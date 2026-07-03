@@ -1183,7 +1183,7 @@ const DISTRICTS = [
     ],
     "familyScore": 9,
     "familyDesc": "Центр города — Калемегдан с огромным парком, детскими площадками, зоопарком. Всё в пешей доступности: магазины, аптеки, поликлиники, кафе. Минусы: очень шумно, холмистая мостовая (коляску трясёт), старые дома без лифта, высокая аренда, грязновато. Для семьи с маленьким ребёнком центр скорее неудобен: нужно много гулять, а в центре мало зелёных дворов и спокойных мест.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Kalemegdan_Belgrade_bulevar.jpg/960px-Kalemegdan_Belgrade_bulevar.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/KalemegdanPark.JPG/960px-KalemegdanPark.JPG"
   },
   {
     "name": "Врачар",
@@ -2692,7 +2692,7 @@ const DISTRICTS = [
     ],
     "familyScore": 12,
     "familyDesc": "Престижный центральный район с отличной инфраструктурой. Детские сады, школы, магазины, аптеки — всё рядом. Парк Манеж для прогулок, Храм Св. Саввы с парковой зоной. Минусы: очень высокая цена аренды, узкие тротуары, холмистый рельеф (с коляской сложно), шумно, сложно с парковкой. Для семьи с ребёнком может быть дискомфортно из-за плотной застройки и отсутствия зелёных дворов.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Temple_Saint_Sava.jpg/960px-Temple_Saint_Sava.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg/960px-Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg"
   },
   {
     "name": "Савски Венац",
@@ -3889,7 +3889,7 @@ const DISTRICTS = [
     ],
     "familyScore": 10,
     "familyDesc": "Дединье — элитный тихий район с большими домами, садами, зеленью. Идеально для семьи, если бюджет позволяет. Много посольств — безопасно. Белград на воде — современные ЖК с детскими площадками, набережной. Минусы: очень дорого, холмистый рельеф, мало магазинов шаговой доступности (нужна машина). Для семьи скорее хорош, но требует больших финансовых вложений.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Belgrade%2C_quartier_de_Dedinje.jpg/960px-Belgrade%2C_quartier_de_Dedinje.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg/960px-Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg"
   },
   {
     "name": "Нови Београд",
@@ -5106,7 +5106,7 @@ const DISTRICTS = [
     ],
     "familyScore": 17,
     "familyDesc": "Максимально подходит для семьи с ребёнком. Ровный рельеф — коляска без проблем. В каждом блоке детские площадки, зелёные дворы без машин. Много детских садов и школ. Развитая инфраструктура: магазины, аптеки, поликлиники — всё в шаговой доступности. Набережная с прогулочной зоной, парк Ушче. Много русскоязычных семей — ребёнку будет с кем играть. Безопасно, современные квартиры с лифтами. Близко к бизнес-центрам (работа для родителей).",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Be%C5%BEanijski_Blokovi_2012.jpg/960px-Be%C5%BEanijski_Blokovi_2012.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Savski_Blokovi_Blok45.jpg/960px-Savski_Blokovi_Blok45.jpg"
   },
   {
     "name": "Земун",
@@ -6171,7 +6171,7 @@ const DISTRICTS = [
     ],
     "familyScore": 16,
     "familyDesc": "Отличный выбор для семьи. Набережная Дуная с прогулочной зоной и велодорожками — идеально для прогулок с коляской. Ровная центральная часть. Свои детские сады, школы, поликлиника. Рынок, магазины шаговой доступности. Атмосфера маленького города — безопасно и спокойно. Цены на жильё ниже центра. Минус — удалённость от центральной части города, но в Земуне есть всё необходимое для повседневной жизни.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/View_of_Belgrade_from_Zemun.jpg/960px-View_of_Belgrade_from_Zemun.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Zemun_panorama_from_Gardo%C5%A1_tower.jpg/960px-Zemun_panorama_from_Gardo%C5%A1_tower.jpg"
   },
   {
     "name": "Звездара",
@@ -7247,7 +7247,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 15,
     "familyDesc": "Один из самых зелёных районов Белграда. Парк Звездарска шума, парк на Мильешевской — отличные места для прогулок с ребёнком. Есть детские сады и школы, спортивные секции. Тихие зелёные дворы. Рядом с центром — до центральной части 10-15 минут на транспорте. Инфраструктура развита: магазины, аптеки, поликлиники. Рельеф с небольшим уклоном, но в целом приемлем для коляски. Минус — мало современных новостроек.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Zvezdara.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Zvezdara_2021.jpg/960px-Zvezdara_2021.jpg"
   },
   {
     "name": "Вождовац",
@@ -8299,7 +8299,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 14,
     "familyDesc": "Тихий спальный район, хороший для семейной жизни. Много зелени, детских площадок. Развитая социальная инфраструктура: садики, школы, поликлиники. Цены на жильё ниже, чем в центре. Спокойная атмосфера, безопасно. Минусы: холмистый рельеф (с коляской тяжеловато на некоторых улицах), пробки в часы пик, удалённость от центра. Если есть машина — хороший вариант.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Pet_solitera.jpg/960px-Pet_solitera.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Jerkovi%C4%87.jpg"
   },
   {
     "name": "Палилула",
@@ -8875,7 +8875,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 11,
     "familyDesc": "Самый большой район — качество сильно зависит от конкретного микрорайона. Центральная часть (Ташмайдан) отлично подходит для семьи: парк, детские площадки, садики рядом. В части у Дуная — тихо и зелено. Окраины (Борча, Крняча) — слабая инфраструктура, проблемы с транспортом. Разброс качества большой: от хороших семейных зон до проблемных.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%BD%D0%B0_%D0%A6%D1%80%D0%BA%D0%B2%D1%83_%D0%A1%D0%B2%D0%B5%D1%82%D0%BE%D0%B3_%D0%9C%D0%B0%D1%80%D0%BA%D0%B0_%D0%B8%D0%B7_%D0%A2%D0%B0%D1%88%D0%BC%D0%B0%D1%98%D0%B4%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%D0%B3_%D0%BF%D0%B0%D1%80%D0%BA%D0%B0.jpg/960px-%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%BD%D0%B0_%D0%A6%D1%80%D0%BA%D0%B2%D1%83_%D0%A1%D0%B2%D0%B5%D1%82%D0%BE%D0%B3_%D0%9C%D0%B0%D1%80%D0%BA%D0%B0_%D0%B8%D0%B7_%D0%A2%D0%B0%D1%88%D0%BC%D0%B0%D1%98%D0%B4%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%D0%B3_%D0%BF%D0%B0%D1%80%D0%BA%D0%B0.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Children_corner_in_Tasmajdan_park.jpg/960px-Children_corner_in_Tasmajdan_park.jpg"
   },
   {
     "name": "Чукарица",
@@ -9944,7 +9944,7 @@ const DISTRICTS = [
     ],
     "familyScore": 13,
     "familyDesc": "Главное преимущество — Ада Циганлия: огромный парк с пляжем, спортивными площадками, прогулочными маршрутами. Летом лучшее место для семьи. Свои детские сады, школы. Цены доступные. Много зелени, Баново Брдо — тихий и зелёный микрорайон. Минусы: удалённость от центра, пробки на мосту (единственный выезд), старый жилфонд в некоторых частях.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Novo_Beograd_-_ada_ciganlija_and_Cukarica_-_Banovo_Brdo_IMG_1758.jpg/960px-Novo_Beograd_-_ada_ciganlija_and_Cukarica_-_Banovo_Brdo_IMG_1758.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Opstina_cukarica.JPG/960px-Opstina_cukarica.JPG"
   },
   {
     "name": "Раковица",
@@ -11004,7 +11004,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 8,
     "familyDesc": "Бюджетный вариант рядом с центром (10-15 минут на машине/автобусе). Есть детские сады, школы, магазины. Минусы: наличие промышленных зон, старый жилфонд, мало зелени и парков, пробки. В некоторых частях грязновато и депрессивно. Для семьи с ребёнком — вариант если сильно ограничен бюджет, но лучше рассмотреть другие районы.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Grave_of_Patriarch_Pavle_in_Rakovica_monastery_02.jpg/960px-Grave_of_Patriarch_Pavle_in_Rakovica_monastery_02.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Rakovica_monastery.jpg/960px-Rakovica_monastery.jpg"
   },
   {
     "name": "Сурчин",
@@ -12148,7 +12148,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 7,
     "familyDesc": "Активно застраивается новыми ЖК — современные квартиры, новые детские площадки. Цены ниже среднего. Минусы: очень далеко от центра (30+ минут без пробок, в часы пик до часа), шум от самолётов (аэропорт рядом), слабая социальная инфраструктура — садиков и школ пока не хватает на всех новосёлов. Без машины сложно. Перспективный район, но для семьи с ребёнком сейчас неудобен.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/EDU_brochure_en_fran%C3%A7ais_Montenegro_21-11-07.jpg/960px-EDU_brochure_en_fran%C3%A7ais_Montenegro_21-11-07.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/%D0%A1%D1%83%D1%80%D1%87%D0%B8%D0%BD_-_%D0%92%D0%BE%D1%98%D0%B2%D0%BE%D1%92%D0%B0%D0%BD%D1%81%D0%BA%D0%B0_%D1%83%D0%BB%D0%B8%D1%86%D0%B0.jpg/960px-%D0%A1%D1%83%D1%80%D1%87%D0%B8%D0%BD_-_%D0%92%D0%BE%D1%98%D0%B2%D0%BE%D1%92%D0%B0%D0%BD%D1%81%D0%BA%D0%B0_%D1%83%D0%BB%D0%B8%D1%86%D0%B0.jpg"
   },
   {
     "name": "Барајево",
@@ -13255,7 +13255,7 @@ const DISTRICTS = [
     "links": [],
     "familyScore": 6,
     "familyDesc": "Пригород с домами и участками. Для тех, кто хочет жить в своём доме с садом — для ребёнка идеально: свежий воздух, своя территория для игр, тишина. Минусы: очень далеко (30-40 км), отсутствие инфраструктуры (ближайший магазин — машина), нет детских садов и школ в пешей доступности, общественный транспорт редко. Полная зависимость от машины. Для постоянного проживания с ребёнком — сложно.",
-    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Wiki_%C5%A0umadija_VICrkva_Sv._Save_%28Barajevo%29_230.jpg/960px-Wiki_%C5%A0umadija_VICrkva_Sv._Save_%28Barajevo%29_230.jpg"
+    "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Barajevo%2C_Serbia.jpg/960px-Barajevo%2C_Serbia.jpg"
   },
   {
     "name": "Гроцка",
