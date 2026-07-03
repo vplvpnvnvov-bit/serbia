@@ -86,12 +86,15 @@ map.on('dragstart', () => {
 
 function showDistrictPanel(d) {
   document.getElementById('d-name').textContent = d.name;
-  const img = document.getElementById('d-img');
-  if (d.img) {
-    img.src = d.img;
-    img.style.display = 'block';
-  } else {
-    img.style.display = 'none';
+  const gallery = document.getElementById('d-gallery');
+  gallery.innerHTML = '';
+  if (d.images && d.images.length) {
+    d.images.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.loading = 'lazy';
+      gallery.appendChild(img);
+    });
   }
   document.getElementById('d-price').textContent = d.price;
   document.getElementById('d-score').textContent = '👶 ' + d.familyScore + '/17 — пригодность для семьи с детьми';

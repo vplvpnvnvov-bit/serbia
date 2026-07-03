@@ -220,6 +220,28 @@ html, body {
   margin-bottom: 8px;
   display: block;
 }
+.gallery {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery img {
+  height: 130px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  object-fit: cover;
+}
+.gallery::-webkit-scrollbar {
+  height: 3px;
+}
+.gallery::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
 .price {
   font-size: 22px;
   font-weight: 700;
