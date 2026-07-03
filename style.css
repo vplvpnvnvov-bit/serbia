@@ -26,10 +26,13 @@ html, body {
   text-align: center;
   animation: var(--arrow-bounce);
   filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+  z-index: 9999;
+  position: relative;
 }
 .arrow-marker {
   background: none !important;
   border: none !important;
+  z-index: 9999 !important;
 }
 
 #app {

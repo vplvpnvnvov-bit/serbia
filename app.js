@@ -51,8 +51,8 @@ function highlightDistrict(name) {
     p.setStyle({ fillOpacity: 0.55, weight: 4 });
     const size = map.getSize();
     map.fitBounds(p.getBounds(), {
-      padding: [40, 40],
-      paddingBottomRight: [0, size.y * 0.48],
+      paddingTopLeft: [40, 40],
+      paddingBottomRight: [40, 40 + size.y * 0.55],
       maxZoom: 13,
     });
   }
