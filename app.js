@@ -49,7 +49,12 @@ function highlightDistrict(name) {
   const p = polygons[name];
   if (p) {
     p.setStyle({ fillOpacity: 0.55, weight: 4 });
-    map.fitBounds(p.getBounds(), { padding: [40, 40], maxZoom: 13 });
+    const size = map.getSize();
+    map.fitBounds(p.getBounds(), {
+      padding: [40, 40],
+      paddingBottomRight: [0, size.y * 0.48],
+      maxZoom: 13,
+    });
   }
   // указатель
   if (window.arrowMarker) map.removeLayer(window.arrowMarker);
