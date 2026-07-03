@@ -86,6 +86,13 @@ map.on('dragstart', () => {
 
 function showDistrictPanel(d) {
   document.getElementById('d-name').textContent = d.name;
+  const img = document.getElementById('d-img');
+  if (d.img) {
+    img.src = d.img;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
   document.getElementById('d-price').textContent = d.price;
   document.getElementById('d-score').textContent = '👶 ' + d.familyScore + '/17 — пригодность для семьи с детьми';
   document.getElementById('d-family-desc').textContent = d.familyDesc || '';
