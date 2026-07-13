@@ -410,7 +410,7 @@ function renderChecklist() {
       tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
       row.appendChild(tipBtn);
       const noteBtn = document.createElement('span');
-      noteBtn.className = 'cl-note-btn';
+      noteBtn.className = 'cl-note-btn' + (st.note ? ' has-note' : '');
       noteBtn.textContent = '📝';
       noteBtn.dataset.id = item.id;
       row.appendChild(noteBtn);

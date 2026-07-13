@@ -449,13 +449,16 @@ html, body {
 .cl-note-btn {
   font-size: 12px;
   cursor: pointer;
-  opacity: 0.3;
+  opacity: 0.25;
   transition: opacity 0.15s;
   flex-shrink: 0;
   user-select: none;
 }
 .cl-note-btn:hover {
-  opacity: 0.7;
+  opacity: 0.6;
+}
+.cl-note-btn.has-note {
+  opacity: 0.85;
 }
 .cl-note-body {
   margin: 0 0 6px 38px;
