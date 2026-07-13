@@ -330,7 +330,7 @@ function renderChecklist() {
           const years = Math.floor(totalMonths / 12);
           const monthsLeft = totalMonths % 12;
           let remainingText = '';
-          if (years > 0) remainingText += `${years}г `;
+          if (years > 0) remainingText += `${years}л `;
           if (monthsLeft > 0 || years === 0) remainingText += `${monthsLeft}мес `;
           if (dd > 0) remainingText += `${dd}дн`;
           rem.textContent = `✅ ещё ${remainingText.trim()}`;
