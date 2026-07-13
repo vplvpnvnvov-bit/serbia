@@ -1,9 +1,7 @@
-const CACHE = 'relocation-v2';
+const CACHE = 'relocation-v3';
 const FILES = [
-  './', './index.html', './style.css', './app.js', './data.js',
+  './', './index.html', './style.css', './app.js', './data.js', './sync.js',
   './manifest.json', './icon.svg',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
 ];
 
 self.addEventListener('install', e => {

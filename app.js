@@ -433,20 +433,20 @@ function updateStats() {
 }
 
 // Lock toggle
-document.addEventListener('DOMContentLoaded', () => {
+function updateLockUI() {
   const lockBtn = document.getElementById('lock-btn');
   if (!lockBtn) return;
-  const updateLock = () => {
-    const locked = localStorage.getItem('checklist-locked') === 'true';
-    lockBtn.textContent = locked ? '🔒' : '🔓';
-    lockBtn.classList.toggle('locked', locked);
-  };
-  lockBtn.addEventListener('click', () => {
+  const locked = localStorage.getItem('checklist-locked') === 'true';
+  lockBtn.textContent = locked ? '🔒' : '🔓';
+  lockBtn.classList.toggle('locked', locked);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  updateLockUI();
+  document.getElementById('lock-btn')?.addEventListener('click', () => {
     const locked = localStorage.getItem('checklist-locked') === 'true';
     localStorage.setItem('checklist-locked', locked ? 'false' : 'true');
-    updateLock();
+    updateLockUI();
   });
-  updateLock();
 });
 
 document.addEventListener('DOMContentLoaded', renderChecklist);
@@ -485,6 +485,16 @@ function calcTotal() {
 }
 
 document.querySelectorAll('#tab-calc input').forEach(inp => {
-  inp.addEventListener('input', calcTotal);
+  inp.addEventListener('input', () => {
+    calcTotal();
+    if (typeof scheduleSync === 'function') scheduleSync();
+  });
 });
 calcTotal();
+
+// Sync: обновление после загрузки из облака
+window.addEventListener('sync-loaded', () => {
+  renderChecklist();
+  calcTotal();
+  updateLockUI();
+});
