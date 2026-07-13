@@ -1,4 +1,4 @@
-const CACHE = 'relocation-v1';
+const CACHE = 'relocation-v2';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js',
   './manifest.json', './icon.svg',
@@ -13,7 +13,9 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.map(k => { if (k !== CACHE) return caches.delete(k); }))).then(() => clients.claim())
+  );
 });
 
 self.addEventListener('fetch', e => {
