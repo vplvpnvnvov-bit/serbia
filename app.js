@@ -438,6 +438,10 @@ function renderChecklist() {
       tipBtn.textContent = '▶';
       tipBtn.dataset.tip = item.tip;
       tipBtn.dataset.link = item.link || '';
+      tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
+      row.appendChild(tipBtn);
+      const savedForNote = saved;
+      const itemId = item.id;
       const toggleTip = (el, e) => {
         e.stopPropagation();
         const row = el.closest('.check-item');
@@ -457,99 +461,70 @@ function renderChecklist() {
         row.after(body);
         tip.textContent = '▼';
         tip.classList.add('open');
+        // Note section inside tip
+        const s = JSON.parse(localStorage.getItem('checklist') || '{}');
+        const n = getItem(s, itemId).note || '';
+        const noteWrap = document.createElement('div');
+        noteWrap.className = 'cl-tip-note-wrap';
+        const noteDisplay = document.createElement('span');
+        noteDisplay.className = 'cl-tip-note-text' + (n ? '' : ' hidden');
+        noteDisplay.textContent = n ? '📝 ' + n : '';
+        const noteBtn = document.createElement('button');
+        noteBtn.className = 'cl-tip-note-btn';
+        noteBtn.textContent = n ? '✏️' : '📝';
+        const noteEdit = document.createElement('div');
+        noteEdit.className = 'cl-tip-note-edit hidden';
+        const noteTA = document.createElement('textarea');
+        noteTA.className = 'cl-note-ta';
+        noteTA.placeholder = 'Заметка...';
+        noteTA.rows = 1;
+        noteTA.value = n;
+        const noteSave = document.createElement('button');
+        noteSave.className = 'cl-tip-note-save';
+        noteSave.textContent = '✅';
+        const showEdit = () => {
+          noteDisplay.classList.add('hidden');
+          noteBtn.classList.add('hidden');
+          noteEdit.classList.remove('hidden');
+          noteTA.focus();
+          noteTA.style.height = 'auto';
+          noteTA.style.height = noteTA.scrollHeight + 'px';
+        };
+        const showDisplay = (val) => {
+          if (val) {
+            noteDisplay.textContent = '📝 ' + val;
+            noteDisplay.classList.remove('hidden');
+            noteBtn.textContent = '✏️';
+            noteBtn.classList.remove('hidden');
+          } else {
+            noteDisplay.classList.add('hidden');
+            noteBtn.textContent = '📝';
+            noteBtn.classList.remove('hidden');
+          }
+          noteEdit.classList.add('hidden');
+        };
+        noteBtn.addEventListener('click', e => { e.stopPropagation(); showEdit(); });
+        noteSave.addEventListener('click', e => {
+          e.stopPropagation();
+          const val = noteTA.value.trim();
+          savedForNote[itemId] = savedForNote[itemId] || {};
+          savedForNote[itemId].note = val;
+          localStorage.setItem('checklist', JSON.stringify(savedForNote));
+          showDisplay(val);
+        });
+        noteTA.addEventListener('input', () => {
+          noteTA.style.height = 'auto';
+          noteTA.style.height = noteTA.scrollHeight + 'px';
+        });
+        noteEdit.appendChild(noteTA);
+        noteEdit.appendChild(noteSave);
+        noteWrap.appendChild(noteDisplay);
+        noteWrap.appendChild(noteBtn);
+        noteWrap.appendChild(noteEdit);
+        body.appendChild(noteWrap);
       };
-      tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
-      row.appendChild(tipBtn);
-      const noteBtn = document.createElement('span');
-      noteBtn.className = 'cl-note-btn' + (st.note ? ' has-note' : '');
-      noteBtn.textContent = '📝';
-      noteBtn.dataset.id = item.id;
-      row.appendChild(noteBtn);
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
-      const noteBody = document.createElement('div');
-      noteBody.className = 'cl-note-body' + (st.note ? '' : ' hidden');
-      const noteRow = document.createElement('div');
-      noteRow.className = 'cl-note-row';
-      const noteDisplay = document.createElement('div');
-      noteDisplay.className = 'cl-note-display';
-      const noteLabel = document.createElement('span');
-      noteLabel.textContent = '📝';
-      const noteDisplayText = document.createElement('span');
-      noteDisplayText.className = 'cl-note-display-text';
-      noteDisplayText.textContent = st.note || '';
-      const noteEditBtn = document.createElement('button');
-      noteEditBtn.className = 'cl-note-act';
-      noteEditBtn.textContent = '✏️';
-      noteDisplay.appendChild(noteLabel);
-      noteDisplay.appendChild(noteDisplayText);
-      noteDisplay.appendChild(noteEditBtn);
-      const noteTA = document.createElement('textarea');
-      noteTA.className = 'cl-note-ta';
-      noteTA.placeholder = 'Заметка...';
-      noteTA.rows = 1;
-      noteTA.value = st.note || '';
-      const noteSaveBtn = document.createElement('button');
-      noteSaveBtn.className = 'cl-note-act';
-      noteSaveBtn.textContent = '✅';
-      const switchToEdit = () => {
-        noteDisplay.classList.add('hidden');
-        noteTA.classList.remove('hidden');
-        noteSaveBtn.classList.remove('hidden');
-        noteTA.focus();
-        noteTA.style.height = 'auto';
-        noteTA.style.height = noteTA.scrollHeight + 'px';
-      };
-      const switchToDisplay = () => {
-        const val = noteTA.value.trim();
-        noteDisplayText.textContent = val || '';
-        noteTA.classList.add('hidden');
-        noteSaveBtn.classList.add('hidden');
-        if (val) {
-          noteDisplay.classList.remove('hidden');
-          noteEditBtn.classList.remove('hidden');
-          noteBody.classList.remove('hidden');
-        } else {
-          noteDisplay.classList.add('hidden');
-          noteEditBtn.classList.add('hidden');
-          noteBody.classList.add('hidden');
-        }
-      };
-      const saveNote = () => {
-        saved[item.id] = saved[item.id] || {};
-        saved[item.id].note = noteTA.value.trim();
-        localStorage.setItem('checklist', JSON.stringify(saved));
-        switchToDisplay();
-      };
-      noteEditBtn.addEventListener('click', e => { e.stopPropagation(); switchToEdit(); });
-      noteSaveBtn.addEventListener('click', e => { e.stopPropagation(); saveNote(); });
-      noteTA.addEventListener('input', () => {
-        noteTA.style.height = 'auto';
-        noteTA.style.height = noteTA.scrollHeight + 'px';
-      });
-      noteBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        noteBody.classList.toggle('hidden');
-        if (!noteBody.classList.contains('hidden') && !st.note) {
-          switchToEdit();
-        }
-      });
-      noteRow.appendChild(noteDisplay);
-      noteRow.appendChild(noteTA);
-      noteRow.appendChild(noteSaveBtn);
-      noteBody.appendChild(noteRow);
-      root.appendChild(noteBody);
-      if (st.note) {
-        noteDisplay.classList.remove('hidden');
-        noteEditBtn.classList.remove('hidden');
-        noteTA.classList.add('hidden');
-        noteSaveBtn.classList.add('hidden');
-      } else {
-        noteDisplay.classList.add('hidden');
-        noteEditBtn.classList.add('hidden');
-        noteTA.classList.add('hidden');
-        noteSaveBtn.classList.add('hidden');
-      }
     });
   });
   updateStats();

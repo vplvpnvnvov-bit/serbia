@@ -481,22 +481,22 @@ html, body {
   align-items: flex-start;
   gap: 4px;
 }
-.cl-note-display {
-  flex: 1;
+.cl-tip-note-wrap {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+.cl-tip-note-text {
   font-size: 13px;
-  color: #333;
-  padding: 4px 0;
-  line-height: 1.4;
-}
-.cl-note-display.hidden {
-  display: none;
-}
-.cl-note-display-text {
+  color: #444;
   white-space: pre-wrap;
   word-break: break-word;
 }
-.cl-note-act {
-  font-size: 15px;
+.cl-tip-note-text.hidden {
+  display: none;
+}
+.cl-tip-note-btn {
+  font-size: 14px;
   background: none;
   border: none;
   cursor: pointer;
@@ -507,8 +507,32 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-.cl-note-act.hidden {
+.cl-tip-note-btn.hidden {
   display: none;
+}
+.cl-tip-note-btn:hover {
+  opacity: 0.8;
+}
+.cl-tip-note-edit {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.cl-tip-note-edit.hidden {
+  display: none;
+}
+.cl-tip-note-save {
+  font-size: 15px;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .cl-note-ta {
   width: 100%;
