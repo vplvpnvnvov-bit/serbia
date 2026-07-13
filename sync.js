@@ -33,6 +33,7 @@ db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 let userId = null;
 let syncCode = null;
 let syncPending = false;
+let syncLoading = false; // prevents write-back during loadFromCloud
 
 firebase.auth().signInAnonymously().catch(() => {});
 firebase.auth().onAuthStateChanged(user => {
@@ -40,7 +41,7 @@ firebase.auth().onAuthStateChanged(user => {
     userId = user.uid;
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
-      syncCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      syncCode = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
       localStorage.setItem('sync-code', syncCode);
     }
     document.getElementById('sync-code-display').textContent = syncCode;
@@ -54,6 +55,7 @@ function loadFromCloud() {
     if (!doc.exists) return;
     const data = doc.data();
 
+    syncLoading = true;
     // Санация + миграция
     if (data.checklist) {
       const version = data.version || '0';
@@ -77,7 +79,8 @@ function loadFromCloud() {
       });
     }
     window.dispatchEvent(new CustomEvent('sync-loaded'));
-  }).catch(() => {});
+    syncLoading = false;
+  }).catch(() => { syncLoading = false; });
 }
 
 function saveToCloud() {
@@ -115,17 +118,18 @@ function scheduleSync() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try { saveToCloud(); } catch (e) {}
-  }, 500);
+  }, 1000);
 }
 
 const origSetItem = Storage.prototype.setItem;
 Storage.prototype.setItem = function(key, value) {
   origSetItem.call(this, key, value);
+  if (syncLoading) return;
   if (key === 'checklist' || key === 'checklist-locked') {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       try { saveToCloud(); } catch (e) {}
-    }, 500);
+    }, 1000);
   }
 };
 
@@ -138,9 +142,13 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.clipboard.writeText(code).catch(() => {});
   });
   document.getElementById('sync-code-change').addEventListener('click', () => {
-    const code = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
-    if (code && code.trim()) {
-      const c = code.trim().toUpperCase();
+    const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
+    if (raw && raw.trim()) {
+      const c = raw.trim().toUpperCase();
+      if (c.length < 6 || c.length > 18) {
+        alert('Код должен быть от 6 до 18 символов.');
+        return;
+      }
       localStorage.setItem('sync-code', c);
       syncCode = c;
       document.getElementById('sync-code-display').textContent = c;

@@ -60,10 +60,10 @@ function saveNote(id) {
   textDiv.classList.remove('hidden');
   editDiv.classList.add('hidden');
   if (val) {
-    textDiv.innerHTML = '📝 ' + val;
+    textDiv.textContent = '📝 ' + val;
     ns.classList.remove('hidden');
   } else {
-    textDiv.innerHTML = '';
+    textDiv.textContent = '';
     ns.classList.add('hidden');
   }
 }
@@ -173,6 +173,11 @@ function darkenHex(hex, amt) {
 }
 
 function scoreMax() { return 10; }
+function safeUrl(url) {
+  if (!url) return '#';
+  if (/^\s*(javascript|data):/i.test(url)) return '#';
+  return url;
+}
 
 function presetEmoji(preset) {
   return preset === 'family' ? '👶' : preset === 'budget' ? '💰' : '⚡';
@@ -378,7 +383,7 @@ function showDistrictPanel(d, noFit) {
   const linksEl = document.getElementById('d-links');
   if (d.links && d.links.length) {
     linksEl.innerHTML = '<strong>🔗 Ссылки по району</strong><br>' +
-      d.links.map(l => `<a href="${l.url}" target="_blank">${l.title}</a>`).join('<br>');
+      d.links.map(l => `<a href="${safeUrl(l.url)}" target="_blank">${l.title}</a>`).join('<br>');
     linksEl.style.display = 'block';
   } else {
     linksEl.style.display = 'none';
@@ -719,7 +724,11 @@ function renderChecklist() {
         dateRow.appendChild(compactSpan);
         inputGroup = document.createElement('span');
         inputGroup.className = 'cl-date-inputs';
-        inputGroup.innerHTML = `<input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[0] || '' : ''}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[1] || '' : ''}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[2] || '' : ''}">`;
+        const esc = s => s.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'})[c] || c);
+        const dd = st.date ? esc(st.date.split('.')[0] || '') : '';
+        const dm = st.date ? esc(st.date.split('.')[1] || '') : '';
+        const dy = st.date ? esc(st.date.split('.')[2] || '') : '';
+        inputGroup.innerHTML = `<input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${dd}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${dm}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${dy}">`;
         dateRow.appendChild(inputGroup);
         const rem = document.createElement('span');
         rem.className = 'cl-date-remaining';
@@ -855,7 +864,7 @@ function renderChecklist() {
       ns.className = 'note-section' + (st.note ? '' : ' hidden');
       const nsText = document.createElement('div');
       nsText.className = 'note-section-text';
-      nsText.innerHTML = st.note ? '📝 ' + st.note : '';
+      nsText.textContent = st.note ? '📝 ' + st.note : '';
       ns.appendChild(nsText);
       const nsEdit = document.createElement('div');
       nsEdit.className = 'note-section-edit hidden';
@@ -891,7 +900,7 @@ function renderChecklist() {
         body.className = 'cl-tip-body';
         body.innerHTML =
           `<div class="cl-tip-text">${tip.dataset.tip.replace(/\n/g, '<br>')}</div>` +
-          (tip.dataset.link ? `<a href="${tip.dataset.link}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
+          (tip.dataset.link ? `<a href="${safeUrl(tip.dataset.link)}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
         const s = JSON.parse(localStorage.getItem('checklist') || '{}');
         const n = getItem(s, itemId).note || '';
         const addBtn = document.createElement('button');
