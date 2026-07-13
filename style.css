@@ -557,22 +557,18 @@ html, body {
   text-align: center;
 }
 .cl-date-edit {
-  font-size: 16px;
-  background: #fff3e0;
-  border: 1px solid #ffcc80;
-  border-radius: 8px;
+  font-size: 15px;
+  background: none;
+  border: none;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 4px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition: background 0.1s;
-}
-.cl-date-edit:active {
-  background: #ffe0b2;
+  opacity: 0.5;
 }
 .cl-date-edit.hidden {
   display: none;
