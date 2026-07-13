@@ -439,14 +439,18 @@ function renderChecklist() {
         localStorage.setItem('checklist', JSON.stringify(saved));
         autoResize();
       });
-      autoResize();
       noteBtn.addEventListener('click', e => {
         e.stopPropagation();
         noteBody.classList.toggle('hidden');
-        if (!noteBody.classList.contains('hidden')) noteTA.focus();
+        if (!noteBody.classList.contains('hidden')) {
+          void noteBody.offsetHeight;
+          autoResize();
+          noteTA.focus();
+        }
       });
       noteBody.appendChild(noteTA);
       root.appendChild(noteBody);
+      if (!noteBody.classList.contains('hidden')) autoResize();
     });
   });
   updateStats();
