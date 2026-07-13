@@ -299,6 +299,13 @@ function renderChecklist() {
       btn.className = 'cl-btn' + (checked ? ' on' : '');
       btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
       let dateRow, dInput, mInput, yInput;
+      const getDateStr = () => {
+        if (!dInput) return '';
+        const d = dInput.value.trim();
+        const m = mInput.value.trim();
+        const y = yInput.value.trim();
+        return d && m && y ? `${d.padStart(2,'0')}.${m.padStart(2,'0')}.${y.padStart(2,'0')}` : '';
+      };
       if (item.hasDate) {
         dateRow = document.createElement('div');
         dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
@@ -307,12 +314,6 @@ function renderChecklist() {
         mInput = dateRow.querySelector('.cl-date-m');
         yInput = dateRow.querySelector('.cl-date-y');
         const editBtn = dateRow.querySelector('.cl-date-edit');
-        const getDateStr = () => {
-          const d = dInput.value.trim();
-          const m = mInput.value.trim();
-          const y = yInput.value.trim();
-          return d && m && y ? `${d.padStart(2,'0')}.${m.padStart(2,'0')}.${y.padStart(2,'0')}` : '';
-        };
         const updateRemaining = () => {
           const rem = dateRow.querySelector('.cl-date-remaining');
           const ds = getDateStr();
