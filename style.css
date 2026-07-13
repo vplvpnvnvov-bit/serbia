@@ -482,7 +482,6 @@ html, body {
 .note-section-text {
   white-space: pre-wrap;
   word-break: break-word;
-  cursor: pointer;
 }
 .note-section-edit {
   display: flex;

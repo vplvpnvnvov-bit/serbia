@@ -516,9 +516,6 @@ function renderChecklist() {
         nsTA.style.height = 'auto';
         nsTA.style.height = nsTA.scrollHeight + 'px';
       };
-      ns.addEventListener('click', e => {
-        if (e.target === ns || e.target === nsText) openNsEdit();
-      });
       nsEdit.addEventListener('click', e => { e.stopPropagation(); });
       nsTA.addEventListener('input', () => {
         nsTA.style.height = 'auto';
