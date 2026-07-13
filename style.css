@@ -444,6 +444,41 @@ html, body {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.cl-note-btn {
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+  user-select: none;
+}
+.cl-note-btn:hover {
+  opacity: 0.7;
+}
+.cl-note-body {
+  padding: 0 0 6px 38px;
+  animation: tipFadeIn 0.15s ease;
+}
+.cl-note-body.hidden {
+  display: none;
+}
+.cl-note-ta {
+  width: 100%;
+  min-height: 50px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  color: #333;
+  background: #fafafa;
+}
+.cl-note-ta:focus {
+  outline: none;
+  border-color: #1a237e;
+  background: #fff;
+}
 .cl-date-row {
   display: flex;
   align-items: center;

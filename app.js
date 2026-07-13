@@ -13,12 +13,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // === HELPERS ===
 function getItem(saved, id) {
   const v = saved[id];
-  if (typeof v === 'boolean') return { done: v, date: '' };
-  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '' };
-  return { done: false, date: '' };
+  if (typeof v === 'boolean') return { done: v, date: '', note: '' };
+  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '', note: v.note || '' };
+  return { done: false, date: '', note: '' };
 }
 function setItem(saved, id, done, date) {
-  saved[id] = { done, date: date || '' };
+  const prev = saved[id] || {};
+  saved[id] = { done, date: date || '', note: prev.note || '' };
   localStorage.setItem('checklist', JSON.stringify(saved));
 }
 function setList(id, title, items) {
@@ -408,6 +409,11 @@ function renderChecklist() {
       };
       tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
       row.appendChild(tipBtn);
+      const noteBtn = document.createElement('span');
+      noteBtn.className = 'cl-note-btn';
+      noteBtn.textContent = '📝';
+      noteBtn.dataset.id = item.id;
+      row.appendChild(noteBtn);
       const textSpan = document.createElement('span');
       textSpan.className = 'cl-text';
       textSpan.innerHTML = item.text;
@@ -416,6 +422,24 @@ function renderChecklist() {
       row.appendChild(textSpan);
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
+      const noteBody = document.createElement('div');
+      noteBody.className = 'cl-note-body hidden';
+      const noteTA = document.createElement('textarea');
+      noteTA.className = 'cl-note-ta';
+      noteTA.placeholder = 'Заметка...';
+      noteTA.value = st.note || '';
+      noteTA.addEventListener('input', () => {
+        saved[item.id] = saved[item.id] || {};
+        saved[item.id].note = noteTA.value;
+        localStorage.setItem('checklist', JSON.stringify(saved));
+      });
+      noteBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        noteBody.classList.toggle('hidden');
+        if (!noteBody.classList.contains('hidden')) noteTA.focus();
+      });
+      noteBody.appendChild(noteTA);
+      root.appendChild(noteBody);
     });
   });
   updateStats();
