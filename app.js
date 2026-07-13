@@ -301,9 +301,28 @@ function renderChecklist() {
       row.appendChild(btn);
       const tipBtn = document.createElement('span');
       tipBtn.className = 'cl-tip';
-      tipBtn.textContent = '?';
+      tipBtn.textContent = '▶';
       tipBtn.dataset.tip = item.tip;
       tipBtn.dataset.link = item.link || '';
+      tipBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        const row = tipBtn.closest('.check-item');
+        const existing = row.nextElementSibling;
+        if (existing && existing.classList.contains('cl-tip-body')) {
+          existing.remove();
+          tipBtn.textContent = '▶';
+          tipBtn.classList.remove('open');
+          return;
+        }
+        const body = document.createElement('div');
+        body.className = 'cl-tip-body';
+        body.innerHTML =
+          `<div class="cl-tip-text">${tipBtn.dataset.tip}</div>` +
+          (tipBtn.dataset.link ? `<a href="${tipBtn.dataset.link}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
+        row.after(body);
+        tipBtn.textContent = '▼';
+        tipBtn.classList.add('open');
+      });
       row.appendChild(tipBtn);
       const textSpan = document.createElement('span');
       textSpan.className = 'cl-text';
@@ -315,42 +334,6 @@ function renderChecklist() {
   });
   updateStats();
 }
-
-// Tooltip: делегирование кликов на 💡
-document.addEventListener('click', e => {
-  const tooltip = document.getElementById('cl-tooltip');
-  const tip = e.target.closest('.cl-tip');
-  const insideTooltip = e.target.closest('#cl-tooltip');
-
-  if (tip) {
-    e.preventDefault();
-    tooltip.innerHTML =
-      `<div class="cl-tooltip-body">${tip.dataset.tip}</div>` +
-      (tip.dataset.link ? `<a href="${tip.dataset.link}" target="_blank" class="cl-tooltip-link">🔗 Открыть ссылку</a>` : '') +
-      `<button class="cl-tooltip-close">&times;</button>`;
-    const rect = tip.getBoundingClientRect();
-    const tw = 260; // max-width
-    let left = rect.left + rect.width / 2 - tw / 2;
-    let top = rect.top - 10;
-    // не вылезать за правый край
-    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
-    // не вылезать за левый край
-    if (left < 12) left = 12;
-    // если сверху не хватает — показываем снизу
-    if (top < 8) top = rect.bottom + 8;
-    tooltip.style.left = left + 'px';
-    tooltip.style.top = top + 'px';
-    tooltip.classList.remove('hidden');
-    tooltip.querySelector('.cl-tooltip-close')?.addEventListener('click', () => {
-      tooltip.classList.add('hidden');
-    });
-    return;
-  }
-
-  if (!insideTooltip) {
-    tooltip.classList.add('hidden');
-  }
-});
 
 function updateStats() {
   const saved = JSON.parse(localStorage.getItem('checklist') || '{}');

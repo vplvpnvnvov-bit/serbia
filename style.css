@@ -362,30 +362,53 @@ html, body {
   font-weight: 600;
 }
 .cl-tip {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
   cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.2s, border-color 0.2s;
+  opacity: 0.4;
+  transition: opacity 0.2s, transform 0.2s;
   vertical-align: middle;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  border: 1.5px solid #999;
-  color: #999;
-  background: transparent;
   line-height: 1;
   user-select: none;
   flex-shrink: 0;
-  font-style: italic;
 }
 .cl-tip:hover {
-  opacity: 1;
-  border-color: #1a237e;
-  color: #1a237e;
+  opacity: 0.8;
+}
+.cl-tip.open {
+  opacity: 0.6;
+}
+.cl-tip-body {
+  padding: 10px 12px;
+  margin: 0 0 6px 38px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #1a237e;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #333;
+  animation: tipFadeIn 0.15s ease;
+}
+@keyframes tipFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cl-tip-text {
+  margin-bottom: 6px;
+}
+.cl-tip-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #1565c0;
+  text-decoration: none;
+  padding: 5px 10px;
+  background: #e3f2fd;
+  border-radius: 6px;
+  font-weight: 500;
 }
 .cl-btn {
   width: 40px;
@@ -511,57 +534,4 @@ html, body {
 }
 .links a:active {
   opacity: 0.7;
-}
-
-/* CHECKLIST TOOLTIP */
-#cl-tooltip {
-  position: fixed;
-  background: white;
-  border-radius: 10px;
-  padding: 12px 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
-  z-index: 9999;
-  max-width: 260px;
-  font-size: 13px;
-  line-height: 1.45;
-  transition: opacity 0.15s, transform 0.15s;
-  pointer-events: auto;
-}
-#cl-tooltip.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-}
-#cl-tooltip:not(.hidden) {
-  opacity: 1;
-  transform: translateY(0);
-}
-.cl-tooltip-body {
-  color: #333;
-  margin-bottom: 8px;
-}
-.cl-tooltip-link {
-  display: inline-block;
-  font-size: 13px;
-  color: #1565c0;
-  text-decoration: none;
-  padding: 6px 12px;
-  background: #e3f2fd;
-  border-radius: 6px;
-  font-weight: 500;
-}
-.cl-tooltip-link:active {
-  opacity: 0.7;
-}
-.cl-tooltip-close {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #aaa;
-  cursor: pointer;
-  line-height: 1;
-  padding: 2px;
 }
