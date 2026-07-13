@@ -49,15 +49,19 @@ function loadFromCloud() {
 function saveToCloud() {
   if (!userId || syncPending) return;
   syncPending = true;
-  const data = {
-    checklist: JSON.parse(localStorage.getItem('checklist') || '{}'),
-    locked: localStorage.getItem('checklist-locked') === 'true',
-    calc: getCalcValues(),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  };
-  db.collection('users').doc(userId).set(data, { merge: true })
-    .then(() => { syncPending = false; })
-    .catch(() => { syncPending = false; });
+  try {
+    const data = {
+      checklist: JSON.parse(localStorage.getItem('checklist') || '{}'),
+      locked: localStorage.getItem('checklist-locked') === 'true',
+      calc: getCalcValues(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    db.collection('users').doc(userId).set(data, { merge: true })
+      .then(() => { syncPending = false; })
+      .catch(() => { syncPending = false; });
+  } catch (e) {
+    syncPending = false;
+  }
 }
 
 function getCalcValues() {
@@ -73,13 +77,18 @@ function getCalcValues() {
 let saveTimer = null;
 function scheduleSync() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToCloud, 500);
+  saveTimer = setTimeout(() => {
+    try { saveToCloud(); } catch (e) {}
+  }, 500);
 }
 
 const origSetItem = Storage.prototype.setItem;
 Storage.prototype.setItem = function(key, value) {
   origSetItem.call(this, key, value);
   if (key === 'checklist' || key === 'checklist-locked') {
-    scheduleSync();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try { saveToCloud(); } catch (e) {}
+    }, 500);
   }
 };
