@@ -429,11 +429,17 @@ function renderChecklist() {
       noteTA.placeholder = 'Заметка...';
       noteTA.rows = 1;
       noteTA.value = st.note || '';
+      const autoResize = () => {
+        noteTA.style.height = 'auto';
+        noteTA.style.height = noteTA.scrollHeight + 'px';
+      };
       noteTA.addEventListener('input', () => {
         saved[item.id] = saved[item.id] || {};
         saved[item.id].note = noteTA.value;
         localStorage.setItem('checklist', JSON.stringify(saved));
+        autoResize();
       });
+      autoResize();
       noteBtn.addEventListener('click', e => {
         e.stopPropagation();
         noteBody.classList.toggle('hidden');
