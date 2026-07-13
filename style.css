@@ -397,6 +397,9 @@ html, body {
   color: #999;
   text-decoration: line-through;
 }
+.check-item.progress .cl-text {
+  color: #e65100;
+}
 .cl-text {
   flex: 1;
   color: #333;
@@ -649,6 +652,12 @@ html, body {
 }
 .cl-btn.on::after {
   transform: translateX(16px);
+}
+.cl-btn.half {
+  background: #f9a825;
+}
+.cl-btn.half::after {
+  transform: translateX(8px);
 }
 #checklist-root {
   position: relative;

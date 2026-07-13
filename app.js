@@ -13,14 +13,20 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // === HELPERS ===
 function getItem(saved, id) {
   const v = saved[id];
-  if (typeof v === 'boolean') return { done: v, date: '', note: '' };
-  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '', note: v.note || '' };
-  return { done: false, date: '', note: '' };
+  if (typeof v === 'boolean') return { done: v, date: '', note: '', progress: false };
+  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '', note: v.note || '', progress: !!v.progress };
+  return { done: false, date: '', note: '', progress: false };
 }
-function setItem(saved, id, done, date) {
+function setItem(saved, id, done, date, progress) {
   const prev = saved[id] || {};
-  saved[id] = { done, date: date || '', note: prev.note || '' };
+  saved[id] = { done, date: date || '', note: prev.note || '', progress: !!progress };
   localStorage.setItem('checklist', JSON.stringify(saved));
+}
+function cycleItem(saved, id) {
+  const st = getItem(saved, id);
+  if (!st.done && !st.progress) return { done: false, progress: true };
+  if (st.progress) return { done: true, progress: false };
+  return { done: false, progress: false };
 }
 function setList(id, title, items) {
   const el = document.getElementById(id);
@@ -294,10 +300,11 @@ function renderChecklist() {
     group.items.forEach(item => {
       const st = getItem(saved, item.id);
       const checked = st.done;
+      const prog = st.progress;
       const row = document.createElement('div');
-      row.className = 'check-item' + (checked ? ' done' : '');
+      row.className = 'check-item' + (checked ? ' done' : '') + (prog ? ' progress' : '');
       const btn = document.createElement('button');
-      btn.className = 'cl-btn' + (checked ? ' on' : '');
+      btn.className = 'cl-btn' + (checked ? ' on' : '') + (prog ? ' half' : '');
       btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
       let dateRow, dInput, mInput, yInput, compactSpan, inputGroup;
       const getDateStr = () => {
@@ -418,12 +425,17 @@ function renderChecklist() {
       btn.addEventListener('click', e => {
         e.stopPropagation();
         if (localStorage.getItem('checklist-locked') === 'true') return;
-        const newChecked = !getItem(saved, item.id).done;
-        setItem(saved, item.id, newChecked, newChecked ? (dInput ? getDateStr() : '') : '');
-        btn.classList.toggle('on', newChecked);
-        btn.setAttribute('aria-label', newChecked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
-        row.classList.toggle('done', newChecked);
-        if (dateRow) dateRow.classList.toggle('hidden', !newChecked);
+        const st = getItem(saved, item.id);
+        const next = cycleItem(saved, item.id);
+        setItem(saved, item.id, next.done, next.done ? (dInput ? getDateStr() : '') : (next.progress ? '' : ''), next.progress);
+        btn.classList.remove('half', 'on');
+        if (next.done) btn.classList.add('on');
+        else if (next.progress) btn.classList.add('half');
+        const isActive = next.done || next.progress;
+        btn.setAttribute('aria-label', isActive ? 'Отметить как невыполненное' : 'Отметить как выполненное');
+        row.classList.toggle('done', next.done);
+        row.classList.toggle('progress', next.progress);
+        if (dateRow) dateRow.classList.toggle('hidden', !next.done);
         updateStats();
       });
       row.appendChild(btn);
@@ -532,14 +544,16 @@ function renderChecklist() {
 
 function updateStats() {
   const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  let total = 0, done = 0;
+  let total = 0, done = 0, progress = 0;
   CHECKLIST.forEach(g => g.items.forEach(i => {
     total++;
-    if (getItem(saved, i.id).done) done++;
+    const st = getItem(saved, i.id);
+    if (st.done) done++;
+    else if (st.progress) progress++;
   }));
-  const pct = total ? Math.round(done / total * 100) : 0;
   document.getElementById('checklist-stats').innerHTML =
-    `✅ Выполнено: <b>${done}</b> / <b>${total}</b> (${pct}%)`;
+    `✅ Выполнено: <b>${done}</b> / <b>${total}</b>` +
+    (progress ? ` · 🔄 в процессе: <b>${progress}</b>` : '');
 }
 
 // Lock toggle
