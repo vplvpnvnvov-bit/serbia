@@ -420,6 +420,27 @@ html, body {
   flex: 1;
   max-width: 160px;
 }
+.cl-date-input.locked {
+  background: #f0f4ff;
+  border-color: #b0bec5;
+  cursor: default;
+  color: #333;
+}
+.cl-date-edit {
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+.cl-date-edit:hover {
+  opacity: 1;
+}
+.cl-date-edit.hidden {
+  display: none;
+}
 .cl-date-remaining {
   font-size: 12px;
   font-weight: 500;

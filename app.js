@@ -302,8 +302,9 @@ function renderChecklist() {
       if (item.hasDate) {
         dateRow = document.createElement('div');
         dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
-        dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="date" class="cl-date-input" value="${st.date || ''}"> <span class="cl-date-remaining"></span>`;
+        dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="date" class="cl-date-input" value="${st.date || ''}"> <span class="cl-date-remaining"></span> <button class="cl-date-edit hidden">✏️</button>`;
         dateInput = dateRow.querySelector('.cl-date-input');
+        const editBtn = dateRow.querySelector('.cl-date-edit');
         const updateRemaining = () => {
           const rem = dateRow.querySelector('.cl-date-remaining');
           if (!dateInput.value || !item.expires) { rem.textContent = ''; return; }
@@ -319,10 +320,24 @@ function renderChecklist() {
           rem.textContent = `✅ ещё ${monthsLeft}мес ${d}дн`;
           rem.className = 'cl-date-remaining ' + (monthsLeft >= 6 ? 'ok' : monthsLeft >= 1 ? 'warn' : 'expired');
         };
-        updateRemaining();
+        const lockDate = () => {
+          if (!dateInput.value) return;
+          dateInput.readOnly = true;
+          dateInput.classList.add('locked');
+          editBtn.classList.remove('hidden');
+          updateRemaining();
+        };
+        const unlockDate = () => {
+          dateInput.readOnly = false;
+          dateInput.classList.remove('locked');
+          editBtn.classList.add('hidden');
+          dateInput.focus();
+        };
+        if (st.date) lockDate();
+        editBtn.addEventListener('click', unlockDate);
         dateInput.addEventListener('change', () => {
           setItem(saved, item.id, true, dateInput.value);
-          updateRemaining();
+          lockDate();
           updateStats();
         });
       }
