@@ -28,6 +28,22 @@ function cycleItem(saved, id) {
   if (st.progress) return { done: true, progress: false };
   return { done: false, progress: false };
 }
+function editNote(id) {
+  const ns = document.getElementById('note-section-' + id);
+  if (!ns) return;
+  const textDiv = ns.querySelector('.note-section-text');
+  const editDiv = ns.querySelector('.note-section-edit');
+  const ta = ns.querySelector('.cl-note-ta');
+  if (!editDiv || !ta) return;
+  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  const st = getItem(saved, id);
+  ta.value = st.note || '';
+  if (textDiv) textDiv.classList.add('hidden');
+  editDiv.classList.remove('hidden');
+  ta.focus();
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
 function setList(id, title, items) {
   const el = document.getElementById(id);
   if (!items || items.length === 0) { el.style.display = 'none'; return; }
@@ -453,8 +469,50 @@ function renderChecklist() {
       tipBtn.dataset.link = item.link || '';
       tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
       row.appendChild(tipBtn);
-      const savedForNote = saved;
       const itemId = item.id;
+      // Note section
+      const ns = document.createElement('div');
+      ns.id = 'note-section-' + itemId;
+      ns.className = 'note-section' + (st.note ? '' : ' hidden');
+      const nsText = document.createElement('div');
+      nsText.className = 'note-section-text';
+      nsText.innerHTML = st.note ? '📝 ' + st.note : '';
+      ns.appendChild(nsText);
+      const nsEdit = document.createElement('div');
+      nsEdit.className = 'note-section-edit hidden';
+      const nsTA = document.createElement('textarea');
+      nsTA.className = 'cl-note-ta';
+      nsTA.placeholder = 'Заметка...';
+      nsTA.rows = 1;
+      nsTA.value = st.note || '';
+      const nsSave = document.createElement('button');
+      nsSave.className = 'note-section-save';
+      nsSave.textContent = '✅';
+      const savedForNote = saved;
+      const saveNsNote = () => {
+        const val = nsTA.value.trim();
+        savedForNote[itemId] = savedForNote[itemId] || {};
+        savedForNote[itemId].note = val;
+        localStorage.setItem('checklist', JSON.stringify(savedForNote));
+        nsText.classList.remove('hidden');
+        nsEdit.classList.add('hidden');
+        if (val) {
+          nsText.innerHTML = '📝 ' + val;
+          ns.classList.remove('hidden');
+        } else {
+          nsText.innerHTML = '';
+          ns.classList.add('hidden');
+        }
+      };
+      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNsNote(); });
+      nsEdit.addEventListener('click', e => { e.stopPropagation(); });
+      nsTA.addEventListener('input', () => {
+        nsTA.style.height = 'auto';
+        nsTA.style.height = nsTA.scrollHeight + 'px';
+      });
+      nsEdit.appendChild(nsTA);
+      nsEdit.appendChild(nsSave);
+      ns.appendChild(nsEdit);
       const toggleTip = (el, e) => {
         e.stopPropagation();
         const row = el.closest('.check-item');
@@ -476,9 +534,9 @@ function renderChecklist() {
         const addBtn = document.createElement('button');
         addBtn.className = 'cl-tip-add-note';
         addBtn.textContent = n ? '✎ Редактировать комментарий' : '＋ Добавить комментарий';
-        addBtn.addEventListener('click', e => {
+        addBtn.addEventListener('click', function(e) {
           e.stopPropagation();
-          openNsEdit();
+          editNote(itemId);
         });
         body.appendChild(addBtn);
         row.after(body);
@@ -487,56 +545,6 @@ function renderChecklist() {
       };
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
-      // Persistent note section below tip
-      const ns = document.createElement('div');
-      ns.id = 'note-section-' + itemId;
-      ns.className = 'note-section' + (st.note ? '' : ' hidden');
-      const nsText = document.createElement('div');
-      nsText.className = 'note-section-text';
-      nsText.innerHTML = st.note ? '📝 ' + st.note : '';
-      ns.appendChild(nsText);
-      const nsEdit = document.createElement('div');
-      nsEdit.className = 'note-section-edit hidden';
-      const nsTA = document.createElement('textarea');
-      nsTA.className = 'cl-note-ta';
-      nsTA.placeholder = 'Заметка...';
-      nsTA.rows = 1;
-      nsTA.value = st.note || '';
-      const nsSave = document.createElement('button');
-      nsSave.className = 'note-section-save';
-      nsSave.textContent = '✅';
-      const saveNsNote = () => {
-        const val = nsTA.value.trim();
-        savedForNote[itemId] = savedForNote[itemId] || {};
-        savedForNote[itemId].note = val;
-        localStorage.setItem('checklist', JSON.stringify(savedForNote));
-        if (val) {
-          nsText.innerHTML = '📝 ' + val;
-          ns.classList.remove('hidden');
-        } else {
-          nsText.innerHTML = '';
-          ns.classList.add('hidden');
-        }
-        nsEdit.classList.add('hidden');
-        ns.classList.remove('note-edit-open');
-      };
-      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNsNote(); });
-      const openNsEdit = () => {
-        nsTA.value = getItem(JSON.parse(localStorage.getItem('checklist') || '{}'), itemId).note || '';
-        nsText.classList.add('hidden');
-        nsEdit.classList.remove('hidden');
-        nsTA.focus();
-        nsTA.style.height = 'auto';
-        nsTA.style.height = nsTA.scrollHeight + 'px';
-      };
-      nsEdit.addEventListener('click', e => { e.stopPropagation(); });
-      nsTA.addEventListener('input', () => {
-        nsTA.style.height = 'auto';
-        nsTA.style.height = nsTA.scrollHeight + 'px';
-      });
-      nsEdit.appendChild(nsTA);
-      nsEdit.appendChild(nsSave);
-      ns.appendChild(nsEdit);
       root.appendChild(ns);
     });
   });
