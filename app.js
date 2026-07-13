@@ -298,17 +298,27 @@ function renderChecklist() {
       const btn = document.createElement('button');
       btn.className = 'cl-btn' + (checked ? ' on' : '');
       btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
-      let dateRow, dateInput;
+      let dateRow, dInput, mInput, yInput;
       if (item.hasDate) {
         dateRow = document.createElement('div');
         dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
-        dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="date" class="cl-date-input" value="${st.date || ''}"> <span class="cl-date-remaining"></span> <button class="cl-date-edit hidden">✏️</button>`;
-        dateInput = dateRow.querySelector('.cl-date-input');
+        dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[0] || '' : ''}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[1] || '' : ''}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[2] || '' : ''}"> <span class="cl-date-remaining"></span> <button class="cl-date-edit hidden">✏️</button>`;
+        dInput = dateRow.querySelector('.cl-date-d');
+        mInput = dateRow.querySelector('.cl-date-m');
+        yInput = dateRow.querySelector('.cl-date-y');
         const editBtn = dateRow.querySelector('.cl-date-edit');
+        const getDateStr = () => {
+          const d = dInput.value.trim();
+          const m = mInput.value.trim();
+          const y = yInput.value.trim();
+          return d && m && y ? `${d.padStart(2,'0')}.${m.padStart(2,'0')}.${y.padStart(2,'0')}` : '';
+        };
         const updateRemaining = () => {
           const rem = dateRow.querySelector('.cl-date-remaining');
-          if (!dateInput.value || !item.expires) { rem.textContent = ''; return; }
-          const issued = new Date(dateInput.value);
+          const ds = getDateStr();
+          if (!ds || !item.expires) { rem.textContent = ''; return; }
+          const parts = ds.split('.');
+          const issued = new Date('20' + parts[2], parts[1] - 1, parts[0]);
           const exp = new Date(issued);
           exp.setMonth(exp.getMonth() + item.expires);
           const now = new Date();
@@ -316,36 +326,43 @@ function renderChecklist() {
           if (msLeft <= 0) { rem.textContent = '⚠️ Просрочен'; rem.className = 'cl-date-remaining expired'; return; }
           const daysLeft = Math.ceil(msLeft / 86400000);
           const monthsLeft = Math.floor(daysLeft / 30);
-          const d = daysLeft % 30;
-          rem.textContent = `✅ ещё ${monthsLeft}мес ${d}дн`;
+          const dd = daysLeft % 30;
+          rem.textContent = `✅ ещё ${monthsLeft}мес ${dd}дн`;
           rem.className = 'cl-date-remaining ' + (monthsLeft >= 6 ? 'ok' : monthsLeft >= 1 ? 'warn' : 'expired');
         };
         const lockDate = () => {
-          if (!dateInput.value) return;
-          dateInput.readOnly = true;
-          dateInput.classList.add('locked');
+          if (!getDateStr()) return;
+          [dInput, mInput, yInput].forEach(el => { el.readOnly = true; el.classList.add('locked'); });
           editBtn.classList.remove('hidden');
           updateRemaining();
         };
         const unlockDate = () => {
-          dateInput.readOnly = false;
-          dateInput.classList.remove('locked');
+          [dInput, mInput, yInput].forEach(el => { el.readOnly = false; el.classList.remove('locked'); });
           editBtn.classList.add('hidden');
-          dateInput.focus();
+          dInput.focus();
+        };
+        const onDateChange = () => {
+          setItem(saved, item.id, true, getDateStr());
+          lockDate();
+          updateStats();
         };
         if (st.date) lockDate();
         editBtn.addEventListener('click', unlockDate);
-        dateInput.addEventListener('change', () => {
-          setItem(saved, item.id, true, dateInput.value);
-          lockDate();
-          updateStats();
+        [dInput, mInput, yInput].forEach((el, i) => {
+          el.addEventListener('input', () => {
+            if (el.value.length >= 2 && i < 2) {
+              const next = [dInput, mInput, yInput][i + 1];
+              if (next) next.focus();
+            }
+          });
+          el.addEventListener('change', onDateChange);
         });
       }
       btn.addEventListener('click', e => {
         e.stopPropagation();
         if (localStorage.getItem('checklist-locked') === 'true') return;
         const newChecked = !getItem(saved, item.id).done;
-        setItem(saved, item.id, newChecked, newChecked ? (dateInput ? dateInput.value : '') : '');
+        setItem(saved, item.id, newChecked, newChecked ? (dInput ? getDateStr() : '') : '');
         btn.classList.toggle('on', newChecked);
         btn.setAttribute('aria-label', newChecked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
         row.classList.toggle('done', newChecked);

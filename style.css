@@ -412,15 +412,16 @@ html, body {
 .cl-date-label {
   white-space: nowrap;
 }
-.cl-date-input {
-  padding: 4px 8px;
+.cl-date-d, .cl-date-m, .cl-date-y {
+  padding: 4px 2px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 13px;
-  flex: 1;
-  max-width: 160px;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
 }
-.cl-date-input.locked {
+.cl-date-d.locked, .cl-date-m.locked, .cl-date-y.locked {
   background: #f0f4ff;
   border-color: #b0bec5;
   cursor: default;
