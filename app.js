@@ -326,6 +326,115 @@ const CHECKLIST = [
   ]},
 ];
 
+const TIMELINE_PLAN = {
+  section: "relocation_4_months_plan",
+  title: "📅 Пошаговый план расходов и действий (4 месяца)",
+  description: "Интерактивный таймлайн переезда в Белград для семьи из 3 человек с легализацией по схеме «Талант ➔ ИП».",
+  timeline: [
+    {
+      id: "m0",
+      title: "Месяц 0: Подготовка в РФ",
+      focus: "Сбор документов, которые невозможно получить удаленно",
+      actions: [
+        "Заказать справку об отсутствии судимости из МВД РФ с Апостилем (быстрее всего через Госуслуги/МФЦ). Срок действия для Сербии — 6 месяцев.",
+        "Собрать оригиналы свидетельства о браке и рождении ребенка. Поставить на них Апостиль в ЗАГСе (необходимо для воссоединения семьи).",
+        "Подготовить оригиналы диплома вуза и вкладыша с оценками (Апостиль на диплом для Сербии НЕ НУЖЕН).",
+        "Взять в поликлинике карту профилактических прививок ребенка (форма 063/у или синий прививочный сертификат) — без нее не примут в сербский детский сад."
+      ],
+      cost_eur: "80 €",
+      cost_details: [
+        { name: "Апостиль на справку о несудимости", cost: "2500 ₽" },
+        { name: "Апостиль на свидетельство о браке", cost: "2500 ₽" },
+        { name: "Апостиль на свидетельство о рождении ребенка", cost: "2500 ₽" }
+      ]
+    },
+    {
+      id: "m1",
+      title: "Месяц 1: Прилет и ВНЖ «Талант»",
+      focus: "Перелет, адаптация на Airbnb, запуск нострификации и онлайн-подача на первый ВНЖ",
+      actions: [
+        "Перелет в Белград, заселение во временное жилье и обязательное получение бумажного или электронного «белого картона» (регистрации) в течение 24 часов.",
+        "Перевод личных документов и диплома у сербского судебного переводчика (sudski tumač).",
+        "Подача заявления на нострификацию диплома онлайн на сайте Агентства по квалификациям (AZK). Пошлина — 7500 RSD.",
+        "Покупка локальных медицинских страховок на 1 год для всей семьи.",
+        "Осмотр ребенка у сербского педиатра в частной клинике для получения справки в детский сад.",
+        "Онлайн-подача документов на Единое разрешение (ВНЖ по таланту для вас + воссоединение для семьи) через портал eUprava."
+      ],
+      cost_eur: "3435 €",
+      cost_details: [
+        { name: "Прямой перелет Air Serbia (3 человека с багажом)", cost: "1350 €" },
+        { name: "Временное жилье Airbnb (1-й месяц, все включено)", cost: "950 €" },
+        { name: "Пошлины за Единое разрешение на троих (~18000 RSD/чел)", cost: "460 €" },
+        { name: "Обязательные медстраховки на 1 год под ВНЖ (на троих)", cost: "250 €" },
+        { name: "Услуги судебного переводчика (диплом, свидетельства, прививки)", cost: "150 €" },
+        { name: "Пошлина AZK за нострификацию диплома (7500 RSD)", cost: "65 €" },
+        { name: "Продукты, мобильная связь, базовый быт", cost: "160 €" },
+        { name: "Прием педиатра и справка для сада", cost: "50 €" }
+      ]
+    },
+    {
+      id: "m2",
+      title: "Месяц 2: Постоянное жилье и детский сад",
+      focus: "Поиск квартиры на долгосрок и устройство ребенка в сад",
+      actions: [
+        "Поиск постоянной двухкомнатной квартиры (двушка/1.5-собан) в Белграде по цене ~600 €/мес.",
+        "Подписание договора аренды (Ugovor o zakupu) минимум на год и оформление нового «белого картона» по постоянному адресу.",
+        "Устройство ребенка в частный детский сад (с получением субсидии от города Белград, если применимо, или полностью за свой счет)."
+      ],
+      cost_eur: "2650 €",
+      cost_details: [
+        { name: "Аренда постоянной квартиры (первый месяц)", cost: "600 €" },
+        { name: "Залог арендодателю (депозит 100%)", cost: "600 €" },
+        { name: "Комиссия сербского риелтора (единоразово 50%)", cost: "300 €" },
+        { name: "Частный детский сад (первый месяц)", cost: "400 €" },
+        { name: "Коммунальные услуги (Инфостан, электричество, домашний интернет)", cost: "150 €" },
+        { name: "Продукты питания, бытовая химия, семейные расходы", cost: "600 €" }
+      ]
+    },
+    {
+      id: "m3",
+      title: "Месяц 3: Открытие ИП и смена статуса",
+      focus: "Регистрация бизнеса (ИП-Паушал) и переход на новое основание ВНЖ",
+      actions: [
+        "Подача документов на регистрацию ИП (Preduzetnik) в Агентство APR. Налоговый номер (PIB) присвоится автоматически.",
+        "Аренда виртуального офиса (юридического адреса) для ИП, если арендодатель квартиры против регистрации бизнеса на его адрес.",
+        "Открытие расчетного счета ИП в сербском банке (прохождение комплаенса).",
+        "Онлайн-подача через eUprava на смену основания вашего ВНЖ — с «Таланта» на «ИП (Предузетник)»."
+      ],
+      cost_eur: "2200 €",
+      cost_details: [
+        { name: "Аренда постоянной квартиры + коммуналка", cost: "750 €" },
+        { name: "Частный детский сад (второй месяц)", cost: "400 €" },
+        { name: "Аренда виртуального офиса для ИП (оплата на год вперед)", cost: "185 €" },
+        { name: "Пошлина за регистрацию ИП в APR и смену статуса ВНЖ", cost: "65 €" },
+        { name: "Помощь юриста / бухгалтера с открытием ИП и комплаенсом в банке", cost: "200 €" },
+        { name: "Продукты питания и повседневные расходы", cost: "600 €" }
+      ]
+    },
+    {
+      id: "m4",
+      title: "Месяц 4: Жизнь на рельсах бизнеса",
+      focus: "Регулярная работа, уплата первых налогов и переход на гос. медицину",
+      actions: [
+        "Ведение коммерческой деятельности через ИП.",
+        "Уплата фиксированного налога ИП (Паушал) в налоговую службу.",
+        "Оформление государственной медицинской страховки (здравственная книжица) на всю семью через ваше ИП. С этого момента коммерческая страховка больше не требуется."
+      ],
+      cost_eur: "2100 €",
+      cost_details: [
+        { name: "Аренда постоянной квартиры + коммуналка", cost: "750 €" },
+        { name: "Частный детский сад (регулярный платеж)", cost: "400 €" },
+        { name: "Ежемесячные фиксированные налоги по ИП (Паушал)", cost: "350 €" },
+        { name: "Продукты питания, быт, семейные расходы", cost: "600 €" }
+      ]
+    }
+  ],
+  totals: {
+    safety_buffer: "9000 €",
+    monthly_burn_rate: "2100 €/мес"
+  }
+};
+
 function renderChecklist() {
   const root = document.getElementById('checklist-items');
   const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
@@ -665,6 +774,74 @@ document.querySelectorAll('#tab-calc input').forEach(inp => {
   });
 });
 calcTotal();
+
+// === TIMELINE PLAN ===
+function renderTimeline() {
+  const root = document.getElementById('timeline-root');
+  if (!root) return;
+  root.innerHTML = '';
+  const h = document.createElement('h2');
+  h.textContent = TIMELINE_PLAN.title;
+  root.appendChild(h);
+  const desc = document.createElement('p');
+  desc.className = 'tl-desc';
+  desc.textContent = TIMELINE_PLAN.description;
+  root.appendChild(desc);
+
+  TIMELINE_PLAN.timeline.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'tl-card';
+    const header = document.createElement('div');
+    header.className = 'tl-header';
+    header.innerHTML = `<span class="tl-month">${m.title}</span> <span class="tl-cost">${m.cost_eur}</span>`;
+    card.appendChild(header);
+    const focusEl = document.createElement('div');
+    focusEl.className = 'tl-focus';
+    focusEl.textContent = '🎯 ' + m.focus;
+    card.appendChild(focusEl);
+
+    const actionsTitle = document.createElement('div');
+    actionsTitle.className = 'tl-subtitle';
+    actionsTitle.textContent = '📋 Действия';
+    card.appendChild(actionsTitle);
+    const ul = document.createElement('ul');
+    ul.className = 'tl-actions';
+    m.actions.forEach(a => {
+      const li = document.createElement('li');
+      li.textContent = a;
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+
+    const costsTitle = document.createElement('div');
+    costsTitle.className = 'tl-subtitle';
+    costsTitle.textContent = '💰 Расходы';
+    card.appendChild(costsTitle);
+    const table = document.createElement('table');
+    table.className = 'tl-costs';
+    m.cost_details.forEach(d => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${d.name}</td><td class="tl-amt">${d.cost}</td>`;
+      table.appendChild(tr);
+    });
+    card.appendChild(table);
+
+    root.appendChild(card);
+  });
+
+  const totals = TIMELINE_PLAN.totals;
+  const summary = document.createElement('div');
+  summary.className = 'tl-summary';
+  summary.innerHTML =
+    `<div class="tl-summary-row">🧳 Рекомендуемая подушка безопасности: <strong>${totals.safety_buffer}</strong></div>` +
+    `<div class="tl-summary-row">📊 Постоянный расход с 4-го месяца: <strong>${totals.monthly_burn_rate}</strong></div>`;
+  root.appendChild(summary);
+}
+
+document.addEventListener('DOMContentLoaded', renderTimeline);
+document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () => {
+  setTimeout(renderTimeline, 50);
+});
 
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
