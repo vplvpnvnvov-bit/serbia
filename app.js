@@ -427,6 +427,7 @@ function renderChecklist() {
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
+      noteTA.rows = 1;
       noteTA.value = st.note || '';
       noteTA.addEventListener('input', () => {
         saved[item.id] = saved[item.id] || {};

@@ -464,7 +464,6 @@ html, body {
 }
 .cl-note-ta {
   width: 100%;
-  min-height: 50px;
   padding: 6px 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
