@@ -966,49 +966,63 @@ document.getElementById('update-btn')?.addEventListener('click', async () => {
   const label = document.getElementById('update-label');
   btn.disabled = true;
   btn.textContent = '⏳';
-  label.textContent = 'Проверка...';
-  const reg = await navigator.serviceWorker.getRegistration();
-  if (reg) {
-    if (reg.waiting) {
-      label.textContent = '🆕 Обновление готово';
-      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-      btn.textContent = '🆕';
-      setTimeout(() => location.reload(), 800);
-      return;
-    }
-    await reg.update();
-    const found = await new Promise(resolve => {
-      const timer = setTimeout(() => resolve(false), 3000);
-      if (reg.installing) {
-        clearTimeout(timer);
-        resolve(true);
+  label.textContent = 'Проверяю...';
+  const reset = () => {
+    btn.textContent = '🔄';
+    btn.disabled = false;
+    label.textContent = 'Проверить обновления';
+  };
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      if (reg.waiting) {
+        label.textContent = '🆕 Обновление готово';
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        btn.textContent = '🆕';
+        setTimeout(() => location.reload(), 800);
         return;
       }
-      reg.addEventListener('updatefound', () => {
-        clearTimeout(timer);
-        resolve(true);
-      }, { once: true });
-    });
-    if (found) {
-      label.textContent = '🆕 Обновление загружается';
-      btn.textContent = '⏳';
-      const newWorker = reg.installing;
-      if (newWorker) {
-        await new Promise(resolve => {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed') {
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-              resolve();
-            }
+      await reg.update();
+      const found = await new Promise(resolve => {
+        const timer = setTimeout(() => resolve(false), 4000);
+        if (reg.installing) {
+          clearTimeout(timer);
+          resolve(true);
+          return;
+        }
+        reg.addEventListener('updatefound', () => {
+          clearTimeout(timer);
+          resolve(true);
+        }, { once: true });
+      });
+      if (found) {
+        label.textContent = '🆕 Загружаю...';
+        const newWorker = reg.installing;
+        if (newWorker) {
+          await new Promise(resolve => {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed') {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                resolve();
+              }
+            });
           });
-        });
+        }
+        btn.textContent = '🆕';
+        setTimeout(() => location.reload(), 800);
+        return;
       }
-      btn.textContent = '🆕';
-      setTimeout(() => location.reload(), 800);
-      return;
+      label.textContent = '✅ У вас актуальная версия';
+    } else {
+      label.textContent = '⚠️ SW не зарегистрирован';
     }
+  } catch (e) {
+    label.textContent = '❌ Ошибка сети';
+    btn.textContent = '🔄';
+    btn.disabled = false;
+    setTimeout(() => { label.textContent = 'Проверить обновления'; }, 4000);
+    return;
   }
-  label.textContent = '✅ Актуально';
   btn.textContent = '🔄';
   btn.disabled = false;
   setTimeout(() => { label.textContent = 'Проверить обновления'; }, 3000);
