@@ -218,46 +218,62 @@ document.getElementById('legend-toggle').addEventListener('click', () => {
 // === CHECKLIST ===
 const CHECKLIST = [
   { cat: "📄 Выезд из РФ", items: [
-    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", link:"https://www.gosuslugi.ru/10087/1", tip:"Подать заявление через Госуслуги. Срок изготовления — до 30 дней." },
-    { id:"p5h", text:"Загранпаспорт мужа — забрать", price:"", link:"", tip:"Забрать в МВД/МФЦ по месту жительства." },
+    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", link:"https://www.gosuslugi.ru/10087/1", tip:"Подать через Госуслуги, фото в ателье. Срок изготовления до 30 дней. Забрать в МВД/МФЦ." },
     { id:"p5w", text:"Загранпаспорт жены (10 лет)", price:"5000", link:"https://www.gosuslugi.ru/10087/1", tip:"Подать через Госуслуги, забрать в МФЦ." },
-    { id:"p5d", text:"Загранпаспорт дочки (5 лет, старый образец)", price:"3000", link:"https://www.gosuslugi.ru/10087/1", tip:"Сначала сделать фото в ателье. Подать через Госуслуги, забрать в МВД/МФЦ (1.5-2 недели)." },
-    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельстве о рождении дочки", price:"", link:"", tip:"Без красного штампа МВД на обороте свидетельства паспорт дочке не выдадут." },
-    { id:"nocrim_h", text:"Справка о несудимости (муж) — бумажная, с печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Заказать на Госуслугах. Придёт письмом или забрать в МВД." },
-    { id:"nocrim_w", text:"Справка о несудимости (жена) — бумажная, с печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Заказать на Госуслугах. Придёт письмом или забрать в МВД." },
+    { id:"p5d", text:"Загранпаспорт ребёнка (5 лет, старый образец)", price:"3000", link:"https://www.gosuslugi.ru/10087/1", tip:"Сначала фото в ателье. Подать через Госуслуги, забрать в МВД/МФЦ (1.5–2 недели). Нужен штамп о гражданстве на свидетельстве о рождении." },
+    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельстве о рождении ребёнка", price:"", link:"", tip:"Без красного штампа МВД на обороте свидетельства загранпаспорт ребёнку не сделают. Обратиться в МВД по месту жительства." },
+    { id:"nocrim_h", text:"Справка о несудимости (муж) — бумажная, с живой печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Заказать на Госуслугах. Придёт письмом или забрать в МВД. ОБЯЗАТЕЛЬНО с синей печатью — распечатка с Госуслуг не подойдёт. Срок действия 6 месяцев. Рекомендуется сразу поставить апостиль." },
+    { id:"nocrim_w", text:"Справка о несудимости (жена) — бумажная, с живой печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Аналогично мужу. Срок действия 6 месяцев. При подаче на ВНЖ сербский МУП может потребовать апостилированную справку." },
+    { id:"nocrim_apost", text:"Апостиль на справки о несудимости (муж + жена)", price:"5000", link:"", tip:"Сдать оригинал справки в МФЦ или Минюст. Госпошлина ~2500₽ за каждую. В 2026 году сербские банки и МУП всё чаще требуют апостилированные справки." },
+    { id:"child_consent", text:"Нотариальное согласие на выезд ребёнка (если едет один родитель)", price:"2000", link:"", tip:"Заверяется у нотариуса. Указать страны и срок. Если едете всей семьёй — не нужно." },
   ]},
-  { cat: "📄 Легализация (апостили)", items: [
-    { id:"apost_marr", text:"Апостиль на свидетельство о браке", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500 руб." },
-    { id:"apost_birth", text:"Апостиль на свидетельство о рождении дочки", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500 руб." },
+  { cat: "📄 Апостили и легализация", items: [
+    { id:"apost_marr", text:"Апостиль на свидетельство о браке (оригинал)", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500₽. Без апостиля супруге могут отказать в ВНЖ на основании вашего ИП." },
+    { id:"apost_birth", text:"Апостиль на свидетельство о рождении ребёнка", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Потребуется для ВНЖ и в будущем для записи в сад/школу." },
+    { id:"apost_diploma", text:"Апостиль на диплом об образовании (с приложением)", price:"2500", link:"", tip:"Нужен для нострификации (подтверждения диплома) в Сербии. Заказать в Минобрнауки или МФЦ. Госпошлина 2500₽. Срок ~30 дней." },
+    { id:"translation_copies", text:"Нотариальные копии и переводы документов на сербский язык", price:"", link:"", tip:"Переводы делает судебный переводчик (судски тумач) уже в Сербии. Нотариальное заверение копий — в РФ." },
+  ]},
+  { cat: "📚 Образование и нострификация", items: [
+    { id:"diploma", text:"Диплом об образовании (с приложением с оценками)", price:"", link:"", tip:"Оригинал или нотариально заверенная копия. Нужен для нострификации, если ИП требует подтверждения квалификации или для ВНЖ как специалист." },
+    { id:"diploma_eng", text:"Перевод диплома на английский/сербский", price:"", link:"", tip:"Заказать у судебного переводчика в Сербии или в бюро переводов в РФ." },
   ]},
   { cat: "📄 Документы в Сербии", items: [
-    { id:"reg", text:"Регистрация пребывания (белый картон)", price:"", link:"", tip:"В течение 24ч после въезда. Делает хозяин квартиры или арендодатель через полицию." },
-    { id:"vnd", text:"Подача на ВНД (вид на жительство)", price:"", link:"", tip:"Основание: регистрация компании / работа / учёба. Срок рассмотрения 2-4 месяца." },
-    { id:"pib", text:"Налоговый номер (PIB)", price:"", link:"", tip:"Получить в Налоговой службе (Poreska Uprava). Нужен для работы, аренды, банка." },
+    { id:"reg", text:"Регистрация пребывания (белый картон)", price:"", link:"", tip:"В течение 24 часов после въезда. Делает хозяин квартиры / арендодатель через полицию (МУП). Хранить при себе." },
+    { id:"vnd", text:"Подача на ВНД (вид на жительство)", price:"", link:"", tip:"Основание: открытие ИП (предузетник), работа по контракту, учёба или недвижимость. Срок рассмотрения 2–4 месяца." },
+    { id:"pib", text:"Налоговый номер (PIB)", price:"", link:"", tip:"Получить в Налоговой службе (Poreska Uprava). Нужен для работы, аренды, открытия счёта в банке, таможни." },
+    { id:"preduzetnik", text:"Открытие ИП (предузетник)", price:"", link:"", tip:"Регистрация через АПР (Agencija za privredne registre) или ЦРС (Centralni registar). Потребуется загранпаспорт, PIB, адрес регистрации." },
   ]},
-  { cat: "🏦 Финансы", items: [
-    { id:"bank", text:"Открытие счёта в сербском банке (Raiffeisen / Intesa / OTP)", price:"", link:"", tip:"Потребуется загранпаспорт, PIB, регистрация. Минимальный взнос ~10 000 RSD." },
-    { id:"power", text:"Генеральная доверенность на родственника в РФ", price:"2000", link:"", tip:"Сделать у нотариуса на 5-10 лет. Чтобы родственник мог распоряжаться имуществом и счетами." },
+  { cat: "🏦 Финансы и налоги", items: [
+    { id:"bank", text:"Открытие счёта в сербском банке (Raiffeisen / Intesa / OTP)", price:"", link:"", tip:"Потребуется загранпаспорт, PIB, регистрация. Минимальный взнос ~10 000 RSD. Комплаенс строгий — могут запросить происхождение средств." },
+    { id:"tax_decl", text:"Налоговые декларации (3-НДФЛ / 2-НДФЛ / выписка из ЛК ФНС)", price:"", link:"", tip:"Скачать с Госуслуг или из личного кабинета ФНС. Нужны для подтверждения легальности доходов сербскому банку. Желательно на русском + английский." },
+    { id:"bank_stat", text:"Выписки по банковским счетам в РФ за 3–6 месяцев (на английском)", price:"", link:"", tip:"Запросить в мобильном приложении или отделении банка. Многие банки РФ выгружают на английском. Понадобятся при комплаенсе в сербском банке." },
+    { id:"power", text:"Генеральная доверенность на родственника в РФ (на 5–10 лет)", price:"2000", link:"", tip:"Сделать у нотариуса. Чтобы родственник мог распоряжаться имуществом, закрывать счета, получать документы." },
   ]},
   { cat: "🏠 Жильё", items: [
-    { id:"rent", text:"Договор аренды жилья", price:"600-800", link:"", tip:"Заключить договор с арендодателем. Задаток обычно 1 месяц + 1 месяц аренды." },
+    { id:"rent", text:"Договор аренды жилья", price:"от 500€/мес", link:"", tip:"Заключить договор с арендодателем. Задаток обычно 1 месяц + 1 месяц аренды. Договор нужен для регистрации пребывания." },
   ]},
-  { cat: "❤️ Здоровье", items: [
-    { id:"insure", text:"Медицинская страховка (международная)", price:"200-400", link:"", tip:"Покрытие должно включать Сербию. ~200-400€/год на семью." },
+  { cat: "❤️ Здоровье и медицина", items: [
+    { id:"insure", text:"Медицинская страховка (международная, покрывает Сербию)", price:"200-400€", link:"", tip:"Покрытие ~200–400€/год на семью. Проверить, входит ли Сербия. Карту иметь с собой." },
+    { id:"vaccine", text:"Карта профилактических прививок ребёнка (форма 063/у)", price:"", link:"", tip:"Запросить в детской поликлинике подробную выписку со всеми прививками (корь, краснуха паротит — критично). Перевести у судебного переводчика в Сербии." },
+    { id:"med_cards", text:"Медицинские выписки при хронических заболеваниях (все члены семьи)", price:"", link:"", tip:"Взять истории болезней, рецепты, назначения. Торговые названия лекарств в Сербии другие — нужны действующие вещества." },
     { id:"dentist", text:"Пройти стоматологов всей семьёй в РФ", price:"", link:"", tip:"В Сербии стоматология дороже. Сделать все зубы до отъезда." },
-    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", link:"", tip:"Многие лекарства продаются по рецепту. Взять привычные с запасом на полгода." },
+    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", link:"", tip:"Многие лекарства в Сербии продаются по рецепту. Взять привычные (жаропонижающие, обезболивающие, от аллергии и т.д.) с запасом на полгода." },
   ]},
-  { cat: "🚗 Транспорт / Права", items: [
-    { id:"license", text:"Перевод водительских прав на сербский", price:"", link:"", tip:"Нужен нотариальный перевод в Сербии. Российские права действуют 6 месяцев." },
+  { cat: "🚗 Транспорт / Автомобиль", items: [
+    { id:"license", text:"Перевод водительских прав на сербский язык", price:"", link:"", tip:"Сделать у судебного переводчика (судски тумач) в Сербии. Российские права действуют 6 месяцев." },
+    { id:"car_power", text:"Нотариальная доверенность на выезд за границу (если машина не на вас)", price:"", link:"", tip:"Если автомобиль на юрлицо или родственника — оформить доверенность с правом выезда за границу, желательно на английском языке." },
+    { id:"kbm", text:"Справка из страховой о безаварийном стаже (КБМ) на английском", price:"", link:"", tip:"Обратиться в свою страховую компанию. Справка поможет получить скидку на ОСАГО (осигурање) в Сербии." },
+    { id:"car_docs", text:"СТС и ПТС (оригиналы на машину)", price:"", link:"", tip:"Для ввоза или перерегистрации авто в Сербии. Сделать копии." },
   ]},
   { cat: "📱 Прочее", items: [
-    { id:"sim", text:"Сим-карта сербского оператора (A1 / Telenor / mts)", price:"1000", link:"", tip:"Купить в салоне связи. Нужен загранпаспорт." },
+    { id:"sim", text:"Сим-карта сербского оператора (A1 / Telenor / mts)", price:"1000 RSD", link:"", tip:"Купить в салоне связи. Нужен загранпаспорт. Есть prepaid и контрактные тарифы." },
   ]},
 ];
 
 function renderChecklist() {
   const root = document.getElementById('checklist-items');
   const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  const locked = localStorage.getItem('checklist-locked') === 'true';
   root.innerHTML = '';
   CHECKLIST.forEach(group => {
     const header = document.createElement('h3');
@@ -266,36 +282,75 @@ function renderChecklist() {
     root.appendChild(header);
     group.items.forEach(item => {
       const checked = saved[item.id] || false;
-      const label = document.createElement('label');
-      label.className = 'check-item';
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.checked = checked;
-      cb.addEventListener('change', () => {
-        saved[item.id] = cb.checked;
+      const row = document.createElement('div');
+      row.className = 'check-item' + (checked ? ' done' : '');
+      const btn = document.createElement('button');
+      btn.className = 'cl-btn' + (checked ? ' on' : '');
+      btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (localStorage.getItem('checklist-locked') === 'true') return;
+        const newChecked = !(saved[item.id] || false);
+        saved[item.id] = newChecked;
         localStorage.setItem('checklist', JSON.stringify(saved));
+        btn.classList.toggle('on', newChecked);
+        btn.setAttribute('aria-label', newChecked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
+        row.classList.toggle('done', newChecked);
         updateStats();
       });
-      label.appendChild(cb);
-      const span = document.createElement('span');
-      span.className = 'cl-text';
-      span.innerHTML = item.text;
-      if (item.price) span.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
-      label.appendChild(span);
+      row.appendChild(btn);
       const tipBtn = document.createElement('span');
       tipBtn.className = 'cl-tip';
-      tipBtn.textContent = '💡';
-      tipBtn.title = item.tip;
-      tipBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        alert(item.tip + (item.link ? `\n\nСсылка: ${item.link}` : ''));
-      });
-      label.appendChild(tipBtn);
-      root.appendChild(label);
+      tipBtn.textContent = '?';
+      tipBtn.dataset.tip = item.tip;
+      tipBtn.dataset.link = item.link || '';
+      row.appendChild(tipBtn);
+      const textSpan = document.createElement('span');
+      textSpan.className = 'cl-text';
+      textSpan.innerHTML = item.text;
+      if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
+      row.appendChild(textSpan);
+      root.appendChild(row);
     });
   });
   updateStats();
 }
+
+// Tooltip: делегирование кликов на 💡
+document.addEventListener('click', e => {
+  const tooltip = document.getElementById('cl-tooltip');
+  const tip = e.target.closest('.cl-tip');
+  const insideTooltip = e.target.closest('#cl-tooltip');
+
+  if (tip) {
+    e.preventDefault();
+    tooltip.innerHTML =
+      `<div class="cl-tooltip-body">${tip.dataset.tip}</div>` +
+      (tip.dataset.link ? `<a href="${tip.dataset.link}" target="_blank" class="cl-tooltip-link">🔗 Открыть ссылку</a>` : '') +
+      `<button class="cl-tooltip-close">&times;</button>`;
+    const rect = tip.getBoundingClientRect();
+    const tw = 260; // max-width
+    let left = rect.left + rect.width / 2 - tw / 2;
+    let top = rect.top - 10;
+    // не вылезать за правый край
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    // не вылезать за левый край
+    if (left < 12) left = 12;
+    // если сверху не хватает — показываем снизу
+    if (top < 8) top = rect.bottom + 8;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    tooltip.classList.remove('hidden');
+    tooltip.querySelector('.cl-tooltip-close')?.addEventListener('click', () => {
+      tooltip.classList.add('hidden');
+    });
+    return;
+  }
+
+  if (!insideTooltip) {
+    tooltip.classList.add('hidden');
+  }
+});
 
 function updateStats() {
   const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
@@ -308,6 +363,23 @@ function updateStats() {
   document.getElementById('checklist-stats').innerHTML =
     `✅ Выполнено: <b>${done}</b> / <b>${total}</b> (${pct}%)`;
 }
+
+// Lock toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const lockBtn = document.getElementById('lock-btn');
+  if (!lockBtn) return;
+  const updateLock = () => {
+    const locked = localStorage.getItem('checklist-locked') === 'true';
+    lockBtn.textContent = locked ? '🔒' : '🔓';
+    lockBtn.classList.toggle('locked', locked);
+  };
+  lockBtn.addEventListener('click', () => {
+    const locked = localStorage.getItem('checklist-locked') === 'true';
+    localStorage.setItem('checklist-locked', locked ? 'false' : 'true');
+    updateLock();
+  });
+  updateLock();
+});
 
 document.addEventListener('DOMContentLoaded', renderChecklist);
 // Если вкладка чеклиста открывается динамически

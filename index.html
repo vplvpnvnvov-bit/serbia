@@ -22,8 +22,21 @@
   </header>
 
   <main id="content">
-    <!-- TAB 1: Карта -->
-    <section id="tab-map" class="tab active">
+    <!-- TAB 1: Чек-лист -->
+    <section id="tab-checklist" class="tab active">
+      <div class="tab-content" id="checklist-root">
+        <h2>📋 Чек-лист для переезда</h2>
+        <div id="checklist-toolbar">
+          <button id="lock-btn" class="lock-btn">🔓</button>
+          <div id="checklist-stats"></div>
+        </div>
+        <div id="checklist-items"></div>
+        <div id="cl-tooltip" class="cl-tooltip hidden"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Карта -->
+    <section id="tab-map" class="tab">
       <div id="map"></div>
       <div id="legend">
         <div class="legend-title" id="legend-toggle">👶 Для семьи с детьми <span id="legend-arrow">▾</span></div>
@@ -44,15 +57,6 @@
         <div id="d-transport" class="extra-section"></div>
         <div id="d-links" class="extra-section"></div>
         <p class="panel-note">📌 Нажми на другой район чтобы посмотреть его</p>
-      </div>
-    </section>
-
-    <!-- TAB 2: Чек-лист -->
-    <section id="tab-checklist" class="tab">
-      <div class="tab-content" id="checklist-root">
-        <h2>📋 Чек-лист для переезда</h2>
-        <div id="checklist-stats"></div>
-        <div id="checklist-items"></div>
       </div>
     </section>
 
@@ -103,8 +107,8 @@
   </main>
 
   <nav id="tabs">
-    <button class="tab-btn active" data-tab="map">🗺️ Карта</button>
-    <button class="tab-btn" data-tab="checklist">✅ Чек-лист</button>
+    <button class="tab-btn active" data-tab="checklist">✅ Чек-лист</button>
+    <button class="tab-btn" data-tab="map">🗺️ Карта</button>
     <button class="tab-btn" data-tab="calc">💰 Расходы</button>
     <button class="tab-btn" data-tab="info">🔗 Полезно</button>
   </nav>
