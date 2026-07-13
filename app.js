@@ -325,10 +325,16 @@ function renderChecklist() {
           const msLeft = exp - now;
           if (msLeft <= 0) { rem.textContent = '⚠️ Просрочен'; rem.className = 'cl-date-remaining expired'; return; }
           const daysLeft = Math.ceil(msLeft / 86400000);
-          const monthsLeft = Math.floor(daysLeft / 30);
+          let totalMonths = Math.floor(daysLeft / 30);
           const dd = daysLeft % 30;
-          rem.textContent = `✅ ещё ${monthsLeft}мес ${dd}дн`;
-          rem.className = 'cl-date-remaining ' + (monthsLeft >= 6 ? 'ok' : monthsLeft >= 1 ? 'warn' : 'expired');
+          const years = Math.floor(totalMonths / 12);
+          const monthsLeft = totalMonths % 12;
+          let remainingText = '';
+          if (years > 0) remainingText += `${years}г `;
+          if (monthsLeft > 0 || years === 0) remainingText += `${monthsLeft}мес `;
+          if (dd > 0) remainingText += `${dd}дн`;
+          rem.textContent = `✅ ещё ${remainingText.trim()}`;
+          rem.className = 'cl-date-remaining ' + (years >= 1 ? 'ok' : totalMonths >= 1 ? 'warn' : 'expired');
         };
         const lockDate = () => {
           if (!getDateStr()) return;
