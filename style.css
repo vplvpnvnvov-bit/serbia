@@ -508,26 +508,22 @@ html, body {
 #checklist-toolbar-top {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-#update-label {
+  gap: 6px;
+  margin-bottom: 8px;
   font-size: 12px;
-  color: #999;
+  color: #888;
+}
+#update-label, #lock-label {
+  white-space: nowrap;
   cursor: default;
 }
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+#lock-label {
+  margin-right: 12px;
 }
 #checklist-stats {
-  flex: 1;
-  font-size: 13px;
-  color: #555;
-  padding: 6px 10px;
-  background: #e8f5e9;
-  border-radius: 6px;
+  font-size: 12px;
+  color: #2e7d32;
+  white-space: nowrap;
 }
 .lock-btn {
   font-size: 20px;
