@@ -471,40 +471,80 @@ function renderChecklist() {
       noteBody.className = 'cl-note-body' + (st.note ? '' : ' hidden');
       const noteRow = document.createElement('div');
       noteRow.className = 'cl-note-row';
+      const noteDisplay = document.createElement('div');
+      noteDisplay.className = 'cl-note-display';
+      noteDisplay.textContent = st.note || '';
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
       noteTA.rows = 1;
       noteTA.value = st.note || '';
-      const noteSave = document.createElement('button');
-      noteSave.className = 'cl-note-save';
-      noteSave.textContent = '✅';
-      const saveNote = () => {
-        saved[item.id] = saved[item.id] || {};
-        saved[item.id].note = noteTA.value;
-        localStorage.setItem('checklist', JSON.stringify(saved));
-      };
-      const autoResize = () => {
+      const noteEditBtn = document.createElement('button');
+      noteEditBtn.className = 'cl-note-act';
+      noteEditBtn.textContent = '✏️';
+      const noteSaveBtn = document.createElement('button');
+      noteSaveBtn.className = 'cl-note-act';
+      noteSaveBtn.textContent = '✅';
+      const switchToEdit = () => {
+        noteDisplay.classList.add('hidden');
+        noteEditBtn.classList.add('hidden');
+        noteTA.classList.remove('hidden');
+        noteSaveBtn.classList.remove('hidden');
+        noteTA.focus();
         noteTA.style.height = 'auto';
         noteTA.style.height = noteTA.scrollHeight + 'px';
       };
-      noteTA.addEventListener('blur', saveNote);
-      noteTA.addEventListener('input', autoResize);
-      noteSave.addEventListener('click', saveNote);
+      const switchToDisplay = () => {
+        const val = noteTA.value.trim();
+        noteDisplay.textContent = val;
+        noteTA.classList.add('hidden');
+        noteSaveBtn.classList.add('hidden');
+        if (val) {
+          noteDisplay.classList.remove('hidden');
+          noteEditBtn.classList.remove('hidden');
+          noteBody.classList.remove('hidden');
+        } else {
+          noteDisplay.classList.add('hidden');
+          noteEditBtn.classList.add('hidden');
+          noteBody.classList.add('hidden');
+        }
+      };
+      const saveNote = () => {
+        saved[item.id] = saved[item.id] || {};
+        saved[item.id].note = noteTA.value.trim();
+        localStorage.setItem('checklist', JSON.stringify(saved));
+        switchToDisplay();
+      };
+      noteEditBtn.addEventListener('click', e => { e.stopPropagation(); switchToEdit(); });
+      noteSaveBtn.addEventListener('click', e => { e.stopPropagation(); saveNote(); });
+      noteTA.addEventListener('input', () => {
+        noteTA.style.height = 'auto';
+        noteTA.style.height = noteTA.scrollHeight + 'px';
+      });
       noteBtn.addEventListener('click', e => {
         e.stopPropagation();
         noteBody.classList.toggle('hidden');
-        if (!noteBody.classList.contains('hidden')) {
-          void noteBody.offsetHeight;
-          autoResize();
-          noteTA.focus();
+        if (!noteBody.classList.contains('hidden') && !st.note) {
+          switchToEdit();
         }
       });
+      noteRow.appendChild(noteDisplay);
       noteRow.appendChild(noteTA);
-      noteRow.appendChild(noteSave);
+      noteRow.appendChild(noteEditBtn);
+      noteRow.appendChild(noteSaveBtn);
       noteBody.appendChild(noteRow);
       root.appendChild(noteBody);
-      if (!noteBody.classList.contains('hidden')) autoResize();
+      if (st.note) {
+        noteDisplay.classList.remove('hidden');
+        noteEditBtn.classList.remove('hidden');
+        noteTA.classList.add('hidden');
+        noteSaveBtn.classList.add('hidden');
+      } else {
+        noteDisplay.classList.add('hidden');
+        noteEditBtn.classList.add('hidden');
+        noteTA.classList.add('hidden');
+        noteSaveBtn.classList.add('hidden');
+      }
     });
   });
   updateStats();

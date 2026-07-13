@@ -481,22 +481,33 @@ html, body {
   align-items: flex-start;
   gap: 4px;
 }
-.cl-note-save {
-  font-size: 16px;
-  background: #e8f5e9;
-  border: 1px solid #a5d6a7;
-  border-radius: 8px;
+.cl-note-display {
+  flex: 1;
+  font-size: 13px;
+  color: #333;
+  padding: 4px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+}
+.cl-note-display.hidden {
+  display: none;
+}
+.cl-note-act {
+  font-size: 15px;
+  background: none;
+  border: none;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 4px;
   line-height: 1;
   flex-shrink: 0;
   margin-top: 1px;
+  opacity: 0.5;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition: background 0.1s;
 }
-.cl-note-save:active {
-  background: #c8e6c9;
+.cl-note-act.hidden {
+  display: none;
 }
 .cl-note-ta {
   width: 100%;
@@ -509,6 +520,9 @@ html, body {
   overflow: hidden;
   color: #333;
   background: #fafafa;
+}
+.cl-note-ta.hidden {
+  display: none;
 }
 .cl-note-ta:focus {
   outline: none;
