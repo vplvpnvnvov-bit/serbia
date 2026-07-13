@@ -482,17 +482,21 @@ html, body {
   gap: 4px;
 }
 .cl-note-save {
-  font-size: 14px;
-  background: none;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  font-size: 16px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 4px 8px;
   line-height: 1;
   flex-shrink: 0;
   margin-top: 1px;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition: background 0.1s;
+}
+.cl-note-save:active {
+  background: #c8e6c9;
 }
 .cl-note-ta {
   width: 100%;
@@ -553,18 +557,25 @@ html, body {
   text-align: center;
 }
 .cl-date-edit {
-  font-size: 14px;
-  background: none;
-  border: none;
+  font-size: 16px;
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
   cursor: pointer;
-  padding: 4px 6px;
-  opacity: 0.4;
-  transition: opacity 0.15s;
+  padding: 4px 8px;
+  line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition: background 0.1s;
+}
+.cl-date-edit:active {
+  background: #ffe0b2;
+}
+.cl-date-edit.hidden {
+  display: none;
 }
 .cl-date-edit:hover {
   opacity: 1;
