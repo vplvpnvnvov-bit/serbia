@@ -473,21 +473,27 @@ function renderChecklist() {
       noteRow.className = 'cl-note-row';
       const noteDisplay = document.createElement('div');
       noteDisplay.className = 'cl-note-display';
-      noteDisplay.innerHTML = (st.note ? '📝 ' + st.note : '');
+      const noteLabel = document.createElement('span');
+      noteLabel.textContent = '📝';
+      const noteDisplayText = document.createElement('span');
+      noteDisplayText.className = 'cl-note-display-text';
+      noteDisplayText.textContent = st.note || '';
+      const noteEditBtn = document.createElement('button');
+      noteEditBtn.className = 'cl-note-act';
+      noteEditBtn.textContent = '✏️';
+      noteDisplay.appendChild(noteLabel);
+      noteDisplay.appendChild(noteDisplayText);
+      noteDisplay.appendChild(noteEditBtn);
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
       noteTA.rows = 1;
       noteTA.value = st.note || '';
-      const noteEditBtn = document.createElement('button');
-      noteEditBtn.className = 'cl-note-act';
-      noteEditBtn.textContent = '✏️';
       const noteSaveBtn = document.createElement('button');
       noteSaveBtn.className = 'cl-note-act';
       noteSaveBtn.textContent = '✅';
       const switchToEdit = () => {
         noteDisplay.classList.add('hidden');
-        noteEditBtn.classList.add('hidden');
         noteTA.classList.remove('hidden');
         noteSaveBtn.classList.remove('hidden');
         noteTA.focus();
@@ -496,7 +502,7 @@ function renderChecklist() {
       };
       const switchToDisplay = () => {
         const val = noteTA.value.trim();
-        noteDisplay.innerHTML = val ? '📝 ' + val : '';
+        noteDisplayText.textContent = val || '';
         noteTA.classList.add('hidden');
         noteSaveBtn.classList.add('hidden');
         if (val) {
@@ -530,7 +536,6 @@ function renderChecklist() {
       });
       noteRow.appendChild(noteDisplay);
       noteRow.appendChild(noteTA);
-      noteRow.appendChild(noteEditBtn);
       noteRow.appendChild(noteSaveBtn);
       noteBody.appendChild(noteRow);
       root.appendChild(noteBody);
