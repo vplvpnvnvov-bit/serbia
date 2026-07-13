@@ -358,6 +358,7 @@ function renderChecklist() {
           rem.textContent = `✅ ещё ${remainingText.trim()}`;
           rem.className = 'cl-date-remaining ' + (years >= 1 ? 'ok' : totalMonths >= 1 ? 'warn' : 'expired');
         };
+        let dateSaving = false;
         const lockDate = () => {
           if (!getDateStr()) return;
           compactSpan.textContent = getDateStr();
@@ -374,18 +375,25 @@ function renderChecklist() {
           editBtn.classList.remove('hidden');
           dInput.focus();
         };
+        editBtn.addEventListener('pointerdown', (e) => {
+          if (editBtn.textContent === '✅') {
+            dateSaving = true;
+          }
+        });
         editBtn.addEventListener('click', () => {
-          if (inputGroup.classList.contains('hidden')) {
-            unlockDate();
-          } else {
+          if (editBtn.textContent === '✅') {
             if (getDateStr()) {
               setItem(saved, item.id, true, getDateStr());
               lockDate();
               updateStats();
             }
+            dateSaving = false;
+          } else {
+            unlockDate();
           }
         });
         const onDateChange = () => {
+          if (dateSaving) return;
           setItem(saved, item.id, true, getDateStr());
           lockDate();
           updateStats();
