@@ -10,24 +10,30 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const settings = { cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED };
-db.settings(settings);
+db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
 db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
 let userId = null;
+let syncCode = null;
 let syncPending = false;
 
-firebase.auth().signInAnonymously().catch(e => console.warn('Auth error:', e));
+firebase.auth().signInAnonymously().catch(() => {});
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     userId = user.uid;
+    syncCode = localStorage.getItem('sync-code');
+    if (!syncCode) {
+      syncCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      localStorage.setItem('sync-code', syncCode);
+    }
+    document.getElementById('sync-code-display').textContent = syncCode;
     loadFromCloud();
   }
 });
 
 function loadFromCloud() {
-  if (!userId) return;
-  db.collection('users').doc(userId).get().then(doc => {
+  if (!syncCode) return;
+  db.collection('users').doc(syncCode).get().then(doc => {
     if (!doc.exists) return;
     const data = doc.data();
     if (data.checklist) {
@@ -47,7 +53,7 @@ function loadFromCloud() {
 }
 
 function saveToCloud() {
-  if (!userId || syncPending) return;
+  if (!syncCode || syncPending) return;
   syncPending = true;
   try {
     const data = {
@@ -56,7 +62,7 @@ function saveToCloud() {
       calc: getCalcValues(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    db.collection('users').doc(userId).set(data, { merge: true })
+    db.collection('users').doc(syncCode).set(data, { merge: true })
       .then(() => { syncPending = false; })
       .catch(() => { syncPending = false; });
   } catch (e) {
@@ -92,3 +98,20 @@ Storage.prototype.setItem = function(key, value) {
     }, 500);
   }
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sync-code-copy').addEventListener('click', () => {
+    const code = document.getElementById('sync-code-display').textContent;
+    navigator.clipboard.writeText(code).catch(() => {});
+  });
+  document.getElementById('sync-code-change').addEventListener('click', () => {
+    const code = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
+    if (code && code.trim()) {
+      const c = code.trim().toUpperCase();
+      localStorage.setItem('sync-code', c);
+      syncCode = c;
+      document.getElementById('sync-code-display').textContent = c;
+      loadFromCloud();
+    }
+  });
+});
