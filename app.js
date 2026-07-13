@@ -31,6 +31,7 @@ function cycleItem(saved, id) {
 function editNote(id) {
   const ns = document.getElementById('note-section-' + id);
   if (!ns) return;
+  ns.classList.remove('hidden');
   const textDiv = ns.querySelector('.note-section-text');
   const editDiv = ns.querySelector('.note-section-edit');
   const ta = ns.querySelector('.cl-note-ta');
@@ -43,6 +44,28 @@ function editNote(id) {
   ta.focus();
   ta.style.height = 'auto';
   ta.style.height = ta.scrollHeight + 'px';
+}
+function saveNote(id) {
+  const ns = document.getElementById('note-section-' + id);
+  if (!ns) return;
+  const textDiv = ns.querySelector('.note-section-text');
+  const editDiv = ns.querySelector('.note-section-edit');
+  const ta = ns.querySelector('.cl-note-ta');
+  if (!editDiv || !ta || !textDiv) return;
+  const val = ta.value.trim();
+  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  saved[id] = saved[id] || {};
+  saved[id].note = val;
+  localStorage.setItem('checklist', JSON.stringify(saved));
+  textDiv.classList.remove('hidden');
+  editDiv.classList.add('hidden');
+  if (val) {
+    textDiv.innerHTML = '📝 ' + val;
+    ns.classList.remove('hidden');
+  } else {
+    textDiv.innerHTML = '';
+    ns.classList.add('hidden');
+  }
 }
 function setList(id, title, items) {
   const el = document.getElementById(id);
@@ -488,23 +511,7 @@ function renderChecklist() {
       const nsSave = document.createElement('button');
       nsSave.className = 'note-section-save';
       nsSave.textContent = '✅';
-      const savedForNote = saved;
-      const saveNsNote = () => {
-        const val = nsTA.value.trim();
-        savedForNote[itemId] = savedForNote[itemId] || {};
-        savedForNote[itemId].note = val;
-        localStorage.setItem('checklist', JSON.stringify(savedForNote));
-        nsText.classList.remove('hidden');
-        nsEdit.classList.add('hidden');
-        if (val) {
-          nsText.innerHTML = '📝 ' + val;
-          ns.classList.remove('hidden');
-        } else {
-          nsText.innerHTML = '';
-          ns.classList.add('hidden');
-        }
-      };
-      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNsNote(); });
+      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNote(itemId); });
       nsEdit.addEventListener('click', e => { e.stopPropagation(); });
       nsTA.addEventListener('input', () => {
         nsTA.style.height = 'auto';
