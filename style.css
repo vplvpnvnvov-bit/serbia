@@ -397,6 +397,29 @@ html, body {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.cl-date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 8px 38px;
+  font-size: 13px;
+  color: #555;
+  animation: tipFadeIn 0.15s ease;
+}
+.cl-date-row.hidden {
+  display: none;
+}
+.cl-date-label {
+  white-space: nowrap;
+}
+.cl-date-input {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+  flex: 1;
+  max-width: 160px;
+}
 .cl-tip-text {
   margin-bottom: 6px;
 }

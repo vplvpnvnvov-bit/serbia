@@ -11,6 +11,16 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // === HELPERS ===
+function getItem(saved, id) {
+  const v = saved[id];
+  if (typeof v === 'boolean') return { done: v, date: '' };
+  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '' };
+  return { done: false, date: '' };
+}
+function setItem(saved, id, done, date) {
+  saved[id] = { done, date: date || '' };
+  localStorage.setItem('checklist', JSON.stringify(saved));
+}
 function setList(id, title, items) {
   const el = document.getElementById(id);
   if (!items || items.length === 0) { el.style.display = 'none'; return; }
@@ -281,21 +291,30 @@ function renderChecklist() {
     header.textContent = group.cat;
     root.appendChild(header);
     group.items.forEach(item => {
-      const checked = saved[item.id] || false;
+      const st = getItem(saved, item.id);
+      const checked = st.done;
       const row = document.createElement('div');
       row.className = 'check-item' + (checked ? ' done' : '');
       const btn = document.createElement('button');
       btn.className = 'cl-btn' + (checked ? ' on' : '');
       btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
+      const dateRow = document.createElement('div');
+      dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
+      dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="date" class="cl-date-input" value="${st.date || ''}">`;
+      const dateInput = dateRow.querySelector('.cl-date-input');
+      dateInput.addEventListener('change', () => {
+        setItem(saved, item.id, true, dateInput.value);
+        updateStats();
+      });
       btn.addEventListener('click', e => {
         e.stopPropagation();
         if (localStorage.getItem('checklist-locked') === 'true') return;
-        const newChecked = !(saved[item.id] || false);
-        saved[item.id] = newChecked;
-        localStorage.setItem('checklist', JSON.stringify(saved));
+        const newChecked = !getItem(saved, item.id).done;
+        setItem(saved, item.id, newChecked, newChecked ? dateInput.value : '');
         btn.classList.toggle('on', newChecked);
         btn.setAttribute('aria-label', newChecked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
         row.classList.toggle('done', newChecked);
+        dateRow.classList.toggle('hidden', !newChecked);
         updateStats();
       });
       row.appendChild(btn);
@@ -330,6 +349,7 @@ function renderChecklist() {
       if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
       row.appendChild(textSpan);
       root.appendChild(row);
+      root.appendChild(dateRow);
     });
   });
   updateStats();
@@ -340,7 +360,7 @@ function updateStats() {
   let total = 0, done = 0;
   CHECKLIST.forEach(g => g.items.forEach(i => {
     total++;
-    if (saved[i.id]) done++;
+    if (getItem(saved, i.id).done) done++;
   }));
   const pct = total ? Math.round(done / total * 100) : 0;
   document.getElementById('checklist-stats').innerHTML =
