@@ -382,6 +382,12 @@ function renderChecklist() {
         updateStats();
       });
       row.appendChild(btn);
+      const textSpan = document.createElement('span');
+      textSpan.className = 'cl-text';
+      textSpan.innerHTML = item.text;
+      if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
+      textSpan.addEventListener('click', e => toggleTip(textSpan, e));
+      row.appendChild(textSpan);
       const tipBtn = document.createElement('span');
       tipBtn.className = 'cl-tip';
       tipBtn.textContent = '▶';
@@ -414,12 +420,6 @@ function renderChecklist() {
       noteBtn.textContent = '📝';
       noteBtn.dataset.id = item.id;
       row.appendChild(noteBtn);
-      const textSpan = document.createElement('span');
-      textSpan.className = 'cl-text';
-      textSpan.innerHTML = item.text;
-      if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
-      textSpan.addEventListener('click', e => toggleTip(textSpan, e));
-      row.appendChild(textSpan);
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
       const noteBody = document.createElement('div');
