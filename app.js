@@ -473,7 +473,7 @@ function renderChecklist() {
       noteRow.className = 'cl-note-row';
       const noteDisplay = document.createElement('div');
       noteDisplay.className = 'cl-note-display';
-      noteDisplay.textContent = st.note || '';
+      noteDisplay.innerHTML = (st.note ? '📝 ' + st.note : '');
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
@@ -496,7 +496,7 @@ function renderChecklist() {
       };
       const switchToDisplay = () => {
         const val = noteTA.value.trim();
-        noteDisplay.textContent = val;
+        noteDisplay.innerHTML = val ? '📝 ' + val : '';
         noteTA.classList.add('hidden');
         noteSaveBtn.classList.add('hidden');
         if (val) {
