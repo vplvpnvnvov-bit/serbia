@@ -458,73 +458,76 @@ function renderChecklist() {
         body.innerHTML =
           `<div class="cl-tip-text">${tip.dataset.tip.replace(/\n/g, '<br>')}</div>` +
           (tip.dataset.link ? `<a href="${tip.dataset.link}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
+        const s = JSON.parse(localStorage.getItem('checklist') || '{}');
+        const n = getItem(s, itemId).note || '';
+        const addBtn = document.createElement('button');
+        addBtn.className = 'cl-tip-add-note';
+        addBtn.textContent = n ? '✎ Редактировать комментарий' : '＋ Добавить комментарий';
+        addBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          openNsEdit();
+        });
+        body.appendChild(addBtn);
         row.after(body);
         tip.textContent = '▼';
         tip.classList.add('open');
-        // Note section inside tip
-        const s = JSON.parse(localStorage.getItem('checklist') || '{}');
-        const n = getItem(s, itemId).note || '';
-        const noteWrap = document.createElement('div');
-        noteWrap.className = 'cl-tip-note-wrap';
-        const noteDisplay = document.createElement('span');
-        noteDisplay.className = 'cl-tip-note-text' + (n ? '' : ' hidden');
-        noteDisplay.textContent = n ? '📝 ' + n : '';
-        const noteBtn = document.createElement('button');
-        noteBtn.className = 'cl-tip-note-btn';
-        noteBtn.textContent = n ? '✏️' : '📝';
-        const noteEdit = document.createElement('div');
-        noteEdit.className = 'cl-tip-note-edit hidden';
-        const noteTA = document.createElement('textarea');
-        noteTA.className = 'cl-note-ta';
-        noteTA.placeholder = 'Заметка...';
-        noteTA.rows = 1;
-        noteTA.value = n;
-        const noteSave = document.createElement('button');
-        noteSave.className = 'cl-tip-note-save';
-        noteSave.textContent = '✅';
-        const showEdit = () => {
-          noteDisplay.classList.add('hidden');
-          noteBtn.classList.add('hidden');
-          noteEdit.classList.remove('hidden');
-          noteTA.focus();
-          noteTA.style.height = 'auto';
-          noteTA.style.height = noteTA.scrollHeight + 'px';
-        };
-        const showDisplay = (val) => {
-          if (val) {
-            noteDisplay.textContent = '📝 ' + val;
-            noteDisplay.classList.remove('hidden');
-            noteBtn.textContent = '✏️';
-            noteBtn.classList.remove('hidden');
-          } else {
-            noteDisplay.classList.add('hidden');
-            noteBtn.textContent = '📝';
-            noteBtn.classList.remove('hidden');
-          }
-          noteEdit.classList.add('hidden');
-        };
-        noteBtn.addEventListener('click', e => { e.stopPropagation(); showEdit(); });
-        noteSave.addEventListener('click', e => {
-          e.stopPropagation();
-          const val = noteTA.value.trim();
-          savedForNote[itemId] = savedForNote[itemId] || {};
-          savedForNote[itemId].note = val;
-          localStorage.setItem('checklist', JSON.stringify(savedForNote));
-          showDisplay(val);
-        });
-        noteTA.addEventListener('input', () => {
-          noteTA.style.height = 'auto';
-          noteTA.style.height = noteTA.scrollHeight + 'px';
-        });
-        noteEdit.appendChild(noteTA);
-        noteEdit.appendChild(noteSave);
-        noteWrap.appendChild(noteDisplay);
-        noteWrap.appendChild(noteBtn);
-        noteWrap.appendChild(noteEdit);
-        body.appendChild(noteWrap);
       };
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
+      // Persistent note section below tip
+      const ns = document.createElement('div');
+      ns.id = 'note-section-' + itemId;
+      ns.className = 'note-section' + (st.note ? '' : ' hidden');
+      const nsText = document.createElement('div');
+      nsText.className = 'note-section-text';
+      nsText.innerHTML = st.note ? '📝 ' + st.note : '';
+      ns.appendChild(nsText);
+      const nsEdit = document.createElement('div');
+      nsEdit.className = 'note-section-edit hidden';
+      const nsTA = document.createElement('textarea');
+      nsTA.className = 'cl-note-ta';
+      nsTA.placeholder = 'Заметка...';
+      nsTA.rows = 1;
+      nsTA.value = st.note || '';
+      const nsSave = document.createElement('button');
+      nsSave.className = 'note-section-save';
+      nsSave.textContent = '✅';
+      const saveNsNote = () => {
+        const val = nsTA.value.trim();
+        savedForNote[itemId] = savedForNote[itemId] || {};
+        savedForNote[itemId].note = val;
+        localStorage.setItem('checklist', JSON.stringify(savedForNote));
+        if (val) {
+          nsText.innerHTML = '📝 ' + val;
+          ns.classList.remove('hidden');
+        } else {
+          nsText.innerHTML = '';
+          ns.classList.add('hidden');
+        }
+        nsEdit.classList.add('hidden');
+        ns.classList.remove('note-edit-open');
+      };
+      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNsNote(); });
+      const openNsEdit = () => {
+        nsTA.value = getItem(JSON.parse(localStorage.getItem('checklist') || '{}'), itemId).note || '';
+        nsText.classList.add('hidden');
+        nsEdit.classList.remove('hidden');
+        nsTA.focus();
+        nsTA.style.height = 'auto';
+        nsTA.style.height = nsTA.scrollHeight + 'px';
+      };
+      ns.addEventListener('click', e => {
+        if (e.target === ns || e.target === nsText) openNsEdit();
+      });
+      nsEdit.addEventListener('click', e => { e.stopPropagation(); });
+      nsTA.addEventListener('input', () => {
+        nsTA.style.height = 'auto';
+        nsTA.style.height = nsTA.scrollHeight + 'px';
+      });
+      nsEdit.appendChild(nsTA);
+      nsEdit.appendChild(nsSave);
+      ns.appendChild(nsEdit);
+      root.appendChild(ns);
     });
   });
   updateStats();
