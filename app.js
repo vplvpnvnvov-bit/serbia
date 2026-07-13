@@ -215,6 +215,106 @@ document.getElementById('legend-toggle').addEventListener('click', () => {
   document.getElementById('legend-arrow').classList.toggle('open');
 });
 
+// === CHECKLIST ===
+const CHECKLIST = [
+  { cat: "📄 Выезд из РФ", items: [
+    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", link:"https://www.gosuslugi.ru/10087/1", tip:"Подать заявление через Госуслуги. Срок изготовления — до 30 дней." },
+    { id:"p5h", text:"Загранпаспорт мужа — забрать", price:"", link:"", tip:"Забрать в МВД/МФЦ по месту жительства." },
+    { id:"p5w", text:"Загранпаспорт жены (10 лет)", price:"5000", link:"https://www.gosuslugi.ru/10087/1", tip:"Подать через Госуслуги, забрать в МФЦ." },
+    { id:"p5d", text:"Загранпаспорт дочки (5 лет, старый образец)", price:"3000", link:"https://www.gosuslugi.ru/10087/1", tip:"Сначала сделать фото в ателье. Подать через Госуслуги, забрать в МВД/МФЦ (1.5-2 недели)." },
+    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельстве о рождении дочки", price:"", link:"", tip:"Без красного штампа МВД на обороте свидетельства паспорт дочке не выдадут." },
+    { id:"nocrim_h", text:"Справка о несудимости (муж) — бумажная, с печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Заказать на Госуслугах. Придёт письмом или забрать в МВД." },
+    { id:"nocrim_w", text:"Справка о несудимости (жена) — бумажная, с печатью", price:"", link:"https://www.gosuslugi.ru/600119/1", tip:"Заказать на Госуслугах. Придёт письмом или забрать в МВД." },
+  ]},
+  { cat: "📄 Легализация (апостили)", items: [
+    { id:"apost_marr", text:"Апостиль на свидетельство о браке", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500 руб." },
+    { id:"apost_birth", text:"Апостиль на свидетельство о рождении дочки", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500 руб." },
+  ]},
+  { cat: "📄 Документы в Сербии", items: [
+    { id:"reg", text:"Регистрация пребывания (белый картон)", price:"", link:"", tip:"В течение 24ч после въезда. Делает хозяин квартиры или арендодатель через полицию." },
+    { id:"vnd", text:"Подача на ВНД (вид на жительство)", price:"", link:"", tip:"Основание: регистрация компании / работа / учёба. Срок рассмотрения 2-4 месяца." },
+    { id:"pib", text:"Налоговый номер (PIB)", price:"", link:"", tip:"Получить в Налоговой службе (Poreska Uprava). Нужен для работы, аренды, банка." },
+  ]},
+  { cat: "🏦 Финансы", items: [
+    { id:"bank", text:"Открытие счёта в сербском банке (Raiffeisen / Intesa / OTP)", price:"", link:"", tip:"Потребуется загранпаспорт, PIB, регистрация. Минимальный взнос ~10 000 RSD." },
+    { id:"power", text:"Генеральная доверенность на родственника в РФ", price:"2000", link:"", tip:"Сделать у нотариуса на 5-10 лет. Чтобы родственник мог распоряжаться имуществом и счетами." },
+  ]},
+  { cat: "🏠 Жильё", items: [
+    { id:"rent", text:"Договор аренды жилья", price:"600-800", link:"", tip:"Заключить договор с арендодателем. Задаток обычно 1 месяц + 1 месяц аренды." },
+  ]},
+  { cat: "❤️ Здоровье", items: [
+    { id:"insure", text:"Медицинская страховка (международная)", price:"200-400", link:"", tip:"Покрытие должно включать Сербию. ~200-400€/год на семью." },
+    { id:"dentist", text:"Пройти стоматологов всей семьёй в РФ", price:"", link:"", tip:"В Сербии стоматология дороже. Сделать все зубы до отъезда." },
+    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", link:"", tip:"Многие лекарства продаются по рецепту. Взять привычные с запасом на полгода." },
+  ]},
+  { cat: "🚗 Транспорт / Права", items: [
+    { id:"license", text:"Перевод водительских прав на сербский", price:"", link:"", tip:"Нужен нотариальный перевод в Сербии. Российские права действуют 6 месяцев." },
+  ]},
+  { cat: "📱 Прочее", items: [
+    { id:"sim", text:"Сим-карта сербского оператора (A1 / Telenor / mts)", price:"1000", link:"", tip:"Купить в салоне связи. Нужен загранпаспорт." },
+  ]},
+];
+
+function renderChecklist() {
+  const root = document.getElementById('checklist-items');
+  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  root.innerHTML = '';
+  CHECKLIST.forEach(group => {
+    const header = document.createElement('h3');
+    header.className = 'cl-cat';
+    header.textContent = group.cat;
+    root.appendChild(header);
+    group.items.forEach(item => {
+      const checked = saved[item.id] || false;
+      const label = document.createElement('label');
+      label.className = 'check-item';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = checked;
+      cb.addEventListener('change', () => {
+        saved[item.id] = cb.checked;
+        localStorage.setItem('checklist', JSON.stringify(saved));
+        updateStats();
+      });
+      label.appendChild(cb);
+      const span = document.createElement('span');
+      span.className = 'cl-text';
+      span.innerHTML = item.text;
+      if (item.price) span.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
+      label.appendChild(span);
+      const tipBtn = document.createElement('span');
+      tipBtn.className = 'cl-tip';
+      tipBtn.textContent = '💡';
+      tipBtn.title = item.tip;
+      tipBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        alert(item.tip + (item.link ? `\n\nСсылка: ${item.link}` : ''));
+      });
+      label.appendChild(tipBtn);
+      root.appendChild(label);
+    });
+  });
+  updateStats();
+}
+
+function updateStats() {
+  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  let total = 0, done = 0;
+  CHECKLIST.forEach(g => g.items.forEach(i => {
+    total++;
+    if (saved[i.id]) done++;
+  }));
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('checklist-stats').innerHTML =
+    `✅ Выполнено: <b>${done}</b> / <b>${total}</b> (${pct}%)`;
+}
+
+document.addEventListener('DOMContentLoaded', renderChecklist);
+// Если вкладка чеклиста открывается динамически
+document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () => {
+  setTimeout(updateStats, 50);
+});
+
 // === CALCULATOR ===
 function calcTotal() {
   const ids = ['rent', 'utils', 'food', 'transport', 'other'];
