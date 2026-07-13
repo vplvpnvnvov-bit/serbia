@@ -487,15 +487,11 @@ html, body {
   color: #333;
   padding: 4px 0;
   line-height: 1.4;
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
 }
 .cl-note-display.hidden {
   display: none;
 }
 .cl-note-display-text {
-  flex: 1;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -504,10 +500,9 @@ html, body {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2px 4px;
-  line-height: 1;
-  flex-shrink: 0;
-  margin-top: 1px;
+  padding: 0 2px;
+  line-height: inherit;
+  vertical-align: baseline;
   opacity: 0.5;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
