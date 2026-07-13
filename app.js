@@ -568,20 +568,55 @@ document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () =
 // === UPDATE BUTTON ===
 document.getElementById('update-btn')?.addEventListener('click', async () => {
   const btn = document.getElementById('update-btn');
+  const label = document.getElementById('update-label');
   btn.disabled = true;
   btn.textContent = '⏳';
-  if ('caches' in window) {
-    const keys = await caches.keys();
-    await Promise.all(keys.map(k => caches.delete(k)));
-  }
-  if ('serviceWorker' in navigator) {
-    const reg = await navigator.serviceWorker.getRegistration();
-    if (reg && reg.waiting) {
+  label.textContent = 'Проверка...';
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (reg) {
+    if (reg.waiting) {
+      label.textContent = '🆕 Обновление готово';
       reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      btn.textContent = '🆕';
+      setTimeout(() => location.reload(), 800);
+      return;
+    }
+    await reg.update();
+    const found = await new Promise(resolve => {
+      const timer = setTimeout(() => resolve(false), 3000);
+      if (reg.installing) {
+        clearTimeout(timer);
+        resolve(true);
+        return;
+      }
+      reg.addEventListener('updatefound', () => {
+        clearTimeout(timer);
+        resolve(true);
+      }, { once: true });
+    });
+    if (found) {
+      label.textContent = '🆕 Обновление загружается';
+      btn.textContent = '⏳';
+      const newWorker = reg.installing;
+      if (newWorker) {
+        await new Promise(resolve => {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed') {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+              resolve();
+            }
+          });
+        });
+      }
+      btn.textContent = '🆕';
+      setTimeout(() => location.reload(), 800);
+      return;
     }
   }
-  btn.textContent = '✅';
-  setTimeout(() => location.reload(), 800);
+  label.textContent = '✅ Актуально';
+  btn.textContent = '🔄';
+  btn.disabled = false;
+  setTimeout(() => { label.textContent = 'Проверить обновления'; }, 3000);
 });
 
 // === CALCULATOR ===
