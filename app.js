@@ -355,7 +355,7 @@ function renderChecklist() {
           }
           if (monthsLeft > 0 || years === 0) remainingText += `${monthsLeft}мес `;
           if (dd > 0) remainingText += `${dd}дн`;
-          rem.textContent = `✅ ещё ${remainingText.trim()}`;
+          rem.textContent = `✅ до окончания: ${remainingText.trim()}`;
           rem.className = 'cl-date-remaining ' + (years >= 1 ? 'ok' : totalMonths >= 1 ? 'warn' : 'expired');
         };
         let dateSaving = false;
