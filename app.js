@@ -409,11 +409,6 @@ function renderChecklist() {
       };
       tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
       row.appendChild(tipBtn);
-      const noteBtn = document.createElement('span');
-      noteBtn.className = 'cl-note-btn' + (st.note ? ' has-note' : '');
-      noteBtn.textContent = '📝';
-      noteBtn.dataset.id = item.id;
-      row.appendChild(noteBtn);
       const textSpan = document.createElement('span');
       textSpan.className = 'cl-text';
       textSpan.innerHTML = item.text;
@@ -423,7 +418,7 @@ function renderChecklist() {
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
       const noteBody = document.createElement('div');
-      noteBody.className = 'cl-note-body' + (st.note ? '' : ' hidden');
+      noteBody.className = 'cl-note-body';
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
@@ -439,18 +434,8 @@ function renderChecklist() {
         localStorage.setItem('checklist', JSON.stringify(saved));
         autoResize();
       });
-      noteBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        noteBody.classList.toggle('hidden');
-        if (!noteBody.classList.contains('hidden')) {
-          void noteBody.offsetHeight;
-          autoResize();
-          noteTA.focus();
-        }
-      });
       noteBody.appendChild(noteTA);
       root.appendChild(noteBody);
-      if (!noteBody.classList.contains('hidden')) autoResize();
     });
   });
   updateStats();
