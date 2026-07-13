@@ -394,7 +394,7 @@ html, body {
   line-height: 1.4;
 }
 .check-item.done .cl-text {
-  color: #999;
+  color: #2e7d32;
   text-decoration: line-through;
 }
 .check-item.progress .cl-text {

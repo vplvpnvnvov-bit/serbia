@@ -553,7 +553,7 @@ function updateStats() {
   }));
   document.getElementById('checklist-stats').innerHTML =
     `✅ Выполнено: <b>${done}</b> / <b>${total}</b>` +
-    (progress ? ` · 🔄 в процессе: <b>${progress}</b>` : '');
+    (progress ? ` · ⌛️ в процессе: <b>${progress}</b>` : '');
 }
 
 // Lock toggle
