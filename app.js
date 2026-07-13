@@ -428,8 +428,7 @@ function updateStats() {
     if (getItem(saved, i.id).done) done++;
   }));
   const pct = total ? Math.round(done / total * 100) : 0;
-  document.getElementById('checklist-stats').innerHTML =
-    `✅ Выполнено: <b>${done}</b> / <b>${total}</b> (${pct}%)`;
+  document.getElementById('checklist-stats').textContent = `${done}/${total}`;
 }
 
 // Lock toggle
