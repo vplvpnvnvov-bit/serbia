@@ -496,7 +496,7 @@ html, body {
 .cl-date-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 4px 0 8px 38px;
   font-size: 13px;
   color: #555;
@@ -509,30 +509,44 @@ html, body {
 .cl-date-label {
   white-space: nowrap;
 }
+.cl-date-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+.cl-date-inputs.hidden {
+  display: none;
+}
+.cl-date-compact {
+  font-weight: 600;
+  color: #1a237e;
+  white-space: nowrap;
+}
+.cl-date-compact.hidden {
+  display: none;
+}
 .cl-date-d, .cl-date-m, .cl-date-y {
-  padding: 4px 2px;
+  padding: 3px 2px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 13px;
-  width: 30px;
+  width: 28px;
   text-align: center;
-  flex-shrink: 1;
-  min-width: 24px;
-}
-.cl-date-d.locked, .cl-date-m.locked, .cl-date-y.locked {
-  background: #f0f4ff;
-  border-color: #b0bec5;
-  cursor: default;
-  color: #333;
 }
 .cl-date-edit {
   font-size: 14px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 4px 6px;
   opacity: 0.4;
   transition: opacity 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .cl-date-edit:hover {
   opacity: 1;

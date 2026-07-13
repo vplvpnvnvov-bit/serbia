@@ -299,7 +299,7 @@ function renderChecklist() {
       const btn = document.createElement('button');
       btn.className = 'cl-btn' + (checked ? ' on' : '');
       btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
-      let dateRow, dInput, mInput, yInput;
+      let dateRow, dInput, mInput, yInput, compactSpan, inputGroup;
       const getDateStr = () => {
         if (!dInput) return '';
         const d = dInput.value.trim();
@@ -310,11 +310,27 @@ function renderChecklist() {
       if (item.hasDate) {
         dateRow = document.createElement('div');
         dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
-        dateRow.innerHTML = `<span class="cl-date-label">📅 Дата выдачи:</span> <input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[0] || '' : ''}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[1] || '' : ''}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[2] || '' : ''}"> <span class="cl-date-remaining"></span> <button class="cl-date-edit hidden">✏️</button>`;
-        dInput = dateRow.querySelector('.cl-date-d');
-        mInput = dateRow.querySelector('.cl-date-m');
-        yInput = dateRow.querySelector('.cl-date-y');
-        const editBtn = dateRow.querySelector('.cl-date-edit');
+        const label = document.createElement('span');
+        label.className = 'cl-date-label';
+        label.textContent = '📅';
+        dateRow.appendChild(label);
+        compactSpan = document.createElement('span');
+        compactSpan.className = 'cl-date-compact';
+        dateRow.appendChild(compactSpan);
+        inputGroup = document.createElement('span');
+        inputGroup.className = 'cl-date-inputs';
+        inputGroup.innerHTML = `<input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[0] || '' : ''}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[1] || '' : ''}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${st.date ? st.date.split('.')[2] || '' : ''}">`;
+        dateRow.appendChild(inputGroup);
+        const rem = document.createElement('span');
+        rem.className = 'cl-date-remaining';
+        dateRow.appendChild(rem);
+        const editBtn = document.createElement('button');
+        editBtn.className = 'cl-date-edit hidden';
+        editBtn.textContent = '✏️';
+        dateRow.appendChild(editBtn);
+        dInput = inputGroup.querySelector('.cl-date-d');
+        mInput = inputGroup.querySelector('.cl-date-m');
+        yInput = inputGroup.querySelector('.cl-date-y');
         const updateRemaining = () => {
           const rem = dateRow.querySelector('.cl-date-remaining');
           const ds = getDateStr();
@@ -344,12 +360,15 @@ function renderChecklist() {
         };
         const lockDate = () => {
           if (!getDateStr()) return;
-          [dInput, mInput, yInput].forEach(el => { el.readOnly = true; el.classList.add('locked'); });
+          compactSpan.textContent = getDateStr();
+          inputGroup.classList.add('hidden');
+          compactSpan.classList.remove('hidden');
           editBtn.classList.remove('hidden');
           updateRemaining();
         };
         const unlockDate = () => {
-          [dInput, mInput, yInput].forEach(el => { el.readOnly = false; el.classList.remove('locked'); });
+          inputGroup.classList.remove('hidden');
+          compactSpan.classList.add('hidden');
           editBtn.classList.add('hidden');
           dInput.focus();
         };
