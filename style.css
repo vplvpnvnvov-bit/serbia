@@ -354,6 +354,7 @@ html, body {
 .cl-text {
   flex: 1;
   color: #333;
+  cursor: pointer;
 }
 .cl-price {
   font-size: 12px;

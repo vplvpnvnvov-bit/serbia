@@ -385,30 +385,33 @@ function renderChecklist() {
       tipBtn.textContent = '▶';
       tipBtn.dataset.tip = item.tip;
       tipBtn.dataset.link = item.link || '';
-      tipBtn.addEventListener('click', e => {
+      const toggleTip = (el, e) => {
         e.stopPropagation();
-        const row = tipBtn.closest('.check-item');
+        const row = el.closest('.check-item');
+        const tip = row.querySelector('.cl-tip');
         const existing = row.nextElementSibling;
         if (existing && existing.classList.contains('cl-tip-body')) {
           existing.remove();
-          tipBtn.textContent = '▶';
-          tipBtn.classList.remove('open');
+          tip.textContent = '▶';
+          tip.classList.remove('open');
           return;
         }
         const body = document.createElement('div');
         body.className = 'cl-tip-body';
         body.innerHTML =
-          `<div class="cl-tip-text">${tipBtn.dataset.tip.replace(/\n/g, '<br>')}</div>` +
-          (tipBtn.dataset.link ? `<a href="${tipBtn.dataset.link}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
+          `<div class="cl-tip-text">${tip.dataset.tip.replace(/\n/g, '<br>')}</div>` +
+          (tip.dataset.link ? `<a href="${tip.dataset.link}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
         row.after(body);
-        tipBtn.textContent = '▼';
-        tipBtn.classList.add('open');
-      });
+        tip.textContent = '▼';
+        tip.classList.add('open');
+      };
+      tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
       row.appendChild(tipBtn);
       const textSpan = document.createElement('span');
       textSpan.className = 'cl-text';
       textSpan.innerHTML = item.text;
       if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
+      textSpan.addEventListener('click', e => toggleTip(textSpan, e));
       row.appendChild(textSpan);
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
