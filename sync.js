@@ -100,6 +100,9 @@ Storage.prototype.setItem = function(key, value) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sync-code-toggle').addEventListener('click', () => {
+    document.getElementById('sync-code-body').classList.toggle('hidden');
+  });
   document.getElementById('sync-code-copy').addEventListener('click', () => {
     const code = document.getElementById('sync-code-display').textContent;
     navigator.clipboard.writeText(code).catch(() => {});
