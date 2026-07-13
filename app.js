@@ -458,23 +458,20 @@ document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () =
 // === UPDATE BUTTON ===
 document.getElementById('update-btn')?.addEventListener('click', async () => {
   const btn = document.getElementById('update-btn');
-  const status = document.getElementById('update-status');
   btn.disabled = true;
-  btn.textContent = '⏳ Проверка...';
-  // Удаляем старый SW кеш
+  btn.textContent = '⏳';
   if ('caches' in window) {
     const keys = await caches.keys();
     await Promise.all(keys.map(k => caches.delete(k)));
   }
-  // Ждём регистрацию нового SW
   if ('serviceWorker' in navigator) {
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg && reg.waiting) {
       reg.waiting.postMessage({ type: 'SKIP_WAITING' });
     }
   }
-  status.textContent = '✅ Обновление загружено, перезагрузка...';
-  setTimeout(() => location.reload(), 1000);
+  btn.textContent = '✅';
+  setTimeout(() => location.reload(), 800);
 });
 
 // === CALCULATOR ===
