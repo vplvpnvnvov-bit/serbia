@@ -52,15 +52,54 @@
     <!-- TAB 2: Карта -->
     <section id="tab-map" class="tab">
       <div id="map"></div>
+      <!-- Layer Control -->
+      <div id="layer-control" class="lc-panel">
+        <div class="lc-title" id="lc-toggle">🎛️ Слои <span id="lc-arrow">▾</span></div>
+        <div id="lc-body" class="hidden">
+          <div class="lc-group">
+            <label class="lc-label">Прозрачность районов</label>
+            <input type="range" id="opacity-slider" min="0" max="100" value="35">
+            <span id="opacity-val" class="lc-hint">35%</span>
+          </div>
+          <div class="lc-group">
+            <label class="lc-label">Подложка</label>
+            <select id="base-map-select" class="lc-select">
+              <option value="carto">Минималистичная</option>
+              <option value="osm">Детальная (OSM)</option>
+              <option value="satellite">Спутник</option>
+            </select>
+          </div>
+          <div class="lc-divider"></div>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="gov" checked> 🏢 Госорганы</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="culture" checked> 🎭 Достопримечательности</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="kids" checked> 👶 Детская инфра</label>
+        </div>
+      </div>
       <div id="legend">
-        <div class="legend-title" id="legend-toggle">👶 Для семьи с детьми <span id="legend-arrow">▾</span></div>
+        <div class="legend-presets">
+          <button class="preset-btn active" data-preset="family">👶 С детьми</button>
+          <button class="preset-btn" data-preset="budget">💰 Бюджетно</button>
+          <button class="preset-btn" data-preset="vibe">⚡ Движ</button>
+        </div>
+        <div class="legend-urban">
+          <label class="urban-label">
+            <input type="checkbox" id="urban-toggle">
+            <span class="urban-slider"></span>
+            Скрыть пригород
+          </label>
+        </div>
+        <div class="legend-ratings" id="legend-toggle">🏆 Рейтинг <span id="legend-arrow">▾</span></div>
         <div class="legend-bar"><span>Лучше</span><span class="legend-grad"></span><span>Хуже</span></div>
         <div id="legend-list" class="legend-list hidden"></div>
       </div>
       <div id="district-info" class="info-panel hidden">
         <button id="close-info">&times;</button>
         <h3 id="d-name"></h3>
-        <div id="d-gallery" class="gallery"></div>
+        <div id="d-gallery-wrap">
+          <button class="carousel-btn carousel-prev" id="car-prev">‹</button>
+          <div id="d-gallery" class="gallery"></div>
+          <button class="carousel-btn carousel-next" id="car-next">›</button>
+        </div>
         <p id="d-price" class="price"></p>
         <p id="d-score" class="score"></p>
         <div id="d-family-desc" class="family-desc"></div>

@@ -89,18 +89,202 @@ const map = L.map('map', {
   attributionControl: true,
 });
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+const baseLayers = {};
+function addBaseLayer(name, url, opts) {
+  const layer = L.tileLayer(url, { maxZoom: 19, ...opts });
+  baseLayers[name] = layer;
+  return layer;
+}
+
+const tileCarto = addBaseLayer('carto', 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-  maxZoom: 19,
 }).addTo(map);
+addBaseLayer('osm', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://openstreetmap.org">OSM</a>',
+});
+addBaseLayer('satellite', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: '&copy; Esri',
+});
+
+// === POI LAYER ===
+const poiLayer = L.layerGroup().addTo(map);
+const poiMarkers = [];
+
+MAP_POINTS.forEach(pt => {
+  const emoji = pt.category === 'gov' ? '🏢' : pt.category === 'culture' ? '🎭' : '👶';
+  const marker = L.marker(pt.coords, {
+    icon: L.divIcon({
+      html: `<div style="font-size:18px;cursor:pointer;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3))">${emoji}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      className: 'poi-marker',
+    }),
+  });
+  marker.bindPopup(`
+    <div style="font-family:sans-serif;max-width:220px">
+      <b>${emoji} ${pt.name}</b><br>
+      <span style="color:#555;font-size:12px">${pt.desc}</span>
+      ${pt.linked ? `<br><button class="poi-link-btn" data-linked="${pt.linked}" style="margin-top:6px;padding:4px 10px;border:none;border-radius:6px;background:#1a237e;color:#fff;cursor:pointer;font-size:11px">✅ Показать в чек-листе</button>` : ''}
+    </div>
+  `, { maxWidth: 280 });
+  marker._poiCat = pt.category;
+  marker._pt = pt;
+  marker.on('popupopen', () => {
+    const btn = marker.getPopup().getElement()?.querySelector('.poi-link-btn');
+    if (btn) {
+      btn.onclick = () => {
+        const id = btn.dataset.linked;
+        scrollToChecklistItem(id);
+        map.closePopup();
+      };
+    }
+  });
+  poiMarkers.push(marker);
+  poiLayer.addLayer(marker);
+});
 
 // === DISTRICT POLYGONS ===
 const polygons = {};
+const labelMarkers = {};
+let activePreset = 'family';
+let urbanHide = false;
+
+function getScore(d, preset) {
+  if (preset === 'budget') return d.budgetScore;
+  if (preset === 'vibe') return d.vibeScore;
+  return d.familyScore;
+}
+
+function scoreColor(score) {
+  return score >= 8 ? '#2e7d32' : score >= 5 ? '#e65100' : '#c62828';
+}
+
+function scoreBg(score) {
+  return score >= 8 ? '#e8f5e9' : score >= 5 ? '#fff3e0' : '#ffebee';
+}
+
+function darkenHex(hex, amt) {
+  if (!hex || hex[0] !== '#') return '#888';
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.max(0, (n >> 16) - amt);
+  const g = Math.max(0, ((n >> 8) & 0xff) - amt);
+  const b = Math.max(0, (n & 0xff) - amt);
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function scoreMax() { return 10; }
+
+function presetEmoji(preset) {
+  return preset === 'family' ? '👶' : preset === 'budget' ? '💰' : '⚡';
+}
+
+function presetName(preset) {
+  return preset === 'family' ? 'С детьми' : preset === 'budget' ? 'Бюджетно' : 'Движ';
+}
+
+function updateMapColors(preset) {
+  activePreset = preset;
+  DISTRICTS.forEach(d => {
+    const p = polygons[d.name];
+    if (!p) return;
+    const sc = getScore(d, preset);
+    const fill = scoreColor(sc);
+    const edge = darkenHex(fill, 30);
+    p.setStyle({ fillColor: fill, color: edge });
+    if (labelMarkers[d.name]) {
+      labelMarkers[d.name].setIcon(L.divIcon({
+        html: districtLabel(d.name, d.price, sc),
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+      }));
+    }
+  });
+  updateLegend(preset);
+  // update info panel if open
+  const nameEl = document.getElementById('d-name');
+  if (nameEl && nameEl.textContent) {
+    const d = DISTRICTS.find(x => x.name === nameEl.textContent);
+    if (d) showDistrictPanel(d, true);
+  }
+}
+
+function updateLegend(preset) {
+  let filtered = urbanHide ? DISTRICTS.filter(d => d.isUrban) : [...DISTRICTS];
+  const sorted = filtered.sort((a, b) => getScore(b, preset) - getScore(a, preset));
+  const listEl = document.getElementById('legend-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  const emoji = presetEmoji(preset);
+  sorted.forEach((d, i) => {
+    const sc = getScore(d, preset);
+    const color = scoreColor(sc);
+    const bg = scoreBg(sc);
+    const row = document.createElement('div');
+    row.className = 'll-row';
+    row.innerHTML = `
+      <span class="ll-rank">${i+1}</span>
+      <span class="ll-name">${d.name}</span>
+      <span class="ll-score" style="background:${bg};color:${color}">${emoji} ${sc}/10</span>
+    `;
+    row.dataset.district = d.name;
+    row.addEventListener('click', () => {
+      showDistrictPanel(d);
+      listEl.classList.add('hidden');
+    });
+    listEl.appendChild(row);
+  });
+  document.getElementById('legend-toggle').textContent =
+    `${emoji} Сортировка: ${presetName(preset)}`;
+}
+
+function updateUrbanFilter(hide) {
+  urbanHide = hide;
+  DISTRICTS.forEach(d => {
+    const p = polygons[d.name];
+    const m = labelMarkers[d.name];
+    if (!p) return;
+    const visible = !hide || d.isUrban;
+    if (visible) {
+      p.setStyle({ fillOpacity: 0.35, weight: 3, interactive: true });
+      if (m) map.addLayer(m);
+    } else {
+      p.setStyle({ fillOpacity: 0, weight: 0, interactive: false, opacity: 0 });
+      if (m) map.removeLayer(m);
+    }
+  });
+  if (hide) {
+    const urban = DISTRICTS.filter(d => d.isUrban && polygons[d.name]);
+    if (urban.length) {
+      const bounds = urban.reduce((b, d) => b.extend(polygons[d.name].getBounds()), L.latLngBounds([]));
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+    }
+  }
+  updateLegend(activePreset);
+}
+
+// Preset switcher
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateMapColors(btn.dataset.preset);
+  });
+});
+
+// Urban toggle
+document.getElementById('urban-toggle')?.addEventListener('change', e => {
+  updateUrbanFilter(e.target.checked);
+});
 
 function highlightDistrict(name) {
   Object.keys(polygons).forEach(k => {
     const p = polygons[k];
-    p.setStyle({ fillOpacity: 0.35, weight: 3 });
+    const d = DISTRICTS.find(x => x.name === k);
+    if (urbanHide && d && !d.isUrban) {
+      p.setStyle({ fillOpacity: 0, weight: 0, opacity: 0, interactive: false });
+    } else {
+      p.setStyle({ fillOpacity: 0.35, weight: 3, interactive: true });
+    }
   });
   const p = polygons[name];
   if (p) {
@@ -140,20 +324,51 @@ map.on('dragstart', () => {
   }
 });
 
-function showDistrictPanel(d) {
+function showDistrictPanel(d, noFit) {
   document.getElementById('d-name').textContent = d.name;
+  // Carousel gallery
   const gallery = document.getElementById('d-gallery');
   gallery.innerHTML = '';
   if (d.images && d.images.length) {
-    d.images.forEach(url => {
+    d.images.forEach((url, idx) => {
       const img = document.createElement('img');
-      img.src = url;
+      img.dataset.idx = idx;
       img.loading = 'lazy';
+      img.onerror = function() {
+        this.onerror = null;
+        const ph = document.createElement('div');
+        ph.className = 'img-placeholder';
+        ph.textContent = d.name;
+        ph.dataset.idx = idx;
+        this.parentNode.replaceChild(ph, this);
+      };
+      img.src = url;
       gallery.appendChild(img);
     });
   }
+  const prevBtn = document.getElementById('car-prev');
+  const nextBtn = document.getElementById('car-next');
+  const scrollCarousel = (dir) => {
+    const scrollAmt = gallery.clientWidth * 0.8;
+    gallery.scrollBy({ left: dir * scrollAmt, behavior: 'smooth' });
+  };
+  prevBtn.onclick = () => scrollCarousel(-1);
+  nextBtn.onclick = () => scrollCarousel(1);
+  // swipe support
+  let startX = 0, startY = 0;
+  gallery.ontouchstart = e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
+  gallery.ontouchend = e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+      scrollCarousel(dx > 0 ? -1 : 1);
+    }
+  };
   document.getElementById('d-price').textContent = d.price;
-  document.getElementById('d-score').textContent = '👶 ' + d.familyScore + '/17 — пригодность для семьи с детьми';
+  document.getElementById('d-score').innerHTML =
+    `👶 С детьми: <b>${d.familyScore}</b>/10 &nbsp;|&nbsp; ` +
+    `💰 Бюджетно: <b>${d.budgetScore}</b>/10 &nbsp;|&nbsp; ` +
+    `⚡ Движ: <b>${d.vibeScore}</b>/10`;
   document.getElementById('d-family-desc').textContent = d.familyDesc || '';
   document.getElementById('d-desc').textContent = d.desc;
   setList('d-pros', '✅ Плюсы', d.pros);
@@ -169,26 +384,30 @@ function showDistrictPanel(d) {
     linksEl.style.display = 'none';
   }
   document.getElementById('district-info').classList.remove('hidden');
-  highlightDistrict(d.name);
+  if (!noFit) highlightDistrict(d.name);
 }
 
 function districtLabel(name, price, score) {
-  let color = score >= 13 ? '#2e7d32' : score >= 9 ? '#f9a825' : '#c62828';
+  let color = score >= 8 ? '#2e7d32' : score >= 5 ? '#f9a825' : '#c62828';
   return `<div style="font-family:sans-serif;font-size:11px;font-weight:bold;
     color:#1a1a1a;text-align:center;white-space:nowrap;
     background:rgba(255,255,255,0.9);border-radius:4px;
     padding:3px 7px;border:1px solid #bbb;
     box-shadow:0 1px 3px rgba(0,0,0,0.1);">
     ${name} <span style="color:#d32f2f">${price}</span>
-    <span style="color:${color};font-size:10px"> (${score}/17)</span>
+    <span style="color:${color};font-size:10px"> (${score}/10)</span>
   </div>`;
 }
 
 function popupHTML(d) {
+  const sc = getScore(d, activePreset);
+  const color = scoreColor(sc);
+  const emoji = presetEmoji(activePreset);
+  const label = presetName(activePreset);
   return `<div style="font-family:sans-serif;width:200px">
     <b style="font-size:15px">${d.name}</b><br>
     <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
-    <span style="font-size:11px;color:#1a237e">👶 ${d.familyScore}/17 для семьи с детьми</span><br>
+    <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
     <span style="color:#555;font-size:11px">${d.desc}</span>
   </div>`;
 }
@@ -196,9 +415,11 @@ function popupHTML(d) {
 DISTRICTS.forEach(d => {
   if (!d.coords || d.coords.length < 3) return;
 
+  const initScore = getScore(d, activePreset);
+  const initFill = scoreColor(initScore);
   const polygon = L.polygon(d.coords, {
-    color: d.edge,
-    fillColor: d.fill,
+    color: darkenHex(initFill, 30),
+    fillColor: initFill,
     fillOpacity: 0.35,
     weight: 3,
   }).addTo(map);
@@ -209,15 +430,14 @@ DISTRICTS.forEach(d => {
 
   polygon.on('click', () => showDistrictPanel(d));
 
-  // Центроид для метки
   const lats = d.coords.map(p => p[0]);
   const lons = d.coords.map(p => p[1]);
   const cx = (Math.min(...lats) + Math.max(...lats)) / 2;
   const cy = (Math.min(...lons) + Math.max(...lons)) / 2;
 
-  L.marker([cx, cy], {
+  labelMarkers[d.name] = L.marker([cx, cy], {
     icon: L.divIcon({
-      html: districtLabel(d.name, d.price, d.familyScore),
+      html: districtLabel(d.name, d.price, initScore),
       iconSize: [0, 0],
       iconAnchor: [0, 0],
     }),
@@ -245,189 +465,214 @@ document.getElementById('close-info').addEventListener('click', () => {
 });
 
 // === LEGEND DROPDOWN ===
-const sorted = [...DISTRICTS].sort((a, b) => b.familyScore - a.familyScore);
 const listEl = document.getElementById('legend-list');
-sorted.forEach((d, i) => {
-  let color = d.familyScore >= 13 ? '#2e7d32' : d.familyScore >= 9 ? '#f9a825' : '#c62828';
-  let bg = d.familyScore >= 13 ? '#e8f5e9' : d.familyScore >= 9 ? '#fff8e1' : '#ffebee';
-  const row = document.createElement('div');
-  row.className = 'll-row';
-  row.innerHTML = `
-    <span class="ll-rank">${i+1}</span>
-    <span class="ll-name">${d.name}</span>
-    <span class="ll-score" style="background:${bg};color:${color}">${d.familyScore}/17</span>
-  `;
-  row.dataset.district = d.name;
-  row.addEventListener('click', () => {
-    showDistrictPanel(d);
-    listEl.classList.add('hidden');
-    document.getElementById('legend-arrow').classList.remove('open');
-  });
-  listEl.appendChild(row);
+document.getElementById('legend-toggle')?.addEventListener('click', () => {
+  listEl.classList.toggle('hidden');
+  document.getElementById('legend-arrow')?.classList.toggle('open');
 });
 
-document.getElementById('legend-toggle').addEventListener('click', () => {
-  listEl.classList.toggle('hidden');
-  document.getElementById('legend-arrow').classList.toggle('open');
+updateLegend(activePreset);
+
+// === LAYER CONTROL ===
+// Base map switch
+document.getElementById('base-map-select')?.addEventListener('change', e => {
+  const key = e.target.value;
+  Object.keys(baseLayers).forEach(k => {
+    if (k === key) map.addLayer(baseLayers[k]);
+    else map.removeLayer(baseLayers[k]);
+  });
+});
+// Opacity slider
+document.getElementById('opacity-slider')?.addEventListener('input', e => {
+  const val = parseInt(e.target.value);
+  document.getElementById('opacity-val').textContent = val + '%';
+  const opacity = val / 100;
+  DISTRICTS.forEach(d => {
+    const p = polygons[d.name];
+    if (!p) return;
+    p.setStyle({ fillOpacity: opacity });
+  });
+  const labelVis = val > 8;
+  DISTRICTS.forEach(d => {
+    const m = labelMarkers[d.name];
+    if (!m) return;
+    if (labelVis && !urbanHide) { if (!map.hasLayer(m)) map.addLayer(m); }
+    else if (!labelVis || urbanHide) { if (map.hasLayer(m)) map.removeLayer(m); }
+  });
+});
+// Layer control toggle
+document.getElementById('lc-toggle')?.addEventListener('click', () => {
+  document.getElementById('lc-body')?.classList.toggle('hidden');
+  document.getElementById('lc-arrow')?.classList.toggle('open');
+});
+// POI category filters
+document.querySelectorAll('[data-poi-cat]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const cat = cb.dataset.poiCat;
+    const visible = cb.checked;
+    poiMarkers.forEach(m => {
+      if (m._poiCat === cat) {
+        if (visible) poiLayer.addLayer(m);
+        else poiLayer.removeLayer(m);
+      }
+    });
+  });
 });
 
 // === CHECKLIST ===
 const CHECKLIST = [
   { cat: "📄 Выезд из РФ", items: [
-    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", hasDate:true, expires:120, link:"", tip:"Госуслуги → Услуги → Паспорта, регистрация → Загранпаспорт нового поколения (10 лет).\n\nШаг 1: Заполнить заявление онлайн, приложить фото из ателье.\nШаг 2: Оплатить госпошлину 5000₽.\nШаг 3: Через 5–7 дней придёт приглашение в МВД/МФЦ.\nШаг 4: Прийти с паспортом РФ, через 30 дней получить готовый." },
-    { id:"p5w", text:"Загранпаспорт жены (10 лет)", price:"5000", hasDate:true, expires:120, link:"", tip:"Госуслуги → Услуги → Паспорта, регистрация → Загранпаспорт нового поколения (10 лет).\n\nШаг 1: Заполнить заявление онлайн, приложить фото из ателье.\nШаг 2: Оплатить госпошлину 5000₽.\nШаг 3: Прийти в МВД/МФЦ по приглашению, забрать через 30 дней." },
-    { id:"p5d", text:"Загранпаспорт ребёнка (5 лет, старый образец)", price:"3000", hasDate:true, expires:60, link:"", tip:"Важно: сначала поставить штамп о гражданстве (см. пункт ниже).\n\nГосуслуги → Услуги → Паспорта, регистрация → Загранпаспорт старого образца (5 лет).\n\nШаг 1: Сначала сделать фото в ателье.\nШаг 2: Заполнить заявление на Госуслугах.\nШаг 3: Оплатить госпошлину 3000₽.\nШаг 4: Забрать в МВД/МФЦ через 1.5–2 недели." },
-    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельство о рождении ребёнка", price:"", link:"", tip:"Без красного штампа МВД на обороте свидетельства загранпаспорт ребёнку не оформят.\n\nОбратиться в МВД по месту жительства (паспортный стол). Подать: паспорт родителя + оригинал свидетельства о рождении. Ставят в день обращения." },
-    { id:"nocrim_h", text:"Справка о несудимости (муж) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, link:"", tip:"Госуслуги → Услуги → Справки, выписки → Справка о наличии (отсутствии) судимости.\n\nШаг 1: Заказать онлайн на Госуслугах (выбрать электронный вариант с ЭЦП ведомства).\nШаг 2: Получить файл .pdf и .sig в личный кабинет (обычно за 5–10 дней).\n\n*Лайфхак:* Распечатывать в МВД не нужно! Электронный файл с цифровой подписью принимают судебные переводчики в Сербии для официального перевода под ВНЖ. Срок действия — 6 месяцев." },
-    { id:"nocrim_w", text:"Справка о несудимости (жена) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, link:"", tip:"То же, что для мужа. Закажите электронную справку с цифровой подписью (ЭЦП) через Госуслуги. Сербский МУП принимает перевод такого документа без необходимости визита в МВД в России." },
-    { id:"nocrim_apost_h", text:"Апостиль на справку о несудимости (муж)", price:"2500", hasDate:true, expires:6, link:"", tip:"Нужен только если вы заказывали БУМАЖНЫЙ оригинал справки в МВД/МФЦ. Сдать бумагу в МФЦ или Минюст на апостилирование. Госпошлина 2500₽. Срок — до 5 рабочих дней.\n\n*Важно:* Если вы используете электронную справку с Госуслуг с ЭЦП, апостиль на неё физически поставить нельзя (и сербский МУП примет её перевод без апостиля)." },
-    { id:"nocrim_apost_w", text:"Апостиль на справку о несудимости (жена)", price:"2500", hasDate:true, expires:6, link:"", tip:"Аналогично мужу. Требуется только для бумажной версии справки. На электронную версию с ЭЦП апостиль не ставится и не требуется." },
-    { id:"child_consent", text:"Нотариальное согласие на выезд ребёнка (если едет один родитель)", price:"2000", link:"", tip:"Заверяется у нотариуса в РФ. Нужны: паспорт родителя, свидетельство о рождении ребёнка. Обязательно указать Сербию как страну назначения и вписать сроки поездки. Если едете всей семьёй (оба родителя вписаны в документы) — согласие не требуется." },
+    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", hasDate:true, expires:120, tip:"Оформить через Госуслуги." },
+    { id:"p5w", text:"Загранпаспорт жены (10 лет)", price:"5000", hasDate:true, expires:120, tip:"Оформить через Госуслуги." },
+    { id:"p5d", text:"Загранпаспорт ребёнка (5 лет, старый образец)", price:"3000", hasDate:true, expires:60, tip:"Оформить через Госуслуги после проставления штампа о гражданстве." },
+    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельство о рождении ребёнка", price:"", tip:"Обратиться в МВД по месту жительства. Ставят в день обращения." },
+    { id:"nocrim_h", text:"Справка о несудимости (муж) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, tip:"Заказать на Госуслугах электронную версию с ЭЦП ведомства." },
+    { id:"nocrim_w", text:"Справка о несудимости (жена) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, tip:"Заказать на Госуслугах электронную версию с ЭЦП ведомства." },
+    { id:"nocrim_apost_h", text:"Апостиль на справку о несудимости (муж)", price:"2500", hasDate:true, expires:6, tip:"Требуется только для бумажной версии справки." },
+    { id:"nocrim_apost_w", text:"Апостиль на справку о несудимости (жена)", price:"2500", hasDate:true, expires:6, tip:"Требуется только для бумажной версии справки." },
+    { id:"child_consent", text:"Нотариальное согласие на выезд ребёнка (если едет один родитель)", price:"2000", tip:"Сделать у нотариуса в РФ, если едете не всей семьей." },
   ]},
   { cat: "📄 Апостили и легализация", items: [
-    { id:"apost_marr", text:"Апостиль на свидетельство о браке (оригинал)", price:"2500", link:"", tip:"Сдать оригинал свидетельства в МФЦ или ЗАГС. Госпошлина 2500₽. Срок — до 5 рабочих дней. Апостиль на свидетельство о браке обязателен для получения ВНЖ супруги по воссоединению семьи." },
-    { id:"apost_birth", text:"Апостиль на свидетельство о рождении ребёнка", price:"2500", link:"", tip:"Сдать оригинал в МФЦ или ЗАГС. Госпошлина 2500₽. Потребуется для получения ВНЖ ребёнка, а также для записи в государственные школы и детские сады в Сербии." },
-    { id:"translation_copies", text:"Переводы документов на сербский язык", price:"", link:"", tip:"Все переводы документов (справок, свидетельств) для подачи на ВНЖ должны выполняться исключительно официальным судебным переводчиком (sudski tumač) на территории Сербии. Переводы, сделанные в РФ, сербские ведомства не примут." },
+    { id:"apost_marr", text:"Апостиль на свидетельство о браке (оригинал)", price:"2500", tip:"Потребуется для ВНЖ супруги по воссоединению семьи." },
+    { id:"apost_birth", text:"Апостиль на свидетельство о рождении ребёнка", price:"2500", tip:"Потребуется для ВНЖ ребенка и записи в школу/сад." },
+    { id:"translation_copies", text:"Переводы личных документов на сербский язык", price:"", tip:"Делает только судебный переводчик (sudski tumač) в Сербии." },
   ]},
   { cat: "📚 Образование и нострификация", items: [
-    { id:"diploma", text:"Оригинал диплома об образовании (с вкладышем оценок)", price:"", link:"", tip:"Оригинал диплома и обязательно приложения с оценками (додатак дипломи). Нужен для нострификации (официального признания) в Сербии, если вы оформляете ВНЖ «по таланту» (как специалист) или устраиваетесь на работу.\n\n*Внимание:* Апостилировать диплом в РФ для Сербии НЕ НУЖНО. Между странами действует договор о взаимном признании документов." },
-    { id:"diploma_eng", text:"Перевод диплома у сербского судебного переводчика", price:"", link:"", tip:"Оригинал диплома и приложение необходимо перевести на сербский язык у местного судебного переводчика (sudski tumač) в Сербии. Переводы из РФ не подходят для процедуры нострификации." },
+    { id:"diploma", text:"Оригинал диплома об образовании (с вкладышем оценок)", price:"", tip:"Апостиль на диплом в РФ для Сербии НЕ НУЖЕН." },
+    { id:"diploma_eng", text:"Перевод диплома у сербского судебного переводчика", price:"", tip:"Перевод диплома и приложения на сербский язык." },
+    { id:"talent_nostrification", text:"Подача на нострификацию диплома онлайн", price:"7500 RSD", tip:"Подача через портал Агентства по квалификациям (AZK) Сербии." },
   ]},
   { cat: "📄 Документы в Сербии", items: [
-    { id:"reg", text:"Регистрация пребывания (белый картон / Beli karton)", price:"", link:"", tip:"Оформить в течение 24 часов после пересечения границы Сербии.\n\nДелает владелец квартиры (арендодатель) в местном отделении полиции (МУП) или через онлайн-систему eTurista. На руки вы получаете заполненный бланк (potvrda o prijavi boravka). Обязательно сохраняйте его, он необходим для открытия банковских счетов и подачи на ВНЖ." },
-    { id:"vnd", text:"Единое разрешение (ВНЖ + разрешение на работу)", price:"18000 RSD", link:"", tip:"Подача на ВНЖ в Сербии теперь полностью объединена с разрешением на работу в один пластик — Jedinstvena dozvola. Всё оформляется ОНЛАЙН через eUprava.\n\nГлавные пути для ИТ-специалистов:\n\n1. 🎭 ВНЖ ПО ТАЛАНТУ (Высокая квалификация):\n— Требуется: нострифицированный в Сербии диплом о высшем образовании + трудовой договор с сербским юрлицом (или сербский филиал вашей компании).\n— Плюс: не нужно платить налоги за содержание ИП, вы оформляетесь как сотрудник.\n— Минус: выдается на 1 год, продлить по этому же основанию («по таланту») на 2-й год нельзя — придется переоформляться на обычный рабочий контракт или ИП.\n\n2. 💼 ВНЖ ЧЕРЕЗ ИП (Предузетник):\n— Требуется: открытое в АПР (APR) сербское ИП.\n— Плюс: можно продлевать из года в год без ограничений.\n— Минус: ежемесячные расходы на налоги и бухгалтера (около 350–450€)." },
-    { id:"talent_nostrification", text:"Нострификация диплома для ВНЖ по таланту", price:"7500 RSD", link:"", tip:"Процесс признания вашего высшего образования в Сербии (через агентство AZK).\n\nШаг 1: Сделайте перевод диплома и вкладыша с оценками у сербского судебного переводчика (sudski tumač).\nШаг 2: Зайдите на сайт azk.gov.rs, заполните анкету ENIC-NARIC и загрузите PDF-сканы документов.\nШаг 3: Оплатите пошлину (около 7500 RSD) и прикрепите квитанцию.\nШаг 4: Дождитесь одобрения онлайн, придите в офис AZK в Белграде, покажите оригиналы и заберите готовое Решение (Rešenje o priznavanju).\n\n*Напоминание:* Апостиль на дипломы РФ/РБ/Украины для Сербии НЕ ТРЕБУЕТСЯ." },
-    { id:"preduzetnik", text:"Регистрация ИП в Сербии (Предузетник)", price:"1500 RSD", link:"", tip:"Регистрация фирмы происходит через Агентство по коммерческим регистрам (APR).\n\nШаг 1: Выбрать код деятельности (шифр делатности), название фирмы и адрес (можно использовать адрес арендуемой квартиры с согласия хозяина).\nШаг 2: Подать заявление в APR (лично или онлайн с сербской ЭЦП).\nШаг 3: Через 3-5 дней забрать решение о регистрации. Налоговый номер (PIB) присваивается автоматически, отдельно за ним в налоговую ходить не нужно." },
+    { id:"reg", text:"Регистрация пребывания (белый картон / Beli karton)", price:"", tip:"Оформить в полиции или через eTurista в течение 24 часов после въезда." },
+    { id:"pediatrician_check", text:"Осмотр ребенка у сербского педиатра", price:"около 50 €", tip:"Получение справки для зачисления в частный или государственный детский сад." },
+    { id:"vnd", text:"Единое разрешение (ВНЖ + разрешение на работу)", price:"18000 RSD", tip:"Онлайн-подача через eUprava по основанию «Талант» или «ИП»." },
+    { id:"preduzetnik", text:"Регистрация ИП в Сербии (Предузетник)", price:"1500 RSD", tip:"Оформление через Агентство APR." },
+    { id:"virtual_office", text:"Аренда виртуального офиса (юридического адреса) для ИП", price:"от 15 €/мес", tip:"Необходимо, если хозяин квартиры против регистрации ИП на его адрес." },
   ]},
   { cat: "🏦 Финансы и налоги", items: [
-    { id:"bank", text:"Открытие личного счёта в сербском банке (Alta, Poštanska, API)", price:"", link:"", tip:"Для нерезидентов (без ВНЖ) счета сейчас открывают Alta Bank, Poštanska Štedionica, API Bank.\n\nПотребуется: загранпаспорт, «белый картон» и подтверждение происхождения средств (выписки, декларации). Крупные банки (OTP, Raiffeisen, Intesa) открывают счета физлицам в основном только после получения ВНЖ/Единого разрешения." },
-    { id:"tax_decl", text:"Налоговые декларации (3-НДФЛ / 2-НДФЛ / выписка из ЛК ФНС)", price:"", link:"", tip:"Скачать из личного кабинета налогоплательщика РФ справки о доходах (2-НДФЛ) или декларации (3-НДФЛ). Эти документы могут потребоваться сербскому банку при прохождении процедуры комплаенса для открытия счета." },
-    { id:"bank_stat", text:"Выписки по банковским счетам из РФ за 3–6 месяцев (на английском)", price:"", link:"", tip:"Выгрузить из приложений российских банков (Т-Банк, Сбер и др.) выписки по движению средств за последние 3-6 месяцев на английском языке. Это главный документ для подтверждения легальности ваших средств при открытии счета в Сербии." },
-    { id:"power", text:"Генеральная доверенность на близкого человека в РФ (на 5–10 лет)", price:"2000", hasDate:true, expires:120, link:"", tip:"Оформить у нотариуса в РФ до отъезда. Включить права на распоряжение счетами, получение документов (включая повторные свидетельства ЗАГС и справки МВД), продажу автомобиля/недвижимости и закрытие ИП. Из Сербии сделать такую доверенность будет намного сложнее и дороже." },
+    { id:"bank", text:"Открытие личного и бизнес-счёта в сербском банке", price:"", tip:"Открытие счетов в Alta Bank, Poštanska Štedionica или API Bank." },
+    { id:"tax_decl", text:"Налоговые декларации из РФ (3-НДФЛ / 2-НДФЛ)", price:"", tip:"Для подтверждения легальности доходов при комплаенсе в банке." },
+    { id:"bank_stat", text:"Выписки по банковским счетам из РФ за 3–6 месяцев", price:"", tip:"Выписки на английском языке из мобильных приложений банков РФ." },
+    { id:"power", text:"Генеральная доверенность на близкого человека в РФ", price:"2000", hasDate:true, expires:120, tip:"Оформить у нотариуса в РФ до отъезда на срок от 5 до 10 лет." },
+    { id:"pay_first_taxes", text:"Уплата первых фиксированных налогов по ИП (Паушал)", price:"около 350 €", tip:"Ежемесячный обязательный платеж в налоговую Сербии." },
   ]},
   { cat: "🏠 Жильё", items: [
-    { id:"rent", text:"Договор аренды жилья (Ugovor o zakupu)", price:"от 500€/мес", hasDate:true, link:"", tip:"Заключить письменный договор аренды с собственником квартиры. Договор понадобится для оформления «белого картона», открытия банковских счетов и онлайн-подачи на ВНЖ.\n\nПопулярные сервисы поиска: CityExpert (без комиссии агенту), HaloOglasi, а также профильные Telegram-каналы по аренде в Белграде." },
+    { id:"rent", text:"Договор аренды жилья (Ugovor o zakupu)", price:"от 500 €/мес", hasDate:true, tip:"Письменный договор аренды с собственником квартиры минимум на 1 год." },
   ]},
   { cat: "❤️ Здоровье и медицина", items: [
-    { id:"insure", text:"Местная или международная медицинская страховка", price:"100-200€", hasDate:true, expires:12, link:"", tip:"Для подачи на ВНЖ (Единое разрешение) требуется медицинский страховой полис, покрывающий территорию Сербии на весь период запрашиваемого ВНЖ. Можно оформить недорогую локальную сербскую страховку (например, Dunav, Globos, Triglav) специально под подачу документов." },
-    { id:"vaccine", text:"Карта профилактических прививок ребёнка (форма 063/у)", price:"", link:"", tip:"Взять в детской поликлинике подробную выписку со всеми прививками (критично наличие прививки MMR — корь-краснуха-паротит). Перевести у судебного переводчика в Сербии. Без этой карты ребенка не зачислят в школу или детский сад." },
-    { id:"med_cards", text:"Медицинские выписки при хронических заболеваниях (все члены семьи)", price:"", link:"", tip:"Взять истории болезней, рецепты и назначения. Важно: найдите международные непатентованные наименования (МНН) ваших лекарств (действующие вещества на латыни), так как торговые марки препаратов в Сербии будут отличаться." },
-    { id:"dentist", text:"Пройти стоматологов всей семьёй в РФ", price:"", link:"", tip:"Рекомендуется вылечить зубы в РФ перед отъездом. В Сербии качественные стоматологические услуги в частных клиниках стоят существенно дороже." },
-    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", link:"", tip:"Многие привычные лекарства (включая антибиотики и сильные обезболивающие) в Сербии отпускаются строго по рецепту врача. Возьмите с собой запас специфических или постоянно принимаемых лекарств на первые 3-6 месяцев." },
+    { id:"insure", text:"Коммерческая медицинская страховка для ВНЖ", price:"100-200 €", hasDate:true, expires:12, tip:"Локальный полис (Dunav, Globos, Triglav) под подачу на ВНЖ." },
+    { id:"vaccine", text:"Карта профилактических прививок ребёнка (форма 063/у)", price:"", tip:"Оригинал карты прививок (особенно корь/MMR) для зачисления в сад." },
+    { id:"med_cards", text:"Медицинские выписки при хронических заболеваниях", price:"", tip:"Выписки с латинскими названиями действующих веществ (МНН)." },
+    { id:"dentist", text:"Пройти стоматологов всей семьёй в РФ", price:"", tip:"Рекомендуется вылечить зубы в РФ до переезда." },
+    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", tip:"Запас специфических рецептурных препаратов на первые 3-6 месяцев." },
+    { id:"state_health_insurance", text:"Оформление государственной медстраховки (здравственная книжица)", price:"", tip:"Оформляется на всю семью через ваше работающее ИП бесплатно." },
   ]},
-  { cat: "🚗 Transport / Автомобиль", items: [
-    { id:"license", text:"Перевод водительских прав на сербский язык", price:"", link:"", tip:"Российские водительские права действительны в Сербии в течение 6 месяцев с момента въезда. Перевод прав у судебного переводчика понадобится для аренды автомобиля, оформления местной страховки или последующего обмена прав на сербские (после получения ВНЖ)." },
-    { id:"car_power", text:"Нотариальная доверенность на выезд за границу (если машина не на вас)", price:"", link:"", tip:"Если автомобиль оформлен на другого человека или юрлицо. В доверенности от нотариуса РФ обязательно должно быть прописано право вывоза ТС за пределы Российской Федерации. Рекомендуется сделать перевод на английский язык." },
-    { id:"kbm", text:"Справка из страховой о безаварийном стаже (КБМ) на английском", price:"", link:"", tip:"Запросить в своей страховой компании в РФ справку о КБМ на английском языке. Некоторые сербские страховые компании учитывают её при расчете стоимости полиса ОСАГО (auto-odgovornost) и дают скидку за безаварийную езду." },
-    { id:"car_docs", text:"СТС и ПТС (оригиналы на машину)", price:"", hasDate:true, link:"", tip:"Оригиналы документов обязательны для прохождения границ. На территории Сербии иностранный автомобиль может находиться до 3 месяцев без выезда, после чего требуется временный выезд (визаран автомобиля) или растаможка/регистрация на сербские номера." },
+  { cat: "🚗 Транспорт / Автомобиль", items: [
+    { id:"license", text:"Перевод водительских прав на сербский язык", price:"", tip:"Сделать у судебного переводчика для законного вождения после первых 6 месяцев." },
+    { id:"car_power", text:"Нотариальная доверенность на выезд за границу на авто", price:"", tip:"Если машина оформлена не на вас." },
+    { id:"kbm", text:"Справка из страховой о безаварийном стаже (КБМ) на английском", price:"", tip:"Для получения скидки на автострахование в Сербии." },
+    { id:"car_docs", text:"СТС и ПТС (оригиналы на машину)", price:"", hasDate:true, tip:"Оригиналы документов для прохождения границ." },
   ]},
   { cat: "📱 Прочее", items: [
-    { id:"sim", text:"Сим-карта сербского оператора (A1 / Yettel / mts)", price:"1000 RSD", link:"", tip:"Купить в любом киоске (prepaid-тариф без паспорта) или оформить в официальном салоне связи по загранпаспорту.\n\n*Операторы:* A1, Yettel (бывший Telenor) и mts. Контрактные тарифы (postpaid) становятся доступны только после получения ВНЖ и предлагают гораздо более выгодные пакеты интернета." },
+    { id:"sim", text:"Сим-карта сербского оператора (A1 / Yettel / mts)", price:"1000 RSD", tip:"Купить prepaid-симкарту в любом киоске без паспорта." },
+    { id:"kindergarten_enroll", text:"Зачисление ребенка в частный детский сад", price:"около 400 €/мес", tip:"Подача документов и справки от педиатра в выбранный сад." },
   ]},
 ];
 
+function getValidChecklistIds() {
+  const ids = new Set();
+  CHECKLIST.forEach(group => group.items.forEach(item => ids.add(item.id)));
+  return ids;
+}
+
+function migrateChecklist(saved) {
+  const valid = getValidChecklistIds();
+  const clean = {};
+  Object.keys(saved).forEach(id => {
+    if (valid.has(id)) clean[id] = saved[id];
+  });
+  return clean;
+}
+
+window.getValidChecklistIds = getValidChecklistIds;
+window.migrateChecklist = migrateChecklist;
+
 const TIMELINE_PLAN = {
   section: "relocation_4_months_plan",
-  title: "📅 Пошаговый план расходов и действий (4 месяца)",
-  description: "Интерактивный таймлайн переезда в Белград для семьи из 3 человек с легализацией по схеме «Талант ➔ ИП».",
+  title: "📅 Пошаговый план (4 месяца)",
+  description: "План переезда в Белград для семьи из 3 человек: ВНЖ «Талант» ➔ ИП.",
   timeline: [
     {
       id: "m0",
       title: "Месяц 0: Подготовка в РФ",
       focus: "Сбор документов, которые невозможно получить удаленно",
-      actions: [
-        "Заказать справку об отсутствии судимости из МВД РФ с Апостилем (быстрее всего через Госуслуги/МФЦ). Срок действия для Сербии — 6 месяцев.",
-        "Собрать оригиналы свидетельства о браке и рождении ребенка. Поставить на них Апостиль в ЗАГСе (необходимо для воссоединения семьи).",
-        "Подготовить оригиналы диплома вуза и вкладыша с оценками (Апостиль на диплом для Сербии НЕ НУЖЕН).",
-        "Взять в поликлинике карту профилактических прививок ребенка (форма 063/у или синий прививочный сертификат) — без нее не примут в сербский детский сад."
+      steps: [
+        { text: "Заказать справку об отсутствии судимости (Госуслуги).", linked_ids: ["nocrim_h","nocrim_w"] },
+        { text: "Поставить апостили на справки о несудимости (бумажные версии).", linked_ids: ["nocrim_apost_h","nocrim_apost_w"] },
+        { text: "Поставить апостиль на свидетельство о браке.", linked_ids: ["apost_marr"] },
+        { text: "Поставить апостиль на свидетельство о рождении ребенка.", linked_ids: ["apost_birth"] },
+        { text: "Оформить или обновить загранпаспорта семьи.", linked_ids: ["p10","p5w","p5d"] },
+        { text: "Проставить штамп о гражданстве на св-во о рождении ребенка.", linked_ids: ["stamp"] },
+        { text: "Оформить нотариальное согласие на выезд ребенка (если едет один родитель).", linked_ids: ["child_consent"] },
+        { text: "Взять в поликлинике карту прививок ребенка.", linked_ids: ["vaccine"] },
+        { text: "Сделать генеральную доверенность на близкого человека в РФ.", linked_ids: ["power"] },
+        { text: "Пройти стоматологов всей семьей, собрать аптечку.", linked_ids: ["dentist","pharm"] },
+        { text: "Подготовить оригиналы диплома + вкладыш.", linked_ids: ["diploma"] },
+        { text: "Выгрузить налоговые декларации и банковские выписки.", linked_ids: ["tax_decl","bank_stat"] },
+        { text: "Взять медвыписки (если есть хроника).", linked_ids: ["med_cards"] },
+        { text: "Оформить доверенность на выезд авто и КБМ справку.", linked_ids: ["car_power","kbm"] },
+        { text: "Подготовить СТС/ПТС на машину.", linked_ids: ["car_docs"] },
       ],
       cost_eur: "80 €",
-      cost_details: [
-        { name: "Апостиль на справку о несудимости", cost: "2500 ₽" },
-        { name: "Апостиль на свидетельство о браке", cost: "2500 ₽" },
-        { name: "Апостиль на свидетельство о рождении ребенка", cost: "2500 ₽" }
-      ]
     },
     {
       id: "m1",
       title: "Месяц 1: Прилет и ВНЖ «Талант»",
-      focus: "Перелет, адаптация на Airbnb, запуск нострификации и онлайн-подача на первый ВНЖ",
-      actions: [
-        "Перелет в Белград, заселение во временное жилье и обязательное получение бумажного или электронного «белого картона» (регистрации) в течение 24 часов.",
-        "Перевод личных документов и диплома у сербского судебного переводчика (sudski tumač).",
-        "Подача заявления на нострификацию диплома онлайн на сайте Агентства по квалификациям (AZK). Пошлина — 7500 RSD.",
-        "Покупка локальных медицинских страховок на 1 год для всей семьи.",
-        "Осмотр ребенка у сербского педиатра в частной клинике для получения справки в детский сад.",
-        "Онлайн-подача документов на Единое разрешение (ВНЖ по таланту для вас + воссоединение для семьи) через портал eUprava."
+      focus: "Перелет, адаптация, запуск нострификации, подача на ВНЖ",
+      steps: [
+        { text: "Перелет в Белград, заселение, регистрация (белый картон).", linked_ids: ["reg"] },
+        { text: "Перевод документов у сербского судебного переводчика.", linked_ids: ["translation_copies","diploma_eng"] },
+        { text: "Подача на нострификацию диплома онлайн (AZK).", linked_ids: ["talent_nostrification"] },
+        { text: "Покупка медстраховок на семью для ВНЖ.", linked_ids: ["insure"] },
+        { text: "Осмотр ребенка у педиатра для справки в сад.", linked_ids: ["pediatrician_check"] },
+        { text: "Онлайн-подача на Единое разрешение (Талант + воссоединение).", linked_ids: ["vnd"] },
+        { text: "Купить сербские сим-карты.", linked_ids: ["sim"] },
+        { text: "Открыть личный банковский счет.", linked_ids: ["bank"] },
       ],
       cost_eur: "3435 €",
-      cost_details: [
-        { name: "Прямой перелет Air Serbia (3 человека с багажом)", cost: "1350 €" },
-        { name: "Временное жилье Airbnb (1-й месяц, все включено)", cost: "950 €" },
-        { name: "Пошлины за Единое разрешение на троих (~18000 RSD/чел)", cost: "460 €" },
-        { name: "Обязательные медстраховки на 1 год под ВНЖ (на троих)", cost: "250 €" },
-        { name: "Услуги судебного переводчика (диплом, свидетельства, прививки)", cost: "150 €" },
-        { name: "Пошлина AZK за нострификацию диплома (7500 RSD)", cost: "65 €" },
-        { name: "Продукты, мобильная связь, базовый быт", cost: "160 €" },
-        { name: "Прием педиатра и справка для сада", cost: "50 €" }
-      ]
     },
     {
       id: "m2",
-      title: "Месяц 2: Постоянное жилье и детский сад",
-      focus: "Поиск квартиры на долгосрок и устройство ребенка в сад",
-      actions: [
-        "Поиск постоянной двухкомнатной квартиры (двушка/1.5-собан) в Белграде по цене ~600 €/мес.",
-        "Подписание договора аренды (Ugovor o zakupu) минимум на год и оформление нового «белого картона» по постоянному адресу.",
-        "Устройство ребенка в частный детский сад (с получением субсидии от города Белград, если применимо, или полностью за свой счет)."
+      title: "Месяц 2: Жилье и сад",
+      focus: "Поиск квартиры и устройство ребенка",
+      steps: [
+        { text: "Найти квартиру, заключить договор аренды на год, подтвердить регистрацию.", linked_ids: ["rent"] },
+        { text: "Зачислить ребенка в частный детский сад.", linked_ids: ["kindergarten_enroll"] },
       ],
       cost_eur: "2650 €",
-      cost_details: [
-        { name: "Аренда постоянной квартиры (первый месяц)", cost: "600 €" },
-        { name: "Залог арендодателю (депозит 100%)", cost: "600 €" },
-        { name: "Комиссия сербского риелтора (единоразово 50%)", cost: "300 €" },
-        { name: "Частный детский сад (первый месяц)", cost: "400 €" },
-        { name: "Коммунальные услуги (Инфостан, электричество, домашний интернет)", cost: "150 €" },
-        { name: "Продукты питания, бытовая химия, семейные расходы", cost: "600 €" }
-      ]
     },
     {
       id: "m3",
-      title: "Месяц 3: Открытие ИП и смена статуса",
-      focus: "Регистрация бизнеса (ИП-Паушал) и переход на новое основание ВНЖ",
-      actions: [
-        "Подача документов на регистрацию ИП (Preduzetnik) в Агентство APR. Налоговый номер (PIB) присвоится автоматически.",
-        "Аренда виртуального офиса (юридического адреса) для ИП, если арендодатель квартиры против регистрации бизнеса на его адрес.",
-        "Открытие расчетного счета ИП в сербском банке (прохождение комплаенса).",
-        "Онлайн-подача через eUprava на смену основания вашего ВНЖ — с «Таланта» на «ИП (Предузетник)»."
+      title: "Месяц 3: ИП и смена статуса",
+      focus: "Регистрация Предузетника и переход на новое основание",
+      steps: [
+        { text: "Зарегистрировать ИП в APR (Предузетник).", linked_ids: ["preduzetnik"] },
+        { text: "Арендовать виртуальный офис для ИП.", linked_ids: ["virtual_office"] },
+        { text: "Открыть бизнес-счет в банке (комплаенс).", linked_ids: ["bank"] },
+        { text: "Подать онлайн-заявление на смену основания ВНЖ (Талант → ИП).", linked_ids: ["vnd"] },
       ],
       cost_eur: "2200 €",
-      cost_details: [
-        { name: "Аренда постоянной квартиры + коммуналка", cost: "750 €" },
-        { name: "Частный детский сад (второй месяц)", cost: "400 €" },
-        { name: "Аренда виртуального офиса для ИП (оплата на год вперед)", cost: "185 €" },
-        { name: "Пошлина за регистрацию ИП в APR и смену статуса ВНЖ", cost: "65 €" },
-        { name: "Помощь юриста / бухгалтера с открытием ИП и комплаенсом в банке", cost: "200 €" },
-        { name: "Продукты питания и повседневные расходы", cost: "600 €" }
-      ]
     },
     {
       id: "m4",
-      title: "Месяц 4: Жизнь на рельсах бизнеса",
-      focus: "Регулярная работа, уплата первых налогов и переход на гос. медицину",
-      actions: [
-        "Ведение коммерческой деятельности через ИП.",
-        "Уплата фиксированного налога ИП (Паушал) в налоговую службу.",
-        "Оформление государственной медицинской страховки (здравственная книжица) на всю семью через ваше ИП. С этого момента коммерческая страховка больше не требуется."
+      title: "Месяц 4: Первые налоги и госстраховка",
+      focus: "Регулярная работа ИП, налоги, оформление гос. медицины",
+      steps: [
+        { text: "Уплатить первые фиксированные налоги ИП (Паушал).", linked_ids: ["pay_first_taxes"] },
+        { text: "Оформить государственную медстраховку (здравственная книжица) на семью.", linked_ids: ["state_health_insurance"] },
       ],
       cost_eur: "2100 €",
-      cost_details: [
-        { name: "Аренда постоянной квартиры + коммуналка", cost: "750 €" },
-        { name: "Частный детский сад (регулярный платеж)", cost: "400 €" },
-        { name: "Ежемесячные фиксированные налоги по ИП (Паушал)", cost: "350 €" },
-        { name: "Продукты питания, быт, семейные расходы", cost: "600 €" }
-      ]
-    }
+    },
   ],
   totals: {
     safety_buffer: "9000 €",
@@ -541,6 +786,7 @@ function renderChecklist() {
               setItem(saved, item.id, true, getDateStr());
               lockDate();
               updateStats();
+              renderTimeline();
             }
             dateSaving = false;
           } else {
@@ -552,6 +798,7 @@ function renderChecklist() {
           setItem(saved, item.id, true, getDateStr());
           lockDate();
           updateStats();
+          renderTimeline();
         };
         if (st.date) {
           lockDate();
@@ -585,6 +832,7 @@ function renderChecklist() {
         row.classList.toggle('progress', next.progress);
         if (dateRow) dateRow.classList.toggle('hidden', !next.done);
         updateStats();
+        renderTimeline();
       });
       row.appendChild(btn);
       const textSpan = document.createElement('span');
@@ -776,6 +1024,26 @@ document.querySelectorAll('#tab-calc input').forEach(inp => {
 calcTotal();
 
 // === TIMELINE PLAN ===
+function getLinkedProgress(ids) {
+  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
+  let done = 0;
+  ids.forEach(id => {
+    if (getItem(saved, id).done) done++;
+  });
+  return { done, total: ids.length, percent: ids.length ? Math.round(done / ids.length * 100) : 0 };
+}
+
+function scrollToChecklistItem(id) {
+  const el = document.getElementById('cl-' + id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1500);
+  }
+  const tab = document.querySelector('[data-tab="checklist"]');
+  if (tab) tab.click();
+}
+
 function renderTimeline() {
   const root = document.getElementById('timeline-root');
   if (!root) return;
@@ -800,31 +1068,43 @@ function renderTimeline() {
     focusEl.textContent = '🎯 ' + m.focus;
     card.appendChild(focusEl);
 
-    const actionsTitle = document.createElement('div');
-    actionsTitle.className = 'tl-subtitle';
-    actionsTitle.textContent = '📋 Действия';
-    card.appendChild(actionsTitle);
+    const stepsTitle = document.createElement('div');
+    stepsTitle.className = 'tl-subtitle';
+    stepsTitle.textContent = '📋 Шаги';
+    card.appendChild(stepsTitle);
     const ul = document.createElement('ul');
-    ul.className = 'tl-actions';
-    m.actions.forEach(a => {
+    ul.className = 'tl-steps';
+    m.steps.forEach(s => {
+      const prog = getLinkedProgress(s.linked_ids);
       const li = document.createElement('li');
-      li.textContent = a;
+      li.className = 'tl-step' + (prog.percent === 100 ? ' done' : '');
+      const barWrap = document.createElement('span');
+      barWrap.className = 'tl-bar-wrap';
+      const bar = document.createElement('span');
+      bar.className = 'tl-bar-fill';
+      bar.style.width = prog.percent + '%';
+      barWrap.appendChild(bar);
+      if (prog.total > 1) {
+        const count = document.createElement('span');
+        count.className = 'tl-bar-count';
+        count.textContent = prog.done + '/' + prog.total;
+        barWrap.appendChild(count);
+      }
+      li.appendChild(barWrap);
+      const link = document.createElement('a');
+      link.className = 'tl-step-link';
+      link.textContent = s.text;
+      link.href = '#';
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        if (s.linked_ids.length === 1) {
+          scrollToChecklistItem(s.linked_ids[0]);
+        }
+      });
+      li.appendChild(link);
       ul.appendChild(li);
     });
     card.appendChild(ul);
-
-    const costsTitle = document.createElement('div');
-    costsTitle.className = 'tl-subtitle';
-    costsTitle.textContent = '💰 Расходы';
-    card.appendChild(costsTitle);
-    const table = document.createElement('table');
-    table.className = 'tl-costs';
-    m.cost_details.forEach(d => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${d.name}</td><td class="tl-amt">${d.cost}</td>`;
-      table.appendChild(tr);
-    });
-    card.appendChild(table);
 
     root.appendChild(card);
   });
@@ -848,4 +1128,5 @@ window.addEventListener('sync-loaded', () => {
   renderChecklist();
   calcTotal();
   updateLockUI();
+  renderTimeline();
 });
