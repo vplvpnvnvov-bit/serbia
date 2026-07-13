@@ -363,21 +363,39 @@ function renderChecklist() {
           compactSpan.textContent = getDateStr();
           inputGroup.classList.add('hidden');
           compactSpan.classList.remove('hidden');
+          editBtn.textContent = '✏️';
           editBtn.classList.remove('hidden');
           updateRemaining();
         };
         const unlockDate = () => {
           inputGroup.classList.remove('hidden');
           compactSpan.classList.add('hidden');
-          editBtn.classList.add('hidden');
+          editBtn.textContent = '✅';
+          editBtn.classList.remove('hidden');
           dInput.focus();
         };
+        editBtn.addEventListener('click', () => {
+          if (inputGroup.classList.contains('hidden')) {
+            unlockDate();
+          } else {
+            if (getDateStr()) {
+              setItem(saved, item.id, true, getDateStr());
+              lockDate();
+              updateStats();
+            }
+          }
+        });
         const onDateChange = () => {
           setItem(saved, item.id, true, getDateStr());
           lockDate();
           updateStats();
         };
-        if (st.date) lockDate();
+        if (st.date) {
+          lockDate();
+        } else {
+          editBtn.textContent = '✅';
+          editBtn.classList.remove('hidden');
+        }
         editBtn.addEventListener('click', unlockDate);
         [dInput, mInput, yInput].forEach((el, i) => {
           el.addEventListener('input', () => {
