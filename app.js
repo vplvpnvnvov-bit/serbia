@@ -423,7 +423,7 @@ function renderChecklist() {
       root.appendChild(row);
       if (dateRow) root.appendChild(dateRow);
       const noteBody = document.createElement('div');
-      noteBody.className = 'cl-note-body hidden';
+      noteBody.className = 'cl-note-body' + (st.note ? '' : ' hidden');
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
