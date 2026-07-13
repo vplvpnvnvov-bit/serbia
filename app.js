@@ -1012,11 +1012,12 @@ document.getElementById('update-btn')?.addEventListener('click', async () => {
         setTimeout(() => location.reload(), 800);
         return;
       }
-      label.textContent = '✅ У вас актуальная версия';
+      alert('У вас установлена самая свежая версия приложения!');
     } else {
       label.textContent = '⚠️ SW не зарегистрирован';
     }
   } catch (e) {
+    alert('Не удалось проверить обновления. Проверьте подключение к интернету.');
     label.textContent = '❌ Ошибка сети';
     btn.textContent = '🔄';
     btn.disabled = false;
