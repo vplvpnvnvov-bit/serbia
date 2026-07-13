@@ -489,6 +489,7 @@ html, body {
   font-size: 13px;
   color: #555;
   animation: tipFadeIn 0.15s ease;
+  flex-wrap: wrap;
 }
 .cl-date-row.hidden {
   display: none;
@@ -501,9 +502,10 @@ html, body {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 13px;
-  width: 32px;
+  width: 30px;
   text-align: center;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 24px;
 }
 .cl-date-d.locked, .cl-date-m.locked, .cl-date-y.locked {
   background: #f0f4ff;
