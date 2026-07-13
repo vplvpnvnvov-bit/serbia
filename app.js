@@ -461,21 +461,28 @@ function renderChecklist() {
       if (dateRow) root.appendChild(dateRow);
       const noteBody = document.createElement('div');
       noteBody.className = 'cl-note-body' + (st.note ? '' : ' hidden');
+      const noteRow = document.createElement('div');
+      noteRow.className = 'cl-note-row';
       const noteTA = document.createElement('textarea');
       noteTA.className = 'cl-note-ta';
       noteTA.placeholder = 'Заметка...';
       noteTA.rows = 1;
       noteTA.value = st.note || '';
+      const noteSave = document.createElement('button');
+      noteSave.className = 'cl-note-save';
+      noteSave.textContent = '✅';
+      const saveNote = () => {
+        saved[item.id] = saved[item.id] || {};
+        saved[item.id].note = noteTA.value;
+        localStorage.setItem('checklist', JSON.stringify(saved));
+      };
       const autoResize = () => {
         noteTA.style.height = 'auto';
         noteTA.style.height = noteTA.scrollHeight + 'px';
       };
-      noteTA.addEventListener('input', () => {
-        saved[item.id] = saved[item.id] || {};
-        saved[item.id].note = noteTA.value;
-        localStorage.setItem('checklist', JSON.stringify(saved));
-        autoResize();
-      });
+      noteTA.addEventListener('blur', saveNote);
+      noteTA.addEventListener('input', autoResize);
+      noteSave.addEventListener('click', saveNote);
       noteBtn.addEventListener('click', e => {
         e.stopPropagation();
         noteBody.classList.toggle('hidden');
@@ -485,7 +492,9 @@ function renderChecklist() {
           noteTA.focus();
         }
       });
-      noteBody.appendChild(noteTA);
+      noteRow.appendChild(noteTA);
+      noteRow.appendChild(noteSave);
+      noteBody.appendChild(noteRow);
       root.appendChild(noteBody);
       if (!noteBody.classList.contains('hidden')) autoResize();
     });
