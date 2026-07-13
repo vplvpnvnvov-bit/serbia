@@ -521,9 +521,12 @@ html, body {
   margin-right: 12px;
 }
 #checklist-stats {
-  font-size: 14px;
-  color: #2e7d32;
-  font-weight: 600;
+  font-size: 13px;
+  color: #555;
+  padding: 6px 10px;
+  background: #e8f5e9;
+  border-radius: 6px;
+  margin-bottom: 10px;
 }
 .lock-btn {
   font-size: 20px;
