@@ -48,6 +48,11 @@ function debouncedSave() {
 }
 
 // === MAP ===
+const mapTiles = {
+  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+};
+
 const map = L.map('map', {
   center: [44.76, 20.48],
   zoom: 10,
@@ -56,6 +61,11 @@ const map = L.map('map', {
 });
 L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
+let currentTileLayer = L.tileLayer(mapTiles.light, {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+}).addTo(map);
+
 const baseLayers = {};
 function addBaseLayer(name, url, opts) {
   const layer = L.tileLayer(url, { maxZoom: 19, ...opts });
@@ -63,9 +73,7 @@ function addBaseLayer(name, url, opts) {
   return layer;
 }
 
-const tileCarto = addBaseLayer('carto', 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-}).addTo(map);
+baseLayers['carto'] = currentTileLayer;
 addBaseLayer('osm', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://openstreetmap.org">OSM</a>',
 });
@@ -1773,5 +1781,34 @@ document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
 window.addEventListener('sync-loaded', () => {
   try { renderPlan(); } catch (e) { console.error(e); }
 });
+
+// === Theme toggle ===
+const themeToggleBtn = document.getElementById('theme-toggle');
+const themeIcon = themeToggleBtn?.querySelector('.theme-icon');
+const themeText = themeToggleBtn?.querySelector('.theme-text');
+
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark-theme');
+    if (themeIcon) themeIcon.textContent = '🌙';
+    if (themeText) themeText.textContent = 'Тёмная тема';
+    if (currentTileLayer && mapTiles) currentTileLayer.setUrl(mapTiles.dark);
+  } else {
+    document.body.classList.remove('dark-theme');
+    if (themeIcon) themeIcon.textContent = '☀️';
+    if (themeText) themeText.textContent = 'Светлая тема';
+    if (currentTileLayer && mapTiles) currentTileLayer.setUrl(mapTiles.light);
+  }
+  localStorage.setItem('app-theme', theme);
+}
+
+themeToggleBtn?.addEventListener('click', () => {
+  const isDark = document.body.classList.contains('dark-theme');
+  applyTheme(isDark ? 'light' : 'dark');
+});
+
+const savedTheme = localStorage.getItem('app-theme') ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+applyTheme(savedTheme);
 
 
