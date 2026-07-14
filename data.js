@@ -18731,8 +18731,8 @@ const MAP_POINTS = [
   { id:"mup_vracar", name:"Полиция Врачар (Белый картон)", coords:[44.797,20.470], category:"gov", desc:"Оформление регистрации в течение 24 ч. — вместе с хозяином квартиры.", linked:"reg" },
   { id:"apr", name:"Агентство APR (Регистрация ИП)", coords:[44.815,20.456], category:"gov", desc:"Регистрация Предузетника — подача документов на открытие ИП.", linked:"preduzetnik" },
   { id:"azk", name:"AZK — Агентство квалификаций (Нострификация)", coords:[44.800,20.468], category:"gov", desc:"Подача на нострификацию диплома онлайн + получение решения лично.", linked:"talent_nostrification" },
-  { id:"uprava", name:"Центр eUprava (ВНЖ)", coords:[44.811,20.460], category:"gov", desc:"Центр госуслуг для подачи на Единое разрешение / ВНЖ.", linked:"vnd" },
-  { id:"poreska", name:"Налоговая инспекция (Пореска управа)", coords:[44.810,20.458], category:"gov", desc:"Уплата налогов по ИП (Паушал).", linked:"pay_first_taxes" },
+  { id:"uprava", name:"Центр eUprava (ВНЖ)", coords:[44.811,20.460], category:"gov", desc:"Центр госуслуг для подачи на Единое разрешение / ВНЖ.", linked:"m1_vnz" },
+  { id:"poreska", name:"Налоговая инспекция (Пореска управа)", coords:[44.810,20.458], category:"gov", desc:"Уплата налогов по ИП (Паушал).", linked:"m4_pausal" },
 
   // Достопримечательности (culture)
   { id:"kalemegdan", name:"Крепость Калемегдан", coords:[44.823,20.450], category:"culture", desc:"Главная достопримечательность Белграда. Парк, смотровые площадки, военный музей.", linked:null },
@@ -18745,7 +18745,7 @@ const MAP_POINTS = [
   // Детская инфраструктура (kids)
   { id:"zoo", name:"Белградский зоопарк (Калемегдан)", coords:[44.826,20.453], category:"kids", desc:"Зоопарк внутри крепости Калемегдан. Детям обязательно понравится.", linked:null },
   { id:"play_nbg", name:"Центральная детская площадка (Блок 45)", coords:[44.789,20.376], category:"kids", desc:"Большая игровая площадка в Нови Београде — горки, качели, зоны для малышей.", linked:null },
-  { id:"kindergarten1", name:"Детский сад «Србика» (частный)", coords:[44.800,20.380], category:"kids", desc:"Частный садик с английским уклоном, принимают без ВНЖ.", linked:"kindergarten_enroll" },
+  { id:"kindergarten1", name:"Детский сад «Србика» (частный)", coords:[44.800,20.380], category:"kids", desc:"Частный садик с английским уклоном, принимают без ВНЖ.", linked:"m2_kindergarten" },
   { id:"play_zvezdara", name:"Парк Звездарска шума", coords:[44.783,20.510], category:"kids", desc:"Большой лесопарк с детскими площадками, спортом, беговыми дорожками.", linked:null },
   { id:"play_ada", name:"Детский парк на Аде", coords:[44.785,20.395], category:"kids", desc:"Оборудованные зоны для детей на острове Ада Циганлия.", linked:null },
 ];

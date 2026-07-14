@@ -112,7 +112,7 @@ MAP_POINTS.forEach(pt => {
     <div style="font-family:sans-serif;max-width:220px">
       <b>${emoji} ${pt.name}</b><br>
       <span style="color:#555;font-size:12px">${pt.desc}</span>
-      ${pt.linked ? `<br><button class="poi-link-btn" data-linked="${pt.linked}" style="margin-top:6px;padding:4px 10px;border:none;border-radius:6px;background:#1a237e;color:#fff;cursor:pointer;font-size:11px">✅ Показать в чек-листе</button>` : ''}
+      ${pt.linked ? `<br><button class="poi-link-btn" data-linked="${pt.linked}" style="margin-top:6px;padding:4px 10px;border:none;border-radius:6px;background:#1a237e;color:#fff;cursor:pointer;font-size:11px">✅ Показать в плане</button>` : ''}
     </div>
   `, { maxWidth: 280 });
   marker._poiCat = pt.category;
