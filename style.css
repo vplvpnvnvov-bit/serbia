@@ -1011,7 +1011,24 @@ input:checked + .plan-toggle-slider:before {
   animation: tipFadeIn 0.15s ease;
 }
 .plan-tip-body.hidden { display: none; }
-.plan-tip-text { margin-bottom: 6px; }
+.plan-tip-text { margin-bottom: 6px; line-height: 1.55; }
+.plan-tip-text p { margin: 0 0 6px; }
+.plan-tip-text p:last-child { margin-bottom: 0; }
+.plan-tip-text b, .plan-tip-text strong { color: #1a237e; }
+.plan-tip-text ul, .plan-tip-text ol { margin: 4px 0 6px; padding-left: 20px; }
+.plan-tip-text li { margin-bottom: 3px; font-size: 13px; }
+.plan-tip-text a, .plan-tip-link {
+  display: inline-block;
+  color: #1565c0;
+  text-decoration: none;
+  padding: 4px 10px;
+  background: #e3f2fd;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  margin: 2px 4px 2px 0;
+}
+.plan-tip-text a:hover, .plan-tip-link:hover { background: #bbdefb; }
 
 /* Plan date row */
 .plan-date-row {
