@@ -1,21 +1,6 @@
 // === Firebase Sync ===
 const CURRENT_DATA_VERSION = "2026.1";
 
-function sanitizeChecklist(data) {
-  if (!data || typeof data !== 'object') return {};
-  const validIds = typeof window.getValidChecklistIds === 'function'
-    ? window.getValidChecklistIds()
-    : null;
-  if (!validIds) return data;
-  const clean = {};
-  Object.keys(data).forEach(id => {
-    if (validIds.has(id)) {
-      clean[id] = data[id];
-    }
-  });
-  return clean;
-}
-
 const firebaseConfig = {
   apiKey: "AIzaSyBOZ-ou8bBnJ6HoubfxFiDNlJ6wiiX8vOk",
   authDomain: "serbia-checklist-sync.firebaseapp.com",
@@ -134,22 +119,6 @@ async function fetchAndLoadDoc() {
   }
 
   syncLoading = true;
-  // Санация + миграция
-  if (data.checklist) {
-    const version = data.version || '0';
-    const needsMigration = version !== CURRENT_DATA_VERSION;
-    const clean = sanitizeChecklist(data.checklist);
-    if (needsMigration && typeof window.migrateChecklist === 'function') {
-      const migrated = window.migrateChecklist(clean);
-      localStorage.setItem('checklist', JSON.stringify(migrated));
-    } else {
-      localStorage.setItem('checklist', JSON.stringify(clean));
-    }
-  }
-
-  if (data.locked !== undefined) {
-    localStorage.setItem('checklist-locked', String(data.locked));
-  }
   if (data.plan) {
     localStorage.setItem('plan-state', JSON.stringify(data.plan));
   }
@@ -165,13 +134,18 @@ window.saveToCloud = async function() {
   if (syncPending) throw new Error('Синхронизация уже выполняется');
   syncPending = true;
   try {
-    const raw = JSON.parse(localStorage.getItem('checklist') || '{}');
     const data = {
-      checklist: sanitizeChecklist(raw),
-      locked: localStorage.getItem('checklist-locked') === 'true',
       plan: getPlanValues(),
       version: CURRENT_DATA_VERSION,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    await db.collection('users').doc(syncCode).set(data, { merge: true });
+    localStorage.setItem('last-sync-time', new Date().toLocaleString());
+    updateSyncStatusUI();
+    updateCloudStatus();
+  } finally {
+    syncPending = false;
+  }
 };
 
 window.deleteCloudData = async function() {
@@ -184,15 +158,6 @@ window.deleteCloudData = async function() {
   localStorage.removeItem('last-sync-time');
   updateSyncStatusUI();
   updateCloudStatus();
-};
-
-    await db.collection('users').doc(syncCode).set(data, { merge: true });
-    localStorage.setItem('last-sync-time', new Date().toLocaleString());
-    updateSyncStatusUI();
-    updateCloudStatus();
-  } finally {
-    syncPending = false;
-  }
 };
 
 function getPlanValues() {

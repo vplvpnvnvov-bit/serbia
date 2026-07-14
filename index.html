@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=1.11.0-c0aa2de" />
+<link rel="stylesheet" href="style.css?v=1.14.0-7c327f5" />
 </head>
 <body>
 
@@ -25,18 +25,9 @@
   </header>
 
   <main id="content">
-    <!-- TAB 1: Чек-лист -->
-    <section id="tab-checklist" class="tab active">
-      <div class="tab-content" id="checklist-root">
-        <div id="checklist-toolbar-top">
-          <button id="lock-btn" class="lock-btn">🔓</button>
-          <span id="lock-label">Режим редактирования</span>
-          <span style="flex:1"></span>
-        </div>
-        <h2>📋 Чек-лист для переезда</h2>
-        <div id="checklist-stats"></div>
-        <div id="checklist-items"></div>
-      </div>
+    <!-- TAB 1: План (чек-лист + бюджет + таймлайн) -->
+    <section id="tab-plan" class="tab active">
+      <div class="tab-content" id="timeline-root"></div>
     </section>
 
     <!-- TAB 2: Карта -->
@@ -102,12 +93,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: План -->
-    <section id="tab-timeline" class="tab">
-      <div class="tab-content" id="timeline-root"></div>
-    </section>
-
-    <!-- TAB 4: Полезно -->
+    <!-- TAB 3: Полезно -->
     <section id="tab-info" class="tab">
       <div class="tab-content">
         <h2>🔗 Полезные ссылки</h2>
@@ -188,9 +174,8 @@
   </main>
 
   <nav id="tabs">
-    <button class="tab-btn active" data-tab="checklist">✅ Чек-лист</button>
+    <button class="tab-btn active" data-tab="plan">📅 План</button>
     <button class="tab-btn" data-tab="map">🗺️ Карта</button>
-    <button class="tab-btn" data-tab="timeline">📅 План</button>
     <button class="tab-btn" data-tab="info">🔗 Полезно</button>
     <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
   </nav>
@@ -200,9 +185,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=1.11.0-c0aa2de"></script>
-<script src="sync.js?v=1.11.0-c0aa2de"></script>
-<script src="app.js?v=1.11.0-c0aa2de"></script>
+<script src="data.js?v=1.14.0-7c327f5"></script>
+<script src="sync.js?v=1.14.0-7c327f5"></script>
+<script src="app.js?v=1.14.0-7c327f5"></script>
 
 </body>
 </html>

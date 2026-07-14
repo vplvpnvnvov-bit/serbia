@@ -1,72 +1,10 @@
 window.APP_CONFIG = {
-  VERSION: "1.13.0",
-  BUILD: "f64296b",
-  CACHE_NAME: "relocation-v1.13.0-f64296b"
+  VERSION: "1.14.0",
+  BUILD: "7c327f5",
+  CACHE_NAME: "relocation-v1.14.0-7c327f5"
 };
 
-const migrationPlan = [
-  {
-    month: 0,
-    title: "Месяц 0: Подготовка в Москве",
-    focus: "Сбор документов, которые невозможно получить в Сербии",
-    tasks: [
-      { id: "m0_apostille", name: "Заказать справку об отсутствии судимости из МВД РФ с Апостилем", cost: 30, currency: "EUR", checked: true, desc: "Госпошлина ~2 500 рублей" },
-      { id: "m0_docs", name: "Собрать оригиналы диплома, свидетельства о браке и рождении ребенка", cost: 0, currency: "EUR", checked: true, desc: "Обязательно взять приложения к дипломам" },
-      { id: "m0_vaccine", name: "Взять в поликлинике синюю книжку — прививочный сертификат дочки (форма № 156/у-93)", cost: 0, currency: "EUR", checked: true, desc: "Нужен для оформления в сербский детский сад" }
-    ]
-  },
-  {
-    month: 1,
-    title: "Месяц 1: Прилет и ВНЖ «Талант»",
-    focus: "Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация",
-    tasks: [
-      { id: "m1_flight", name: "Прямой перелет Air Serbia (3 чел. с багажом)", cost: 1350, currency: "EUR", checked: true, desc: "Рейс Москва — Белград" },
-      { id: "m1_airbnb", name: "Жилье на Airbnb (1-й месяц, всё включено)", cost: 950, currency: "EUR", checked: true, desc: "Временный дом и получение белого картона от хоста" },
-      { id: "m1_vnz", name: "Пошлины МУП за ВНЖ на троих", cost: 600, currency: "EUR", checked: true, desc: "Сборы за подачу документов на ВНЖ Талант" },
-      { id: "m1_insurance", name: "Обязательные медстраховки на 1 год (на троих)", cost: 250, currency: "EUR", checked: true, desc: "Необходимы для подачи в полицию" },
-      { id: "m1_translate", name: "Судебные переводы (диплом, свидетельства, прививки)", cost: 200, currency: "EUR", checked: true, desc: "Перевод сертифицированным переводчиком в Сербии" },
-      { id: "m1_living", name: "Еда, связь, базовый быт", cost: 600, currency: "EUR", checked: true, desc: "Расходы семьи на первый месяц" },
-      { id: "m1_pediatrician", name: "Осмотр ребенка у педиатра для садика", cost: 50, currency: "EUR", checked: true, desc: "Получение справки для коммерческого сада" }
-    ]
-  },
-  {
-    month: 2,
-    title: "Месяц 2: Постоянное жилье и детский сад",
-    focus: "Поиск долгосрочной квартиры и устройство дочки в садик",
-    tasks: [
-      { id: "m2_rent", name: "Аренда постоянной квартиры (1-й месяц)", cost: 600, currency: "EUR", checked: true, desc: "Поиск двушки на долгий срок" },
-      { id: "m2_deposit", name: "Залог хозяину квартиры (100%)", cost: 600, currency: "EUR", checked: true, desc: "Возвратный депозит за сохранность" },
-      { id: "m2_agency", name: "Комиссия риелтору (50% единоразово)", cost: 300, currency: "EUR", checked: true, desc: "Оплата услуг агентства при подписании договора" },
-      { id: "m2_utility", name: "Коммунальные услуги (Инфостан, свет, интернет)", cost: 150, currency: "EUR", checked: true, desc: "Ежемесячные платежи по счетам" },
-      { id: "m2_kindergarten", name: "Частный детский сад (1-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата за дочку" },
-      { id: "m2_living", name: "Еда, быт, семейные расходы", cost: 600, currency: "EUR", checked: true, desc: "Текущие расходы на жизнь" }
-    ]
-  },
-  {
-    month: 3,
-    title: "Месяц 3: Запуск ИП и смена статуса ВНЖ",
-    focus: "Регистрация бизнеса и подготовка к первым доходам",
-    tasks: [
-      { id: "m3_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", checked: true, desc: "Арендная плата и счета" },
-      { id: "m3_kindergarten", name: "Частный детский сад (2-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата сада" },
-      { id: "m3_living", name: "Еда и базовые расходы", cost: 600, currency: "EUR", checked: true, desc: "Расходы на жизнь" },
-      { id: "m3_ip_tax", name: "Пошлина за регистрацию ИП и смену ВНЖ", cost: 65, currency: "EUR", checked: true, desc: "Подача в APR и пошлина за переход на ВНЖ по ИП" },
-      { id: "m3_office", name: "Виртуальный офис / Юр. адрес для ИП (на год вперед)", cost: 185, currency: "EUR", checked: true, desc: "Адрес для регистрации бизнеса" },
-      { id: "m3_lawyer", name: "Услуги юриста (помощь с комплаенсом в банке и МУП)", cost: 200, currency: "EUR", checked: true, desc: "Прохождение банковских проверок для бизнес-счета" }
-    ]
-  },
-  {
-    month: 4,
-    title: "Месяц 4: Жизнь на рельсах бизнеса",
-    focus: "Полноценная работа, оплата первых налогов",
-    tasks: [
-      { id: "m4_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", checked: true, desc: "Арендная плата и счета" },
-      { id: "m4_kindergarten", name: "Частный детский сад (3-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата сада" },
-      { id: "m4_pausal", name: "Первые фиксированные налоги по ИП (Паушал)", cost: 350, currency: "EUR", checked: true, desc: "Включает государственное медстрахование всей семьи" },
-      { id: "m4_living", name: "Еда и быт", cost: 600, currency: "EUR", checked: true, desc: "Стандартный ежемесячный бюджет семьи" }
-    ]
-  }
-];
+
 
 // === TABS ===
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -81,62 +19,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // === HELPERS ===
-function getItem(saved, id) {
-  const v = saved[id];
-  if (typeof v === 'boolean') return { done: v, date: '', note: '', progress: false };
-  if (v && typeof v === 'object') return { done: !!v.done, date: v.date || '', note: v.note || '', progress: !!v.progress };
-  return { done: false, date: '', note: '', progress: false };
-}
-function setItem(saved, id, done, date, progress) {
-  const prev = saved[id] || {};
-  saved[id] = { done, date: date || '', note: prev.note || '', progress: !!progress };
-  localStorage.setItem('checklist', JSON.stringify(saved));
-}
-function cycleItem(saved, id) {
-  const st = getItem(saved, id);
-  if (!st.done && !st.progress) return { done: false, progress: true };
-  if (st.progress) return { done: true, progress: false };
-  return { done: false, progress: false };
-}
-function editNote(id) {
-  const ns = document.getElementById('note-section-' + id);
-  if (!ns) return;
-  ns.classList.remove('hidden');
-  const textDiv = ns.querySelector('.note-section-text');
-  const editDiv = ns.querySelector('.note-section-edit');
-  const ta = ns.querySelector('.cl-note-ta');
-  if (!editDiv || !ta) return;
-  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  const st = getItem(saved, id);
-  ta.value = st.note || '';
-  if (textDiv) textDiv.classList.add('hidden');
-  editDiv.classList.remove('hidden');
-  ta.focus();
-  ta.style.height = 'auto';
-  ta.style.height = ta.scrollHeight + 'px';
-}
-function saveNote(id) {
-  const ns = document.getElementById('note-section-' + id);
-  if (!ns) return;
-  const textDiv = ns.querySelector('.note-section-text');
-  const editDiv = ns.querySelector('.note-section-edit');
-  const ta = ns.querySelector('.cl-note-ta');
-  if (!editDiv || !ta || !textDiv) return;
-  const val = ta.value.trim();
-  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  saved[id] = saved[id] || {};
-  saved[id].note = val;
-  localStorage.setItem('checklist', JSON.stringify(saved));
-  textDiv.classList.remove('hidden');
-  editDiv.classList.add('hidden');
-  if (val) {
-    textDiv.textContent = '📝 ' + val;
-    ns.classList.remove('hidden');
-  } else {
-    textDiv.textContent = '';
-    ns.classList.add('hidden');
-  }
-}
 function setList(id, title, items) {
   const el = document.getElementById(id);
   if (!items || items.length === 0) { el.style.display = 'none'; return; }
@@ -594,357 +476,80 @@ document.querySelectorAll('[data-poi-cat]').forEach(cb => {
   });
 });
 
-// === CHECKLIST ===
-const CHECKLIST = [
-  { cat: "📄 Выезд из РФ", items: [
-    { id:"p10", text:"Загранпаспорт мужа (10 лет)", price:"5000", hasDate:true, expires:120, tip:"Оформить через Госуслуги." },
-    { id:"p5w", text:"Загранпаспорт жены (10 лет)", price:"5000", hasDate:true, expires:120, tip:"Оформить через Госуслуги." },
-    { id:"p5d", text:"Загранпаспорт ребёнка (5 лет, старый образец)", price:"3000", hasDate:true, expires:60, tip:"Оформить через Госуслуги после проставления штампа о гражданстве." },
-    { id:"stamp", text:"Штамп о гражданстве РФ на свидетельство о рождении ребёнка", price:"", tip:"Обратиться в МВД по месту жительства. Ставят в день обращения." },
-    { id:"nocrim_h", text:"Справка о несудимости (муж) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, tip:"Заказать на Госуслугах электронную версию с ЭЦП ведомства." },
-    { id:"nocrim_w", text:"Справка о несудимости (жена) — электронная с ЭЦП или бумажная", price:"", hasDate:true, expires:6, tip:"Заказать на Госуслугах электронную версию с ЭЦП ведомства." },
-    { id:"nocrim_apost_h", text:"Апостиль на справку о несудимости (муж)", price:"2500", hasDate:true, expires:6, tip:"Требуется только для бумажной версии справки." },
-    { id:"nocrim_apost_w", text:"Апостиль на справку о несудимости (жена)", price:"2500", hasDate:true, expires:6, tip:"Требуется только для бумажной версии справки." },
-    { id:"child_consent", text:"Нотариальное согласие на выезд ребёнка (если едет один родитель)", price:"2000", tip:"Сделать у нотариуса в РФ, если едете не всей семьей." },
-  ]},
-  { cat: "📄 Апостили и легализация", items: [
-    { id:"apost_marr", text:"Апостиль на свидетельство о браке (оригинал)", price:"2500", tip:"Потребуется для ВНЖ супруги по воссоединению семьи." },
-    { id:"apost_birth", text:"Апостиль на свидетельство о рождении ребёнка", price:"2500", tip:"Потребуется для ВНЖ ребенка и записи в школу/сад." },
-    { id:"translation_copies", text:"Переводы личных документов на сербский язык", price:"", tip:"Делает только судебный переводчик (sudski tumač) в Сербии." },
-  ]},
-  { cat: "📚 Образование и нострификация", items: [
-    { id:"diploma", text:"Оригинал диплома об образовании (с вкладышем оценок)", price:"", tip:"Апостиль на диплом в РФ для Сербии НЕ НУЖЕН." },
-    { id:"diploma_eng", text:"Перевод диплома у сербского судебного переводчика", price:"", tip:"Перевод диплома и приложения на сербский язык." },
-    { id:"talent_nostrification", text:"Подача на нострификацию диплома онлайн", price:"7500 RSD", tip:"Подача через портал Агентства по квалификациям (AZK) Сербии." },
-  ]},
-  { cat: "📄 Документы в Сербии", items: [
-    { id:"reg", text:"Регистрация пребывания (белый картон / Beli karton)", price:"", tip:"Оформить в полиции или через eTurista в течение 24 часов после въезда." },
-    { id:"pediatrician_check", text:"Осмотр ребенка у сербского педиатра", price:"около 50 €", tip:"Получение справки для зачисления в частный или государственный детский сад." },
-    { id:"vnd", text:"Единое разрешение (ВНЖ + разрешение на работу)", price:"18000 RSD", tip:"Онлайн-подача через eUprava по основанию «Талант» или «ИП»." },
-    { id:"preduzetnik", text:"Регистрация ИП в Сербии (Предузетник)", price:"1500 RSD", tip:"Оформление через Агентство APR." },
-    { id:"virtual_office", text:"Аренда виртуального офиса (юридического адреса) для ИП", price:"от 15 €/мес", tip:"Необходимо, если хозяин квартиры против регистрации ИП на его адрес." },
-  ]},
-  { cat: "🏦 Финансы и налоги", items: [
-    { id:"bank", text:"Открытие личного и бизнес-счёта в сербском банке", price:"", tip:"Открытие счетов в Alta Bank, Poštanska Štedionica или API Bank." },
-    { id:"tax_decl", text:"Налоговые декларации из РФ (3-НДФЛ / 2-НДФЛ)", price:"", tip:"Для подтверждения легальности доходов при комплаенсе в банке." },
-    { id:"bank_stat", text:"Выписки по банковским счетам из РФ за 3–6 месяцев", price:"", tip:"Выписки на английском языке из мобильных приложений банков РФ." },
-    { id:"power", text:"Генеральная доверенность на близкого человека в РФ", price:"2000", hasDate:true, expires:120, tip:"Оформить у нотариуса в РФ до отъезда на срок от 5 до 10 лет." },
-    { id:"pay_first_taxes", text:"Уплата первых фиксированных налогов по ИП (Паушал)", price:"около 350 €", tip:"Ежемесячный обязательный платеж в налоговую Сербии." },
-  ]},
-  { cat: "🏠 Жильё", items: [
-    { id:"rent", text:"Договор аренды жилья (Ugovor o zakupu)", price:"от 500 €/мес", hasDate:true, tip:"Письменный договор аренды с собственником квартиры минимум на 1 год." },
-  ]},
-  { cat: "❤️ Здоровье и медицина", items: [
-    { id:"insure", text:"Коммерческая медицинская страховка для ВНЖ", price:"100-200 €", hasDate:true, expires:12, tip:"Локальный полис (Dunav, Globos, Triglav) под подачу на ВНЖ." },
-    { id:"vaccine", text:"Карта профилактических прививок ребёнка (форма 063/у)", price:"", tip:"Оригинал карты прививок (особенно корь/MMR) для зачисления в сад." },
-    { id:"med_cards", text:"Медицинские выписки при хронических заболеваниях", price:"", tip:"Выписки с латинскими названиями действующих веществ (МНН)." },
-    { id:"dentist", text:"Пройти стоматологов всей семьёй в РФ", price:"", tip:"Рекомендуется вылечить зубы в РФ до переезда." },
-    { id:"pharm", text:"Собрать аптечку с привычными лекарствами", price:"", tip:"Запас специфических рецептурных препаратов на первые 3-6 месяцев." },
-    { id:"state_health_insurance", text:"Оформление государственной медстраховки (здравственная книжица)", price:"", tip:"Оформляется на всю семью через ваше работающее ИП бесплатно." },
-  ]},
-  { cat: "🚗 Транспорт / Автомобиль", items: [
-    { id:"license", text:"Перевод водительских прав на сербский язык", price:"", tip:"Сделать у судебного переводчика для законного вождения после первых 6 месяцев." },
-    { id:"car_power", text:"Нотариальная доверенность на выезд за границу на авто", price:"", tip:"Если машина оформлена не на вас." },
-    { id:"kbm", text:"Справка из страховой о безаварийном стаже (КБМ) на английском", price:"", tip:"Для получения скидки на автострахование в Сербии." },
-    { id:"car_docs", text:"СТС и ПТС (оригиналы на машину)", price:"", hasDate:true, tip:"Оригиналы документов для прохождения границ." },
-  ]},
-  { cat: "📱 Прочее", items: [
-    { id:"sim", text:"Сим-карта сербского оператора (A1 / Yettel / mts)", price:"1000 RSD", tip:"Купить prepaid-симкарту в любом киоске без паспорта." },
-    { id:"kindergarten_enroll", text:"Зачисление ребенка в частный детский сад", price:"около 400 €/мес", tip:"Подача документов и справки от педиатра в выбранный сад." },
-  ]},
+const masterTimeline = [
+  {
+    month: 0,
+    title: "Месяц 0: Подготовка в Москве",
+    focus: "Сбор документов, которые невозможно получить в Сербии",
+    tasks: [
+      { id: "p10", name: "Загранпаспорт мужа (10 лет)", cost: 50, currency: "EUR", desc: "Оформить через Госуслуги", tip: "Делается до 1 месяца.", hasDate: true, expires: 120 },
+      { id: "p5w", name: "Загранпаспорт жены (10 лет)", cost: 50, currency: "EUR", desc: "Оформить через Госуслуги", tip: "Делается до 1 месяца.", hasDate: true, expires: 120 },
+      { id: "p5d", name: "Загранпаспорт ребёнка", cost: 30, currency: "EUR", desc: "Старый образец на 5 лет", tip: "Оформить после штампа о гражданстве.", hasDate: true, expires: 60 },
+      { id: "stamp", name: "Штамп о гражданстве РФ на свидетельство о рождении", cost: 0, currency: "EUR", desc: "Штамп на обратную сторону свидетельства", tip: "Ставят в МВД по месту жительства в день обращения." },
+      { id: "m0_apostille", name: "Апостиль на справку о несудимости (муж + жена)", cost: 60, currency: "EUR", desc: "Пошлина 2500 руб за один апостиль", tip: "Обязательно делать на бумажные оригиналы справок в МВД.", hasDate: true, expires: 6 },
+      { id: "apost_marr", name: "Апостиль на свидетельство о браке", cost: 30, currency: "EUR", desc: "Пошлина 2500 руб", tip: "Необходим для ВНЖ супруги по воссоединению." },
+      { id: "apost_birth", name: "Апостиль на свидетельство о рождении ребенка", cost: 30, currency: "EUR", desc: "Пошлина 2500 руб", tip: "Потребуется для ВНЖ ребенка и записи в школу/сад." },
+      { id: "power", name: "Генеральная доверенность в РФ на близкого человека", cost: 20, currency: "EUR", desc: "Оформить у нотариуса до отъезда", tip: "Сделайте на срок от 5 до 10 лет с правом передоверия.", hasDate: true, expires: 120 },
+      { id: "dentist", name: "Пройти стоматологов всей семьёй в РФ", cost: 0, currency: "EUR", desc: "Санация полости рта", tip: "В РФ стоматология выйдет привычнее и дешевле перед стартом." }
+    ]
+  },
+  {
+    month: 1,
+    title: "Месяц 1: Прилет и ВНЖ «Талант»",
+    focus: "Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация",
+    tasks: [
+      { id: "m1_flight", name: "Прямой перелет Air Serbia (3 чел. с багажом)", cost: 1350, currency: "EUR", desc: "Рейс Москва — Белград" },
+      { id: "m1_airbnb", name: "Жилье на Airbnb (1-й месяц, всё включено)", cost: 950, currency: "EUR", desc: "Временный дом и получение белого картона от хоста" },
+      { id: "reg", name: "Получение белого картона (Beli karton)", cost: 0, currency: "EUR", desc: "Регистрация в полиции в течение 24 часов", tip: "Хозяин Airbnb обязан зарегистрировать вас онлайн или лично в полиции." },
+      { id: "sim", name: "Покупка местной сим-карты", cost: 10, currency: "EUR", desc: "Симка в любом киоске без паспорта", tip: "Операторы A1, Yettel или mts. Для начала берите prepaid-пакет." },
+      { id: "m1_translate", name: "Судебные переводы документов", cost: 200, currency: "EUR", desc: "Перевод диплома, свидетельств судебным переводчиком", tip: "Делается строго у сертифицированных судебных переводчиков (sudski tumač) в Сербии." },
+      { id: "talent_nostrification", name: "Подача диплома на нострификацию онлайн", cost: 65, currency: "EUR", desc: "Пошлина в AZK (около 7500 RSD)", tip: "Подача через портал Агентства по квалификациям." },
+      { id: "m1_insurance", name: "Обязательные медстраховки на 1 год (на троих)", cost: 250, currency: "EUR", desc: "Для подачи в полицию на ВНЖ", tip: "Локальный полис (Dunav, Globos, Triglav).", hasDate: true, expires: 12 },
+      { id: "m1_vnz", name: "Пошлины МУП за ВНЖ «Талант» на троих", cost: 600, currency: "EUR", desc: "Сборы за подачу документов на Единое разрешение", tip: "Подача происходит онлайн через eUprava." },
+      { id: "m1_living", name: "Еда, связь, базовый быт", cost: 600, currency: "EUR", desc: "Текущие расходы на первый месяц" },
+      { id: "m1_pediatrician", name: "Осмотр ребенка у педиатра для садика", cost: 50, currency: "EUR", desc: "Получение справки" }
+    ]
+  },
+  {
+    month: 2,
+    title: "Месяц 2: Постоянное жилье и детский сад",
+    focus: "Поиск долгосрочной квартиры и устройство дочки в садик",
+    tasks: [
+      { id: "m2_rent", name: "Аренда квартиры (1-й месяц)", cost: 600, currency: "EUR", desc: "Двушка на долгий срок", tip: "Договор аренды (Ugovor o zakupu) нужен минимум на 1 год.", hasDate: true },
+      { id: "m2_deposit", name: "Залог хозяину квартиры (100%)", cost: 600, currency: "EUR", desc: "Депозит" },
+      { id: "m2_agency", name: "Комиссия риелтору (50% единоразово)", cost: 300, currency: "EUR", desc: "Оплата услуг агентства" },
+      { id: "m2_utility", name: "Коммунальные услуги (Инфостан, свет, интернет)", cost: 150, currency: "EUR", desc: "Ежемесячные платежи по счетам" },
+      { id: "m2_kindergarten", name: "Частный детский сад (1-й месяц)", cost: 400, currency: "EUR", desc: "Оплата за дочку", tip: "Для зачисления обязательно нужна синяя прививочная карта (форма 063/у)." },
+      { id: "m2_living", name: "Еда, быт, семейные расходы", cost: 600, currency: "EUR", desc: "Текущие расходы на жизнь" }
+    ]
+  },
+  {
+    month: 3,
+    title: "Месяц 3: Запуск ИП и смена статуса ВНЖ",
+    focus: "Регистрация бизнеса и подготовка к первым доходам",
+    tasks: [
+      { id: "m3_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", desc: "Арендная плата и счета" },
+      { id: "m3_kindergarten", name: "Частный детский сад (2-й месяц)", cost: 400, currency: "EUR", desc: "Оплата сада" },
+      { id: "m3_living", name: "Еда и базовые расходы", cost: 600, currency: "EUR", desc: "Расходы на жизнь" },
+      { id: "preduzetnik", name: "Регистрация ИП в APR (Предузетник)", cost: 15, currency: "EUR", desc: "Оформление бизнеса в Агентстве APR", tip: "Потребуются выписки по счетам из РФ за 3–6 месяцев для комплаенса." },
+      { id: "m3_office", name: "Виртуальный офис для ИП (на год вперед)", cost: 185, currency: "EUR", desc: "Адрес для регистрации бизнеса", tip: "Нужен, если хозяин арендуемой квартиры против регистрации ИП на его адрес." },
+      { id: "bank", name: "Открытие личного и бизнес-счёта в банке", cost: 0, currency: "EUR", desc: "Счета в Alta, Поштанска или API банке", tip: "Потребуются налоговые декларации 2-НДФЛ/3-НДФЛ для подтверждения легальности доходов." },
+      { id: "m3_lawyer", name: "Услуги юриста (помощь с комплаенсом в банке и МУП)", cost: 200, currency: "EUR", desc: "Прохождение банковских проверок и пошлина за смену ВНЖ" }
+    ]
+  },
+  {
+    month: 4,
+    title: "Месяц 4: Жизнь на рельсах бизнеса",
+    focus: "Полноценная работа, оплата первых налогов",
+    tasks: [
+      { id: "m4_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", desc: "Арендная плата и счета" },
+      { id: "m4_kindergarten", name: "Частный детский сад (3-й месяц)", cost: 400, currency: "EUR", desc: "Оплата сада" },
+      { id: "m4_pausal", name: "Первые фиксированные налоги по ИП (Паушал)", cost: 350, currency: "EUR", desc: "Обязательный ежемесячный платеж в налоговую Сербии" },
+      { id: "state_health_insurance", name: "Оформление государственной медстраховки (здравственная книжица)", cost: 0, currency: "EUR", desc: "Бесплатная медицина на всю семью через ИП", tip: "После оформления здравственной книжицы годовая коммерческая страховка больше не нужна." },
+      { id: "m4_living", name: "Еда и быт", cost: 600, currency: "EUR", desc: "Стандартный ежемесячный бюджет семьи" }
+    ]
+  }
 ];
-
-function getValidChecklistIds() {
-  const ids = new Set();
-  CHECKLIST.forEach(group => group.items.forEach(item => ids.add(item.id)));
-  return ids;
-}
-
-function migrateChecklist(saved) {
-  const valid = getValidChecklistIds();
-  const clean = {};
-  Object.keys(saved).forEach(id => {
-    if (valid.has(id)) clean[id] = saved[id];
-  });
-  return clean;
-}
-
-window.getValidChecklistIds = getValidChecklistIds;
-window.migrateChecklist = migrateChecklist;
-
-
-
-function renderChecklist() {
-  const root = document.getElementById('checklist-items');
-  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  const locked = localStorage.getItem('checklist-locked') === 'true';
-  root.innerHTML = '';
-  CHECKLIST.forEach(group => {
-    const header = document.createElement('h3');
-    header.className = 'cl-cat';
-    header.textContent = group.cat;
-    root.appendChild(header);
-    group.items.forEach(item => {
-      const st = getItem(saved, item.id);
-      const checked = st.done;
-      const prog = st.progress;
-      const row = document.createElement('div');
-      row.className = 'check-item' + (checked ? ' done' : '') + (prog ? ' progress' : '');
-      const btn = document.createElement('button');
-      btn.className = 'cl-btn' + (checked ? ' on' : '') + (prog ? ' half' : '');
-      btn.setAttribute('aria-label', checked ? 'Отметить как невыполненное' : 'Отметить как выполненное');
-      let dateRow, dInput, mInput, yInput, compactSpan, inputGroup;
-      const getDateStr = () => {
-        if (!dInput) return '';
-        const d = dInput.value.trim();
-        const m = mInput.value.trim();
-        const y = yInput.value.trim();
-        return d && m && y ? `${d.padStart(2,'0')}.${m.padStart(2,'0')}.${y.padStart(2,'0')}` : '';
-      };
-      if (item.hasDate) {
-        dateRow = document.createElement('div');
-        dateRow.className = 'cl-date-row' + (checked ? '' : ' hidden');
-        const label = document.createElement('span');
-        label.className = 'cl-date-label';
-        label.textContent = '📅';
-        dateRow.appendChild(label);
-        compactSpan = document.createElement('span');
-        compactSpan.className = 'cl-date-compact';
-        dateRow.appendChild(compactSpan);
-        inputGroup = document.createElement('span');
-        inputGroup.className = 'cl-date-inputs';
-        const esc = s => s.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'})[c] || c);
-        const dd = st.date ? esc(st.date.split('.')[0] || '') : '';
-        const dm = st.date ? esc(st.date.split('.')[1] || '') : '';
-        const dy = st.date ? esc(st.date.split('.')[2] || '') : '';
-        inputGroup.innerHTML = `<input type="text" class="cl-date-d" placeholder="ДД" maxlength="2" inputmode="numeric" value="${dd}">.<input type="text" class="cl-date-m" placeholder="ММ" maxlength="2" inputmode="numeric" value="${dm}">.<input type="text" class="cl-date-y" placeholder="ГГ" maxlength="2" inputmode="numeric" value="${dy}">`;
-        dateRow.appendChild(inputGroup);
-        const rem = document.createElement('span');
-        rem.className = 'cl-date-remaining';
-        dateRow.appendChild(rem);
-        const editBtn = document.createElement('button');
-        editBtn.className = 'cl-date-edit hidden';
-        editBtn.textContent = '✏️';
-        dateRow.appendChild(editBtn);
-        dInput = inputGroup.querySelector('.cl-date-d');
-        mInput = inputGroup.querySelector('.cl-date-m');
-        yInput = inputGroup.querySelector('.cl-date-y');
-        const updateRemaining = () => {
-          const rem = dateRow.querySelector('.cl-date-remaining');
-          const ds = getDateStr();
-          if (!ds || !item.expires) { rem.textContent = ''; return; }
-          const parts = ds.split('.');
-          const issued = new Date('20' + parts[2], parts[1] - 1, parts[0]);
-          const exp = new Date(issued);
-          exp.setMonth(exp.getMonth() + item.expires);
-          const now = new Date();
-          const msLeft = exp - now;
-          if (msLeft <= 0) { rem.textContent = '⚠️ Просрочен'; rem.className = 'cl-date-remaining expired'; return; }
-          const daysLeft = Math.ceil(msLeft / 86400000);
-          let totalMonths = Math.floor(daysLeft / 30);
-          const dd = daysLeft % 30;
-          const years = Math.floor(totalMonths / 12);
-          const monthsLeft = totalMonths % 12;
-          let remainingText = '';
-          if (years > 0) {
-            const yEnd = years % 10, yEnd100 = years % 100;
-            const ySuffix = (yEnd === 1 && yEnd100 !== 11) || (yEnd >= 2 && yEnd <= 4 && (yEnd100 < 10 || yEnd100 >= 20)) ? 'г' : 'л';
-            remainingText += `${years}${ySuffix} `;
-          }
-          if (monthsLeft > 0 || years === 0) remainingText += `${monthsLeft}мес `;
-          if (dd > 0) remainingText += `${dd}дн`;
-          rem.textContent = `✅ до окончания: ${remainingText.trim()}`;
-          rem.className = 'cl-date-remaining ' + (years >= 1 ? 'ok' : totalMonths >= 1 ? 'warn' : 'expired');
-        };
-        let dateSaving = false;
-        const lockDate = () => {
-          if (!getDateStr()) return;
-          compactSpan.textContent = getDateStr();
-          inputGroup.classList.add('hidden');
-          compactSpan.classList.remove('hidden');
-          editBtn.textContent = '✏️';
-          editBtn.classList.remove('hidden');
-          updateRemaining();
-        };
-        const unlockDate = () => {
-          inputGroup.classList.remove('hidden');
-          compactSpan.classList.add('hidden');
-          editBtn.textContent = '✅';
-          editBtn.classList.remove('hidden');
-          dInput.focus();
-        };
-        editBtn.addEventListener('pointerdown', (e) => {
-          if (editBtn.textContent === '✅') {
-            dateSaving = true;
-          }
-        });
-        editBtn.addEventListener('click', () => {
-          if (editBtn.textContent === '✅') {
-            if (getDateStr()) {
-              setItem(saved, item.id, true, getDateStr());
-              lockDate();
-              updateStats();
-            }
-            dateSaving = false;
-          } else {
-            unlockDate();
-          }
-        });
-        const onDateChange = () => {
-          if (dateSaving) return;
-          setItem(saved, item.id, true, getDateStr());
-          lockDate();
-          updateStats();
-        };
-        if (st.date) {
-          lockDate();
-        } else {
-          editBtn.textContent = '✅';
-          editBtn.classList.remove('hidden');
-        }
-        editBtn.addEventListener('click', unlockDate);
-        [dInput, mInput, yInput].forEach((el, i) => {
-          el.addEventListener('input', () => {
-            if (el.value.length >= 2 && i < 2) {
-              const next = [dInput, mInput, yInput][i + 1];
-              if (next) next.focus();
-            }
-          });
-          el.addEventListener('change', onDateChange);
-        });
-      }
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        if (localStorage.getItem('checklist-locked') === 'true') return;
-        const st = getItem(saved, item.id);
-        const next = cycleItem(saved, item.id);
-        setItem(saved, item.id, next.done, next.done ? (dInput ? getDateStr() : '') : (next.progress ? '' : ''), next.progress);
-        btn.classList.remove('half', 'on');
-        if (next.done) btn.classList.add('on');
-        else if (next.progress) btn.classList.add('half');
-        const isActive = next.done || next.progress;
-        btn.setAttribute('aria-label', isActive ? 'Отметить как невыполненное' : 'Отметить как выполненное');
-        row.classList.toggle('done', next.done);
-        row.classList.toggle('progress', next.progress);
-        if (dateRow) dateRow.classList.toggle('hidden', !next.done);
-        updateStats();
-      });
-      row.appendChild(btn);
-      const textSpan = document.createElement('span');
-      textSpan.className = 'cl-text';
-      textSpan.innerHTML = item.text;
-      if (item.price) textSpan.innerHTML += ` <span class="cl-price">${item.price} ₽</span>`;
-      textSpan.addEventListener('click', e => toggleTip(textSpan, e));
-      row.appendChild(textSpan);
-      const tipBtn = document.createElement('span');
-      tipBtn.className = 'cl-tip';
-      tipBtn.textContent = '▶';
-      tipBtn.dataset.tip = item.tip;
-      tipBtn.dataset.link = item.link || '';
-      tipBtn.addEventListener('click', e => toggleTip(tipBtn, e));
-      row.appendChild(tipBtn);
-      const itemId = item.id;
-      // Note section
-      const ns = document.createElement('div');
-      ns.id = 'note-section-' + itemId;
-      ns.className = 'note-section' + (st.note ? '' : ' hidden');
-      const nsText = document.createElement('div');
-      nsText.className = 'note-section-text';
-      nsText.textContent = st.note ? '📝 ' + st.note : '';
-      ns.appendChild(nsText);
-      const nsEdit = document.createElement('div');
-      nsEdit.className = 'note-section-edit hidden';
-      const nsTA = document.createElement('textarea');
-      nsTA.className = 'cl-note-ta';
-      nsTA.placeholder = 'Заметка...';
-      nsTA.rows = 1;
-      nsTA.value = st.note || '';
-      const nsSave = document.createElement('button');
-      nsSave.className = 'note-section-save';
-      nsSave.textContent = '✅';
-      nsSave.addEventListener('click', e => { e.stopPropagation(); saveNote(itemId); });
-      nsEdit.addEventListener('click', e => { e.stopPropagation(); });
-      nsTA.addEventListener('input', () => {
-        nsTA.style.height = 'auto';
-        nsTA.style.height = nsTA.scrollHeight + 'px';
-      });
-      nsEdit.appendChild(nsTA);
-      nsEdit.appendChild(nsSave);
-      ns.appendChild(nsEdit);
-      const toggleTip = (el, e) => {
-        e.stopPropagation();
-        const row = el.closest('.check-item');
-        const tip = row.querySelector('.cl-tip');
-        const existing = row.nextElementSibling;
-        if (existing && existing.classList.contains('cl-tip-body')) {
-          existing.remove();
-          tip.textContent = '▶';
-          tip.classList.remove('open');
-          return;
-        }
-        const body = document.createElement('div');
-        body.className = 'cl-tip-body';
-        body.innerHTML =
-          `<div class="cl-tip-text">${tip.dataset.tip.replace(/\n/g, '<br>')}</div>` +
-          (tip.dataset.link ? `<a href="${safeUrl(tip.dataset.link)}" target="_blank" class="cl-tip-link">🔗 Открыть ссылку</a>` : '');
-        const s = JSON.parse(localStorage.getItem('checklist') || '{}');
-        const n = getItem(s, itemId).note || '';
-        const addBtn = document.createElement('button');
-        addBtn.className = 'cl-tip-add-note';
-        addBtn.textContent = n ? '✎ Редактировать комментарий' : '＋ Добавить комментарий';
-        addBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          editNote(itemId);
-        });
-        body.appendChild(addBtn);
-        row.after(body);
-        tip.textContent = '▼';
-        tip.classList.add('open');
-      };
-      root.appendChild(row);
-      if (dateRow) root.appendChild(dateRow);
-      root.appendChild(ns);
-    });
-  });
-  updateStats();
-}
-
-function updateStats() {
-  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  let total = 0, done = 0, progress = 0;
-  CHECKLIST.forEach(g => g.items.forEach(i => {
-    total++;
-    const st = getItem(saved, i.id);
-    if (st.done) done++;
-    else if (st.progress) progress++;
-  }));
-  document.getElementById('checklist-stats').innerHTML =
-    `✅ Выполнено: <b>${done}</b> / <b>${total}</b>` +
-    (progress ? ` · ⌛️ в процессе: <b>${progress}</b>` : '');
-}
-
-// Lock toggle
-function updateLockUI() {
-  const lockBtn = document.getElementById('lock-btn');
-  if (!lockBtn) return;
-  const locked = localStorage.getItem('checklist-locked') === 'true';
-  lockBtn.textContent = locked ? '🔒' : '🔓';
-  lockBtn.classList.toggle('locked', locked);
-}
-document.addEventListener('DOMContentLoaded', () => {
-  updateLockUI();
-  document.getElementById('lock-btn')?.addEventListener('click', () => {
-    const locked = localStorage.getItem('checklist-locked') === 'true';
-    localStorage.setItem('checklist-locked', locked ? 'false' : 'true');
-    updateLockUI();
-  });
-});
-
-document.addEventListener('DOMContentLoaded', renderChecklist);
-// Если вкладка чеклиста открывается динамически
-document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () => {
-  setTimeout(updateStats, 50);
-});
 
 // === СИСТЕМА УПРАВЛЕНИЯ ОБНОВЛЕНИЯМИ PWA ===
 
@@ -1032,7 +637,7 @@ function scrollToChecklistItem(id) {
     el.classList.add('flash');
     setTimeout(() => el.classList.remove('flash'), 1500);
   }
-  const tab = document.querySelector('[data-tab="checklist"]');
+  const tab = document.querySelector('[data-tab="plan"]');
   if (tab) tab.click();
 }
 
@@ -1051,7 +656,7 @@ function renderPlan() {
   let state = getPlanState();
   if (!state) {
     const tasks = {};
-    migrationPlan.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, customCost: null }; }));
+    masterTimeline.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, customCost: null }; }));
     state = { tasks };
     setPlanState(state);
   }
@@ -1070,7 +675,7 @@ function renderPlan() {
   let grandMonth4Planned = 0;
   let grandMonth4Spent = 0;
 
-  migrationPlan.forEach(m => {
+  masterTimeline.forEach(m => {
     const card = document.createElement('div');
     card.className = 'tl-card';
     const header = document.createElement('div');
@@ -1317,14 +922,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () => {
+document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(renderPlan, 50);
 });
 
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
-  renderChecklist();
-  updateLockUI();
   renderPlan();
 });
 
