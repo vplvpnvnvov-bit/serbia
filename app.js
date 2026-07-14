@@ -38,6 +38,15 @@ function formatPrice(value, currency) {
   return value.toLocaleString('ru-RU') + ' ' + currency;
 }
 
+let _debounceTimer = null;
+function debouncedSave() {
+  if (!window.saveToCloud) return;
+  clearTimeout(_debounceTimer);
+  _debounceTimer = setTimeout(() => {
+    window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
+  }, 1500);
+}
+
 // === MAP ===
 const map = L.map('map', {
   center: [44.76, 20.48],
@@ -660,6 +669,43 @@ function setPlanState(state) {
   localStorage.setItem('plan-state', JSON.stringify(state));
 }
 
+function calculateMonthMetrics(tasks, state) {
+  let totalPlanned = 0, spent = 0, spentInProgress = 0;
+  let taskDone = 0, taskProgress = 0, taskTotal = 0;
+
+  if (!Array.isArray(tasks)) {
+    return { totalPlanned: 0, spent: 0, spentInProgress: 0, taskDone: 0, taskProgress: 0, taskTotal: 0,
+      spentPct: 0, pendingSpentPct: 0, donePct: 0, progPct: 0,
+      combinedTaskPct: 0, combinedBudgetPct: 0, pendingTasksCount: 0 };
+  }
+
+  tasks.forEach(t => {
+    if (!t) return;
+    const s = (state && state.tasks && state.tasks[t.id]) || { checked: false, progress: false, customCost: null };
+    const cost = (s.customCost != null ? s.customCost : t.cost) || 0;
+    totalPlanned += cost;
+    if (s.checked === true) spent += cost;
+    else if (s.progress === true) spentInProgress += cost;
+    taskTotal++;
+    if (s.checked === true) taskDone++;
+    else if (s.progress === true) taskProgress++;
+  });
+
+  const spentPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
+  const pendingSpentPct = totalPlanned > 0 ? Math.round((spentInProgress / totalPlanned) * 100) : 0;
+  const donePct = taskTotal > 0 ? Math.round((taskDone / taskTotal) * 100) : 0;
+  const progPct = taskTotal > 0 ? Math.round((taskProgress / taskTotal) * 100) : 0;
+
+  return {
+    totalPlanned, spent, spentInProgress,
+    taskDone, taskProgress, taskTotal,
+    spentPct, pendingSpentPct, donePct, progPct,
+    combinedTaskPct: Math.round(donePct + (progPct * 0.5)),
+    combinedBudgetPct: spentPct + pendingSpentPct,
+    pendingTasksCount: taskTotal - taskDone - taskProgress
+  };
+}
+
 function renderPlan() {
   const root = document.getElementById('timeline-root');
   if (!root) return;
@@ -735,31 +781,18 @@ function renderPlan() {
     focusEl.textContent = '🎯 ' + (m.focus || '');
     card.appendChild(focusEl);
 
-    let totalPlanned = 0, spent = 0, spentInProgress = 0;
-    let taskDone = 0, taskProgress = 0, taskTotal = 0;
     const firstTask = m.tasks.length > 0 ? m.tasks[0] : null;
     const monthCur = (firstTask && firstTask.currency) || 'EUR';
     const monthSym = monthCur === 'RUB' ? ' ₽' : ' €';
-    m.tasks.forEach(t => {
-      if (!t) return;
-      const s = state.tasks[t.id] || { checked: false, progress: false, customCost: null };
-      const cost = (s.customCost != null ? s.customCost : t.cost) || 0;
-      totalPlanned += cost;
-      if (s.checked === true) spent += cost;
-      else if (s.progress === true) spentInProgress += cost;
-      taskTotal++;
-      if (s.checked === true) taskDone++;
-      else if (s.progress === true) taskProgress++;
-    });
 
-    const spentPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
-    const pendingSpentPct = totalPlanned > 0 ? Math.round((spentInProgress / totalPlanned) * 100) : 0;
-    const donePct = taskTotal > 0 ? Math.round((taskDone / taskTotal) * 100) : 0;
-    const progPct = taskTotal > 0 ? Math.round((taskProgress / taskTotal) * 100) : 0;
-
-    const pendingTasksCount = taskTotal - taskDone - taskProgress;
-    const combinedBudgetPct = spentPct + pendingSpentPct;
-    const combinedTaskPct = Math.round(donePct + (progPct * 0.5));
+    const M = calculateMonthMetrics(m.tasks, state);
+    const totalPlanned = M.totalPlanned, spent = M.spent, spentInProgress = M.spentInProgress;
+    const taskDone = M.taskDone, taskProgress = M.taskProgress, taskTotal = M.taskTotal;
+    const spentPct = M.spentPct, pendingSpentPct = M.pendingSpentPct;
+    const donePct = M.donePct, progPct = M.progPct;
+    const pendingTasksCount = M.pendingTasksCount;
+    const combinedBudgetPct = M.combinedBudgetPct;
+    const combinedTaskPct = M.combinedTaskPct;
 
     const metricsGroup = document.createElement('div');
     metricsGroup.className = 'plan-metrics-group';
@@ -1116,9 +1149,7 @@ if (!window.planListenerAdded) {
       }
       setPlanState(st);
       try { renderPlan(); } catch (e) { console.error(e); }
-      if (window.saveToCloud) {
-        window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
-      }
+      debouncedSave();
       return;
     }
 

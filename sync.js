@@ -121,7 +121,12 @@ async function fetchAndLoadDoc() {
   syncLoading = true;
 
   if (data.plan) {
-    localStorage.setItem('plan-state', JSON.stringify(data.plan));
+    const serverTs = data.lastUpdated || 0;
+    const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
+    if (serverTs > localTs) {
+      localStorage.setItem('plan-state', JSON.stringify(data.plan));
+      localStorage.setItem('plan-state-last-updated', String(serverTs));
+    }
   } else if (data.checklist || data.calc) {
     localStorage.setItem('checklist', JSON.stringify(data.checklist || {}));
     if (data.locked !== undefined) localStorage.setItem('checklist-locked', String(data.locked));
@@ -143,11 +148,14 @@ window.saveToCloud = async function() {
   if (syncPending) throw new Error('Синхронизация уже выполняется');
   syncPending = true;
   try {
+    const now = Date.now();
     const data = {
       plan: getPlanValues(),
       version: CURRENT_DATA_VERSION,
+      lastUpdated: now,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
+    localStorage.setItem('plan-state-last-updated', String(now));
     await db.collection('users').doc(syncCode).set(data, { merge: true });
     localStorage.setItem('last-sync-time', new Date().toLocaleString());
     updateSyncStatusUI();
