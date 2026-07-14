@@ -1599,8 +1599,34 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-.theme-btn:hover {
-  background: rgba(255,255,255,0.2);
+/* Элегантная пилюля цены на карте */
+.map-price-badge {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-color, #1a1a1a);
+  text-align: center;
+  white-space: nowrap;
+  background: var(--panel-bg, rgba(255,255,255,0.92));
+  border: 1px solid var(--border-color, rgba(0,0,0,0.12));
+  border-radius: 20px;
+  padding: 4px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.badge-price {
+  color: #d32f2f;
+  font-weight: 700;
+}
+body.dark-theme .map-price-badge {
+  background: rgba(30,30,30,0.95);
+  border-color: rgba(255,255,255,0.08);
+  color: #e3e3e7;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 #map {

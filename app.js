@@ -368,6 +368,19 @@ map.on('dragstart', () => {
   }
 });
 
+map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  DISTRICTS.forEach(d => {
+    const marker = labelMarkers[d.name];
+    if (!marker) return;
+    if (zoom < 11 || (urbanHide && !d.isUrban)) {
+      if (map.hasLayer(marker)) map.removeLayer(marker);
+    } else {
+      if (!map.hasLayer(marker)) map.addLayer(marker);
+    }
+  });
+});
+
 function showDistrictPanel(d, noFit) {
   document.getElementById('d-name').textContent = d.name;
   // Carousel gallery
@@ -436,15 +449,8 @@ function showDistrictPanel(d, noFit) {
 }
 
 function districtLabel(name, price, score) {
-  let color = score >= 8 ? '#2e7d32' : score >= 5 ? '#f9a825' : '#c62828';
-  return `<div style="font-family:sans-serif;font-size:11px;font-weight:bold;
-    color:#1a1a1a;text-align:center;white-space:nowrap;
-    background:rgba(255,255,255,0.9);border-radius:4px;
-    padding:3px 7px;border:1px solid #bbb;
-    box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    ${name} <span style="color:#d32f2f">${price}</span>
-    <span style="color:${color};font-size:10px"> (${score}/10)</span>
-  </div>`;
+  let color = score >= 9 ? '#1b5e20' : score >= 7 ? '#43a047' : score >= 5 ? '#fbc02d' : score >= 3 ? '#f57c00' : '#d32f2f';
+  return `<div class="map-price-badge"><span class="badge-name">${name}</span><span class="badge-price">${price}</span></div>`;
 }
 
 function popupHTML(d) {
@@ -527,6 +533,7 @@ document.getElementById('legend-toggle')?.addEventListener('click', () => {
 
 updateLegend(activePreset);
 setTimeout(() => updateUrbanFilter(true), 100);
+setTimeout(() => map.fire('zoomend'), 200);
 
 // === LAYER CONTROL ===
 // Base map switch
