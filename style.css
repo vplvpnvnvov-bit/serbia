@@ -1805,3 +1805,46 @@ body.dark-theme .badge {
   background: rgba(255,255,255,0.1);
   color: #81d4fa;
 }
+body.dark-theme .lc-check input {
+  accent-color: #81d4fa;
+}
+body.dark-theme input[type="range"] {
+  accent-color: #81d4fa;
+}
+body.dark-theme input[type="checkbox"] {
+  accent-color: #81d4fa;
+}
+body.dark-theme .preset-btn {
+  background: rgba(255,255,255,0.06);
+  color: #90a4ae;
+  border-color: rgba(255,255,255,0.1);
+}
+body.dark-theme .preset-btn.active {
+  background: var(--accent-color);
+  color: #1d1d1f;
+  border-color: var(--accent-color);
+}
+body.dark-theme .urban-label {
+  color: #90a4ae;
+}
+body.dark-theme #legend-toggle {
+  color: #81d4fa;
+}
+body.dark-theme #display-sync-code {
+  color: #81d4fa;
+}
+body.dark-theme .score {
+  color: #90a4ae;
+}
+body.dark-theme .price {
+  color: #ef5350;
+}
+body.dark-theme #opacity-slider {
+  accent-color: #81d4fa;
+}
+body.dark-theme .ts-control {
+  color: #b0bec5;
+}
+body.dark-theme .tab-content h4 {
+  color: #81d4fa;
+}
