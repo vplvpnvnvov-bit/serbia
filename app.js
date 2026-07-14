@@ -713,8 +713,8 @@ function renderPlan() {
   lockBar.appendChild(lockBtn);
   root.appendChild(lockBar);
 
-  let rubPlanned = 0, rubSpent = 0;
-  let eurPlanned013 = 0, eurSpent013 = 0;
+  let rubPlanned = 0, rubSpent = 0, rubInProgress = 0;
+  let eurPlanned013 = 0, eurSpent013 = 0, eurInProgress013 = 0;
   let eurPlanned4 = 0, eurSpent4 = 0;
   let globalTaskDone = 0, globalTaskProgress = 0, globalTaskTotal = 0;
 
@@ -734,7 +734,7 @@ function renderPlan() {
     focusEl.textContent = '🎯 ' + (m.focus || '');
     card.appendChild(focusEl);
 
-    let totalPlanned = 0, spent = 0;
+    let totalPlanned = 0, spent = 0, spentInProgress = 0;
     let taskDone = 0, taskProgress = 0, taskTotal = 0;
     const firstTask = m.tasks.length > 0 ? m.tasks[0] : null;
     const monthCur = (firstTask && firstTask.currency) || 'EUR';
@@ -745,14 +745,17 @@ function renderPlan() {
       const cost = (s.customCost != null ? s.customCost : t.cost) || 0;
       totalPlanned += cost;
       if (s.checked === true) spent += cost;
+      else if (s.progress === true) spentInProgress += cost;
       taskTotal++;
       if (s.checked === true) taskDone++;
       else if (s.progress === true) taskProgress++;
     });
 
     const remaining = totalPlanned - spent;
-    const budgetPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
-    const taskPct = taskTotal > 0 ? Math.round(((taskDone * 1 + taskProgress * 0.5) / taskTotal) * 100) : 0;
+    const spentPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
+    const pendingSpentPct = totalPlanned > 0 ? Math.round((spentInProgress / totalPlanned) * 100) : 0;
+    const donePct = taskTotal > 0 ? Math.round((taskDone / taskTotal) * 100) : 0;
+    const progPct = taskTotal > 0 ? Math.round((taskProgress / taskTotal) * 100) : 0;
 
     const stats = document.createElement('div');
     stats.className = 'plan-month-stats';
@@ -769,14 +772,23 @@ function renderPlan() {
     budgetWrapper.className = 'plan-metric-wrapper';
     const budgetHeader = document.createElement('div');
     budgetHeader.className = 'plan-metric-header';
-    budgetHeader.innerHTML = '<span class="plan-metric-title">💶 Бюджет</span><span class="plan-metric-value">' + budgetPct + '%</span>';
+    budgetHeader.innerHTML = '<span class="plan-metric-title">💶 Бюджет</span><span class="plan-metric-value">' +
+      `<span style="color:#1565c0;">🔵 ${spentPct}%</span>` +
+      `<span class="val-sep">|</span>` +
+      `<span style="color:#03a9f4;">🔷 ${pendingSpentPct}%</span>` +
+      '</span>';
     budgetWrapper.appendChild(budgetHeader);
     const budgetTrack = document.createElement('div');
-    budgetTrack.className = 'plan-progress-track';
-    const budgetFill = document.createElement('div');
-    budgetFill.className = 'plan-progress-fill budget';
-    budgetFill.style.width = budgetPct + '%';
-    budgetTrack.appendChild(budgetFill);
+    budgetTrack.className = 'plan-progress-track budget-combined';
+    const segSpent = document.createElement('div');
+    segSpent.className = 'plan-progress-segment segment-spent';
+    segSpent.style.width = spentPct + '%';
+    budgetTrack.appendChild(segSpent);
+    const segPendingSpent = document.createElement('div');
+    segPendingSpent.className = 'plan-progress-segment segment-pending-spent';
+    segPendingSpent.style.left = spentPct + '%';
+    segPendingSpent.style.width = pendingSpentPct + '%';
+    budgetTrack.appendChild(segPendingSpent);
     budgetWrapper.appendChild(budgetTrack);
     metricsGroup.appendChild(budgetWrapper);
 
@@ -784,14 +796,23 @@ function renderPlan() {
     taskWrapper.className = 'plan-metric-wrapper';
     const taskHeader = document.createElement('div');
     taskHeader.className = 'plan-metric-header';
-    taskHeader.innerHTML = '<span class="plan-metric-title">📋 Задачи</span><span class="plan-metric-value">' + taskPct + '%</span>';
+    taskHeader.innerHTML = '<span class="plan-metric-title">📋 Задачи</span><span class="plan-metric-value">' +
+      `<span style="color:#2e7d32;">🟢 ${donePct}%</span>` +
+      `<span class="val-sep">|</span>` +
+      `<span style="color:#fbc02d;">🟡 ${progPct}%</span>` +
+      '</span>';
     taskWrapper.appendChild(taskHeader);
     const taskTrack = document.createElement('div');
-    taskTrack.className = 'plan-progress-track';
-    const taskFill = document.createElement('div');
-    taskFill.className = 'plan-progress-fill tasks';
-    taskFill.style.width = taskPct + '%';
-    taskTrack.appendChild(taskFill);
+    taskTrack.className = 'plan-progress-track tasks-combined';
+    const segDone = document.createElement('div');
+    segDone.className = 'plan-progress-segment segment-done';
+    segDone.style.width = donePct + '%';
+    taskTrack.appendChild(segDone);
+    const segProg = document.createElement('div');
+    segProg.className = 'plan-progress-segment segment-progress';
+    segProg.style.left = donePct + '%';
+    segProg.style.width = progPct + '%';
+    taskTrack.appendChild(segProg);
     taskWrapper.appendChild(taskTrack);
     metricsGroup.appendChild(taskWrapper);
 
@@ -999,15 +1020,20 @@ function renderPlan() {
     card.appendChild(ul);
     root.appendChild(card);
 
-    if (m.month === 0) { rubPlanned += totalPlanned; rubSpent += spent; }
-    if (m.month >= 1 && m.month <= 3) { eurPlanned013 += totalPlanned; eurSpent013 += spent; }
+    if (m.month === 0) { rubPlanned += totalPlanned; rubSpent += spent; rubInProgress += spentInProgress; }
+    if (m.month >= 1 && m.month <= 3) { eurPlanned013 += totalPlanned; eurSpent013 += spent; eurInProgress013 += spentInProgress; }
     if (m.month === 4) { eurPlanned4 += totalPlanned; eurSpent4 += spent; }
     if (m.month >= 0 && m.month <= 3) { globalTaskDone += taskDone; globalTaskProgress += taskProgress; globalTaskTotal += taskTotal; }
   });
 
   const rubRemaining = rubPlanned - rubSpent;
   const eurRemaining013 = eurPlanned013 - eurSpent013;
-  const globalPct = globalTaskTotal > 0 ? Math.round(((globalTaskDone * 1 + globalTaskProgress * 0.5) / globalTaskTotal) * 100) : 0;
+  const rubSpentPct = rubPlanned > 0 ? Math.round((rubSpent / rubPlanned) * 100) : 0;
+  const rubProgPct = rubPlanned > 0 ? Math.round((rubInProgress / rubPlanned) * 100) : 0;
+  const eurSpentPct = eurPlanned013 > 0 ? Math.round((eurSpent013 / eurPlanned013) * 100) : 0;
+  const eurProgPct = eurPlanned013 > 0 ? Math.round((eurInProgress013 / eurPlanned013) * 100) : 0;
+  const globalDonePct = globalTaskTotal > 0 ? Math.round((globalTaskDone / globalTaskTotal) * 100) : 0;
+  const globalProgPct = globalTaskTotal > 0 ? Math.round((globalTaskProgress / globalTaskTotal) * 100) : 0;
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
   summary.innerHTML =
@@ -1019,14 +1045,42 @@ function renderPlan() {
       `<div style="font-size:0.9em;color:#64b5f6">📅 Осталось: <strong>${rubRemaining.toLocaleString('ru-RU')} ₽</strong></div>` +
     `</div>` +
     `<div class="tl-summary-row" style="margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">` +
-      `<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span><b>📈 Общая готовность к переезду</b></span><span><b>${globalPct}%</b></span></div>` +
-      `<div class="plan-progress-track"><div class="plan-progress-fill tasks" style="width:${globalPct}%"></div></div>` +
+      `<div class="plan-metric-wrapper">` +
+        `<div class="plan-metric-header" style="color:#ddd">` +
+          `<span class="plan-metric-title"><b>📈 Готовность к переезду</b></span>` +
+          `<span class="plan-metric-value"><span style="color:#2e7d32;">🟢 ${globalDonePct}%</span><span class="val-sep">|</span><span style="color:#fbc02d;">🟡 ${globalProgPct}%</span></span>` +
+        `</div>` +
+        `<div class="plan-progress-track tasks-combined">` +
+          `<div class="plan-progress-segment segment-done" style="width:${globalDonePct}%"></div>` +
+          `<div class="plan-progress-segment segment-progress" style="left:${globalDonePct}%;width:${globalProgPct}%"></div>` +
+        `</div>` +
+      `</div>` +
+      `<div class="plan-metric-wrapper" style="margin-top:8px">` +
+        `<div class="plan-metric-header" style="color:#ddd">` +
+          `<span class="plan-metric-title"><b>💶 Бюджет РФ</b></span>` +
+          `<span class="plan-metric-value"><span style="color:#1565c0;">🔵 ${rubSpentPct}%</span><span class="val-sep">|</span><span style="color:#03a9f4;">🔷 ${rubProgPct}%</span></span>` +
+        `</div>` +
+        `<div class="plan-progress-track budget-combined">` +
+          `<div class="plan-progress-segment segment-spent" style="width:${rubSpentPct}%"></div>` +
+          `<div class="plan-progress-segment segment-pending-spent" style="left:${rubSpentPct}%;width:${rubProgPct}%"></div>` +
+        `</div>` +
+      `</div>` +
     `</div>` +
     `<div class="tl-summary-row" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">` +
       `<div>🇷🇸 <b>Расходы в Сербии (Месяцы 1–3):</b></div>` +
       `<div style="margin-top:4px;font-size:0.95em">Запланировано: <strong>${eurPlanned013.toLocaleString('ru-RU')} €</strong></div>` +
       `<div style="font-size:0.9em;color:#81c784">✅ Потрачено: <strong>${eurSpent013.toLocaleString('ru-RU')} €</strong></div>` +
       `<div style="font-size:0.9em;color:#64b5f6">📅 Осталось: <strong>${eurRemaining013.toLocaleString('ru-RU')} €</strong></div>` +
+      `<div class="plan-metric-wrapper" style="margin-top:6px">` +
+        `<div class="plan-metric-header" style="color:#ddd">` +
+          `<span class="plan-metric-title">💶 Бюджет Сербия</span>` +
+          `<span class="plan-metric-value"><span style="color:#1565c0;">🔵 ${eurSpentPct}%</span><span class="val-sep">|</span><span style="color:#03a9f4;">🔷 ${eurProgPct}%</span></span>` +
+        `</div>` +
+        `<div class="plan-progress-track budget-combined">` +
+          `<div class="plan-progress-segment segment-spent" style="width:${eurSpentPct}%"></div>` +
+          `<div class="plan-progress-segment segment-pending-spent" style="left:${eurSpentPct}%;width:${eurProgPct}%"></div>` +
+        `</div>` +
+      `</div>` +
     `</div>` +
     `<div class="tl-summary-row" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2)">🔄 Ежемесячный бюджет на рельсах (Месяц 4): <strong>${eurPlanned4.toLocaleString('ru-RU')} €</strong>` +
     (eurSpent4 > 0 ? ` <span style="font-size:0.85em;color:#81c784">(потрачено ${eurSpent4.toLocaleString('ru-RU')} €)</span>` : '') +

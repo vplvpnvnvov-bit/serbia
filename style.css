@@ -1192,19 +1192,19 @@ html, body {
   50% { background: #fff3cd; }
 }
 
-/* METRICS — progress bars with headers */
+/* METRICS — segmented two-color progress bars */
 .plan-metrics-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin: 12px 0;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  gap: 12px;
+  margin: 14px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 .plan-metric-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
 }
 .plan-metric-header {
   display: flex;
@@ -1215,24 +1215,53 @@ html, body {
 }
 .plan-metric-value {
   color: #333;
+  font-size: 11px;
 }
+.val-sep {
+  margin: 0 5px;
+  color: rgba(0,0,0,0.12);
+}
+
 .plan-progress-track {
   width: 100%;
   height: 6px;
   background-color: #e0e0e0;
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
+  position: relative;
 }
-.plan-progress-fill {
+
+.plan-progress-segment {
   height: 100%;
-  border-radius: 3px;
-  transition: width 0.4s ease;
+  position: absolute;
+  top: 0;
+  transition: width 0.4s ease, left 0.4s ease;
 }
-.plan-progress-fill.budget {
-  background: linear-gradient(90deg, #66bb6a, #2e7d32);
+
+/* Budget: spent (dark blue) + pending (cyan) */
+.plan-progress-segment.segment-spent {
+  left: 0;
+  background-color: #1565c0;
+  border-radius: 4px 0 0 4px;
 }
-.plan-progress-fill.tasks {
-  background: linear-gradient(90deg, #5c6bc0, #1565c0);
+.plan-progress-segment.segment-pending-spent {
+  background-color: #03a9f4;
+}
+
+/* Tasks: done (green) + in-progress (yellow) */
+.plan-progress-segment.segment-done {
+  left: 0;
+  background-color: #2e7d32;
+  border-radius: 4px 0 0 4px;
+}
+.plan-progress-segment.segment-progress {
+  background-color: #fbc02d;
+}
+
+/* Round edges when 100% */
+.plan-progress-segment.segment-spent[style*="width: 100%"],
+.plan-progress-segment.segment-done[style*="width: 100%"] {
+  border-radius: 4px;
 }
 
 /* === SETTINGS DATA CENTER === */
