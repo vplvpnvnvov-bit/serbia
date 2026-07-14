@@ -5,118 +5,35 @@ window.APP_CONFIG = {
 };
 
 const defaultMonthlyExpenses = [
-  {
-    id: "rent_first_month",
-    month: 1,
-    category: "Жилье",
-    name: "Аренда жилья (1-й месяц)",
-    cost: 500,
-    description: "Первый месяц аренды квартиры",
-  },
-  {
-    id: "rent_deposit",
-    month: 1,
-    category: "Жилье",
-    name: "Депозит за квартиру",
-    cost: 500,
-    description: "Возвратный депозит собственнику (обычно равен 1 месяцу)",
-  },
-  {
-    id: "ip_open",
-    month: 1,
-    category: "Бизнес",
-    name: "Открытие ИП (APR) под ключ",
-    cost: 150,
-    description: "Пошлины АПР, услуги юриста, печать, открытие счета",
-  },
-  {
-    id: "court_translator_1",
-    month: 1,
-    category: "Переводы",
-    name: "Судебный переводчик (пакет для ИП)",
-    cost: 50,
-    description: "Перевод диплома и паспорта на сербский язык с заверением",
-  },
-  {
-    id: "rent_second_month",
-    month: 2,
-    category: "Жилье",
-    name: "Аренда жилья (2-й месяц)",
-    cost: 500,
-    description: "Арендная плата",
-  },
-  {
-    id: "vnz_tax",
-    month: 2,
-    category: "ВНЖ",
-    name: "Пошлины на ВНЖ (Боравак)",
-    cost: 170,
-    description: "Государственный сбор за подачу заявления на ВНЖ",
-  },
-  {
-    id: "insurance_year",
-    month: 2,
-    category: "ВНЖ",
-    name: "Медицинская страховка (1 год)",
-    cost: 120,
-    description: "Обязательная локальная страховка для ВНЖ",
-  },
-  {
-    id: "bookkeeper_1",
-    month: 2,
-    category: "Бизнес",
-    name: "Бухгалтер (1-й месяц)",
-    cost: 80,
-    description: "Сопровождение ИП, расчет налогов",
-  },
-  {
-    id: "rent_third_month",
-    month: 3,
-    category: "Жилье",
-    name: "Аренда жилья (3-й месяц)",
-    cost: 500,
-    description: "Арендная плата",
-  },
-  {
-    id: "taxes_first_payment",
-    month: 3,
-    category: "Бизнес",
-    name: "Налоги ИП (Паушал)",
-    cost: 250,
-    description: "Ежемесячный фиксированный налог за ИП",
-  },
-  {
-    id: "bookkeeper_2",
-    month: 3,
-    category: "Бизнес",
-    name: "Бухгалтер (2-й месяц)",
-    cost: 80,
-    description: "Ежемесячная оплата услуг бухгалтера",
-  },
-  {
-    id: "rent_fourth_month",
-    month: 4,
-    category: "Жилье",
-    name: "Аренда жилья (4-й месяц)",
-    cost: 500,
-    description: "Арендная плата",
-  },
-  {
-    id: "taxes_second_payment",
-    month: 4,
-    category: "Бизнес",
-    name: "Налоги ИП (Паушал)",
-    cost: 250,
-    description: "Ежемесячный налог",
-  },
-  {
-    id: "bookkeeper_3",
-    month: 4,
-    category: "Бизнес",
-    name: "Бухгалтер (3-й месяц)",
-    cost: 80,
-    description: "Ежемесячная оплата услуг бухгалтера",
-  },
+  { id: "m0_apostille", month: 0, category: "Документы (РФ)", name: "Апостиль на справку о судимости", cost: 30, description: "Госпошлина за апостилирование справки МВД (2500 руб)" },
+  { id: "m0_docs", month: 0, category: "Документы (РФ)", name: "Сбор оригиналов документов", cost: 0, description: "Диплом с приложением, свидетельства о браке и рождении, синяя прививочная книжка дочки (форма № 156/у-93)" },
+
+  { id: "m1_flight", month: 1, category: "Переезд", name: "Перелет Air Serbia (3 чел + багаж)", cost: 1350, description: "Прямой рейс Москва — Белград" },
+  { id: "m1_airbnb", month: 1, category: "Жилье", name: "Airbnb (1-й месяц, всё включено)", cost: 950, description: "Временное жилье на период поиска постоянной квартиры и оформление белого картона" },
+  { id: "m1_vnz_tax", month: 1, category: "ВНЖ", name: "Пошлины за ВНЖ «Талант» (на троих)", cost: 600, description: "Административные сборы МУП" },
+  { id: "m1_insurance", month: 1, category: "ВНЖ", name: "Медстраховки на 1 год (на троих)", cost: 250, description: "Обязательные годовые полисы для подачи на ВНЖ" },
+  { id: "m1_translations", month: 1, category: "Переводы", name: "Судебные переводы документов", cost: 200, description: "Перевод диплома, свидетельств, прививок судебным переводчиком" },
+  { id: "m1_living", month: 1, category: "Быт", name: "Еда, связь, базовый быт", cost: 600, description: "Расходы на жизнь семьи из 3-х человек" },
+  { id: "m1_pediatrician", month: 1, category: "Быт", name: "Осмотр ребенка у педиатра для сада", cost: 50, description: "Медицинская справка для зачисления в частный садик" },
+
+  { id: "m2_rent", month: 2, category: "Жилье", name: "Аренда постоянной квартиры (1-й месяц)", cost: 600, description: "Двухкомнатная квартира для семьи" },
+  { id: "m2_deposit", month: 2, category: "Жилье", name: "Депозит хозяину квартиры (100%)", cost: 600, description: "Возвратный залог за сохранность имущества" },
+  { id: "m2_agency", month: 2, category: "Жилье", name: "Комиссия риелтору (50%)", cost: 300, description: "Единоразовая оплата услуг агента по недвижимости" },
+  { id: "m2_bills", month: 2, category: "Жилье", name: "Коммунальные услуги", cost: 150, description: "Инфостан (отопление, вода), электричество, домашний интернет" },
+  { id: "m2_kindergarten", month: 2, category: "Быт", name: "Частный детский сад (1-й месяц)", cost: 400, description: "Ежемесячная оплата коммерческого садика для дочки" },
+  { id: "m2_living", month: 2, category: "Быт", name: "Еда, быт, семейные расходы", cost: 600, description: "Расходы на жизнь семьи" },
+
+  { id: "m3_rent_bills", month: 3, category: "Жилье", name: "Аренда квартиры + коммуналка", cost: 750, description: "Ежемесячный платеж за проживание" },
+  { id: "m3_kindergarten", month: 3, category: "Быт", name: "Частный детский сад (2-й месяц)", cost: 400, description: "Оплата садика" },
+  { id: "m3_living", month: 3, category: "Быт", name: "Еда и базовые расходы", cost: 600, description: "Расходы на жизнь семьи" },
+  { id: "m3_ip_tax", month: 3, category: "Бизнес", name: "Пошлины за ИП и смену ВНЖ", cost: 65, description: "Регистрация ИП в APR и пошлина за переход на ВНЖ по ИП" },
+  { id: "m3_virtual_office", month: 3, category: "Бизнес", name: "Виртуальный офис / Юр. адрес (на год)", cost: 185, description: "Аренда адреса для регистрации ИП" },
+  { id: "m3_lawyer", month: 3, category: "Бизнес", name: "Услуги юриста (банк и комплаенс)", cost: 200, description: "Помощь с открытием бизнес-счета и прохождением проверок банка" },
+
+  { id: "m4_rent_bills", month: 4, category: "Жилье", name: "Аренда квартиры + коммуналка", cost: 750, description: "Ежемесячный платеж за проживание" },
+  { id: "m4_kindergarten", month: 4, category: "Быт", name: "Частный детский сад (3-й месяц)", cost: 400, description: "Оплата садика" },
+  { id: "m4_pausal_tax", month: 4, category: "Бизнес", name: "Налоги ИП (Паушал)", cost: 350, description: "Первый фиксированный налог за ИП (включает гос. медстрахование всей семьи)" },
+  { id: "m4_living", month: 4, category: "Быт", name: "Еда и быт", cost: 600, description: "Стандартные расходы на жизнь" },
 ];
 
 // === TABS ===
@@ -1162,10 +1079,11 @@ if (updateBtn) {
 
 // === CALCULATOR (Monthly Breakdown) ===
 const MONTH_LABELS = [
-  'Месяц 1 — Старт, аренда, подача документов',
-  'Месяц 2 — Подача на ВНЖ',
-  'Месяц 3 — Ожидание ВНЖ и первые налоги',
-  'Месяц 4 — Получение ВНЖ и адаптация',
+  'Месяц 0: Подготовка в Москве — Сбор документов, которые невозможно получить в Сербии',
+  'Месяц 1: Прилет и ВНЖ «Талант» — Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация',
+  'Месяц 2: Постоянное жилье и детский сад — Поиск долгосрочной квартиры и устройство дочки в садик',
+  'Месяц 3: Запуск ИП и смена статуса ВНЖ — Регистрация бизнеса и подготовка к первым доходам',
+  'Месяц 4: Жизнь на рельсах бизнеса — Полноценная работа, оплата первых налогов',
 ];
 
 function getCalcState() {
@@ -1181,7 +1099,7 @@ function calcTotal() {
   const expenses = state.expenses || {};
   let grandTotal = 0;
 
-  for (let m = 1; m <= 4; m++) {
+  for (let m = 0; m <= 4; m++) {
     const monthTotalEl = document.getElementById('month-total-' + m);
     let monthTotal = 0;
     defaultMonthlyExpenses.filter(e => e.month === m).forEach(e => {
@@ -1211,11 +1129,12 @@ function renderCalc() {
 
   root.innerHTML = '';
 
-  for (let m = 1; m <= 4; m++) {
+  for (let m = 0; m <= 4; m++) {
     const items = defaultMonthlyExpenses.filter(e => e.month === m);
+    if (items.length === 0) continue;
     const block = document.createElement('div');
     block.className = 'calc-month-block';
-    block.innerHTML = `<h3 class="calc-month-title">${MONTH_LABELS[m - 1]}</h3>`;
+    block.innerHTML = `<h3 class="calc-month-title">${MONTH_LABELS[m]}</h3>`;
 
     items.forEach(e => {
       const s = state.expenses[e.id] || { selected: true, customCost: null };
@@ -1241,7 +1160,7 @@ function renderCalc() {
 
   const grand = document.createElement('div');
   grand.className = 'calc-grand-total';
-  grand.innerHTML = `<strong>Общий бюджет на 4 месяца:</strong> <span id="calc-grand-total">0 €</span>`;
+  grand.innerHTML = `<strong>Общий бюджет на 5 месяцев:</strong> <span id="calc-grand-total">0 €</span>`;
   root.appendChild(grand);
 
   root.addEventListener('input', e => {
