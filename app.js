@@ -237,12 +237,6 @@ function updateMapColors(preset) {
     }
   });
   updateLegend(preset);
-  // update info panel if open
-  const nameEl = document.getElementById('d-name');
-  if (nameEl && nameEl.textContent) {
-    const d = DISTRICTS.find(x => x.name === nameEl.textContent);
-    if (d) showDistrictPanel(d, true);
-  }
 }
 
 function updateLegend(preset) {

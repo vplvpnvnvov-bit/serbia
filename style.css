@@ -1599,28 +1599,26 @@ html, body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
-/* Элегантный микро-ценник (эффект матового стекла) */
+/* Контрастный минималистичный ценник */
 .map-price-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  background: rgba(255,255,255,0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  gap: 5px;
+  padding: 3px 8px;
+  background: #ffffff;
+  border: 1.5px solid #1a237e;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 11px;
   font-weight: 700;
-  color: #1d1d1f;
+  color: #1a237e;
   pointer-events: none;
-  transition: transform 0.2s cubic-bezier(0.4,0,0.2,1), background 0.2s;
+  transition: transform 0.2s ease, background-color 0.2s;
 }
 .badge-status-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -1628,18 +1626,17 @@ html, body {
   letter-spacing: -0.2px;
 }
 body.dark-theme .map-price-badge {
-  background: rgba(30,30,30,0.75);
-  border-color: rgba(255,255,255,0.06);
-  color: #e3e3e7;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background: #1e1e1e;
+  border-color: #fbc02d;
+  color: #fbc02d;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 .map-price-badge.active {
-  transform: translateY(-2px) scale(1.05);
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: scale(1.1);
+  background: #f5f5f7;
 }
 body.dark-theme .map-price-badge.active {
-  background: rgba(30,30,30,0.95);
+  background: #2a2a2a;
 }
 
 #map {
