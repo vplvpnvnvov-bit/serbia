@@ -1590,3 +1590,153 @@ html, body {
 .theme-btn:hover {
   background: rgba(255,255,255,0.2);
 }
+
+/* Dark theme — plan section overrides */
+body.dark-theme #app {
+  background: var(--bg-color);
+}
+body.dark-theme .tab-content {
+  background: var(--bg-color);
+}
+body.dark-theme .tl-card {
+  background: var(--panel-bg);
+  border-color: var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+body.dark-theme .tl-header {
+  background: #263238;
+}
+body.dark-theme .tl-month {
+  color: #eceff1;
+}
+body.dark-theme .tl-focus {
+  color: #b0bec5;
+}
+body.dark-theme .tl-desc {
+  color: #90a4ae;
+}
+body.dark-theme .tl-step {
+  border-bottom-color: rgba(255,255,255,0.06);
+}
+body.dark-theme .tl-step:hover {
+  background-color: rgba(255,255,255,0.03);
+}
+body.dark-theme .plan-task-name {
+  color: #cfd8dc;
+}
+body.dark-theme .plan-task-desc {
+  color: #78909c;
+}
+body.dark-theme .plan-task-cost {
+  color: #81c784;
+}
+body.dark-theme .plan-month-stats {
+  background: rgba(255,255,255,0.04);
+  color: #b0bec5;
+}
+body.dark-theme .plan-metric-details {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.06);
+  color: #90a4ae;
+}
+body.dark-theme .plan-metric-header {
+  color: #b0bec5;
+}
+body.dark-theme .plan-metric-value {
+  color: #cfd8dc;
+}
+body.dark-theme .plan-metric-percentage {
+  color: #cfd8dc;
+}
+body.dark-theme .plan-metric-title {
+  color: #b0bec5;
+}
+body.dark-theme .plan-progress-track {
+  background: rgba(255,255,255,0.08);
+}
+body.dark-theme .plan-tip-body {
+  color: #b0bec5;
+}
+body.dark-theme .plan-tip-text b,
+body.dark-theme .plan-tip-text strong {
+  color: #ffd54f;
+}
+body.dark-theme .plan-date-inline {
+  color: #90a4ae;
+}
+body.dark-theme .plan-date-label,
+body.dark-theme .plan-date-val {
+  color: #81d4fa;
+}
+body.dark-theme .plan-note-inline {
+  color: #b0bec5;
+}
+body.dark-theme .plan-note-display {
+  background: rgba(255,253,231,0.08);
+  border-color: rgba(230,216,138,0.2);
+  color: #cfd8dc;
+}
+body.dark-theme .plan-note-ta {
+  background: rgba(255,253,231,0.08);
+  border-color: rgba(230,216,138,0.25);
+  color: #cfd8dc;
+}
+body.dark-theme .plan-status-btn {
+  background: #37474f;
+  border-color: #546e7a;
+}
+body.dark-theme .tl-summary {
+  color: #b0bec5;
+}
+body.dark-theme .plan-lock-btn {
+  background: rgba(255,255,255,0.06);
+  color: #90a4ae;
+  border-color: rgba(255,255,255,0.08);
+}
+body.dark-theme .plan-date-d,
+body.dark-theme .plan-date-m,
+body.dark-theme .plan-date-y {
+  background: #37474f;
+  border-color: #546e7a;
+  color: #cfd8dc;
+}
+body.dark-theme #legend,
+body.dark-theme #district-info,
+body.dark-theme .lc-panel {
+  background: var(--panel-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+body.dark-theme .poi-reestr {
+  background: var(--panel-bg);
+  border-color: var(--border-color);
+}
+body.dark-theme .poi-reestr-toggle {
+  background: #263238;
+  color: #81d4fa;
+}
+body.dark-theme .poi-reestr-item {
+  color: #cfd8dc;
+  border-bottom-color: rgba(255,255,255,0.06);
+}
+body.dark-theme .poi-reestr-item:hover {
+  background: rgba(255,255,255,0.06);
+}
+body.dark-theme .tab-btn {
+  background: #263238;
+  color: #78909c;
+  border-color: rgba(255,255,255,0.06);
+}
+body.dark-theme .tab-btn.active {
+  background: var(--accent-color);
+  color: #1d1d1f;
+}
+body.dark-theme .settings-card {
+  background: var(--panel-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+body.dark-theme .settings-card .card-desc,
+body.dark-theme .section-intro {
+  color: var(--text-muted);
+}
