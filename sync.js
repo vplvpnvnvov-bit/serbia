@@ -54,6 +54,7 @@ firebase.auth().onAuthStateChanged(async user => {
       localStorage.setItem('sync-code', syncCode);
     }
     document.getElementById('display-sync-code').textContent = syncCode;
+    updateCloudStatus();
   }
 });
 
@@ -75,6 +76,25 @@ function updateSyncStatusUI() {
       syncTimeStatus.textContent = 'Еще не синхронизировано с облаком';
       syncTimeStatus.className = 'status-none';
     }
+  }
+}
+
+async function updateCloudStatus() {
+  const el = document.getElementById('cloud-status');
+  if (!el) return;
+  if (!syncCode) { el.textContent = 'Нет кода'; return; }
+  try {
+    const doc = await db.collection('users').doc(syncCode).get({ source: 'server' });
+    if (!doc.exists) { el.textContent = '❌ Данные в облаке не найдены'; return; }
+    const data = doc.data();
+    if (data.updatedAt) {
+      const ts = data.updatedAt.toDate ? data.updatedAt.toDate().toLocaleString() : 'есть данные';
+      el.textContent = `✅ Данные есть в облаке (${ts})`;
+    } else {
+      el.textContent = '✅ Данные есть в облаке';
+    }
+  } catch (_) {
+    el.textContent = '⚠️ Нет соединения с сервером';
   }
 }
 
@@ -130,6 +150,7 @@ async function fetchAndLoadDoc() {
   syncLoading = false;
   localStorage.setItem('last-sync-time', new Date().toLocaleString());
   updateSyncStatusUI();
+  updateCloudStatus();
 }
 
 window.saveToCloud = async function() {
@@ -155,11 +176,13 @@ window.deleteCloudData = async function() {
   if (v.exists) throw new Error('Сервер не подтвердил удаление');
   localStorage.removeItem('last-sync-time');
   updateSyncStatusUI();
+  updateCloudStatus();
 };
 
     await db.collection('users').doc(syncCode).set(data, { merge: true });
     localStorage.setItem('last-sync-time', new Date().toLocaleString());
     updateSyncStatusUI();
+    updateCloudStatus();
   } finally {
     syncPending = false;
   }
@@ -188,6 +211,7 @@ window.changeSyncCode = function() {
     localStorage.setItem('sync-code', c);
     syncCode = c;
     document.getElementById('display-sync-code').textContent = c;
+    updateCloudStatus();
     window.loadFromCloud().catch(() => {});
   }
 };
