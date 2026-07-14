@@ -662,14 +662,14 @@ function renderPlan() {
   let state = getPlanState();
   if (!state) {
     const tasks = {};
-    masterTimeline.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, customCost: null }; }));
+    masterTimeline.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, progress: false, customCost: null }; }));
     state = { tasks };
     setPlanState(state);
   } else {
     let reconciled = false;
     masterTimeline.forEach(m => m.tasks.forEach(t => {
       if (!state.tasks[t.id]) {
-        state.tasks[t.id] = { checked: false, customCost: null };
+        state.tasks[t.id] = { checked: false, progress: false, customCost: null };
         reconciled = true;
       }
     }));
@@ -682,13 +682,11 @@ function renderPlan() {
   root.appendChild(h);
   const desc = document.createElement('p');
   desc.className = 'tl-desc';
-  desc.textContent = 'Отмечайте выполненные задачи (тумблером) — потраченные деньги зафиксируются. Нажмите ▶ для деталей, дат и заметок.';
+  desc.textContent = 'Нажимайте на кружок статуса: ⚪ В планах → 🟡 В процессе → 🟢 Выполнено. Даты и заметки видны на карточке сразу. ▶ — справочная информация.';
   root.appendChild(desc);
 
-  let grandPlanned = 0;
-  let grandSpent = 0;
-  let grandMonth4Planned = 0;
-  let grandMonth4Spent = 0;
+  let grandPlanned = 0, grandSpent = 0;
+  let grandMonth4Planned = 0, grandMonth4Spent = 0;
 
   masterTimeline.forEach(m => {
     const card = document.createElement('div');
@@ -702,11 +700,9 @@ function renderPlan() {
     focusEl.textContent = '🎯 ' + m.focus;
     card.appendChild(focusEl);
 
-    let totalPlanned = 0;
-    let spent = 0;
-
+    let totalPlanned = 0, spent = 0;
     m.tasks.forEach(t => {
-      const s = state.tasks[t.id] || { checked: false, customCost: null };
+      const s = state.tasks[t.id] || { checked: false, progress: false, customCost: null };
       const cost = (s.customCost != null ? s.customCost : t.cost);
       totalPlanned += cost;
       if (s.checked === true) spent += cost;
@@ -740,29 +736,30 @@ function renderPlan() {
     ul.className = 'tl-steps';
 
     m.tasks.forEach(t => {
-      const s = state.tasks[t.id] || { checked: false, customCost: null };
+      const s = state.tasks[t.id] || { checked: false, progress: false, customCost: null };
       const checked = s.checked === true;
+      const prog = s.progress === true;
       const cost = (s.customCost != null ? s.customCost : t.cost);
+      const hasTip = !!t.tip;
+      const hasDate = !!t.hasDate;
+      const dateVal = s.date || '';
+      const noteVal = s.note || '';
+
+      let statusClass = '';
+      let statusEmoji = '🔵';
+      if (checked) { statusClass = ' status-done'; statusEmoji = '🟢'; }
+      else if (prog) { statusClass = ' status-in-progress'; statusEmoji = '🟡'; }
+      else { statusEmoji = '⚪'; }
 
       const li = document.createElement('li');
-      li.className = 'tl-step' + (checked ? ' done' : ' plan-pending');
+      li.className = 'tl-step' + statusClass;
       li.id = 'plan-' + t.id;
 
-      const label = document.createElement('label');
-      label.className = 'plan-toggle';
-
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.className = 'plan-task-cb';
-      cb.checked = checked;
-      cb.dataset.planId = t.id;
-      label.appendChild(cb);
-
-      const slider = document.createElement('span');
-      slider.className = 'plan-toggle-slider';
-      label.appendChild(slider);
-
-      li.appendChild(label);
+      const statusBtn = document.createElement('button');
+      statusBtn.className = 'plan-status-btn' + (checked ? ' done' : prog ? ' progress' : '');
+      statusBtn.textContent = statusEmoji;
+      statusBtn.dataset.planStatus = t.id;
+      li.appendChild(statusBtn);
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'plan-task-name';
@@ -781,9 +778,133 @@ function renderPlan() {
         li.appendChild(descSpan);
       }
 
-      const hasTip = !!t.tip;
-      const hasDate = !!t.hasDate;
-      if (hasTip || hasDate) {
+      // Date block — visible when done AND hasDate
+      if (checked && hasDate) {
+        const expiresMonths = t.expires || 0;
+
+        const dateBlock = document.createElement('div');
+        dateBlock.className = 'plan-date-inline';
+
+        const dateLabel = document.createElement('span');
+        dateLabel.className = 'plan-date-label';
+        dateLabel.textContent = '📅 Получено:';
+        dateBlock.appendChild(dateLabel);
+
+        const dateValEl = document.createElement('span');
+        dateValEl.className = 'plan-date-val';
+        dateValEl.id = 'plan-dv-' + t.id;
+        dateValEl.textContent = dateVal || 'не указана';
+        dateBlock.appendChild(dateValEl);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'plan-date-edit-btn';
+        editBtn.textContent = '✏️';
+        editBtn.dataset.planDateEdit = t.id;
+        dateBlock.appendChild(editBtn);
+
+        const dateInputsWrap = document.createElement('span');
+        dateInputsWrap.className = 'plan-date-inputs-wrap hidden';
+        dateInputsWrap.id = 'plan-di-' + t.id;
+
+        const parts = dateVal ? dateVal.split('.') : [];
+        const dInp = document.createElement('input');
+        dInp.className = 'plan-date-d';
+        dInp.placeholder = 'ДД'; dInp.value = parts[0] || ''; dInp.maxLength = 2;
+        dateInputsWrap.appendChild(dInp);
+        dateInputsWrap.appendChild(document.createTextNode('.'));
+        const mInp = document.createElement('input');
+        mInp.className = 'plan-date-m';
+        mInp.placeholder = 'ММ'; mInp.value = parts[1] || ''; mInp.maxLength = 2;
+        dateInputsWrap.appendChild(mInp);
+        dateInputsWrap.appendChild(document.createTextNode('.'));
+        const yInp = document.createElement('input');
+        yInp.className = 'plan-date-y';
+        yInp.placeholder = 'ГГГГ'; yInp.value = parts[2] || ''; yInp.maxLength = 4;
+        dateInputsWrap.appendChild(yInp);
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'plan-date-save-btn';
+        saveBtn.textContent = '💾';
+        saveBtn.dataset.planDateSave = t.id;
+        dateInputsWrap.appendChild(saveBtn);
+
+        dateBlock.appendChild(dateInputsWrap);
+
+        if (dateVal && expiresMonths > 0) {
+          const dp = dateVal.split('.');
+          if (dp.length === 3) {
+            const doneDate = new Date(+dp[2], +dp[1] - 1, +dp[0]);
+            const expDate = new Date(doneDate);
+            expDate.setMonth(expDate.getMonth() + expiresMonths);
+            const now = new Date();
+            const totalDaysLeft = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
+            const monthsLeft = Math.floor(totalDaysLeft / 30);
+            const daysLeft = totalDaysLeft - monthsLeft * 30;
+            let remText;
+            if (totalDaysLeft < 0) {
+              remText = 'Просрочено на ' + Math.abs(totalDaysLeft) + ' дн.';
+            } else if (monthsLeft > 0) {
+              remText = 'Ещё ' + monthsLeft + ' мес. ' + daysLeft + ' дн.';
+            } else {
+              remText = 'Ещё ' + daysLeft + ' дн.';
+            }
+            const rem = document.createElement('span');
+            rem.className = 'plan-date-remaining';
+            if (totalDaysLeft < 0) { rem.classList.add('expired'); rem.textContent = '⏳ ' + remText; }
+            else if (totalDaysLeft <= 30) { rem.classList.add('warn'); rem.textContent = '⏳ Действует до: ' + expDate.toLocaleDateString('ru-RU') + ' (' + remText + ')'; }
+            else { rem.classList.add('ok'); rem.textContent = '⏳ Действует до: ' + expDate.toLocaleDateString('ru-RU') + ' (' + remText + ')'; }
+            dateBlock.appendChild(rem);
+          }
+        }
+
+        li.appendChild(dateBlock);
+      }
+
+      // Note block — always visible
+      {
+        const noteBlock = document.createElement('div');
+        noteBlock.className = 'plan-note-inline';
+
+        const noteDisplay = document.createElement('span');
+        noteDisplay.className = 'plan-note-display' + (noteVal ? '' : ' hidden');
+        noteDisplay.id = 'plan-nd-' + t.id;
+        if (noteVal) {
+          noteDisplay.textContent = '📝 ' + noteVal;
+        }
+        noteBlock.appendChild(noteDisplay);
+
+        const noteEditBtn = document.createElement('button');
+        noteEditBtn.className = 'plan-note-edit-btn';
+        noteEditBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
+        noteEditBtn.dataset.planNoteEdit = t.id;
+        noteBlock.appendChild(noteEditBtn);
+
+        const noteEditWrap = document.createElement('span');
+        noteEditWrap.className = 'plan-note-edit-wrap hidden';
+        noteEditWrap.id = 'plan-ne-' + t.id;
+        const noteTa = document.createElement('textarea');
+        noteTa.className = 'plan-note-ta';
+        noteTa.rows = 2;
+        noteTa.value = noteVal;
+        noteEditWrap.appendChild(noteTa);
+        const noteSaveBtn = document.createElement('button');
+        noteSaveBtn.className = 'plan-note-save-btn';
+        noteSaveBtn.textContent = '💾';
+        noteSaveBtn.dataset.planNoteSave = t.id;
+        noteEditWrap.appendChild(noteSaveBtn);
+        if (noteVal) {
+          const noteDelBtn = document.createElement('button');
+          noteDelBtn.className = 'plan-note-del-btn';
+          noteDelBtn.textContent = '🗑️';
+          noteDelBtn.dataset.planNoteDel = t.id;
+          noteEditWrap.appendChild(noteDelBtn);
+        }
+        noteBlock.appendChild(noteEditWrap);
+
+        li.appendChild(noteBlock);
+      }
+
+      // Tip toggle — only reference info in spoiler
+      if (hasTip) {
         const tipBtn = document.createElement('button');
         tipBtn.className = 'plan-tip-toggle';
         tipBtn.textContent = '▶';
@@ -793,139 +914,10 @@ function renderPlan() {
         const tipBody = document.createElement('div');
         tipBody.className = 'plan-tip-body hidden';
         tipBody.dataset.planTipBody = t.id;
-
-        if (hasTip) {
-          const tipText = document.createElement('div');
-          tipText.className = 'plan-tip-text';
-          tipText.innerHTML = '💡 ' + t.tip;
-          tipBody.appendChild(tipText);
-        }
-
-        if (hasDate) {
-          const dateVal = s.date || '';
-          const expiresMonths = t.expires || 0;
-
-          const dateRow = document.createElement('div');
-          dateRow.className = 'plan-date-row';
-
-          const dateLabel = document.createElement('span');
-          dateLabel.className = 'plan-date-label';
-          dateLabel.textContent = '📅 Сделано:';
-          dateRow.appendChild(dateLabel);
-
-          const dateCompact = document.createElement('span');
-          dateCompact.className = 'plan-date-compact';
-          dateCompact.id = 'plan-dc-' + t.id;
-          dateCompact.textContent = dateVal || 'не указана';
-          dateRow.appendChild(dateCompact);
-
-          const dateInputs = document.createElement('span');
-          dateInputs.className = 'plan-date-inputs hidden';
-          dateInputs.id = 'plan-di-' + t.id;
-
-          const parts = dateVal ? dateVal.split('.') : [];
-          const dInp = document.createElement('input');
-          dInp.className = 'plan-date-d';
-          dInp.placeholder = 'ДД';
-          dInp.value = parts[0] || '';
-          dInp.maxLength = 2;
-          dateInputs.appendChild(dInp);
-          dateInputs.appendChild(document.createTextNode('.'));
-
-          const mInp = document.createElement('input');
-          mInp.className = 'plan-date-m';
-          mInp.placeholder = 'ММ';
-          mInp.value = parts[1] || '';
-          mInp.maxLength = 2;
-          dateInputs.appendChild(mInp);
-          dateInputs.appendChild(document.createTextNode('.'));
-
-          const yInp = document.createElement('input');
-          yInp.className = 'plan-date-y';
-          yInp.placeholder = 'ГГГГ';
-          yInp.value = parts[2] || '';
-          yInp.maxLength = 4;
-          dateInputs.appendChild(yInp);
-
-          const saveDateBtn = document.createElement('button');
-          saveDateBtn.className = 'plan-date-save';
-          saveDateBtn.textContent = '💾';
-          saveDateBtn.dataset.planDateSave = t.id;
-          dateInputs.appendChild(saveDateBtn);
-
-          dateRow.appendChild(dateInputs);
-
-          const editDateBtn = document.createElement('button');
-          editDateBtn.className = 'plan-date-edit';
-          editDateBtn.textContent = '✏️';
-          editDateBtn.dataset.planDateEdit = t.id;
-          dateRow.appendChild(editDateBtn);
-
-          if (dateVal && expiresMonths > 0) {
-            const dp = dateVal.split('.');
-            if (dp.length === 3) {
-              const doneDate = new Date(+dp[2], +dp[1] - 1, +dp[0]);
-              const expDate = new Date(doneDate);
-              expDate.setMonth(expDate.getMonth() + expiresMonths);
-              const now = new Date();
-              const daysLeft = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-
-              const rem = document.createElement('span');
-              rem.className = 'plan-date-remaining';
-              if (daysLeft < 0) { rem.classList.add('expired'); rem.textContent = '⚠️ Просрочено на ' + Math.abs(daysLeft) + ' дн.'; }
-              else if (daysLeft <= 30) { rem.classList.add('warn'); rem.textContent = '⚠️ Осталось ' + daysLeft + ' дн.'; }
-              else { rem.classList.add('ok'); rem.textContent = '✅ Ещё ' + daysLeft + ' дн.'; }
-              dateRow.appendChild(rem);
-            }
-          }
-
-          tipBody.appendChild(dateRow);
-        }
-
-        const noteVal = s.note || '';
-        const noteSection = document.createElement('div');
-        noteSection.className = 'plan-note-section';
-
-        if (noteVal) {
-          const noteText = document.createElement('span');
-          noteText.className = 'plan-note-text';
-          noteText.textContent = '📝 ' + noteVal;
-          noteSection.appendChild(noteText);
-        }
-
-        const noteEditBtn = document.createElement('button');
-        noteEditBtn.className = 'plan-note-edit';
-        noteEditBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
-        noteEditBtn.dataset.planNoteEdit = t.id;
-        noteSection.appendChild(noteEditBtn);
-
-        const noteEditBlock = document.createElement('div');
-        noteEditBlock.className = 'plan-note-edit-block hidden';
-        noteEditBlock.id = 'plan-ne-' + t.id;
-
-        const noteTa = document.createElement('textarea');
-        noteTa.className = 'plan-note-ta';
-        noteTa.rows = 2;
-        noteTa.value = noteVal;
-        noteEditBlock.appendChild(noteTa);
-
-        const noteSaveBtn = document.createElement('button');
-        noteSaveBtn.className = 'plan-note-save';
-        noteSaveBtn.textContent = '💾';
-        noteSaveBtn.dataset.planNoteSave = t.id;
-        noteEditBlock.appendChild(noteSaveBtn);
-
-        if (noteVal) {
-          const noteDelBtn = document.createElement('button');
-          noteDelBtn.className = 'plan-note-delete';
-          noteDelBtn.textContent = '🗑️';
-          noteDelBtn.dataset.planNoteDelete = t.id;
-          noteEditBlock.appendChild(noteDelBtn);
-        }
-
-        noteSection.appendChild(noteEditBlock);
-        tipBody.appendChild(noteSection);
-
+        const tipText = document.createElement('div');
+        tipText.className = 'plan-tip-text';
+        tipText.innerHTML = '💡 ' + t.tip;
+        tipBody.appendChild(tipText);
         li.appendChild(tipBody);
       }
 
@@ -935,14 +927,8 @@ function renderPlan() {
     card.appendChild(ul);
     root.appendChild(card);
 
-    if (m.month >= 0 && m.month <= 3) {
-      grandPlanned += totalPlanned;
-      grandSpent += spent;
-    }
-    if (m.month === 4) {
-      grandMonth4Planned += totalPlanned;
-      grandMonth4Spent += spent;
-    }
+    if (m.month >= 0 && m.month <= 3) { grandPlanned += totalPlanned; grandSpent += spent; }
+    if (m.month === 4) { grandMonth4Planned += totalPlanned; grandMonth4Spent += spent; }
   });
 
   const grandRemaining = grandPlanned - grandSpent;
@@ -959,23 +945,32 @@ function renderPlan() {
 }
 
 if (!window.planListenerAdded) {
-  document.getElementById('timeline-root')?.addEventListener('change', e => {
-    const cb = e.target;
-    if (!cb.classList.contains('plan-task-cb')) return;
-    const id = cb.dataset.planId;
-    if (!id) return;
-    const st = getPlanState() || { tasks: {} };
-    if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
-    st.tasks[id].checked = cb.checked;
-    setPlanState(st);
-    renderPlan();
-    if (window.saveToCloud) {
-      window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
-    }
-  });
-
   document.getElementById('timeline-root')?.addEventListener('click', e => {
     const el = e.target;
+
+    // Three-state status button
+    if (el.classList.contains('plan-status-btn')) {
+      const id = el.dataset.planStatus;
+      if (!id) return;
+      const st = getPlanState() || { tasks: {} };
+      if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
+      const cur = st.tasks[id];
+      if (!cur.checked && !cur.progress) {
+        cur.progress = true;
+      } else if (!cur.checked && cur.progress) {
+        cur.progress = false;
+        cur.checked = true;
+      } else {
+        cur.checked = false;
+        cur.progress = false;
+      }
+      setPlanState(st);
+      renderPlan();
+      if (window.saveToCloud) {
+        window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
+      }
+      return;
+    }
 
     // Tip toggle
     if (el.classList.contains('plan-tip-toggle')) {
@@ -992,19 +987,19 @@ if (!window.planListenerAdded) {
     }
 
     // Date edit
-    if (el.classList.contains('plan-date-edit')) {
+    if (el.classList.contains('plan-date-edit-btn')) {
       const id = el.dataset.planDateEdit;
       if (!id) return;
-      const compact = document.getElementById('plan-dc-' + id);
+      const valEl = document.getElementById('plan-dv-' + id);
       const inputs = document.getElementById('plan-di-' + id);
-      if (compact) compact.classList.add('hidden');
+      if (valEl) valEl.style.display = 'none';
       if (inputs) inputs.classList.remove('hidden');
-      el.classList.add('hidden');
+      el.style.display = 'none';
       return;
     }
 
     // Date save
-    if (el.classList.contains('plan-date-save')) {
+    if (el.classList.contains('plan-date-save-btn')) {
       const id = el.dataset.planDateSave;
       if (!id) return;
       const inputs = document.getElementById('plan-di-' + id);
@@ -1017,7 +1012,7 @@ if (!window.planListenerAdded) {
       const yy = yEl ? yEl.value.trim() : '';
       if (dd && mm && yy && dd.length === 2 && mm.length === 2 && yy.length === 4) {
         const st = getPlanState() || { tasks: {} };
-        if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+        if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
         setPlanState(st);
       }
@@ -1026,25 +1021,25 @@ if (!window.planListenerAdded) {
     }
 
     // Note edit
-    if (el.classList.contains('plan-note-edit')) {
+    if (el.classList.contains('plan-note-edit-btn')) {
       const id = el.dataset.planNoteEdit;
       if (!id) return;
-      const block = document.getElementById('plan-ne-' + id);
-      if (block) block.classList.remove('hidden');
-      const ta = block ? block.querySelector('.plan-note-ta') : null;
+      const wrap = document.getElementById('plan-ne-' + id);
+      if (wrap) wrap.classList.remove('hidden');
+      const ta = wrap ? wrap.querySelector('.plan-note-ta') : null;
       if (ta) { ta.focus(); ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
       return;
     }
 
     // Note save
-    if (el.classList.contains('plan-note-save')) {
+    if (el.classList.contains('plan-note-save-btn')) {
       const id = el.dataset.planNoteSave;
       if (!id) return;
-      const block = document.getElementById('plan-ne-' + id);
-      const ta = block ? block.querySelector('.plan-note-ta') : null;
+      const wrap = document.getElementById('plan-ne-' + id);
+      const ta = wrap ? wrap.querySelector('.plan-note-ta') : null;
       const val = ta ? ta.value.trim() : '';
       const st = getPlanState() || { tasks: {} };
-      if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+      if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       st.tasks[id].note = val || undefined;
       setPlanState(st);
       renderPlan();
@@ -1052,11 +1047,11 @@ if (!window.planListenerAdded) {
     }
 
     // Note delete
-    if (el.classList.contains('plan-note-delete')) {
-      const id = el.dataset.planNoteDelete;
+    if (el.classList.contains('plan-note-del-btn')) {
+      const id = el.dataset.planNoteDel;
       if (!id) return;
       const st = getPlanState() || { tasks: {} };
-      if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+      if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       delete st.tasks[id].note;
       setPlanState(st);
       renderPlan();

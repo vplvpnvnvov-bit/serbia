@@ -879,7 +879,7 @@ html, body {
   min-width: 0;
   transition: color 0.25s ease, text-decoration 0.25s ease;
 }
-.tl-step.done .plan-task-name {
+.tl-step.status-done .plan-task-name {
   color: #2e7d32;
   text-decoration: line-through;
 }
@@ -899,62 +899,128 @@ html, body {
   font-size: 11px;
   color: #999;
   flex-basis: 100%;
-  padding-left: 44px;
+  padding-left: 42px;
   margin-top: -2px;
 }
-.tl-step.done .plan-task-desc {
+.tl-step.status-done .plan-task-desc {
   color: #8bc34a;
 }
 
-
-/* iOS style toggle */
-.plan-toggle {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-  flex-shrink: 0;
-  margin-right: 12px;
-}
-.plan-toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.plan-toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: .3s;
-  border-radius: 24px;
-}
-.plan-toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: .3s;
+/* Three-state status button */
+.plan-status-btn {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  border: 2px solid #bbb;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
-input:checked + .plan-toggle-slider {
-  background-color: #2e7d32;
+.plan-status-btn:hover {
+  transform: scale(1.1);
 }
-input:checked + .plan-toggle-slider:before {
-  transform: translateX(20px);
+.plan-status-btn.done {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+.plan-status-btn.progress {
+  border-color: #f9a825;
+  background: #fff8e1;
 }
 
-/* Стилизация невыполненных (планируемых) строк */
-.tl-step.plan-pending {
-  opacity: 0.85;
+/* Status borders on task rows */
+.tl-step.status-in-progress {
+  border-left: 4px solid #f9a825;
+  background: linear-gradient(90deg, rgba(249,168,37,0.06), transparent);
 }
-.tl-step.done .plan-task-name {
-  text-decoration: line-through;
-  color: #888;
+.tl-step.status-done {
+  border-left: 4px solid #2e7d32;
+  background: linear-gradient(90deg, rgba(46,125,50,0.05), transparent);
 }
+
+/* Inline date block (visible when done + hasDate) */
+.plan-date-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-basis: 100%;
+  padding: 6px 0 2px 42px;
+  font-size: 13px;
+  color: #555;
+  flex-wrap: wrap;
+}
+.plan-date-inline .plan-date-label {
+  white-space: nowrap;
+  font-weight: 600;
+  color: #1a237e;
+}
+.plan-date-inline .plan-date-val {
+  font-weight: 500;
+  color: #1a237e;
+}
+.plan-date-edit-btn, .plan-date-save-btn {
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.plan-date-edit-btn { opacity: 0.5; }
+.plan-date-edit-btn:hover { opacity: 1; }
+.plan-date-inputs-wrap { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
+.plan-date-inputs-wrap.hidden { display: none; }
+
+/* Inline note block (always visible) */
+.plan-note-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-basis: 100%;
+  padding: 4px 0 4px 42px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+  flex-wrap: wrap;
+}
+.plan-note-display {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #555;
+  flex: 1;
+  min-width: 0;
+}
+.plan-note-display.hidden { display: none; }
+.plan-note-edit-btn, .plan-note-save-btn, .plan-note-del-btn {
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.plan-note-edit-btn { opacity: 0.5; font-size: 13px; }
+.plan-note-edit-btn:hover { opacity: 1; }
+.plan-note-save-btn { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; }
+.plan-note-del-btn { opacity: 0.5; }
+.plan-note-del-btn:hover { opacity: 1; }
+.plan-note-edit-wrap { display: flex; align-items: flex-start; gap: 4px; flex-basis: 100%; margin-top: 2px; }
+.plan-note-edit-wrap.hidden { display: none; }
 
 /* MONTH STATS + PROGRESS BAR */
 .plan-month-stats {
@@ -1030,21 +1096,7 @@ input:checked + .plan-toggle-slider:before {
 }
 .plan-tip-text a:hover, .plan-tip-link:hover { background: #bbdefb; }
 
-/* Plan date row */
-.plan-date-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 0;
-  font-size: 13px;
-  color: #555;
-  flex-wrap: wrap;
-}
-.plan-date-label { white-space: nowrap; }
-.plan-date-compact { font-weight: 600; color: #1a237e; white-space: nowrap; }
-.plan-date-compact.hidden { display: none; }
-.plan-date-inputs { display: inline-flex; align-items: center; gap: 2px; white-space: nowrap; }
-.plan-date-inputs.hidden { display: none; }
+/* Shared date input styles */
 .plan-date-d, .plan-date-m, .plan-date-y {
   padding: 3px 2px;
   border: 1px solid #ccc;
@@ -1053,44 +1105,13 @@ input:checked + .plan-toggle-slider:before {
   width: 28px;
   text-align: center;
 }
-.plan-date-save, .plan-date-edit {
-  font-size: 15px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px 4px;
-  line-height: 1;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+.plan-date-save-btn {
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 6px;
 }
-.plan-date-edit.hidden { display: none; }
-.plan-date-remaining { font-size: 12px; font-weight: 500; white-space: nowrap; }
-.plan-date-remaining.ok { color: #2e7d32; }
-.plan-date-remaining.warn { color: #f57f17; }
-.plan-date-remaining.expired { color: #c62828; }
 
-/* Plan note section */
-.plan-note-section {
-  padding: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.4;
-}
-.plan-note-text { white-space: pre-wrap; word-break: break-word; }
-.plan-note-edit, .plan-note-save, .plan-note-delete {
-  font-size: 15px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px 6px;
-  line-height: 1;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-.plan-note-edit { opacity: 0.5; }
-.plan-note-edit:hover { opacity: 1; }
-.plan-note-save { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; }
-.plan-note-edit-block { display: flex; align-items: flex-start; gap: 4px; margin-top: 4px; }
-.plan-note-edit-block.hidden { display: none; }
+/* Shared note textarea */
 .plan-note-ta {
   width: 100%;
   padding: 6px 8px;
@@ -1105,14 +1126,20 @@ input:checked + .plan-toggle-slider:before {
 }
 .plan-note-ta:focus { outline: none; border-color: #1a237e; background: #fff; }
 
+/* Shared date remaining indicator */
+.plan-date-remaining { font-size: 12px; font-weight: 500; white-space: nowrap; }
+.plan-date-remaining.ok { color: #2e7d32; }
+.plan-date-remaining.warn { color: #f57f17; }
+.plan-date-remaining.expired { color: #c62828; }
+
 /* Flash animation for scroll-to */
 @keyframes flashAnim {
   0%, 100% { background: transparent; }
   50% { background: #fff3cd; }
 }
-.tl-step.flash { animation: flashAnim 0.5s ease 3; }
+
+/* MONTH STATS + PROGRESS BAR */
 .plan-progress-bar {
-  position: relative;
   height: 10px;
   background: #e0e0e0;
   border-radius: 5px;

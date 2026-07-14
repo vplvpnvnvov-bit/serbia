@@ -193,12 +193,13 @@ function migrateLegacyData() {
   timeline.forEach(m => {
     m.tasks.forEach(t => {
       const old = oldChecklist[t.id];
-      const entry = { checked: false, customCost: null };
+      const entry = { checked: false, progress: false, customCost: null };
       if (old !== undefined && old !== null) {
         if (typeof old === 'boolean') {
           entry.checked = old;
         } else if (typeof old === 'object') {
           entry.checked = !!old.done;
+          entry.progress = !!old.progress;
           if (old.date) entry.date = old.date;
           if (old.note) entry.note = old.note;
         }
