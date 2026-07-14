@@ -953,6 +953,44 @@ html, body {
   background: linear-gradient(90deg, rgba(46,125,50,0.05), transparent);
 }
 
+/* Lock button */
+.plan-lock-bar {
+  margin: 8px 0 4px;
+}
+.plan-lock-btn {
+  padding: 6px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.plan-lock-btn:hover {
+  border-color: #999;
+}
+.plan-lock-btn.locked {
+  border-color: #d32f2f;
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Locked mode */
+.plan-locked-mode .plan-status-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+.plan-locked-mode .plan-status-btn:hover {
+  transform: none;
+}
+.plan-locked-mode .plan-tip-toggle {
+  /* keep tip toggle working */
+}
+
 /* Inline date block (visible when done + hasDate) */
 .plan-date-inline {
   display: flex;
@@ -1143,32 +1181,51 @@ html, body {
   50% { background: #fff3cd; }
 }
 
-/* MONTH STATS + PROGRESS BAR */
+/* DUAL PROGRESS BARS */
+.plan-bars-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
 .plan-progress-bar {
-  height: 10px;
+  position: relative;
+  height: 8px;
   background: #e0e0e0;
-  border-radius: 5px;
-  margin-bottom: 12px;
+  border-radius: 4px;
   overflow: hidden;
+}
+.plan-progress-bar-budget {
+  /* default green */
+}
+.plan-progress-bar-tasks {
+  /* blue */
 }
 .plan-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #66bb6a, #2e7d32);
-  border-radius: 5px;
+  border-radius: 4px;
   transition: width 0.4s ease;
 }
 .plan-progress-fill.done {
   background: linear-gradient(90deg, #2e7d32, #1b5e20);
+}
+.plan-progress-fill-tasks {
+  background: linear-gradient(90deg, #5c6bc0, #283593);
+}
+.plan-progress-fill-tasks.done {
+  background: linear-gradient(90deg, #283593, #1a237e);
 }
 .plan-progress-label {
   position: absolute;
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 9px;
+  font-size: 8px;
   font-weight: bold;
   color: #555;
   line-height: 1;
+  white-space: nowrap;
 }
 
 /* === SETTINGS DATA CENTER === */

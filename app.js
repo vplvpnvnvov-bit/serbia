@@ -677,6 +677,8 @@ function renderPlan() {
   }
 
   root.innerHTML = '';
+  root.className = locked ? 'plan-locked-mode' : '';
+
   const h = document.createElement('h2');
   h.textContent = '📅 Пошаговый план переезда (5 месяцев)';
   root.appendChild(h);
@@ -684,6 +686,17 @@ function renderPlan() {
   desc.className = 'tl-desc';
   desc.textContent = 'Нажимайте на кружок статуса: ⚪ В планах → 🟡 В процессе → 🟢 Выполнено. Даты и заметки видны на карточке сразу. ▶ — справочная информация.';
   root.appendChild(desc);
+
+  const locked = localStorage.getItem('plan-locked') === 'true';
+
+  const lockBar = document.createElement('div');
+  lockBar.className = 'plan-lock-bar';
+  const lockBtn = document.createElement('button');
+  lockBtn.className = 'plan-lock-btn' + (locked ? ' locked' : '');
+  lockBtn.textContent = locked ? '🔒 Заблокировано' : '🔓 Редактирование';
+  lockBtn.dataset.planLock = '1';
+  lockBar.appendChild(lockBtn);
+  root.appendChild(lockBar);
 
   let rubPlanned = 0, rubSpent = 0;
   let eurPlanned013 = 0, eurSpent013 = 0;
@@ -702,6 +715,7 @@ function renderPlan() {
     card.appendChild(focusEl);
 
     let totalPlanned = 0, spent = 0;
+    let taskDone = 0, taskProgress = 0, taskTotal = 0;
     const monthCur = m.tasks[0]?.currency || 'EUR';
     const monthSym = monthCur === 'RUB' ? ' ₽' : ' €';
     m.tasks.forEach(t => {
@@ -709,10 +723,14 @@ function renderPlan() {
       const cost = (s.customCost != null ? s.customCost : t.cost);
       totalPlanned += cost;
       if (s.checked === true) spent += cost;
+      taskTotal++;
+      if (s.checked === true) taskDone++;
+      else if (s.progress === true) taskProgress++;
     });
 
     const remaining = totalPlanned - spent;
-    const pct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
+    const budgetPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
+    const taskPct = taskTotal > 0 ? Math.round(((taskDone * 1 + taskProgress * 0.5) / taskTotal) * 100) : 0;
 
     const stats = document.createElement('div');
     stats.className = 'plan-month-stats';
@@ -722,18 +740,36 @@ function renderPlan() {
       `<div class="plan-stat-row plan-stat-remain" style="color: #1565c0;"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')}${monthSym}</strong></div>`;
     card.appendChild(stats);
 
-    const barWrap = document.createElement('div');
-    barWrap.className = 'plan-progress-bar';
-    const barFill = document.createElement('div');
-    barFill.className = 'plan-progress-fill';
-    barFill.style.width = pct + '%';
-    if (pct === 100) barFill.classList.add('done');
-    barWrap.appendChild(barFill);
-    const barLabel = document.createElement('span');
-    barLabel.className = 'plan-progress-label';
-    barLabel.textContent = pct + '%';
-    barWrap.appendChild(barLabel);
-    card.appendChild(barWrap);
+    const barsWrap = document.createElement('div');
+    barsWrap.className = 'plan-bars-wrap';
+
+    const budgetBarWrap = document.createElement('div');
+    budgetBarWrap.className = 'plan-progress-bar plan-progress-bar-budget';
+    const budgetFill = document.createElement('div');
+    budgetFill.className = 'plan-progress-fill';
+    budgetFill.style.width = budgetPct + '%';
+    if (budgetPct === 100) budgetFill.classList.add('done');
+    budgetBarWrap.appendChild(budgetFill);
+    const budgetLabel = document.createElement('span');
+    budgetLabel.className = 'plan-progress-label';
+    budgetLabel.textContent = '💶 Бюджет: ' + budgetPct + '%';
+    budgetBarWrap.appendChild(budgetLabel);
+    barsWrap.appendChild(budgetBarWrap);
+
+    const taskBarWrap = document.createElement('div');
+    taskBarWrap.className = 'plan-progress-bar plan-progress-bar-tasks';
+    const taskFill = document.createElement('div');
+    taskFill.className = 'plan-progress-fill plan-progress-fill-tasks';
+    taskFill.style.width = taskPct + '%';
+    if (taskPct === 100) taskFill.classList.add('done');
+    taskBarWrap.appendChild(taskFill);
+    const taskLabel = document.createElement('span');
+    taskLabel.className = 'plan-progress-label';
+    taskLabel.textContent = '📋 Задачи: ' + taskPct + '%';
+    taskBarWrap.appendChild(taskLabel);
+    barsWrap.appendChild(taskBarWrap);
+
+    card.appendChild(barsWrap);
 
     const ul = document.createElement('ul');
     ul.className = 'tl-steps';
@@ -762,6 +798,7 @@ function renderPlan() {
       statusBtn.className = 'plan-status-btn' + (checked ? ' done' : prog ? ' progress' : '');
       statusBtn.textContent = statusEmoji;
       statusBtn.dataset.planStatus = t.id;
+      if (locked) statusBtn.disabled = true;
       li.appendChild(statusBtn);
 
       const nameSpan = document.createElement('span');
@@ -804,7 +841,7 @@ function renderPlan() {
         editBtn.className = 'plan-date-edit-btn';
         editBtn.textContent = '✏️';
         editBtn.dataset.planDateEdit = t.id;
-        dateBlock.appendChild(editBtn);
+        if (!locked) dateBlock.appendChild(editBtn);
 
         const dateInputsWrap = document.createElement('span');
         dateInputsWrap.className = 'plan-date-inputs-wrap hidden';
@@ -814,22 +851,25 @@ function renderPlan() {
         const dInp = document.createElement('input');
         dInp.className = 'plan-date-d';
         dInp.placeholder = 'ДД'; dInp.value = parts[0] || ''; dInp.maxLength = 2;
+        if (locked) dInp.disabled = true;
         dateInputsWrap.appendChild(dInp);
         dateInputsWrap.appendChild(document.createTextNode('.'));
         const mInp = document.createElement('input');
         mInp.className = 'plan-date-m';
         mInp.placeholder = 'ММ'; mInp.value = parts[1] || ''; mInp.maxLength = 2;
+        if (locked) mInp.disabled = true;
         dateInputsWrap.appendChild(mInp);
         dateInputsWrap.appendChild(document.createTextNode('.'));
         const yInp = document.createElement('input');
         yInp.className = 'plan-date-y';
         yInp.placeholder = 'ГГГГ'; yInp.value = parts[2] || ''; yInp.maxLength = 4;
+        if (locked) yInp.disabled = true;
         dateInputsWrap.appendChild(yInp);
         const saveBtn = document.createElement('button');
         saveBtn.className = 'plan-date-save-btn';
         saveBtn.textContent = '💾';
         saveBtn.dataset.planDateSave = t.id;
-        dateInputsWrap.appendChild(saveBtn);
+        if (!locked) dateInputsWrap.appendChild(saveBtn);
 
         dateBlock.appendChild(dateInputsWrap);
 
@@ -880,7 +920,7 @@ function renderPlan() {
         noteEditBtn.className = 'plan-note-edit-btn';
         noteEditBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
         noteEditBtn.dataset.planNoteEdit = t.id;
-        noteBlock.appendChild(noteEditBtn);
+        if (!locked) noteBlock.appendChild(noteEditBtn);
 
         const noteEditWrap = document.createElement('span');
         noteEditWrap.className = 'plan-note-edit-wrap hidden';
@@ -889,18 +929,19 @@ function renderPlan() {
         noteTa.className = 'plan-note-ta';
         noteTa.rows = 2;
         noteTa.value = noteVal;
+        if (locked) noteTa.disabled = true;
         noteEditWrap.appendChild(noteTa);
         const noteSaveBtn = document.createElement('button');
         noteSaveBtn.className = 'plan-note-save-btn';
         noteSaveBtn.textContent = '💾';
         noteSaveBtn.dataset.planNoteSave = t.id;
-        noteEditWrap.appendChild(noteSaveBtn);
+        if (!locked) noteEditWrap.appendChild(noteSaveBtn);
         if (noteVal) {
           const noteDelBtn = document.createElement('button');
           noteDelBtn.className = 'plan-note-del-btn';
           noteDelBtn.textContent = '🗑️';
           noteDelBtn.dataset.planNoteDel = t.id;
-          noteEditWrap.appendChild(noteDelBtn);
+          if (!locked) noteEditWrap.appendChild(noteDelBtn);
         }
         noteBlock.appendChild(noteEditWrap);
 
@@ -964,8 +1005,18 @@ if (!window.planListenerAdded) {
   document.getElementById('timeline-root')?.addEventListener('click', e => {
     const el = e.target;
 
+    // Lock button
+    if (el.classList.contains('plan-lock-btn') || el.closest('.plan-lock-btn')) {
+      const btn = el.classList.contains('plan-lock-btn') ? el : el.closest('.plan-lock-btn');
+      const isLocked = localStorage.getItem('plan-locked') === 'true';
+      localStorage.setItem('plan-locked', isLocked ? 'false' : 'true');
+      renderPlan();
+      return;
+    }
+
     // Three-state status button
     if (el.classList.contains('plan-status-btn')) {
+      if (el.disabled) return;
       const id = el.dataset.planStatus;
       if (!id) return;
       const st = getPlanState() || { tasks: {} };
