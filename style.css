@@ -1827,6 +1827,31 @@ body.dark-theme .preset-btn.active {
 body.dark-theme .urban-label {
   color: #90a4ae;
 }
+body.dark-theme .urban-slider {
+  background: #546e7a;
+}
+body.dark-theme .urban-slider::after {
+  background: #b0bec5;
+}
+body.dark-theme .urban-label input:checked + .urban-slider {
+  background: #81d4fa;
+}
+body.dark-theme .urban-label input:checked + .urban-slider::after {
+  background: #fff;
+}
+body.dark-theme #opacity-slider {
+  background: #455a64;
+}
+body.dark-theme #opacity-slider::-webkit-slider-thumb {
+  background: #81d4fa;
+  border-color: #81d4fa;
+}
+body.dark-theme .legend-bar {
+  color: #78909c;
+}
+body.dark-theme #opacity-val {
+  color: #b0bec5;
+}
 body.dark-theme #legend-toggle {
   color: #81d4fa;
 }
