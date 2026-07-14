@@ -121,6 +121,10 @@ function loadFromCloud() {
 
 function saveToCloud() {
   if (!syncCode || syncPending) return;
+  if (localStorage.getItem('is_deleted_session') === 'true') {
+    console.warn('Попытка отправить данные для аннулированной сессии заблокирована.');
+    return;
+  }
   syncPending = true;
   try {
     const raw = JSON.parse(localStorage.getItem('checklist') || '{}');

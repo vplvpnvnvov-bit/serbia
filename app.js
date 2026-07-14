@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.3.0",
-  BUILD: "660fd0c",
-  CACHE_NAME: "relocation-v1.3.0-660fd0c"
+  VERSION: "1.4.0",
+  BUILD: "bc1c43d",
+  CACHE_NAME: "relocation-v1.4.0-bc1c43d"
 };
 
 // === TABS ===
@@ -1130,6 +1130,7 @@ function showResetOverlay() {
 
 window.localHardResetWithoutCloud = async function() {
   showResetOverlay();
+  localStorage.setItem('is_deleted_session', 'true');
   localStorage.clear();
   try {
     const keys = await caches.keys();
@@ -1140,6 +1141,7 @@ window.localHardResetWithoutCloud = async function() {
 
 window.hardResetApplication = async function() {
   showResetOverlay();
+  localStorage.setItem('is_deleted_session', 'true');
   await window.deleteCloudData();
   localStorage.clear();
   try {
