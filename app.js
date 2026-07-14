@@ -380,22 +380,36 @@ function showDistrictPanel(d, noFit) {
   // Carousel gallery & Lightbox
   const gallery = document.getElementById('d-gallery');
   gallery.innerHTML = '';
+
+  let captionContainer = document.getElementById('d-gallery-caption');
+  if (!captionContainer) {
+    captionContainer = document.createElement('div');
+    captionContainer.id = 'd-gallery-caption';
+    captionContainer.className = 'carousel-caption';
+    gallery.parentNode.insertBefore(captionContainer, gallery.nextSibling);
+  }
+  captionContainer.textContent = '';
+
   let dotsContainer = document.getElementById('d-gallery-dots');
   if (!dotsContainer) {
     dotsContainer = document.createElement('div');
     dotsContainer.id = 'd-gallery-dots';
     dotsContainer.className = 'carousel-dots';
-    gallery.parentNode.insertBefore(dotsContainer, gallery.nextSibling);
+    gallery.parentNode.insertBefore(dotsContainer, captionContainer);
   }
   dotsContainer.innerHTML = '';
 
   if (d.images && d.images.length) {
-    d.images.forEach((url, idx) => {
+    d.images.forEach((imgObj, idx) => {
+      const url = typeof imgObj === 'string' ? imgObj : imgObj.url;
+      const title = typeof imgObj === 'string' ? '' : (imgObj.title || '');
+
       const img = document.createElement('img');
       img.dataset.idx = idx;
       img.loading = 'lazy';
       img.src = url;
       img.className = 'carousel-slide';
+      img.dataset.caption = title;
       img.addEventListener('click', () => openLightbox(url));
       img.onerror = function() {
         this.onerror = null;
@@ -413,6 +427,9 @@ function showDistrictPanel(d, noFit) {
       });
       dotsContainer.appendChild(dot);
     });
+
+    const firstImg = d.images[0];
+    captionContainer.textContent = typeof firstImg === 'string' ? '' : (firstImg.title || '');
   }
 
   gallery.onscroll = () => {
@@ -424,6 +441,10 @@ function showDistrictPanel(d, noFit) {
     dots.forEach((dot, idx) => {
       dot.classList.toggle('active', idx === activeIdx);
     });
+    const slides = gallery.querySelectorAll('.carousel-slide');
+    if (slides[activeIdx]) {
+      captionContainer.textContent = slides[activeIdx].dataset.caption || '';
+    }
   };
 
   const prevBtn = document.getElementById('car-prev');
