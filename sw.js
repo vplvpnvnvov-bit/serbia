@@ -1,4 +1,4 @@
-const CACHE_NAME = 'relocation-v1.4.2-7bcc56d';
+const CACHE_NAME = 'relocation-v1.5.0-38008cc';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js', './sync.js',
   './manifest.json', './icon.svg',
@@ -22,7 +22,7 @@ self.addEventListener('activate', e => {
     caches.keys().then(keys =>
       Promise.all(keys.map(k => {
         if (k !== CACHE_NAME) {
-          console.log('Удаляем старый кэш:', k);
+          console.log('удаляем старый кэш:', k);
           return caches.delete(k);
         }
       }))

@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.4.2",
-  BUILD: "7bcc56d",
-  CACHE_NAME: "relocation-v1.4.2-7bcc56d"
+  VERSION: "1.5.0",
+  BUILD: "38008cc",
+  CACHE_NAME: "relocation-v1.5.0-38008cc"
 };
 
 // === TABS ===
