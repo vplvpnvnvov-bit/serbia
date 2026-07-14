@@ -247,7 +247,7 @@ html, body {
 .legend-ratings {
   font-weight: 600;
   color: #1a237e;
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   user-select: none;
   margin-bottom: 2px;
@@ -261,10 +261,12 @@ html, body {
   user-select: none;
 }
 #legend-arrow {
-  font-size: 11px;
+  font-size: 14px;
   transition: transform .2s;
   display: inline-block;
   font-weight: bold;
+  color: inherit;
+  margin-left: 4px;
 }
 #legend-arrow.open {
   transform: rotate(180deg);
