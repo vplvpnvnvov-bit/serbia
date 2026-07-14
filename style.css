@@ -978,7 +978,15 @@ html, body {
   color: #c62828;
 }
 
-/* Locked mode — status circles stay bright */
+/* Locked mode — subtle dimming, circles stay bright */
+.plan-locked-mode .plan-date-inline,
+.plan-locked-mode .plan-note-inline {
+  opacity: 0.6;
+}
+.plan-locked-mode input:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .plan-locked-mode .plan-status-btn:disabled {
   cursor: default;
   pointer-events: none;
@@ -1315,13 +1323,36 @@ html, body {
 .tl-summary .metric-detail-item.pending .metric-num { color: #4fc3f7; }
 
 @media (max-width: 480px) {
+  .plan-metrics-group {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .plan-metric-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
   .plan-metric-details {
     grid-template-columns: 1fr;
     gap: 3px;
+    font-size: 10px;
+  }
+  .plan-metric-title {
+    font-size: 11px;
+  }
+  .plan-metric-percentage {
+    font-size: 11px;
   }
   .metric-detail-item {
     flex-direction: row;
     justify-content: space-between;
+    gap: 4px;
+  }
+  .metric-detail-item span:first-child {
+    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
   }
 }
 
