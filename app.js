@@ -51,9 +51,10 @@ function debouncedSave() {
 const map = L.map('map', {
   center: [44.76, 20.48],
   zoom: 10,
-  zoomControl: true,
+  zoomControl: false,
   attributionControl: true,
 });
+L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
 const baseLayers = {};
 function addBaseLayer(name, url, opts) {
@@ -77,7 +78,20 @@ const poiLayer = L.layerGroup().addTo(map);
 const poiMarkers = [];
 
 MAP_POINTS.forEach(pt => {
-  const emoji = pt.category === 'gov' ? '🏢' : pt.category === 'culture' ? '🎭' : '👶';
+  let emoji = '🏢';
+  if (pt.category === 'gov') {
+    const n = pt.name.toLowerCase();
+    if (n.includes('полиция') || n.includes('муп')) emoji = '👮';
+    else if (n.includes('почта')) emoji = '✉️';
+    else if (n.includes('apr')) emoji = '📄';
+    else if (n.includes('клиника') || n.includes('больница')) emoji = '🏥';
+    else if (n.includes('садик') || n.includes('школа')) emoji = '🎒';
+    else emoji = '🏢';
+  } else if (pt.category === 'culture') {
+    emoji = '🎭';
+  } else {
+    emoji = '👶';
+  }
   const marker = L.marker(pt.coords, {
     icon: L.divIcon({
       html: `<div style="font-size:18px;cursor:pointer;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3))">${emoji}</div>`,
@@ -95,6 +109,7 @@ MAP_POINTS.forEach(pt => {
   `, { maxWidth: 280 });
   marker._poiCat = pt.category;
   marker._pt = pt;
+  marker._poiEmoji = emoji;
   marker.on('popupopen', () => {
     const btn = marker.getPopup().getElement()?.querySelector('.poi-link-btn');
     if (btn) {
@@ -109,11 +124,35 @@ MAP_POINTS.forEach(pt => {
   poiLayer.addLayer(marker);
 });
 
+// POI reest list
+function buildPoiReestr() {
+  const listEl = document.getElementById('poi-reestr-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  MAP_POINTS.forEach(pt => {
+    const item = document.createElement('div');
+    item.className = 'poi-reestr-item';
+    const marker = poiMarkers.find(m => m._pt === pt);
+    item.textContent = (marker ? marker._poiEmoji : '📍') + ' ' + pt.name;
+    item.addEventListener('click', () => {
+      map.setView(pt.coords, 14);
+      if (marker) marker.openPopup();
+    });
+    listEl.appendChild(item);
+  });
+}
+buildPoiReestr();
+
+document.getElementById('poi-reestr-toggle')?.addEventListener('click', () => {
+  document.getElementById('poi-reestr-list')?.classList.toggle('hidden');
+  document.getElementById('poi-reestr-arrow')?.classList.toggle('open');
+});
+
 // === DISTRICT POLYGONS ===
 const polygons = {};
 const labelMarkers = {};
 let activePreset = 'family';
-let urbanHide = false;
+let urbanHide = true;
 
 function getScore(d, preset) {
   if (preset === 'budget') return d.budgetScore;
@@ -122,11 +161,29 @@ function getScore(d, preset) {
 }
 
 function scoreColor(score) {
-  return score >= 8 ? '#2e7d32' : score >= 5 ? '#e65100' : '#c62828';
+  if (score >= 9) return '#1b5e20';
+  if (score >= 7) return '#43a047';
+  if (score >= 5) return '#fbc02d';
+  if (score >= 3) return '#f57c00';
+  return '#d32f2f';
 }
 
 function scoreBg(score) {
-  return score >= 8 ? '#e8f5e9' : score >= 5 ? '#fff3e0' : '#ffebee';
+  if (score >= 9) return '#e8f5e9';
+  if (score >= 7) return '#e8f5e9';
+  if (score >= 5) return '#fffde7';
+  if (score >= 3) return '#fff3e0';
+  return '#ffebee';
+}
+
+function getNormalizedScore(d, preset, visibleDistricts) {
+  if (!visibleDistricts || visibleDistricts.length <= 1) return getScore(d, preset);
+  const scores = visibleDistricts.map(vd => getScore(vd, preset));
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+  if (max === min) return 5;
+  const raw = getScore(d, preset);
+  return Math.round(1 + ((raw - min) / (max - min)) * 9);
 }
 
 function darkenHex(hex, amt) {
@@ -155,10 +212,11 @@ function presetName(preset) {
 
 function updateMapColors(preset) {
   activePreset = preset;
+  const visible = urbanHide ? DISTRICTS.filter(d => d.isUrban) : [...DISTRICTS];
   DISTRICTS.forEach(d => {
     const p = polygons[d.name];
     if (!p) return;
-    const sc = getScore(d, preset);
+    const sc = getNormalizedScore(d, preset, visible);
     const fill = scoreColor(sc);
     const edge = darkenHex(fill, 30);
     p.setStyle({ fillColor: fill, color: edge });
@@ -181,13 +239,19 @@ function updateMapColors(preset) {
 
 function updateLegend(preset) {
   let filtered = urbanHide ? DISTRICTS.filter(d => d.isUrban) : [...DISTRICTS];
-  const sorted = filtered.sort((a, b) => getScore(b, preset) - getScore(a, preset));
+  const sorted = filtered.sort((a, b) => getNormalizedScore(b, preset, filtered) - getNormalizedScore(a, preset, filtered));
   const listEl = document.getElementById('legend-list');
   if (!listEl) return;
   listEl.innerHTML = '';
+
+  const legendBar = document.createElement('div');
+  legendBar.className = 'legend-score-bar';
+  legendBar.innerHTML = '🟢 8-10 — Отлично &nbsp;|&nbsp; 🟡 5-7 — Хорошо &nbsp;|&nbsp; 🔴 1-4 — Компромиссно';
+  listEl.appendChild(legendBar);
+
   const emoji = presetEmoji(preset);
   sorted.forEach((d, i) => {
-    const sc = getScore(d, preset);
+    const sc = getNormalizedScore(d, preset, filtered);
     const color = scoreColor(sc);
     const bg = scoreBg(sc);
     const row = document.createElement('div');
@@ -201,6 +265,7 @@ function updateLegend(preset) {
     row.addEventListener('click', () => {
       showDistrictPanel(d);
       listEl.classList.add('hidden');
+      document.getElementById('legend-arrow')?.classList.remove('open');
     });
     listEl.appendChild(row);
   });
@@ -336,10 +401,14 @@ function showDistrictPanel(d, noFit) {
     }
   };
   document.getElementById('d-price').textContent = d.price;
+  const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
+  const fs = getNormalizedScore(d, 'family', visible);
+  const bs = getNormalizedScore(d, 'budget', visible);
+  const vs = getNormalizedScore(d, 'vibe', visible);
   document.getElementById('d-score').innerHTML =
-    `👶 С детьми: <b>${d.familyScore}</b>/10 &nbsp;|&nbsp; ` +
-    `💰 Бюджетно: <b>${d.budgetScore}</b>/10 &nbsp;|&nbsp; ` +
-    `⚡ Движ: <b>${d.vibeScore}</b>/10`;
+    `👶 С детьми: <b>${fs}</b>/10 &nbsp;|&nbsp; ` +
+    `💰 Бюджетно: <b>${bs}</b>/10 &nbsp;|&nbsp; ` +
+    `⚡ Движ: <b>${vs}</b>/10`;
   document.getElementById('d-family-desc').textContent = d.familyDesc || '';
   document.getElementById('d-desc').textContent = d.desc;
   setList('d-pros', '✅ Плюсы', d.pros);
@@ -371,7 +440,8 @@ function districtLabel(name, price, score) {
 }
 
 function popupHTML(d) {
-  const sc = getScore(d, activePreset);
+  const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
+  const sc = getNormalizedScore(d, activePreset, visible);
   const color = scoreColor(sc);
   const emoji = presetEmoji(activePreset);
   const label = presetName(activePreset);
@@ -386,7 +456,8 @@ function popupHTML(d) {
 DISTRICTS.forEach(d => {
   if (!d.coords || d.coords.length < 3) return;
 
-  const initScore = getScore(d, activePreset);
+  const initVisible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
+  const initScore = getNormalizedScore(d, activePreset, initVisible);
   const initFill = scoreColor(initScore);
   const polygon = L.polygon(d.coords, {
     color: darkenHex(initFill, 30),
@@ -443,6 +514,7 @@ document.getElementById('legend-toggle')?.addEventListener('click', () => {
 });
 
 updateLegend(activePreset);
+setTimeout(() => updateUrbanFilter(true), 100);
 
 // === LAYER CONTROL ===
 // Base map switch

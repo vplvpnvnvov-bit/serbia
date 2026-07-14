@@ -1482,3 +1482,58 @@ html, body {
 .status-none {
   color: #868e96 !important;
 }
+
+/* Legend score bar */
+.legend-score-bar {
+  font-size: 11px;
+  color: #666;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* POI Reestr */
+.poi-reestr {
+  margin-top: 8px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+.poi-reestr-toggle {
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a237e;
+  cursor: pointer;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.poi-reestr-toggle:hover { background: #eee; }
+.poi-reestr-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.poi-reestr-list.hidden { display: none; }
+.poi-reestr-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.poi-reestr-item:hover { background: #e8eaf6; }
+.poi-reestr-item:last-child { border-bottom: none; }
+
+#poi-reestr-arrow { transition: transform 0.2s; }
+#poi-reestr-arrow.open { transform: rotate(180deg); }
