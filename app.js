@@ -449,8 +449,8 @@ function showDistrictPanel(d, noFit) {
 }
 
 function districtLabel(name, price, score) {
-  let color = score >= 9 ? '#1b5e20' : score >= 7 ? '#43a047' : score >= 5 ? '#fbc02d' : score >= 3 ? '#f57c00' : '#d32f2f';
-  return `<div class="map-price-badge"><span class="badge-name">${name}</span><span class="badge-price">${price}</span></div>`;
+  let dotColor = score >= 8 ? '#43a047' : score >= 5 ? '#fbc02d' : '#d32f2f';
+  return `<div class="map-price-badge"><span class="badge-status-dot" style="background-color:${dotColor}"></span><span class="badge-price">${price}</span></div>`;
 }
 
 function popupHTML(d) {
