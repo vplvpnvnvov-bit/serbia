@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.33.5",
-  BUILD: "33f6b48",
-  CACHE_NAME: "relocation-v1.33.5-33f6b48"
+  VERSION: "1.33.6",
+  BUILD: "7a9e32c",
+  CACHE_NAME: "relocation-v1.33.6-7a9e32c"
 };
 
 
