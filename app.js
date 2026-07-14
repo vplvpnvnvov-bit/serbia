@@ -1,3 +1,9 @@
+window.APP_CONFIG = {
+  VERSION: "1.0.0",
+  BUILD: "253d64c",
+  CACHE_NAME: "relocation-v1.0.0-253d64c"
+};
+
 // === TABS ===
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -1156,6 +1162,10 @@ window.hardResetApplication = async function() {
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
   updateSyncStatusUI();
+  const versionEl = document.getElementById('app-version-display');
+  if (versionEl && window.APP_CONFIG) {
+    versionEl.textContent = `v${window.APP_CONFIG.VERSION} (${window.APP_CONFIG.BUILD})`;
+  }
 
   document.getElementById('btn-sync-now')?.addEventListener('click', async () => {
     const btn = document.getElementById('btn-sync-now');
