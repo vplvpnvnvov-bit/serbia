@@ -1148,3 +1148,24 @@ html, body {
   color: #ffd54f;
   font-size: 16px;
 }
+
+.danger-btn {
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid #e53935;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.danger-btn:hover {
+  background: #ffebee;
+}
+.danger-btn:active {
+  background: #ffcdd2;
+}

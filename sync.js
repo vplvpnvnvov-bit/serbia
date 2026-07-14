@@ -156,3 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+window.deleteCloudData = async function() {
+  const code = localStorage.getItem('sync-code');
+  if (!code) return;
+  try {
+    await db.collection('users').doc(code).delete();
+  } catch (e) {
+    // документ уже удалён или нет сети — не фатально
+  }
+};

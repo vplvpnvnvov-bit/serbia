@@ -1142,7 +1142,28 @@ function renderTimeline() {
   root.appendChild(summary);
 }
 
-document.addEventListener('DOMContentLoaded', renderTimeline);
+// === HARD RESET (GDPR) ===
+window.hardResetApplication = async function() {
+  const root = document.getElementById('app');
+  if (root) root.style.opacity = '0.3';
+  const status = document.createElement('div');
+  status.textContent = '🗑️ Удаляю данные...';
+  status.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;background:#fff;padding:20px 30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;';
+  document.body.appendChild(status);
+  await window.deleteCloudData();
+  localStorage.clear();
+  try { await caches.delete('relocation-v2026.2'); } catch (e) {}
+  location.reload();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTimeline();
+  document.getElementById('reset-btn')?.addEventListener('click', () => {
+    if (confirm('Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?')) {
+      window.hardResetApplication();
+    }
+  });
+});
 document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () => {
   setTimeout(renderTimeline, 50);
 });
