@@ -1069,9 +1069,13 @@ html, body {
 .plan-note-display {
   white-space: pre-wrap;
   word-break: break-word;
-  color: #555;
+  color: #5d4037;
   flex: 1;
   min-width: 0;
+  background: #fffde7;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #e6d88a;
 }
 .plan-note-display.hidden { display: none; }
 .plan-note-edit-btn, .plan-note-save-btn, .plan-note-del-btn {
@@ -1183,16 +1187,16 @@ html, body {
 .plan-note-ta {
   width: 100%;
   padding: 6px 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #e6d88a;
   border-radius: 6px;
   font-family: inherit;
   font-size: 13px;
   resize: none;
   overflow: hidden;
   color: #333;
-  background: #fafafa;
+  background: #fffde7;
 }
-.plan-note-ta:focus { outline: none; border-color: #1a237e; background: #fff; }
+.plan-note-ta:focus { outline: none; border-color: #fbc02d; background: #fff9c4; }
 
 /* Shared date remaining indicator */
 .plan-date-remaining { font-size: 12px; font-weight: 500; white-space: nowrap; }
