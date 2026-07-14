@@ -277,8 +277,8 @@ function updateLegend(preset) {
     });
     listEl.appendChild(row);
   });
-  document.getElementById('legend-toggle').textContent =
-    `${emoji} Сортировка: ${presetName(preset)}`;
+  document.getElementById('legend-toggle').innerHTML =
+    `${emoji} Сортировка: ${presetName(preset)} <span id="legend-arrow">▾</span>`;
 }
 
 function updateUrbanFilter(hide) {
