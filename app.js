@@ -410,7 +410,7 @@ function showDistrictPanel(d, noFit) {
       img.src = url;
       img.className = 'carousel-slide';
       img.dataset.caption = title;
-      img.addEventListener('click', () => openLightbox(url));
+      img.addEventListener('click', () => openLightbox(url, title));
       img.onerror = function() {
         this.onerror = null;
         const ph = document.createElement('div');
@@ -514,17 +514,22 @@ function showDistrictPanel(d, noFit) {
   if (!noFit) highlightDistrict(d.name);
 }
 
-function openLightbox(url) {
+function openLightbox(url, title) {
   let box = document.getElementById('lightbox-overlay');
   if (!box) {
     box = document.createElement('div');
     box.id = 'lightbox-overlay';
     box.className = 'lightbox-hidden';
-    box.innerHTML = '<span class="lightbox-close">&times;</span><img id="lightbox-img" src="" alt="View">';
+    box.innerHTML = '<span class="lightbox-close">&times;</span><div class="lightbox-content-wrapper"><img id="lightbox-img" src="" alt="View"><div id="lightbox-caption" class="lightbox-caption-text"></div></div>';
     document.body.appendChild(box);
-    box.addEventListener('click', () => box.className = 'lightbox-hidden');
+    box.addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox-overlay' || e.target.classList.contains('lightbox-close')) {
+        box.className = 'lightbox-hidden';
+      }
+    });
   }
   document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-caption').textContent = title || '';
   box.className = 'lightbox-visible';
 }
 
