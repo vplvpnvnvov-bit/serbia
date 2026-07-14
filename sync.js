@@ -36,15 +36,17 @@ let syncPending = false;
 let syncLoading = false; // prevents write-back during loadFromCloud
 
 firebase.auth().signInAnonymously().catch(() => {});
+window.generateNewSyncCode = function() {
+  const code = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
+  localStorage.setItem('sync-code', code);
+  syncCode = code;
+  document.getElementById('display-sync-code').textContent = code;
+  return code;
+};
+
 firebase.auth().onAuthStateChanged(async user => {
   if (user) {
     userId = user.uid;
-
-    const resetCode = sessionStorage.getItem('reset_old_code');
-    if (resetCode) {
-      sessionStorage.removeItem('reset_old_code');
-      await deleteFirestoreDoc(resetCode);
-    }
 
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
@@ -101,14 +103,6 @@ async function fetchAndLoadDoc() {
     return;
   }
 
-  if (data.isDeleted === true) {
-    console.warn('Попытка подключиться к удаленному коду синхронизации.');
-    alert('Этот код связи был ранее удален и больше недействителен. Будет сгенерирован новый чистый код.');
-    syncLoading = true;
-    window.localHardResetWithoutCloud();
-    return;
-  }
-
   syncLoading = true;
   // Санация + миграция
   if (data.checklist) {
@@ -140,10 +134,6 @@ async function fetchAndLoadDoc() {
 
 window.saveToCloud = async function() {
   if (!syncCode) return;
-  if (localStorage.getItem('is_deleted_session') === 'true') {
-    console.warn('Попытка отправить данные для аннулированной сессии заблокирована.');
-    throw new Error('Сессия аннулирована');
-  }
   if (syncPending) throw new Error('Синхронизация уже выполняется');
   syncPending = true;
   try {
@@ -190,25 +180,4 @@ window.changeSyncCode = function() {
   }
 };
 
-async function deleteFirestoreDoc(code) {
-  const ref = db.collection('users').doc(code);
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    try {
-      await ref.set({ isDeleted: true });
-      // Новая сессия реад — ждём ответа сервера
-      const v = await ref.get({ source: 'server' });
-      if (v.exists && v.data().isDeleted === true) return;
-      console.warn(`Попытка ${attempt}: сервер не подтвердил isDeleted, повтор...`);
-    } catch (e) {
-      console.warn(`Попытка ${attempt} не удалась:`, e.message);
-    }
-    await new Promise(r => setTimeout(r, 1500));
-  }
-  throw new Error('Не удалось подтвердить удаление облачных данных после 5 попыток');
-}
 
-window.deleteCloudData = async function() {
-  const code = localStorage.getItem('sync-code');
-  if (!code) return;
-  await deleteFirestoreDoc(code);
-};

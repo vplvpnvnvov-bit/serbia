@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.5.7",
-  BUILD: "f28535b",
-  CACHE_NAME: "relocation-v1.5.7-f28535b"
+  VERSION: "1.6.0",
+  BUILD: "26d670d",
+  CACHE_NAME: "relocation-v1.6.0-26d670d"
 };
 
 // === TABS ===
@@ -1155,37 +1155,23 @@ function renderTimeline() {
   root.appendChild(summary);
 }
 
-// === HARD RESET (GDPR) ===
+// === СБРОС ВСЕХ НАСТРОЕК И ДАННЫХ ===
 function showResetOverlay() {
   const root = document.getElementById('app');
   if (root) root.style.opacity = '0.3';
   const status = document.createElement('div');
-  status.textContent = '🗑️ Удаляю данные...';
+  status.textContent = '🔄 Сбрасываю данные...';
   status.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;background:#fff;padding:20px 30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;';
   document.body.appendChild(status);
 }
 
-window.localHardResetWithoutCloud = async function() {
+window.factoryReset = async function() {
   showResetOverlay();
-  localStorage.setItem('is_deleted_session', 'true');
+
+  const code = localStorage.getItem('sync-code');
   localStorage.clear();
-  try {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
-  } catch (e) {}
-  location.reload();
-};
+  if (code) localStorage.setItem('sync-code', code);
 
-window.hardResetApplication = async function() {
-  showResetOverlay();
-  localStorage.setItem('is_deleted_session', 'true');
-
-  const oldCode = localStorage.getItem('sync-code');
-  if (oldCode) sessionStorage.setItem('reset_old_code', oldCode);
-
-  await window.deleteCloudData().catch(() => {});
-
-  localStorage.clear();
   try {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
@@ -1237,16 +1223,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.changeSyncCode();
   });
 
+  document.getElementById('btn-new-code')?.addEventListener('click', () => {
+    if (confirm('Сгенерировать новый код синхронизации? Старый код перестанет быть доступен на этом устройстве.')) {
+      window.generateNewSyncCode();
+    }
+  });
+
   const resetBtn = document.getElementById('btn-hard-reset');
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (confirm("Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?")) {
+      if (confirm("Это сбросит все локальные данные: чек-лист, калькулятор, настройки. Сам код синхронизации сохранится. Продолжить?")) {
         try {
-          await window.hardResetApplication();
+          await window.factoryReset();
         } catch (err) {
-          console.error("Ошибка при сбросе данных:", err);
-          alert("Произошла ошибка при удалении данных. Попробуйте еще раз.");
+          console.error("Ошибка при сбросе:", err);
         }
       }
     });

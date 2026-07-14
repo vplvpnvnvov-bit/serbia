@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=1.5.7-f28535b" />
+<link rel="stylesheet" href="style.css?v=1.6.0-26d670d" />
 </head>
 <body>
 
@@ -174,9 +174,10 @@
               <div class="card-actions">
                 <button id="btn-upload" class="action-btn primary-btn" title="Отправить текущие данные этого устройства в облако.">📤 Выгрузить в облако</button>
                 <button id="btn-download" class="action-btn primary-btn" title="Забрать данные из облака на это устройство.">📥 Загрузить из облака</button>
+                <button id="btn-new-code" class="action-btn secondary-btn" title="Создать новый случайный код синхронизации.">🔄 Сгенерировать новый код</button>
                 <button id="btn-change-code" class="action-btn secondary-btn" title="Ввести код другого устройства, чтобы подключиться к его данным.">✏️ Изменить код связи</button>
               </div>
-              <p class="action-help">«Выгрузить» — сохраняет ваши данные в облако. «Загрузить» — читает данные из облака на это устройство (заменяет локальные). «Изменить код» — подключиться к данным другого устройства.</p>
+              <p class="action-help">«Выгрузить» — сохраняет ваши данные в облако. «Загрузить» — читает данные из облака на это устройство. «Сгенерировать новый код» — создаёт новый код, старый остаётся в облаке нетронутым. «Изменить код» — подключиться к данным другого устройства.</p>
             </div>
 
           <div class="settings-card">
@@ -199,14 +200,14 @@
           <div class="settings-card danger-card">
             <div class="card-header">
               <span class="card-icon">⚠️</span>
-              <h4>Опасная зона</h4>
+              <h4>Сброс устройства</h4>
             </div>
-            <p class="card-desc">Полное удаление всей вашей информации без возможности восстановления.</p>
+            <p class="card-desc">Очищает все локальные данные (чек-лист, калькулятор, настройки), но сохраняет код синхронизации. Облачные данные не затрагиваются.</p>
 
             <div class="card-actions">
-              <button id="btn-hard-reset" class="action-btn danger-btn" title="Безвозвратно удаляет всю вашу информацию из этого браузера и из облака Firebase. Процесс необратим!">🗑️ Очистить всё и удалить аккаунт</button>
+              <button id="btn-hard-reset" class="action-btn danger-btn" title="Очищает все данные на этом устройстве: чек-лист, калькулятор, настройки. Код синхронизации сохраняется.">🔄 Сбросить все настройки</button>
             </div>
-            <p class="action-help">Внимание! Это действие физически сотрет ваши данные из облака Firebase, очистит память этого телефона и сгенерирует вам новый чистый код.</p>
+            <p class="action-help">После сброса вы можете загрузить свежие данные из облака (кнопка «Загрузить») или начать с чистого листа и выгрузить пустой чек-лист в облако.</p>
           </div>
         </div>
       </div>
@@ -227,9 +228,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=1.5.7-f28535b"></script>
-<script src="sync.js?v=1.5.7-f28535b"></script>
-<script src="app.js?v=1.5.7-f28535b"></script>
+<script src="data.js?v=1.6.0-26d670d"></script>
+<script src="sync.js?v=1.6.0-26d670d"></script>
+<script src="app.js?v=1.6.0-26d670d"></script>
 
 </body>
 </html>
