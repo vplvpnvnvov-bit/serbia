@@ -1186,7 +1186,7 @@ const DISTRICTS = [
     "vibeScore": 10,
     "isUrban": true,
     "familyDesc": "Центр города — Калемегдан с огромным парком, детскими площадками, зоопарком. Всё в пешей доступности: магазины, аптеки, поликлиники, кафе. Минусы: очень шумно, холмистая мостовая (коляску трясёт), старые дома без лифта, высокая аренда, грязновато. Для семьи с маленьким ребёнком центр скорее неудобен: нужно много гулять, а в центре мало зелёных дворов и спокойных мест.",
-    "images": [{"url":"https://images.unsplash.com/photo-1555992336-03a23c7b20eb?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Улица Князя Михаила — главная пешеходная зона с кафе"},{"url":"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Историческая архитектура Старого города"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Knez_Mihailova_Street_2020.jpg/640px-Knez_Mihailova_Street_2020.jpg","title":"Кнез Михайлова — сердце Белграда"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Stari_Grad_Beograd.jpg/640px-Stari_Grad_Beograd.jpg","title":"Панорама Старого Града"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1555992336-03a23c7b20eb?w=1000&auto=format&fit=crop&q=80","title":"Улица Князя Михаила — пешеходный проспект, старинная архитектура, уличные художники"},{"url":"https://images.unsplash.com/photo-1584646098098-336f40b282b9?w=1000&auto=format&fit=crop&q=80","title":"Крепость Калемегдан — панорама на слияние Савы и Дуная"},{"url":"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80","title":"Площадь Республики — Национальный театр и памятник князю Михаилу"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Скадарлия — богемный квартал с мощёными мостовыми и ресторанами"}]
   },
   {
     "name": "Врачар",
@@ -2698,7 +2698,7 @@ const DISTRICTS = [
     "vibeScore": 10,
     "isUrban": true,
     "familyDesc": "Престижный центральный район с отличной инфраструктурой. Детские сады, школы, магазины, аптеки — всё рядом. Парк Манеж для прогулок, Храм Св. Саввы с парковой зоной. Минусы: очень высокая цена аренды, узкие тротуары, холмистый рельеф (с коляской сложно), шумно, сложно с парковкой. Для семьи с ребёнком может быть дискомфортно из-за плотной застройки и отсутствия зелёных дворов.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg/960px-Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg","title":"Храм Святого Саввы — крупнейший православный храм на Балканах"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Парк и площадь вокруг храма"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Vracar_Belgrade.jpg/640px-Vracar_Belgrade.jpg","title":"Улицы Врачара с видом на храм"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nikola_Tesla_Museum_Belgrade.jpg/640px-Nikola_Tesla_Museum_Belgrade.jpg","title":"Музей Николы Теслы во Врачаре"}]
+    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg/960px-Hram_Sv._Save_u_Beogradu_2023-01-07_DJI_0807-12.jpg","title":"Храм Святого Саввы — величественный собор, фонтаны и зелёный сквер"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Улочки Врачара — малоэтажная застройка в зелени вековых деревьев"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Каленич Пияца — аутентичный рынок со свежими фруктами и цветами"},{"url":"https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=1000&auto=format&fit=crop&q=80","title":"Чубурский парк — центр притяжения семей с детьми"}]
   },
   {
     "name": "Савски Венац",
@@ -3898,7 +3898,7 @@ const DISTRICTS = [
     "vibeScore": 6,
     "isUrban": true,
     "familyDesc": "Дединье — элитный тихий район с большими домами, садами, зеленью. Идеально для семьи, если бюджет позволяет. Много посольств — безопасно. Белград на воде — современные ЖК с детскими площадками, набережной. Минусы: очень дорого, холмистый рельеф, мало магазинов шаговой доступности (нужна машина). Для семьи скорее хорош, но требует больших финансовых вложений.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg/960px-Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg","title":"Парк Милутина Миланковича"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Элитный район с парками и посольствами"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Beogradjanka_Belgrade.jpg/640px-Beogradjanka_Belgrade.jpg","title":"Башня Београджанка в центре"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Saint_Sava_Temple_Belgrade.jpg/640px-Saint_Sava_Temple_Belgrade.jpg","title":"Вид на район с набережной Савы"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80","title":"Belgrade Waterfront — променад Савы мирового уровня с игровыми городками"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg/960px-Park_Milutin_Milankovi%C4%87%2C_Belgrade%2C_Savski_Venac_%281%29.jpg","title":"Парк Топчидер — лесной массив, гигантские платаны и деревянные мостики"},{"url":"https://images.unsplash.com/photo-1555992336-03a23c7b20eb?w=1000&auto=format&fit=crop&q=80","title":"Дединье — тихий элитный район вилл, посольств и тенистых садов"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Парки и скверы Савского Венца"}]
   },
   {
     "name": "Нови Београд",
@@ -5118,7 +5118,7 @@ const DISTRICTS = [
     "vibeScore": 7,
     "isUrban": true,
     "familyDesc": "Максимально подходит для семьи с ребёнком. Ровный рельеф — коляска без проблем. В каждом блоке детские площадки, зелёные дворы без машин. Много детских садов и школ. Развитая инфраструктура: магазины, аптеки, поликлиники — всё в шаговой доступности. Набережная с прогулочной зоной, парк Ушче. Много русскоязычных семей — ребёнку будет с кем играть. Безопасно, современные квартиры с лифтами. Близко к бизнес-центрам (работа для родителей).",
-    "images": [{"url":"https://images.unsplash.com/photo-1549692520-acc6669e2f0c?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Современные жилые блоки и широкие проспекты"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Genex_Tower_Belgrade.jpg/640px-Genex_Tower_Belgrade.jpg","title":"Башня Генекс — культовый памятник брутализма"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Novi_Beograd_bulevar.jpg/640px-Novi_Beograd_bulevar.jpg","title":"Бульвары Нового Белграда"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Офисы и парки у реки"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Savski_Blokovi_Blok45.jpg/960px-Savski_Blokovi_Blok45.jpg","title":"Савские Блоки — жилой район у воды"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1605538032432-a9f0c8d9baac?w=1000&auto=format&fit=crop&q=80","title":"Савский Кей — просторная набережная, детские площадки у воды"},{"url":"https://images.unsplash.com/photo-1549692520-acc6669e2f0c?w=1000&auto=format&fit=crop&q=80","title":"Парк Ушче — огромный зелёный парк на стрелке рек с видом на старый город"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Genex_Tower_Belgrade.jpg/640px-Genex_Tower_Belgrade.jpg","title":"Башня Генекс — культовый памятник брутализма"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Современные офисы, широкие велодорожки и новые школы"}]
   },
   {
     "name": "Земун",
@@ -6186,7 +6186,7 @@ const DISTRICTS = [
     "vibeScore": 6,
     "isUrban": true,
     "familyDesc": "Отличный выбор для семьи. Набережная Дуная с прогулочной зоной и велодорожками — идеально для прогулок с коляской. Ровная центральная часть. Свои детские сады, школы, поликлиника. Рынок, магазины шаговой доступности. Атмосфера маленького города — безопасно и спокойно. Цены на жильё ниже центра. Минус — удалённость от центральной части города, но в Земуне есть всё необходимое для повседневной жизни.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gardos_Tower_Zemun.jpg/640px-Gardos_Tower_Zemun.jpg","title":"Башня Гардош — смотровая площадка над черепичными крышами"},{"url":"https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Дунайская набережная — лебеди, яхты и кафе"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Zemun_quay_Belgrade.jpg/640px-Zemun_quay_Belgrade.jpg","title":"Прогулочная зона Земунского Кея"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Zemun_old_town.jpg/640px-Zemun_old_town.jpg","title":"Старый город Земун — узкие улочки и бары"}]
+    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gardos_Tower_Zemun.jpg/640px-Gardos_Tower_Zemun.jpg","title":"Башня Гардош — смотровая площадка с видом на черепичные крыши и Дунай"},{"url":"https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1000&auto=format&fit=crop&q=80","title":"Земунский Кей — набережная Дуная, белые лебеди у берега"},{"url":"https://images.unsplash.com/photo-1601918774946-25832a4be0d6?w=1000&auto=format&fit=crop&q=80","title":"Старый центр Земуна — Магистратская площадь, мощеные улочки"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Парк Земун — тенистые аллеи, детские площадки"}]
   },
   {
     "name": "Звездара",
@@ -7265,7 +7265,7 @@ const DISTRICTS = [
     "vibeScore": 5,
     "isUrban": true,
     "familyDesc": "Один из самых зелёных районов Белграда. Парк Звездарска шума, парк на Мильешевской — отличные места для прогулок с ребёнком. Есть детские сады и школы, спортивные секции. Тихие зелёные дворы. Рядом с центром — до центральной части 10-15 минут на транспорте. Инфраструктура развита: магазины, аптеки, поликлиники. Рельеф с небольшим уклоном, но в целом приемлем для коляски. Минус — мало современных новостроек.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Zvezdara_Forest.jpg/640px-Zvezdara_Forest.jpg","title":"Звездарский лес — крупнейший лесопарк Белграда"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Панорама района Звездара"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Zvezdara_Municipality.jpg/640px-Zvezdara_Municipality.jpg","title":"Обсерватория и зелёные холмы"}]
+    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Zvezdara_Forest.jpg/640px-Zvezdara_Forest.jpg","title":"Звездарский лес — крупнейший лесопарк Белграда с пешеходными тропами"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Зелёные холмы и тихие жилые кварталы Звездары"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Обсерватория и панорамные виды с высоты"}]
   },
   {
     "name": "Вождовац",
@@ -8320,7 +8320,7 @@ const DISTRICTS = [
     "vibeScore": 3,
     "isUrban": true,
     "familyDesc": "Тихий спальный район, хороший для семейной жизни. Много зелени, детских площадок. Развитая социальная инфраструктура: садики, школы, поликлиники. Цены на жильё ниже, чем в центре. Спокойная атмосфера, безопасно. Минусы: холмистый рельеф (с коляской тяжеловато на некоторых улицах), пробки в часы пик, удалённость от центра. Если есть машина — хороший вариант.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Vozdovac_Belgrade.jpg/640px-Vozdovac_Belgrade.jpg","title":"Жилые кварталы Вождоваца"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Зелёные холмы у подножия Авалы"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Avala_Tower_Belgrade.jpg/640px-Avala_Tower_Belgrade.jpg","title":"Башня на Авале — вид на весь Белград"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Зелёные холмы у подножия Авалы — свежий воздух и тишина"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Avala_Tower_Belgrade.jpg/640px-Avala_Tower_Belgrade.jpg","title":"Башня на Авале — панорамный вид на весь Белград"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Жилые кварталы Вождоваца — спокойный семейный район"}]
   },
   {
     "name": "Палилула",
@@ -8899,7 +8899,7 @@ const DISTRICTS = [
     "vibeScore": 4,
     "isUrban": true,
     "familyDesc": "Самый большой район — качество сильно зависит от конкретного микрорайона. Центральная часть (Ташмайдан) отлично подходит для семьи: парк, детские площадки, садики рядом. В части у Дуная — тихо и зелено. Окраины (Борча, Крняча) — слабая инфраструктура, проблемы с транспортом. Разброс качества большой: от хороших семейных зон до проблемных.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Belgrade_Arena_%D0%9A%D0%BE%D0%BC%D0%B1%D0%B0%D0%BD%D0%BA_%D0%B0%D1%80%D0%B5%D0%BD%D0%B0.jpg/640px-Belgrade_Arena.jpg","title":"Белградская Арена — крупнейший концертный зал"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Парк Ташмайдан в центре Палилулы"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Palilula_Belgrade.jpg/640px-Palilula_Belgrade.jpg","title":"Улицы и зелёные зоны Палилулы"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Tasmajdan_Park_Belgrade.jpg/640px-Tasmajdan_Park_Belgrade.jpg","title":"Церковь Святого Марка в Ташмайдане"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Парк Ташмайдан — лучший детский парк с поющими фонтанами"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Tasmajdan_Park_Belgrade.jpg/640px-Tasmajdan_Park_Belgrade.jpg","title":"Церковь Святого Марка и зелёные аллеи Ташмайдана"},{"url":"https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80","title":"Ботанический сад Евремовац — викторианская теплица"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Улицы Палилулы — оживлённый район с кафе и магазинами"}]
   },
   {
     "name": "Чукарица",
@@ -9971,7 +9971,7 @@ const DISTRICTS = [
     "vibeScore": 4,
     "isUrban": true,
     "familyDesc": "Главное преимущество — Ада Циганлия: огромный парк с пляжем, спортивными площадками, прогулочными маршрутами. Летом лучшее место для семьи. Свои детские сады, школы. Цены доступные. Много зелени, Баново Брдо — тихий и зелёный микрорайон. Минусы: удалённость от центра, пробки на мосту (единственный выезд), старый жилфонд в некоторых частях.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ada_Ciganlija_Overview.jpg/640px-Ada_Ciganlija_Overview.jpg","title":"Ада Циганлия — Белградское море"},{"url":"https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Пляжи и спорт на Аде"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Cukarica_Belgrade.jpg/640px-Cukarica_Belgrade.jpg","title":"Зелёные кварталы Чукарицы"}]
+    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ada_Ciganlija_Overview.jpg/640px-Ada_Ciganlija_Overview.jpg","title":"Ада Циганлия — Белградское море, пляжи и спортивные площадки"},{"url":"https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1000&auto=format&fit=crop&q=80","title":"Набережная и зоны отдыха у воды на Аде"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Зелёные кварталы Чукарицы — доступное жильё для семей"}]
   },
   {
     "name": "Раковица",
@@ -11034,7 +11034,7 @@ const DISTRICTS = [
     "vibeScore": 3,
     "isUrban": true,
     "familyDesc": "Бюджетный вариант рядом с центром (10-15 минут на машине/автобусе). Есть детские сады, школы, магазины. Минусы: наличие промышленных зон, старый жилфонд, мало зелени и парков, пробки. В некоторых частях грязновато и депрессивно. Для семьи с ребёнком — вариант если сильно ограничен бюджет, но лучше рассмотреть другие районы.",
-    "images": [{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Rakovica_Belgrade.jpg/640px-Rakovica_Belgrade.jpg","title":"Жилые кварталы Раковицы"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Лесопарк Кошутняк"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Kosutnjak_Forest.jpg/640px-Kosutnjak_Forest.jpg","title":"Природа и тихие улицы Раковицы"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Лесопарк Кошутняк — беговые дорожки и пикниковые зоны"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Тихие жилые кварталы Раковицы у подножия холмов"},{"url":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Kosutnjak_Forest.jpg/640px-Kosutnjak_Forest.jpg","title":"Природа и зелень — Кошутняк в осенних красках"}]
   },
   {
     "name": "Сурчин",
@@ -12181,7 +12181,7 @@ const DISTRICTS = [
     "vibeScore": 2,
     "isUrban": false,
     "familyDesc": "Активно застраивается новыми ЖК — современные квартиры, новые детские площадки. Цены ниже среднего. Минусы: очень далеко от центра (30+ минут без пробок, в часы пик до часа), шум от самолётов (аэропорт рядом), слабая социальная инфраструктура — садиков и школ пока не хватает на всех новосёлов. Без машины сложно. Перспективный район, но для семьи с ребёнком сейчас неудобен.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Сурчин"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Сурчин"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Аэропорт Никола Тесла — воздушные ворота Сербии"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Сельские пейзажи и просторы Сурчина"}]
   },
   {
     "name": "Барајево",
@@ -13291,7 +13291,7 @@ const DISTRICTS = [
     "vibeScore": 1,
     "isUrban": false,
     "familyDesc": "Пригород с домами и участками. Для тех, кто хочет жить в своём доме с садом — для ребёнка идеально: свежий воздух, своя территория для игр, тишина. Минусы: очень далеко (30-40 км), отсутствие инфраструктуры (ближайший магазин — машина), нет детских садов и школ в пешей доступности, общественный транспорт редко. Полная зависимость от машины. Для постоянного проживания с ребёнком — сложно.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Барајево"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Барајево"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Зелёные холмы и леса — природа Бараево"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Тихая сельская жизнь в пригороде Белграда"}]
   },
   {
     "name": "Гроцка",
@@ -14401,7 +14401,7 @@ const DISTRICTS = [
     "vibeScore": 2,
     "isUrban": false,
     "familyDesc": "Пригород вдоль Дуная с пляжами и дачами. Хорошо как место для отдыха на выходные. Для постоянного проживания с ребёнком — слабо: плохая инфраструктура, мало магазинов, нет хороших детских садов и школ, далеко от центра (20-30 км), без машины не обойтись. Цены низкие, но и качество жизни для семьи соответствующее.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Гроцка"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Гроцка"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1000&auto=format&fit=crop&q=80","title":"Дунайская набережная и фруктовые сады Гроцки"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Виноградники и сельские пейзажи на берегу Дуная"}]
   },
   {
     "name": "Обреновац",
@@ -15447,7 +15447,7 @@ const DISTRICTS = [
     "vibeScore": 2,
     "isUrban": false,
     "familyDesc": "Удалённый промышленный пригород (30 км от центра). Есть свой центр с инфраструктурой — садики, школы, магазины. Цены низкие. Минусы: близость ТЭЦ и промышленных предприятий — экология под вопросом, долгая дорога до центра (час+ на автобусе), мало зелени. Для семьи с ребёнком — не лучший выбор из-за экологии и удалённости.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Обреновац"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Обреновац"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Набережная Савы и городской парк Обреноваца"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80","title":"Термальные источники и зелёные зоны отдыха"}]
   },
   {
     "name": "Лазаревац",
@@ -16585,7 +16585,7 @@ const DISTRICTS = [
     "vibeScore": 1,
     "isUrban": false,
     "familyDesc": "Далёкий пригород (60 км к югу). Фактически отдельный город. Есть минимальная инфраструктура: садики, школа, поликлиника. Минусы: угольные шахты и ТЭЦ — плохая экология, очень далеко от Белграда, дорога на автобусе занимает больше часа, для работы в Белграде — ежедневный подвиг. Не рекомендуется для семьи с маленьким ребёнком.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Лазаревац"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Лазаревац"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Центральный парк и тихие улочки Лазареваца"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Лесистые холмы и чистый воздух шумадийского региона"}]
   },
   {
     "name": "Младеновац",
@@ -17731,7 +17731,7 @@ const DISTRICTS = [
     "vibeScore": 1,
     "isUrban": false,
     "familyDesc": "Далёкий южный пригород (45 км). Своя инфраструктура: садики, школа, поликлиника. Цены низкие, есть новые дома. Минусы: очень далеко (час до центра на автобусе), нет нормальной транспортной связи, мало рабочих мест, отсутствие культурной среды. Для семьи с ребёнком подходит только если вы работаете там же и не нуждаетесь в инфраструктуре Белграда.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Младеновац"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Младеновац"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Городской парк и спа-источники Младеноваца"},{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Зелёные окрестности — природа Шумадии"}]
   },
   {
     "name": "Сопот",
@@ -18685,7 +18685,7 @@ const DISTRICTS = [
     "vibeScore": 1,
     "isUrban": false,
     "familyDesc": "Маленький город (3-4 тыс. жителей) у горы Космай. Природа, чистый воздух, тишина. Для ребёнка — отлично с точки зрения экологии и безопасности. Минусы: отсутствие нормальной инфраструктуры (один магазин, нет хорошей поликлиники, нет кружков/секций), очень далеко (50-70 мин до центра), без машины невозможно. Самый низкий балл — не потому что место плохое, а потому что для семьи с ребёнком требуется полная самостоятельность и готовность к изоляции.",
-    "images": [{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Сопот"},{"url":"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&auto=format&fit=crop&q=80&auto=format&fit=crop","title":"Фото района Сопот"}]
+    "images": [{"url":"https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1000&auto=format&fit=crop&q=80","title":"Космай — гора и памятник с панорамным видом"},{"url":"https://images.unsplash.com/photo-1580048914724-5f2b0bde7413?w=1000&auto=format&fit=crop&q=80","title":"Холмы и фруктовые сады — сердце Шумадии"}]
   }
 ];
 
