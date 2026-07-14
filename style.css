@@ -1232,8 +1232,13 @@ html, body {
 
 /* Flash animation for scroll-to */
 @keyframes flashAnim {
-  0%, 100% { background: transparent; }
-  50% { background: #fff3cd; }
+  0%, 100% { background: transparent; box-shadow: none; }
+  50% { background: #fff3cd; box-shadow: 0 0 12px rgba(251,192,45,0.6); }
+}
+
+.tl-step.flash {
+  animation: flashAnim 0.6s ease 5;
+  border-radius: 4px;
 }
 
 /* METRICS — segmented two-color progress bars */
