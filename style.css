@@ -983,16 +983,8 @@ html, body {
   background: #fdd835;
 }
 
-/* Locked mode — subtle dimming, circles stay bright */
-.plan-locked-mode .plan-date-inline,
-.plan-locked-mode .plan-note-inline {
-  opacity: 0.6;
-}
-.plan-locked-mode input:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-.plan-locked-mode .plan-status-btn:disabled {
+/* Disabled status buttons — always bright, never grayed out */
+.plan-status-btn:disabled {
   cursor: default;
   pointer-events: none;
   border-color: #bbb;
@@ -1000,19 +992,31 @@ html, body {
   color: inherit;
   -webkit-text-fill-color: inherit;
 }
-.plan-locked-mode .plan-status-btn:disabled.done {
+.plan-status-btn:disabled.done {
   border-color: #2e7d32 !important;
   background: #e8f5e9 !important;
 }
-.plan-locked-mode .plan-status-btn:disabled.progress {
+.plan-status-btn:disabled.progress {
   border-color: #f9a825 !important;
   background: #fff8e1 !important;
 }
-.plan-locked-mode .plan-status-btn:hover {
+.plan-status-btn:disabled:hover {
   transform: none;
 }
-.plan-locked-mode .plan-tip-toggle {
-  /* keep tip toggle working */
+
+/* Edit mode — subtle dim on date/note inputs to signal editing */
+.plan-edit-mode .plan-date-inline,
+.plan-edit-mode .plan-note-inline {
+  opacity: 0.65;
+  transition: opacity 0.25s ease;
+}
+.plan-edit-mode .plan-date-inline:hover,
+.plan-edit-mode .plan-note-inline:hover {
+  opacity: 0.85;
+}
+.plan-edit-mode .plan-date-inline input:focus,
+.plan-edit-mode .plan-note-ta:focus {
+  opacity: 1;
 }
 
 /* Inline date block (visible when done + hasDate) */

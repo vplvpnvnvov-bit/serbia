@@ -699,7 +699,7 @@ function renderPlan() {
 
   const locked = localStorage.getItem('plan-locked') === 'true';
   root.innerHTML = '';
-  root.className = 'tab-content' + (locked ? ' plan-locked-mode' : '');
+  root.className = 'tab-content' + (!locked ? ' plan-edit-mode' : '');
 
   const h = document.createElement('h2');
   h.textContent = '📅 Пошаговый план переезда (5 месяцев)';
