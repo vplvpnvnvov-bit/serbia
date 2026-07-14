@@ -486,6 +486,27 @@ DISTRICTS.forEach(d => {
 
   polygon.on('click', () => showDistrictPanel(d));
 
+  polygon.on('mouseover', () => {
+    const marker = labelMarkers[d.name];
+    if (marker) {
+      const el = marker.getElement();
+      if (el) {
+        const badge = el.querySelector('.map-price-badge');
+        if (badge) badge.classList.add('active');
+      }
+    }
+  });
+  polygon.on('mouseout', () => {
+    const marker = labelMarkers[d.name];
+    if (marker) {
+      const el = marker.getElement();
+      if (el) {
+        const badge = el.querySelector('.map-price-badge');
+        if (badge) badge.classList.remove('active');
+      }
+    }
+  });
+
   const lats = d.coords.map(p => p[0]);
   const lons = d.coords.map(p => p[1]);
   const cx = (Math.min(...lats) + Math.max(...lats)) / 2;
