@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.5.2",
-  BUILD: "666ef0f",
-  CACHE_NAME: "relocation-v1.5.2-666ef0f"
+  VERSION: "1.5.3",
+  BUILD: "85310b2",
+  CACHE_NAME: "relocation-v1.5.3-85310b2"
 };
 
 // === TABS ===
@@ -1182,7 +1182,16 @@ window.localHardResetWithoutCloud = async function() {
 window.hardResetApplication = async function() {
   showResetOverlay();
   localStorage.setItem('is_deleted_session', 'true');
-  await window.deleteCloudData();
+
+  const oldCode = localStorage.getItem('sync-code');
+  if (oldCode) sessionStorage.setItem('reset_old_code', oldCode);
+
+  try {
+    await window.deleteCloudData();
+  } catch (e) {
+    console.warn('Cloud delete failed (local reset continues):', e);
+  }
+  sessionStorage.removeItem('reset_old_code');
   localStorage.clear();
   try {
     const keys = await caches.keys();

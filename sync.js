@@ -39,13 +39,23 @@ firebase.auth().signInAnonymously().catch(() => {});
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     userId = user.uid;
+
+    const resetCode = sessionStorage.getItem('reset_old_code');
+    if (resetCode) {
+      sessionStorage.removeItem('reset_old_code');
+      db.collection('users').doc(resetCode).set({
+        isDeleted: true,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }).catch(() => {});
+    }
+
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
       syncCode = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
       localStorage.setItem('sync-code', syncCode);
     }
     document.getElementById('display-sync-code').textContent = syncCode;
-    loadFromCloud();
+    if (!resetCode) loadFromCloud();
   }
 });
 
@@ -191,12 +201,13 @@ window.changeSyncCode = function() {
 window.deleteCloudData = async function() {
   const code = localStorage.getItem('sync-code');
   if (!code) return;
-  try {
-    await db.collection('users').doc(code).set({
-      isDeleted: true,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-  } catch (e) {
-    // нет сети — не фатально
+  const ref = db.collection('users').doc(code);
+  await ref.set({
+    isDeleted: true,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+  const verify = await ref.get({ source: 'server' });
+  if (!verify.exists || verify.data().isDeleted !== true) {
+    throw new Error('Server did not confirm isDeleted');
   }
 };
