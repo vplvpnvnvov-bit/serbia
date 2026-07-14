@@ -980,9 +980,17 @@ html, body {
 
 /* Locked mode */
 .plan-locked-mode .plan-status-btn:disabled {
-  opacity: 0.5;
   cursor: default;
   pointer-events: none;
+  opacity: 0.9;
+}
+.plan-locked-mode .plan-status-btn:disabled.done {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+.plan-locked-mode .plan-status-btn:disabled.progress {
+  border-color: #f9a825;
+  background: #fff8e1;
 }
 .plan-locked-mode .plan-status-btn:hover {
   transform: none;
