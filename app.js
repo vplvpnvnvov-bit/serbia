@@ -1073,6 +1073,22 @@ if (!window.planListenerAdded) {
       renderPlan();
       return;
     }
+
+    // Catch-all: click on task row toggles tip (skip interactive elements)
+    const step = el.closest('.tl-step');
+    if (step) {
+      if (el.closest('input') || el.closest('textarea') || el.closest('a')) return;
+      const btn = el.closest('button');
+      if (btn && !btn.classList.contains('plan-tip-toggle')) return;
+      const tipBtn = step.querySelector('.plan-tip-toggle');
+      const tipBody = step.querySelector('.plan-tip-body');
+      if (tipBody && tipBtn) {
+        const isHidden = tipBody.classList.contains('hidden');
+        tipBody.classList.toggle('hidden');
+        tipBtn.classList.toggle('open', isHidden);
+        tipBtn.textContent = isHidden ? '▼' : '▶';
+      }
+    }
   });
 
   window.planListenerAdded = true;
