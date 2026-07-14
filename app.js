@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.5.1",
-  BUILD: "0973ef9",
-  CACHE_NAME: "relocation-v1.5.1-0973ef9"
+  VERSION: "1.5.2",
+  BUILD: "666ef0f",
+  CACHE_NAME: "relocation-v1.5.2-666ef0f"
 };
 
 // === TABS ===
@@ -1002,8 +1002,13 @@ function showUpdateNotification(worker) {
     if (userAccepted) {
       if (worker) {
         worker.postMessage({ action: 'skipWaiting' });
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        window.location.reload();
       }
-      window.location.reload();
     }
   }, 800);
 }
