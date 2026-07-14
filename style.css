@@ -1237,7 +1237,7 @@ html, body {
 }
 
 .tl-step.flash {
-  animation: flashAnim 0.8s ease 4;
+  animation: flashAnim 2s ease 3;
   border-radius: 4px;
 }
 
