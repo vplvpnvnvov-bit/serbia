@@ -677,7 +677,7 @@ function renderPlan() {
   }
 
   root.innerHTML = '';
-  root.className = locked ? 'plan-locked-mode' : '';
+  root.className = 'tab-content' + (locked ? ' plan-locked-mode' : '');
 
   const h = document.createElement('h2');
   h.textContent = '📅 Пошаговый план переезда (5 месяцев)';
