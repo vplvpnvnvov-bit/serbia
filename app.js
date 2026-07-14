@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.11.0",
-  BUILD: "c0aa2de",
-  CACHE_NAME: "relocation-v1.11.0-c0aa2de"
+  VERSION: "1.12.0",
+  BUILD: "8051d68",
+  CACHE_NAME: "relocation-v1.12.0-8051d68"
 };
 
 const migrationPlan = [
@@ -1065,8 +1065,10 @@ function renderPlan() {
   desc.textContent = 'План переезда в Белград для семьи из 3 человек: ВНЖ «Талант» ➔ ИП. Отмечайте выполненные шаги — бюджет пересчитается автоматически.';
   root.appendChild(desc);
 
-  let grandTotalStart = 0;
-  let grandTotalMonth4 = 0;
+  let grandPlanned = 0;
+  let grandSpent = 0;
+  let grandMonth4Planned = 0;
+  let grandMonth4Spent = 0;
 
   migrationPlan.forEach(m => {
     const card = document.createElement('div');
@@ -1080,21 +1082,51 @@ function renderPlan() {
     focusEl.textContent = '🎯 ' + m.focus;
     card.appendChild(focusEl);
 
+    let totalPlanned = 0;
+    let spent = 0;
+    m.tasks.forEach(t => {
+      const s = state.tasks[t.id] || { checked: t.checked, customCost: null };
+      const cost = (s.customCost != null ? s.customCost : t.cost);
+      totalPlanned += cost;
+      if (s.checked !== false) spent += cost;
+    });
+    const remaining = totalPlanned - spent;
+    const pct = totalPlanned > 0 ? Math.round(spent / totalPlanned * 100) : 0;
+
+    const stats = document.createElement('div');
+    stats.className = 'plan-month-stats';
+    stats.innerHTML =
+      `<div class="plan-stat-row"><span>📋 Всего запланировано:</span> <strong>${totalPlanned.toLocaleString('ru-RU')} €</strong></div>` +
+      `<div class="plan-stat-row plan-stat-spent"><span>✅ Уже потрачено:</span> <strong>${spent.toLocaleString('ru-RU')} €</strong></div>` +
+      `<div class="plan-stat-row plan-stat-remain"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')} €</strong></div>`;
+    card.appendChild(stats);
+
+    const barWrap = document.createElement('div');
+    barWrap.className = 'plan-progress-bar';
+    const barFill = document.createElement('div');
+    barFill.className = 'plan-progress-fill';
+    barFill.style.width = pct + '%';
+    if (pct === 100) barFill.classList.add('done');
+    barWrap.appendChild(barFill);
+    const barLabel = document.createElement('span');
+    barLabel.className = 'plan-progress-label';
+    barLabel.textContent = pct + '%';
+    barWrap.appendChild(barLabel);
+    card.appendChild(barWrap);
+
     const ul = document.createElement('ul');
     ul.className = 'tl-steps';
 
-    let monthTotal = 0;
     m.tasks.forEach(t => {
       const s = state.tasks[t.id] || { checked: t.checked, customCost: null };
       const checked = s.checked !== false;
       const cost = (s.customCost != null ? s.customCost : t.cost);
-      if (checked) monthTotal += cost;
 
       const li = document.createElement('li');
-      li.className = 'tl-step' + (checked ? '' : ' plan-disabled');
+      li.className = 'tl-step' + (checked ? ' done' : '') + (checked ? '' : ' plan-disabled');
 
       const label = document.createElement('label');
-      label.className = 'plan-task-label';
+      label.className = 'plan-toggle';
 
       const cb = document.createElement('input');
       cb.type = 'checkbox';
@@ -1102,13 +1134,16 @@ function renderPlan() {
       cb.checked = checked;
       cb.dataset.planId = t.id;
       label.appendChild(cb);
+      const slider = document.createElement('span');
+      slider.className = 'plan-toggle-slider';
+      label.appendChild(slider);
+
+      li.appendChild(label);
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'plan-task-name';
       nameSpan.textContent = t.name;
-      label.appendChild(nameSpan);
-
-      li.appendChild(label);
+      li.appendChild(nameSpan);
 
       const costSpan = document.createElement('span');
       costSpan.className = 'plan-task-cost';
@@ -1126,27 +1161,27 @@ function renderPlan() {
     });
 
     card.appendChild(ul);
-
-    const sub = document.createElement('div');
-    sub.className = 'calc-month-total';
-    sub.innerHTML = `<strong>Итого за месяц:</strong> ${monthTotal.toLocaleString('ru-RU')} €`;
-    card.appendChild(sub);
-
     root.appendChild(card);
 
     if (m.month >= 0 && m.month <= 3) {
-      grandTotalStart += monthTotal;
+      grandPlanned += totalPlanned;
+      grandSpent += spent;
     }
     if (m.month === 4) {
-      grandTotalMonth4 += monthTotal;
+      grandMonth4Planned += totalPlanned;
+      grandMonth4Spent += spent;
     }
   });
 
+  const grandRemaining = grandPlanned - grandSpent;
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
   summary.innerHTML =
-    `<div class="tl-summary-row" style="font-size:1.2em">💰 Общий финансовый итог для старта (Месяцы 0–3): <strong>${grandTotalStart.toLocaleString('ru-RU')} €</strong></div>` +
-    `<div class="tl-summary-row" style="margin-top:8px">🔄 Повторяющийся месячный бюджет (с 4-го месяца): <strong>${grandTotalMonth4.toLocaleString('ru-RU')} €</strong></div>`;
+    `<div class="tl-summary-row" style="font-size:1.2em">💰 Стартовая подушка (Месяцы 0–3): <strong>${grandPlanned.toLocaleString('ru-RU')} €</strong></div>` +
+    `<div class="tl-summary-row" style="font-size:1em;margin-top:4px">📅 Осталось накопить: <strong>${grandRemaining.toLocaleString('ru-RU')} €</strong> из ${grandPlanned.toLocaleString('ru-RU')} €</div>` +
+    `<div class="tl-summary-row" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2)">🔄 Повторяющийся месячный бюджет (с 4-го месяца): <strong>${grandMonth4Planned.toLocaleString('ru-RU')} €</strong>` +
+    (grandMonth4Spent > 0 ? ` <span style="font-size:0.85em;color:#aaa">(потрачено ${grandMonth4Spent.toLocaleString('ru-RU')} €)</span>` : '') +
+    `</div>`;
   root.appendChild(summary);
 
   root.addEventListener('change', e => {
