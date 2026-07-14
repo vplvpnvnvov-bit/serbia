@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.5.3",
-  BUILD: "85310b2",
-  CACHE_NAME: "relocation-v1.5.3-85310b2"
+  VERSION: "1.5.4",
+  BUILD: "890b911",
+  CACHE_NAME: "relocation-v1.5.4-890b911"
 };
 
 // === TABS ===
@@ -1188,10 +1188,10 @@ window.hardResetApplication = async function() {
 
   try {
     await window.deleteCloudData();
+    sessionStorage.removeItem('reset_old_code');
   } catch (e) {
     console.warn('Cloud delete failed (local reset continues):', e);
   }
-  sessionStorage.removeItem('reset_old_code');
   localStorage.clear();
   try {
     const keys = await caches.keys();
