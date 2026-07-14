@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.5.6",
-  BUILD: "ec06509",
-  CACHE_NAME: "relocation-v1.5.6-ec06509"
+  VERSION: "1.5.7",
+  BUILD: "f28535b",
+  CACHE_NAME: "relocation-v1.5.7-f28535b"
 };
 
 // === TABS ===
@@ -1056,10 +1056,7 @@ function calcTotal() {
 }
 
 document.querySelectorAll('#tab-calc input').forEach(inp => {
-  inp.addEventListener('input', () => {
-    calcTotal();
-    if (typeof scheduleSync === 'function') scheduleSync();
-  });
+  inp.addEventListener('input', calcTotal);
 });
 calcTotal();
 
@@ -1204,17 +1201,36 @@ document.addEventListener('DOMContentLoaded', () => {
     versionEl.textContent = `v${window.APP_CONFIG.VERSION} (${window.APP_CONFIG.BUILD})`;
   }
 
-  document.getElementById('btn-sync-now')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-sync-now');
+  document.getElementById('btn-upload')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-upload');
     btn.disabled = true;
-    btn.textContent = '⏳ Синхронизирую...';
+    btn.innerHTML = '⏳ Выгружаю...';
     try {
-      await loadFromCloud();
+      await window.saveToCloud();
+      btn.innerHTML = '✅ Выгружено';
     } catch (e) {
-      // ошибка уже обработана в loadFromCloud
+      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
     }
-    btn.textContent = '🔄 Синхронизировать сейчас';
-    btn.disabled = false;
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '📤 Выгрузить в облако';
+    }, 2500);
+  });
+
+  document.getElementById('btn-download')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-download');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Загружаю...';
+    try {
+      await window.loadFromCloud();
+      btn.innerHTML = '✅ Загружено';
+    } catch (e) {
+      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
+    }
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '📥 Загрузить из облака';
+    }, 2500);
   });
 
   document.getElementById('btn-change-code')?.addEventListener('click', () => {

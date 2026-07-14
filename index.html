@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=1.5.6-ec06509" />
+<link rel="stylesheet" href="style.css?v=1.5.7-f28535b" />
 </head>
 <body>
 
@@ -159,24 +159,25 @@
           <h3>⚙️ Управление данными и обновлениями</h3>
           <p class="section-intro">Здесь вы можете управлять сохранностью ваших данных, синхронизировать устройства и обновлять само приложение.</p>
 
-          <div class="settings-card">
-            <div class="card-header">
-              <span class="card-icon">🔄</span>
-              <h4>Синхронизация данных (Облако)</h4>
-            </div>
-            <p class="card-desc">Связывает ваши устройства между собой. Данные автоматически сохраняются в облаке при каждом изменении чек-листа.</p>
+            <div class="settings-card">
+              <div class="card-header">
+                <span class="card-icon">🔄</span>
+                <h4>Синхронизация данных (Облако)</h4>
+              </div>
+              <p class="card-desc">Связывает ваши устройства между собой. Данные сохраняются в облаке только когда вы сами нажмёте «Выгрузить». Чтобы получить данные с другого устройства, нажмите «Загрузить».</p>
 
-            <div class="sync-status-info">
-              <p><strong>Ваш код синхронизации:</strong> <span id="display-sync-code">Загрузка...</span></p>
-              <p><strong>Статус облака:</strong> <span id="sync-time-status">Нет данных о синхронизации</span></p>
-            </div>
+              <div class="sync-status-info">
+                <p><strong>Ваш код синхронизации:</strong> <span id="display-sync-code">Загрузка...</span></p>
+                <p><strong>Последняя синхронизация:</strong> <span id="sync-time-status">Нет данных</span></p>
+              </div>
 
-            <div class="card-actions">
-              <button id="btn-sync-now" class="action-btn primary-btn" title="Сверяет данные вашего телефона с облаком Firebase. Если в облаке есть более свежие изменения, они скачаются. Если ваши изменения новее, они отправятся в облако.">🔄 Синхронизировать сейчас</button>
-              <button id="btn-change-code" class="action-btn secondary-btn" title="Позволяет ввести 12-значный код другого вашего устройства, чтобы объединить чек-листы и калькулятор расходов.">✏️ Изменить код связи</button>
+              <div class="card-actions">
+                <button id="btn-upload" class="action-btn primary-btn" title="Отправить текущие данные этого устройства в облако.">📤 Выгрузить в облако</button>
+                <button id="btn-download" class="action-btn primary-btn" title="Забрать данные из облака на это устройство.">📥 Загрузить из облака</button>
+                <button id="btn-change-code" class="action-btn secondary-btn" title="Ввести код другого устройства, чтобы подключиться к его данным.">✏️ Изменить код связи</button>
+              </div>
+              <p class="action-help">«Выгрузить» — сохраняет ваши данные в облако. «Загрузить» — читает данные из облака на это устройство (заменяет локальные). «Изменить код» — подключиться к данным другого устройства.</p>
             </div>
-            <p class="action-help">«Синхронизировать сейчас» принудительно забирает свежие данные из облака или отправляет локальные изменения. «Изменить код» позволяет подключить другое устройство.</p>
-          </div>
 
           <div class="settings-card">
             <div class="card-header">
@@ -226,9 +227,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=1.5.6-ec06509"></script>
-<script src="sync.js?v=1.5.6-ec06509"></script>
-<script src="app.js?v=1.5.6-ec06509"></script>
+<script src="data.js?v=1.5.7-f28535b"></script>
+<script src="sync.js?v=1.5.7-f28535b"></script>
+<script src="app.js?v=1.5.7-f28535b"></script>
 
 </body>
 </html>

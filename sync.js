@@ -52,7 +52,6 @@ firebase.auth().onAuthStateChanged(async user => {
       localStorage.setItem('sync-code', syncCode);
     }
     document.getElementById('display-sync-code').textContent = syncCode;
-    if (!resetCode) loadFromCloud();
   }
 });
 
@@ -77,10 +76,11 @@ function updateSyncStatusUI() {
   }
 }
 
-function loadFromCloud() {
-  if (!syncCode) return Promise.resolve();
-  return fetchAndLoadDoc().catch(() => { syncLoading = false; });
-}
+window.loadFromCloud = async function() {
+  if (!syncCode) return;
+  if (syncLoading) throw new Error('Загрузка уже выполняется');
+  await fetchAndLoadDoc();
+};
 
 async function fetchAndLoadDoc() {
   const ref = db.collection('users').doc(syncCode);
@@ -138,12 +138,13 @@ async function fetchAndLoadDoc() {
   updateSyncStatusUI();
 }
 
-function saveToCloud() {
-  if (!syncCode || syncPending) return;
+window.saveToCloud = async function() {
+  if (!syncCode) return;
   if (localStorage.getItem('is_deleted_session') === 'true') {
     console.warn('Попытка отправить данные для аннулированной сессии заблокирована.');
-    return;
+    throw new Error('Сессия аннулирована');
   }
+  if (syncPending) throw new Error('Синхронизация уже выполняется');
   syncPending = true;
   try {
     const raw = JSON.parse(localStorage.getItem('checklist') || '{}');
@@ -154,13 +155,13 @@ function saveToCloud() {
       version: CURRENT_DATA_VERSION,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    db.collection('users').doc(syncCode).set(data, { merge: true })
-      .then(() => { syncPending = false; })
-      .catch(() => { syncPending = false; });
-  } catch (e) {
+    await db.collection('users').doc(syncCode).set(data, { merge: true });
+    localStorage.setItem('last-sync-time', new Date().toLocaleString());
+    updateSyncStatusUI();
+  } finally {
     syncPending = false;
   }
-}
+};
 
 function getCalcValues() {
   const ids = ['rent', 'utils', 'food', 'transport', 'other'];
@@ -172,25 +173,7 @@ function getCalcValues() {
   return vals;
 }
 
-let saveTimer = null;
-function scheduleSync() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    try { saveToCloud(); } catch (e) {}
-  }, 1000);
-}
 
-const origSetItem = Storage.prototype.setItem;
-Storage.prototype.setItem = function(key, value) {
-  origSetItem.call(this, key, value);
-  if (syncLoading) return;
-  if (key === 'checklist' || key === 'checklist-locked') {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      try { saveToCloud(); } catch (e) {}
-    }, 1000);
-  }
-};
 
 window.changeSyncCode = function() {
   const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
@@ -203,7 +186,7 @@ window.changeSyncCode = function() {
     localStorage.setItem('sync-code', c);
     syncCode = c;
     document.getElementById('display-sync-code').textContent = c;
-    loadFromCloud();
+    window.loadFromCloud().catch(() => {});
   }
 };
 
