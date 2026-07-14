@@ -709,7 +709,7 @@ function renderPlan() {
   lockBar.className = 'plan-lock-bar';
   const lockBtn = document.createElement('button');
   lockBtn.className = 'plan-lock-btn' + (locked ? '' : ' unlocked');
-  lockBtn.textContent = locked ? '🔒 Только просмотр' : '🔓 Редактирование';
+  lockBtn.textContent = locked ? '🔎 Только просмотр' : '✏️ Редактирование';
   lockBtn.dataset.planLock = '1';
   lockBar.appendChild(lockBtn);
   root.appendChild(lockBar);

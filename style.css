@@ -961,17 +961,17 @@ html, body {
   padding: 6px 14px;
   border: 1.5px solid rgba(0,0,0,0.12);
   border-radius: 8px;
-  background: rgba(0,0,0,0.04);
+  background: #e8f5e9;
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  color: #555;
+  color: #2e7d32;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 .plan-lock-btn:hover {
-  background: rgba(0,0,0,0.07);
+  background: #c8e6c9;
 }
 .plan-lock-btn.unlocked {
   border-color: #fbc02d;
