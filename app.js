@@ -350,10 +350,10 @@ function highlightDistrict(name) {
     const cy = (Math.min(...lons) + Math.max(...lons)) / 2;
     window.arrowMarker = L.marker([cx, cy], {
       icon: L.divIcon({
-        html: '<div class="arrow-bounce">⬇️</div>',
+        html: '<div class="map-pulse-ring"></div><div class="map-pulse-dot"></div>',
         iconSize: [40, 40],
         iconAnchor: [20, 20],
-        className: 'arrow-marker',
+        className: 'pulse-marker',
       }),
       interactive: false,
       zIndexOffset: 10000,
@@ -383,42 +383,69 @@ map.on('zoomend', () => {
 
 function showDistrictPanel(d, noFit) {
   document.getElementById('d-name').textContent = d.name;
-  // Carousel gallery
+  // Carousel gallery & Lightbox
   const gallery = document.getElementById('d-gallery');
   gallery.innerHTML = '';
+  let dotsContainer = document.getElementById('d-gallery-dots');
+  if (!dotsContainer) {
+    dotsContainer = document.createElement('div');
+    dotsContainer.id = 'd-gallery-dots';
+    dotsContainer.className = 'carousel-dots';
+    gallery.parentNode.insertBefore(dotsContainer, gallery.nextSibling);
+  }
+  dotsContainer.innerHTML = '';
+
   if (d.images && d.images.length) {
     d.images.forEach((url, idx) => {
       const img = document.createElement('img');
       img.dataset.idx = idx;
       img.loading = 'lazy';
+      img.src = url;
+      img.className = 'carousel-slide';
+      img.addEventListener('click', () => openLightbox(url));
       img.onerror = function() {
         this.onerror = null;
         const ph = document.createElement('div');
-        ph.className = 'img-placeholder';
+        ph.className = 'img-placeholder carousel-slide';
         ph.textContent = d.name;
-        ph.dataset.idx = idx;
         this.parentNode.replaceChild(ph, this);
       };
-      img.src = url;
       gallery.appendChild(img);
+
+      const dot = document.createElement('span');
+      dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+      dot.addEventListener('click', () => {
+        gallery.scrollTo({ left: img.offsetLeft, behavior: 'smooth' });
+      });
+      dotsContainer.appendChild(dot);
     });
   }
+
+  gallery.onscroll = () => {
+    const scrollPos = gallery.scrollLeft;
+    const width = gallery.clientWidth;
+    if (width <= 0) return;
+    const activeIdx = Math.round(scrollPos / width);
+    const dots = dotsContainer.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === activeIdx);
+    });
+  };
+
   const prevBtn = document.getElementById('car-prev');
   const nextBtn = document.getElementById('car-next');
-  const scrollCarousel = (dir) => {
-    const scrollAmt = gallery.clientWidth * 0.8;
-    gallery.scrollBy({ left: dir * scrollAmt, behavior: 'smooth' });
-  };
-  prevBtn.onclick = () => scrollCarousel(-1);
-  nextBtn.onclick = () => scrollCarousel(1);
-  // swipe support
+  if (prevBtn && nextBtn) {
+    prevBtn.onclick = () => gallery.scrollBy({ left: -gallery.clientWidth, behavior: 'smooth' });
+    nextBtn.onclick = () => gallery.scrollBy({ left: gallery.clientWidth, behavior: 'smooth' });
+  }
+
   let startX = 0, startY = 0;
   gallery.ontouchstart = e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
   gallery.ontouchend = e => {
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
     if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
-      scrollCarousel(dx > 0 ? -1 : 1);
+      gallery.scrollBy({ left: dx > 0 ? -gallery.clientWidth : gallery.clientWidth, behavior: 'smooth' });
     }
   };
   document.getElementById('d-price').textContent = d.price;
@@ -426,10 +453,34 @@ function showDistrictPanel(d, noFit) {
   const fs = getNormalizedScore(d, 'family', visible);
   const bs = getNormalizedScore(d, 'budget', visible);
   const vs = getNormalizedScore(d, 'vibe', visible);
-  document.getElementById('d-score').innerHTML =
-    `👶 С детьми: <b>${fs}</b>/10 &nbsp;|&nbsp; ` +
-    `💰 Бюджетно: <b>${bs}</b>/10 &nbsp;|&nbsp; ` +
-    `⚡ Движ: <b>${vs}</b>/10`;
+  document.getElementById('d-score').innerHTML = `
+    <div class="score-cards-container">
+      <div class="score-card">
+        <span class="sc-emoji">👶</span>
+        <div class="sc-info">
+          <span class="sc-label">С детьми</span>
+          <div class="sc-bar-wrap"><div class="sc-bar family" style="width:${fs*10}%"></div></div>
+        </div>
+        <span class="sc-num">${fs}</span>
+      </div>
+      <div class="score-card">
+        <span class="sc-emoji">💰</span>
+        <div class="sc-info">
+          <span class="sc-label">Бюджет</span>
+          <div class="sc-bar-wrap"><div class="sc-bar budget" style="width:${bs*10}%"></div></div>
+        </div>
+        <span class="sc-num">${bs}</span>
+      </div>
+      <div class="score-card">
+        <span class="sc-emoji">⚡</span>
+        <div class="sc-info">
+          <span class="sc-label">Движ</span>
+          <div class="sc-bar-wrap"><div class="sc-bar vibe" style="width:${vs*10}%"></div></div>
+        </div>
+        <span class="sc-num">${vs}</span>
+      </div>
+    </div>
+  `;
   document.getElementById('d-family-desc').textContent = d.familyDesc || '';
   document.getElementById('d-desc').textContent = d.desc;
   setList('d-pros', '✅ Плюсы', d.pros);
@@ -446,6 +497,20 @@ function showDistrictPanel(d, noFit) {
   }
   document.getElementById('district-info').classList.remove('hidden');
   if (!noFit) highlightDistrict(d.name);
+}
+
+function openLightbox(url) {
+  let box = document.getElementById('lightbox-overlay');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'lightbox-overlay';
+    box.className = 'lightbox-hidden';
+    box.innerHTML = '<span class="lightbox-close">&times;</span><img id="lightbox-img" src="" alt="View">';
+    document.body.appendChild(box);
+    box.addEventListener('click', () => box.className = 'lightbox-hidden');
+  }
+  document.getElementById('lightbox-img').src = url;
+  box.className = 'lightbox-visible';
 }
 
 function districtLabel(name, price, score) {
