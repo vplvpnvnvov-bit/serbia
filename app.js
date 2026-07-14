@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.12.0",
-  BUILD: "8051d68",
-  CACHE_NAME: "relocation-v1.12.0-8051d68"
+  VERSION: "1.13.0",
+  BUILD: "f64296b",
+  CACHE_NAME: "relocation-v1.13.0-f64296b"
 };
 
 const migrationPlan = [
@@ -1051,7 +1051,7 @@ function renderPlan() {
   let state = getPlanState();
   if (!state) {
     const tasks = {};
-    migrationPlan.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: t.checked, customCost: null }; }));
+    migrationPlan.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, customCost: null }; }));
     state = { tasks };
     setPlanState(state);
   }
@@ -1062,7 +1062,7 @@ function renderPlan() {
   root.appendChild(h);
   const desc = document.createElement('p');
   desc.className = 'tl-desc';
-  desc.textContent = 'План переезда в Белград для семьи из 3 человек: ВНЖ «Талант» ➔ ИП. Отмечайте выполненные шаги — бюджет пересчитается автоматически.';
+  desc.textContent = 'Отмечайте выполненные задачи (тумблером справа) — потраченные деньги зафиксируются, а остаток на месяц автоматически уменьшится.';
   root.appendChild(desc);
 
   let grandPlanned = 0;
@@ -1084,21 +1084,27 @@ function renderPlan() {
 
     let totalPlanned = 0;
     let spent = 0;
+
     m.tasks.forEach(t => {
-      const s = state.tasks[t.id] || { checked: t.checked, customCost: null };
+      const s = state.tasks[t.id] || { checked: false, customCost: null };
       const cost = (s.customCost != null ? s.customCost : t.cost);
+
       totalPlanned += cost;
-      if (s.checked !== false) spent += cost;
+
+      if (s.checked === true) {
+        spent += cost;
+      }
     });
+
     const remaining = totalPlanned - spent;
-    const pct = totalPlanned > 0 ? Math.round(spent / totalPlanned * 100) : 0;
+    const pct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
 
     const stats = document.createElement('div');
     stats.className = 'plan-month-stats';
     stats.innerHTML =
       `<div class="plan-stat-row"><span>📋 Всего запланировано:</span> <strong>${totalPlanned.toLocaleString('ru-RU')} €</strong></div>` +
-      `<div class="plan-stat-row plan-stat-spent"><span>✅ Уже потрачено:</span> <strong>${spent.toLocaleString('ru-RU')} €</strong></div>` +
-      `<div class="plan-stat-row plan-stat-remain"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')} €</strong></div>`;
+      `<div class="plan-stat-row plan-stat-spent" style="color: #2e7d32;"><span>✅ Уже потрачено:</span> <strong>${spent.toLocaleString('ru-RU')} €</strong></div>` +
+      `<div class="plan-stat-row plan-stat-remain" style="color: #1565c0;"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')} €</strong></div>`;
     card.appendChild(stats);
 
     const barWrap = document.createElement('div');
@@ -1118,12 +1124,12 @@ function renderPlan() {
     ul.className = 'tl-steps';
 
     m.tasks.forEach(t => {
-      const s = state.tasks[t.id] || { checked: t.checked, customCost: null };
-      const checked = s.checked !== false;
+      const s = state.tasks[t.id] || { checked: false, customCost: null };
+      const checked = s.checked === true;
       const cost = (s.customCost != null ? s.customCost : t.cost);
 
       const li = document.createElement('li');
-      li.className = 'tl-step' + (checked ? ' done' : '') + (checked ? '' : ' plan-disabled');
+      li.className = 'tl-step' + (checked ? ' done' : ' plan-pending');
 
       const label = document.createElement('label');
       label.className = 'plan-toggle';
@@ -1134,6 +1140,7 @@ function renderPlan() {
       cb.checked = checked;
       cb.dataset.planId = t.id;
       label.appendChild(cb);
+
       const slider = document.createElement('span');
       slider.className = 'plan-toggle-slider';
       label.appendChild(slider);
@@ -1147,7 +1154,7 @@ function renderPlan() {
 
       const costSpan = document.createElement('span');
       costSpan.className = 'plan-task-cost';
-      costSpan.textContent = cost.toLocaleString('ru-RU') + ' €';
+      costSpan.textContent = cost > 0 ? cost.toLocaleString('ru-RU') + ' €' : 'Бесплатно';
       li.appendChild(costSpan);
 
       if (t.desc) {
@@ -1177,24 +1184,32 @@ function renderPlan() {
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
   summary.innerHTML =
-    `<div class="tl-summary-row" style="font-size:1.2em">💰 Стартовая подушка (Месяцы 0–3): <strong>${grandPlanned.toLocaleString('ru-RU')} €</strong></div>` +
-    `<div class="tl-summary-row" style="font-size:1em;margin-top:4px">📅 Осталось накопить: <strong>${grandRemaining.toLocaleString('ru-RU')} €</strong> из ${grandPlanned.toLocaleString('ru-RU')} €</div>` +
-    `<div class="tl-summary-row" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2)">🔄 Повторяющийся месячный бюджет (с 4-го месяца): <strong>${grandMonth4Planned.toLocaleString('ru-RU')} €</strong>` +
-    (grandMonth4Spent > 0 ? ` <span style="font-size:0.85em;color:#aaa">(потрачено ${grandMonth4Spent.toLocaleString('ru-RU')} €)</span>` : '') +
+    `<div class="tl-summary-row" style="font-size:1.2em">💰 Финансовый итог для старта (Месяцы 0–3): <strong>${grandPlanned.toLocaleString('ru-RU')} €</strong></div>` +
+    `<div class="tl-summary-row" style="font-size:1em;margin-top:6px;color:#81c784">✅ Фактически потрачено: <strong>${grandSpent.toLocaleString('ru-RU')} €</strong></div>` +
+    `<div class="tl-summary-row" style="font-size:1.05em;margin-top:4px;font-weight:bold;color:#64b5f6">📅 Осталось потратить до запуска ИП: <strong>${grandRemaining.toLocaleString('ru-RU')} €</strong> из ${grandPlanned.toLocaleString('ru-RU')} €</div>` +
+    `<div class="tl-summary-row" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2)">🔄 Ежемесячный бюджет на рельсах (Месяц 4): <strong>${grandMonth4Planned.toLocaleString('ru-RU')} €</strong>` +
+    (grandMonth4Spent > 0 ? ` <span style="font-size:0.85em;color:#81c784">(потрачено ${grandMonth4Spent.toLocaleString('ru-RU')} €)</span>` : '') +
     `</div>`;
   root.appendChild(summary);
+}
 
-  root.addEventListener('change', e => {
+if (!window.planListenerAdded) {
+  document.getElementById('timeline-root')?.addEventListener('change', e => {
     const cb = e.target;
     if (!cb.classList.contains('plan-task-cb')) return;
     const id = cb.dataset.planId;
     if (!id) return;
     const st = getPlanState() || { tasks: {} };
-    if (!st.tasks[id]) st.tasks[id] = { checked: true, customCost: null };
+    if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
     st.tasks[id].checked = cb.checked;
     setPlanState(st);
     renderPlan();
+
+    if (window.saveToCloud) {
+      window.saveToCloud().catch(err => console.error("Фоновое сохранение не удалось:", err));
+    }
   });
+  window.planListenerAdded = true;
 }
 
 // === СБРОС ВСЕХ НАСТРОЕК И ДАННЫХ ===
