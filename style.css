@@ -959,23 +959,28 @@ html, body {
 }
 .plan-lock-btn {
   padding: 6px 14px;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid rgba(0,0,0,0.12);
   border-radius: 8px;
-  background: white;
+  background: rgba(0,0,0,0.04);
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
+  color: #555;
   transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 .plan-lock-btn:hover {
-  border-color: #999;
+  background: rgba(0,0,0,0.07);
 }
-.plan-lock-btn.locked {
-  border-color: #d32f2f;
-  background: #ffebee;
-  color: #c62828;
+.plan-lock-btn.unlocked {
+  border-color: #fbc02d;
+  background: #fbc02d;
+  color: #000;
+  font-weight: 700;
+}
+.plan-lock-btn.unlocked:hover {
+  background: #fdd835;
 }
 
 /* Locked mode — subtle dimming, circles stay bright */
