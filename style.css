@@ -2093,6 +2093,10 @@ body.dark-theme .carousel-caption {
   background-color: #c2185b !important;
   transform: translateY(-1px);
 }
+.poi-gmap-btn:hover {
+  background-color: #3367d6 !important;
+  transform: translateY(-1px);
+}
 
 .leaflet-interactive:focus {
   outline: none;
