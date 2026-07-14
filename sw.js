@@ -1,4 +1,4 @@
-const CACHE_NAME = 'relocation-v1.4.1-88d30a3';
+const CACHE_NAME = 'relocation-v1.4.2-7bcc56d';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js', './sync.js',
   './manifest.json', './icon.svg',
@@ -8,8 +8,13 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME)
       .then(c => Promise.allSettled(FILES.map(f => c.add(f).catch(() => {}))))
-      .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener('message', e => {
+  if (e.data?.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', e => {

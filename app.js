@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.4.1",
-  BUILD: "88d30a3",
-  CACHE_NAME: "relocation-v1.4.1-88d30a3"
+  VERSION: "1.4.2",
+  BUILD: "7bcc56d",
+  CACHE_NAME: "relocation-v1.4.2-7bcc56d"
 };
 
 // === TABS ===
@@ -966,41 +966,76 @@ document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () =
   setTimeout(updateStats, 50);
 });
 
-// === UPDATE BUTTON ===
+// === СИСТЕМА УПРАВЛЕНИЯ ОБНОВЛЕНИЯМИ PWA ===
+
+// 1. Регистрация Service Worker с защитой от Race Condition
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+
+      // Сценарий А: Новая версия уже скачана браузером в фоне и ждет активации
+      if (reg.waiting && navigator.serviceWorker.controller) {
+        showUpdateNotification(reg.waiting);
+      }
+
+      // Сценарий Б: Обновление обнаружилось и скачивается в процессе текущей сессии
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        if (installingWorker) {
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateNotification(installingWorker);
+            }
+          };
+        }
+      };
+    }).catch(err => {
+      console.error('Ошибка регистрации Service Worker:', err);
+    });
+  });
+}
+
+// Функция мягкого уведомления пользователя об обновлении
+function showUpdateNotification(worker) {
+  setTimeout(() => {
+    const userAccepted = confirm('Доступна новая версия приложения с улучшениями! Обновить сейчас?');
+    if (userAccepted) {
+      if (worker) {
+        worker.postMessage({ action: 'skipWaiting' });
+      }
+      window.location.reload();
+    }
+  }, 800);
+}
+
+// 2. Обработчик кнопки ручной проверки обновлений
 const updateBtn = document.getElementById('btn-check-app-update');
 if (updateBtn) {
   updateBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     updateBtn.disabled = true;
-    const originalText = updateBtn.innerHTML;
-    updateBtn.innerHTML = '⏳ Проверяю наличие новой версии...';
-    updateBtn.style.opacity = '0.7';
+    updateBtn.innerHTML = '🔍 Проверяю сервер...';
 
-    if ('serviceWorker' in navigator) {
-      try {
-        const reg = await navigator.serviceWorker.ready;
-        await reg.update();
-        setTimeout(() => {
-          updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
-          updateBtn.style.background = '#28a745';
-          updateBtn.style.color = 'white';
-          updateBtn.style.opacity = '1';
-          setTimeout(() => {
-            updateBtn.disabled = false;
-            updateBtn.innerHTML = originalText;
-            updateBtn.style.background = '';
-            updateBtn.style.color = '';
-          }, 2000);
-        }, 1200);
-      } catch (err) {
-        console.error('Ошибка при проверке обновлений:', err);
-        updateBtn.innerHTML = '❌ Ошибка проверки';
-        updateBtn.disabled = false;
-        setTimeout(() => { updateBtn.innerHTML = originalText; }, 2000);
+    try {
+      const reg = await navigator.serviceWorker.ready;
+
+      await reg.update();
+
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      if (!reg.installing && !reg.waiting) {
+        updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
+      } else {
+        updateBtn.innerHTML = '🚀 Найдено обновление! Устанавливаю...';
       }
-    } else {
-      updateBtn.innerHTML = '✕ Не поддерживается браузером';
-      setTimeout(() => { updateBtn.innerHTML = originalText; updateBtn.disabled = false; }, 2000);
+    } catch (err) {
+      console.error('Ошибка при ручной проверке обновлений:', err);
+      updateBtn.innerHTML = '❌ Ошибка проверки';
+    } finally {
+      setTimeout(() => {
+        updateBtn.disabled = false;
+        updateBtn.innerHTML = '🔄 Проверить обновления';
+      }, 3000);
     }
   });
 }
@@ -1203,24 +1238,4 @@ window.addEventListener('sync-loaded', () => {
   renderTimeline();
 });
 
-// === AUTO PWA UPDATE DETECTION ===
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-      reg.onupdatefound = () => {
-        const installingWorker = reg.installing;
-        if (installingWorker) {
-          installingWorker.onstatechange = () => {
-            if (installingWorker.state === 'installed') {
-              if (navigator.serviceWorker.controller) {
-                console.log('Новая версия успешно скачана в кэш.');
-                alert('Успешно скачана новая версия приложения! Страница будет перезагружена для обновления кода.');
-                window.location.reload();
-              }
-            }
-          };
-        }
-      };
-    });
-  });
-}
+
