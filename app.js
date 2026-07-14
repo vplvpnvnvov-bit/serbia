@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.0.0",
-  BUILD: "b331701",
-  CACHE_NAME: "relocation-v1.0.0-b331701"
+  VERSION: "1.0.1",
+  BUILD: "fb35bab",
+  CACHE_NAME: "relocation-v1.0.1-fb35bab"
 };
 
 // === TABS ===
@@ -972,47 +972,10 @@ document.getElementById('btn-check-app-update')?.addEventListener('click', async
   btn.disabled = true;
   btn.textContent = '⏳ Проверяю...';
   try {
-    const reg = await navigator.serviceWorker.getRegistration();
-    if (reg) {
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        btn.textContent = '🆕 Обновление готово';
-        setTimeout(() => location.reload(), 800);
-        return;
-      }
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready;
+      console.log('Принудительно проверяем наличие новой версии на сервере...');
       await reg.update();
-      const found = await new Promise(resolve => {
-        const timer = setTimeout(() => resolve(false), 4000);
-        if (reg.installing) {
-          clearTimeout(timer);
-          resolve(true);
-          return;
-        }
-        reg.addEventListener('updatefound', () => {
-          clearTimeout(timer);
-          resolve(true);
-        }, { once: true });
-      });
-      if (found) {
-        btn.textContent = '🆕 Загружаю...';
-        const newWorker = reg.installing;
-        if (newWorker) {
-          await new Promise(resolve => {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed') {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                resolve();
-              }
-            });
-          });
-        }
-        btn.textContent = '🆕';
-        setTimeout(() => location.reload(), 800);
-        return;
-      }
-      alert('У вас установлена самая свежая версия приложения!');
-    } else {
-      alert('⚠️ Сервис-воркер не зарегистрирован.');
     }
   } catch (e) {
     alert('Не удалось проверить обновления. Проверьте подключение к интернету.');
@@ -1216,3 +1179,25 @@ window.addEventListener('sync-loaded', () => {
   updateLockUI();
   renderTimeline();
 });
+
+// === AUTO PWA UPDATE DETECTION ===
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        if (installingWorker) {
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                console.log('Новая версия успешно скачана в кэш.');
+                alert('Успешно скачана новая версия приложения! Страница будет перезагружена для обновления кода.');
+                window.location.reload();
+              }
+            }
+          };
+        }
+      };
+    });
+  });
+}
