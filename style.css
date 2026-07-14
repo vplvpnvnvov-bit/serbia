@@ -1192,51 +1192,47 @@ html, body {
   50% { background: #fff3cd; }
 }
 
-/* DUAL PROGRESS BARS */
-.plan-bars-wrap {
+/* METRICS — progress bars with headers */
+.plan-metrics-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
-.plan-progress-bar {
-  position: relative;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 4px;
+.plan-metric-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.plan-metric-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+.plan-metric-value {
+  color: #333;
+}
+.plan-progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
   overflow: hidden;
-}
-.plan-progress-bar-budget {
-  /* default green */
-}
-.plan-progress-bar-tasks {
-  /* blue */
 }
 .plan-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #66bb6a, #2e7d32);
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.4s ease;
 }
-.plan-progress-fill.done {
-  background: linear-gradient(90deg, #2e7d32, #1b5e20);
+.plan-progress-fill.budget {
+  background: linear-gradient(90deg, #66bb6a, #2e7d32);
 }
-.plan-progress-fill-tasks {
-  background: linear-gradient(90deg, #5c6bc0, #283593);
-}
-.plan-progress-fill-tasks.done {
-  background: linear-gradient(90deg, #283593, #1a237e);
-}
-.plan-progress-label {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 8px;
-  font-weight: bold;
-  color: #555;
-  line-height: 1;
-  white-space: nowrap;
+.plan-progress-fill.tasks {
+  background: linear-gradient(90deg, #5c6bc0, #1565c0);
 }
 
 /* === SETTINGS DATA CENTER === */

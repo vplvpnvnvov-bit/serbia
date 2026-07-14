@@ -716,6 +716,7 @@ function renderPlan() {
   let rubPlanned = 0, rubSpent = 0;
   let eurPlanned013 = 0, eurSpent013 = 0;
   let eurPlanned4 = 0, eurSpent4 = 0;
+  let globalTaskDone = 0, globalTaskProgress = 0, globalTaskTotal = 0;
 
   if (!Array.isArray(masterTimeline)) { root.appendChild(document.createTextNode('Ошибка данных.')); return; }
 
@@ -761,36 +762,40 @@ function renderPlan() {
       `<div class="plan-stat-row plan-stat-remain" style="color: #1565c0;"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')}${monthSym}</strong></div>`;
     card.appendChild(stats);
 
-    const barsWrap = document.createElement('div');
-    barsWrap.className = 'plan-bars-wrap';
+    const metricsGroup = document.createElement('div');
+    metricsGroup.className = 'plan-metrics-group';
 
-    const budgetBarWrap = document.createElement('div');
-    budgetBarWrap.className = 'plan-progress-bar plan-progress-bar-budget';
+    const budgetWrapper = document.createElement('div');
+    budgetWrapper.className = 'plan-metric-wrapper';
+    const budgetHeader = document.createElement('div');
+    budgetHeader.className = 'plan-metric-header';
+    budgetHeader.innerHTML = '<span class="plan-metric-title">💶 Бюджет</span><span class="plan-metric-value">' + budgetPct + '%</span>';
+    budgetWrapper.appendChild(budgetHeader);
+    const budgetTrack = document.createElement('div');
+    budgetTrack.className = 'plan-progress-track';
     const budgetFill = document.createElement('div');
-    budgetFill.className = 'plan-progress-fill';
+    budgetFill.className = 'plan-progress-fill budget';
     budgetFill.style.width = budgetPct + '%';
-    if (budgetPct === 100) budgetFill.classList.add('done');
-    budgetBarWrap.appendChild(budgetFill);
-    const budgetLabel = document.createElement('span');
-    budgetLabel.className = 'plan-progress-label';
-    budgetLabel.textContent = '💶 Бюджет: ' + budgetPct + '%';
-    budgetBarWrap.appendChild(budgetLabel);
-    barsWrap.appendChild(budgetBarWrap);
+    budgetTrack.appendChild(budgetFill);
+    budgetWrapper.appendChild(budgetTrack);
+    metricsGroup.appendChild(budgetWrapper);
 
-    const taskBarWrap = document.createElement('div');
-    taskBarWrap.className = 'plan-progress-bar plan-progress-bar-tasks';
+    const taskWrapper = document.createElement('div');
+    taskWrapper.className = 'plan-metric-wrapper';
+    const taskHeader = document.createElement('div');
+    taskHeader.className = 'plan-metric-header';
+    taskHeader.innerHTML = '<span class="plan-metric-title">📋 Задачи</span><span class="plan-metric-value">' + taskPct + '%</span>';
+    taskWrapper.appendChild(taskHeader);
+    const taskTrack = document.createElement('div');
+    taskTrack.className = 'plan-progress-track';
     const taskFill = document.createElement('div');
-    taskFill.className = 'plan-progress-fill plan-progress-fill-tasks';
+    taskFill.className = 'plan-progress-fill tasks';
     taskFill.style.width = taskPct + '%';
-    if (taskPct === 100) taskFill.classList.add('done');
-    taskBarWrap.appendChild(taskFill);
-    const taskLabel = document.createElement('span');
-    taskLabel.className = 'plan-progress-label';
-    taskLabel.textContent = '📋 Задачи: ' + taskPct + '%';
-    taskBarWrap.appendChild(taskLabel);
-    barsWrap.appendChild(taskBarWrap);
+    taskTrack.appendChild(taskFill);
+    taskWrapper.appendChild(taskTrack);
+    metricsGroup.appendChild(taskWrapper);
 
-    card.appendChild(barsWrap);
+    card.appendChild(metricsGroup);
 
     const ul = document.createElement('ul');
     ul.className = 'tl-steps';
@@ -997,10 +1002,12 @@ function renderPlan() {
     if (m.month === 0) { rubPlanned += totalPlanned; rubSpent += spent; }
     if (m.month >= 1 && m.month <= 3) { eurPlanned013 += totalPlanned; eurSpent013 += spent; }
     if (m.month === 4) { eurPlanned4 += totalPlanned; eurSpent4 += spent; }
+    if (m.month >= 0 && m.month <= 3) { globalTaskDone += taskDone; globalTaskProgress += taskProgress; globalTaskTotal += taskTotal; }
   });
 
   const rubRemaining = rubPlanned - rubSpent;
   const eurRemaining013 = eurPlanned013 - eurSpent013;
+  const globalPct = globalTaskTotal > 0 ? Math.round(((globalTaskDone * 1 + globalTaskProgress * 0.5) / globalTaskTotal) * 100) : 0;
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
   summary.innerHTML =
@@ -1010,6 +1017,10 @@ function renderPlan() {
       `<div style="margin-top:4px;font-size:0.95em">Запланировано: <strong>${rubPlanned.toLocaleString('ru-RU')} ₽</strong></div>` +
       `<div style="font-size:0.9em;color:#81c784">✅ Потрачено: <strong>${rubSpent.toLocaleString('ru-RU')} ₽</strong></div>` +
       `<div style="font-size:0.9em;color:#64b5f6">📅 Осталось: <strong>${rubRemaining.toLocaleString('ru-RU')} ₽</strong></div>` +
+    `</div>` +
+    `<div class="tl-summary-row" style="margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">` +
+      `<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span><b>📈 Общая готовность к переезду</b></span><span><b>${globalPct}%</b></span></div>` +
+      `<div class="plan-progress-track"><div class="plan-progress-fill tasks" style="width:${globalPct}%"></div></div>` +
     `</div>` +
     `<div class="tl-summary-row" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">` +
       `<div>🇷🇸 <b>Расходы в Сербии (Месяцы 1–3):</b></div>` +
