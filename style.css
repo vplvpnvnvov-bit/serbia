@@ -1511,14 +1511,19 @@ html, body {
 
 /* Legend score bar */
 .legend-score-bar {
-  font-size: 11px;
-  color: #666;
-  padding: 6px 8px;
-  margin-bottom: 6px;
-  background: #f5f5f5;
-  border-radius: 6px;
-  text-align: center;
-  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #999;
+  padding: 4px 8px 8px;
+}
+.legend-grad-drop {
+  display: inline-block;
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #2ecc71, #f3d400, #e70000);
 }
 
 /* POI Reestr */

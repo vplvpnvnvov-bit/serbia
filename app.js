@@ -254,7 +254,7 @@ function updateLegend(preset) {
 
   const legendBar = document.createElement('div');
   legendBar.className = 'legend-score-bar';
-  legendBar.innerHTML = '🟢 8-10 — Отлично &nbsp;|&nbsp; 🟡 5-7 — Хорошо &nbsp;|&nbsp; 🔴 1-4 — Компромиссно';
+  legendBar.innerHTML = '<span>Лучше</span><span class="legend-grad-drop"></span><span>Хуже</span>';
   listEl.appendChild(legendBar);
 
   const emoji = presetEmoji(preset);
