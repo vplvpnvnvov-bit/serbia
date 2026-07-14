@@ -1761,7 +1761,7 @@ body.dark-theme .ll-name {
 body.dark-theme #legend-toggle {
   color: #81d4fa;
 }
-body.dark-theme #lc-title,
+body.dark-theme .lc-title,
 body.dark-theme .ll-row {
   color: #b0bec5;
 }
@@ -1800,4 +1800,8 @@ body.dark-theme .settings-card {
 body.dark-theme .settings-card .card-desc,
 body.dark-theme .section-intro {
   color: var(--text-muted);
+}
+body.dark-theme .badge {
+  background: rgba(255,255,255,0.1);
+  color: #81d4fa;
 }
