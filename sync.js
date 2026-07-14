@@ -151,10 +151,7 @@ async function fetchAndLoadDoc() {
     localStorage.setItem('checklist-locked', String(data.locked));
   }
   if (data.calc) {
-    Object.entries(data.calc).forEach(([k, v]) => {
-      const el = document.getElementById('calc-' + k);
-      if (el) el.value = v;
-    });
+    localStorage.setItem('calc-state', JSON.stringify(data.calc));
   }
   window.dispatchEvent(new CustomEvent('sync-loaded'));
   syncLoading = false;
@@ -199,13 +196,7 @@ window.deleteCloudData = async function() {
 };
 
 function getCalcValues() {
-  const ids = ['rent', 'utils', 'food', 'transport', 'other'];
-  const vals = {};
-  ids.forEach(id => {
-    const el = document.getElementById('calc-' + id);
-    if (el) vals[id] = el.value;
-  });
-  return vals;
+  try { return JSON.parse(localStorage.getItem('calc-state') || 'null'); } catch { return {}; }
 }
 
 

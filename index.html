@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=1.9.0-cd3812c" />
+<link rel="stylesheet" href="style.css?v=1.10.0-3625b53" />
 </head>
 <body>
 
@@ -105,31 +105,9 @@
     <!-- TAB 3: Калькулятор -->
     <section id="tab-calc" class="tab">
       <div class="tab-content">
-        <h2>💰 Калькулятор расходов</h2>
-        <div class="calc-row">
-          <label>Аренда жилья (€)</label>
-          <input type="number" id="calc-rent" value="600" min="200" max="2000">
-        </div>
-        <div class="calc-row">
-          <label>Коммунальные услуги (€)</label>
-          <input type="number" id="calc-utils" value="120" min="30" max="500">
-        </div>
-        <div class="calc-row">
-          <label>Продукты (€)</label>
-          <input type="number" id="calc-food" value="300" min="100" max="1000">
-        </div>
-        <div class="calc-row">
-          <label>Транспорт (€)</label>
-          <input type="number" id="calc-transport" value="60" min="0" max="500">
-        </div>
-        <div class="calc-row">
-          <label>Прочее (€)</label>
-          <input type="number" id="calc-other" value="150" min="0" max="1000">
-        </div>
-        <div class="calc-total">
-          <strong>Итого в месяц:</strong> <span id="calc-total">1 230 €</span>
-        </div>
-        <p class="calc-note">* Средние цены на 2026 год (источник: Metar.rs, Numbeo)</p>
+        <h2>💰 Планирование расходов на 4 месяца</h2>
+        <p class="section-intro">Отмечайте расходы, которые планируете в каждом месяце, и корректируйте суммы под свою ситуацию.</p>
+        <div id="calc-root"></div>
       </div>
     </section>
 
@@ -232,9 +210,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=1.9.0-cd3812c"></script>
-<script src="sync.js?v=1.9.0-cd3812c"></script>
-<script src="app.js?v=1.9.0-cd3812c"></script>
+<script src="data.js?v=1.10.0-3625b53"></script>
+<script src="sync.js?v=1.10.0-3625b53"></script>
+<script src="app.js?v=1.10.0-3625b53"></script>
 
 </body>
 </html>

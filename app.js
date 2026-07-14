@@ -1,8 +1,123 @@
 window.APP_CONFIG = {
-  VERSION: "1.9.0",
-  BUILD: "cd3812c",
-  CACHE_NAME: "relocation-v1.9.0-cd3812c"
+  VERSION: "1.10.0",
+  BUILD: "3625b53",
+  CACHE_NAME: "relocation-v1.10.0-3625b53"
 };
+
+const defaultMonthlyExpenses = [
+  {
+    id: "rent_first_month",
+    month: 1,
+    category: "Жилье",
+    name: "Аренда жилья (1-й месяц)",
+    cost: 500,
+    description: "Первый месяц аренды квартиры",
+  },
+  {
+    id: "rent_deposit",
+    month: 1,
+    category: "Жилье",
+    name: "Депозит за квартиру",
+    cost: 500,
+    description: "Возвратный депозит собственнику (обычно равен 1 месяцу)",
+  },
+  {
+    id: "ip_open",
+    month: 1,
+    category: "Бизнес",
+    name: "Открытие ИП (APR) под ключ",
+    cost: 150,
+    description: "Пошлины АПР, услуги юриста, печать, открытие счета",
+  },
+  {
+    id: "court_translator_1",
+    month: 1,
+    category: "Переводы",
+    name: "Судебный переводчик (пакет для ИП)",
+    cost: 50,
+    description: "Перевод диплома и паспорта на сербский язык с заверением",
+  },
+  {
+    id: "rent_second_month",
+    month: 2,
+    category: "Жилье",
+    name: "Аренда жилья (2-й месяц)",
+    cost: 500,
+    description: "Арендная плата",
+  },
+  {
+    id: "vnz_tax",
+    month: 2,
+    category: "ВНЖ",
+    name: "Пошлины на ВНЖ (Боравак)",
+    cost: 170,
+    description: "Государственный сбор за подачу заявления на ВНЖ",
+  },
+  {
+    id: "insurance_year",
+    month: 2,
+    category: "ВНЖ",
+    name: "Медицинская страховка (1 год)",
+    cost: 120,
+    description: "Обязательная локальная страховка для ВНЖ",
+  },
+  {
+    id: "bookkeeper_1",
+    month: 2,
+    category: "Бизнес",
+    name: "Бухгалтер (1-й месяц)",
+    cost: 80,
+    description: "Сопровождение ИП, расчет налогов",
+  },
+  {
+    id: "rent_third_month",
+    month: 3,
+    category: "Жилье",
+    name: "Аренда жилья (3-й месяц)",
+    cost: 500,
+    description: "Арендная плата",
+  },
+  {
+    id: "taxes_first_payment",
+    month: 3,
+    category: "Бизнес",
+    name: "Налоги ИП (Паушал)",
+    cost: 250,
+    description: "Ежемесячный фиксированный налог за ИП",
+  },
+  {
+    id: "bookkeeper_2",
+    month: 3,
+    category: "Бизнес",
+    name: "Бухгалтер (2-й месяц)",
+    cost: 80,
+    description: "Ежемесячная оплата услуг бухгалтера",
+  },
+  {
+    id: "rent_fourth_month",
+    month: 4,
+    category: "Жилье",
+    name: "Аренда жилья (4-й месяц)",
+    cost: 500,
+    description: "Арендная плата",
+  },
+  {
+    id: "taxes_second_payment",
+    month: 4,
+    category: "Бизнес",
+    name: "Налоги ИП (Паушал)",
+    cost: 250,
+    description: "Ежемесячный налог",
+  },
+  {
+    id: "bookkeeper_3",
+    month: 4,
+    category: "Бизнес",
+    name: "Бухгалтер (3-й месяц)",
+    cost: 80,
+    description: "Ежемесячная оплата услуг бухгалтера",
+  },
+];
 
 // === TABS ===
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1045,20 +1160,112 @@ if (updateBtn) {
   });
 }
 
-// === CALCULATOR ===
-function calcTotal() {
-  const ids = ['rent', 'utils', 'food', 'transport', 'other'];
-  const total = ids.reduce((sum, id) => {
-    return sum + (parseFloat(document.getElementById('calc-' + id).value) || 0);
-  }, 0);
-  document.getElementById('calc-total').textContent =
-    total.toLocaleString('ru-RU') + ' €';
+// === CALCULATOR (Monthly Breakdown) ===
+const MONTH_LABELS = [
+  'Месяц 1 — Старт, аренда, подача документов',
+  'Месяц 2 — Подача на ВНЖ',
+  'Месяц 3 — Ожидание ВНЖ и первые налоги',
+  'Месяц 4 — Получение ВНЖ и адаптация',
+];
+
+function getCalcState() {
+  try { return JSON.parse(localStorage.getItem('calc-state') || 'null'); } catch { return null; }
 }
 
-document.querySelectorAll('#tab-calc input').forEach(inp => {
-  inp.addEventListener('input', calcTotal);
-});
-calcTotal();
+function setCalcState(state) {
+  localStorage.setItem('calc-state', JSON.stringify(state));
+}
+
+function calcTotal() {
+  const state = getCalcState() || {};
+  const expenses = state.expenses || {};
+  let grandTotal = 0;
+
+  for (let m = 1; m <= 4; m++) {
+    const monthTotalEl = document.getElementById('month-total-' + m);
+    let monthTotal = 0;
+    defaultMonthlyExpenses.filter(e => e.month === m).forEach(e => {
+      const s = expenses[e.id];
+      if (s && s.selected === false) return;
+      const cost = (s && s.customCost != null) ? s.customCost : e.cost;
+      monthTotal += cost;
+    });
+    grandTotal += monthTotal;
+    if (monthTotalEl) monthTotalEl.textContent = monthTotal.toLocaleString('ru-RU') + ' €';
+  }
+
+  const grandEl = document.getElementById('calc-grand-total');
+  if (grandEl) grandEl.textContent = grandTotal.toLocaleString('ru-RU') + ' €';
+}
+
+function renderCalc() {
+  const root = document.getElementById('calc-root');
+  if (!root) return;
+  let state = getCalcState();
+  if (!state) {
+    const exps = {};
+    defaultMonthlyExpenses.forEach(e => { exps[e.id] = { selected: true, customCost: null }; });
+    state = { expenses: exps };
+    setCalcState(state);
+  }
+
+  root.innerHTML = '';
+
+  for (let m = 1; m <= 4; m++) {
+    const items = defaultMonthlyExpenses.filter(e => e.month === m);
+    const block = document.createElement('div');
+    block.className = 'calc-month-block';
+    block.innerHTML = `<h3 class="calc-month-title">${MONTH_LABELS[m - 1]}</h3>`;
+
+    items.forEach(e => {
+      const s = state.expenses[e.id] || { selected: true, customCost: null };
+      const row = document.createElement('div');
+      row.className = 'calc-expense-row' + (s.selected === false ? ' calc-disabled' : '');
+      row.innerHTML = `
+        <label class="calc-expense-label">
+          <input type="checkbox" data-calc-id="${e.id}" ${s.selected !== false ? 'checked' : ''}>
+          <span class="calc-expense-name" title="${e.description}">${e.name}</span>
+        </label>
+        <input type="number" class="calc-expense-cost" data-calc-id="${e.id}" value="${(s.customCost != null ? s.customCost : e.cost)}" min="0">
+        <span class="calc-expense-currency">€</span>
+      `;
+      block.appendChild(row);
+    });
+
+    const sub = document.createElement('div');
+    sub.className = 'calc-month-total';
+    sub.innerHTML = `<strong>Итого за месяц:</strong> <span id="month-total-${m}">0 €</span>`;
+    block.appendChild(sub);
+    root.appendChild(block);
+  }
+
+  const grand = document.createElement('div');
+  grand.className = 'calc-grand-total';
+  grand.innerHTML = `<strong>Общий бюджет на 4 месяца:</strong> <span id="calc-grand-total">0 €</span>`;
+  root.appendChild(grand);
+
+  root.addEventListener('input', e => {
+    const inp = e.target;
+    const id = inp.dataset.calcId;
+    if (!id) return;
+    const st = getCalcState() || { expenses: {} };
+    if (!st.expenses[id]) st.expenses[id] = { selected: true, customCost: null };
+    if (inp.type === 'checkbox') {
+      st.expenses[id].selected = inp.checked;
+    } else {
+      st.expenses[id].customCost = parseFloat(inp.value) || 0;
+    }
+    setCalcState(st);
+    calcTotal();
+    const row = inp.closest('.calc-expense-row');
+    if (row && inp.type === 'checkbox') row.classList.toggle('calc-disabled', !inp.checked);
+  });
+
+  calcTotal();
+}
+
+document.addEventListener('DOMContentLoaded', renderCalc);
+document.querySelector('[data-tab="calc"]')?.addEventListener('click', () => setTimeout(renderCalc, 50));
 
 // === TIMELINE PLAN ===
 function getLinkedProgress(ids) {
@@ -1267,7 +1474,7 @@ document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () =>
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
   renderChecklist();
-  calcTotal();
+  renderCalc();
   updateLockUI();
   renderTimeline();
 });
