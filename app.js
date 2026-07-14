@@ -631,7 +631,7 @@ if (updateBtn) {
 }
 
 function scrollToChecklistItem(id) {
-  const el = document.getElementById('cl-' + id);
+  const el = document.getElementById('plan-' + id);
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     el.classList.add('flash');
@@ -667,7 +667,7 @@ function renderPlan() {
   root.appendChild(h);
   const desc = document.createElement('p');
   desc.className = 'tl-desc';
-  desc.textContent = 'Отмечайте выполненные задачи (тумблером справа) — потраченные деньги зафиксируются, а остаток на месяц автоматически уменьшится.';
+  desc.textContent = 'Отмечайте выполненные задачи (тумблером) — потраченные деньги зафиксируются. Нажмите ▶ для деталей, дат и заметок.';
   root.appendChild(desc);
 
   let grandPlanned = 0;
@@ -693,12 +693,8 @@ function renderPlan() {
     m.tasks.forEach(t => {
       const s = state.tasks[t.id] || { checked: false, customCost: null };
       const cost = (s.customCost != null ? s.customCost : t.cost);
-
       totalPlanned += cost;
-
-      if (s.checked === true) {
-        spent += cost;
-      }
+      if (s.checked === true) spent += cost;
     });
 
     const remaining = totalPlanned - spent;
@@ -735,6 +731,7 @@ function renderPlan() {
 
       const li = document.createElement('li');
       li.className = 'tl-step' + (checked ? ' done' : ' plan-pending');
+      li.id = 'plan-' + t.id;
 
       const label = document.createElement('label');
       label.className = 'plan-toggle';
@@ -767,6 +764,158 @@ function renderPlan() {
         descSpan.className = 'plan-task-desc';
         descSpan.textContent = t.desc;
         li.appendChild(descSpan);
+      }
+
+      const hasTip = !!t.tip;
+      const hasDate = !!t.hasDate;
+      if (hasTip || hasDate) {
+        const tipBtn = document.createElement('button');
+        tipBtn.className = 'plan-tip-toggle';
+        tipBtn.textContent = '▶';
+        tipBtn.dataset.planTip = t.id;
+        li.appendChild(tipBtn);
+
+        const tipBody = document.createElement('div');
+        tipBody.className = 'plan-tip-body hidden';
+        tipBody.dataset.planTipBody = t.id;
+
+        if (hasTip) {
+          const tipText = document.createElement('div');
+          tipText.className = 'plan-tip-text';
+          tipText.textContent = '💡 ' + t.tip;
+          tipBody.appendChild(tipText);
+        }
+
+        if (hasDate) {
+          const dateVal = s.date || '';
+          const expiresMonths = t.expires || 0;
+
+          const dateRow = document.createElement('div');
+          dateRow.className = 'plan-date-row';
+
+          const dateLabel = document.createElement('span');
+          dateLabel.className = 'plan-date-label';
+          dateLabel.textContent = '📅 Сделано:';
+          dateRow.appendChild(dateLabel);
+
+          const dateCompact = document.createElement('span');
+          dateCompact.className = 'plan-date-compact';
+          dateCompact.id = 'plan-dc-' + t.id;
+          dateCompact.textContent = dateVal || 'не указана';
+          dateRow.appendChild(dateCompact);
+
+          const dateInputs = document.createElement('span');
+          dateInputs.className = 'plan-date-inputs hidden';
+          dateInputs.id = 'plan-di-' + t.id;
+
+          const parts = dateVal ? dateVal.split('.') : [];
+          const dInp = document.createElement('input');
+          dInp.className = 'plan-date-d';
+          dInp.placeholder = 'ДД';
+          dInp.value = parts[0] || '';
+          dInp.maxLength = 2;
+          dateInputs.appendChild(dInp);
+          dateInputs.appendChild(document.createTextNode('.'));
+
+          const mInp = document.createElement('input');
+          mInp.className = 'plan-date-m';
+          mInp.placeholder = 'ММ';
+          mInp.value = parts[1] || '';
+          mInp.maxLength = 2;
+          dateInputs.appendChild(mInp);
+          dateInputs.appendChild(document.createTextNode('.'));
+
+          const yInp = document.createElement('input');
+          yInp.className = 'plan-date-y';
+          yInp.placeholder = 'ГГГГ';
+          yInp.value = parts[2] || '';
+          yInp.maxLength = 4;
+          dateInputs.appendChild(yInp);
+
+          const saveDateBtn = document.createElement('button');
+          saveDateBtn.className = 'plan-date-save';
+          saveDateBtn.textContent = '💾';
+          saveDateBtn.dataset.planDateSave = t.id;
+          dateInputs.appendChild(saveDateBtn);
+
+          dateRow.appendChild(dateInputs);
+
+          const editDateBtn = document.createElement('button');
+          editDateBtn.className = 'plan-date-edit';
+          editDateBtn.textContent = '✏️';
+          editDateBtn.dataset.planDateEdit = t.id;
+          dateRow.appendChild(editDateBtn);
+
+          if (dateVal && expiresMonths > 0) {
+            const dp = dateVal.split('.');
+            if (dp.length === 3) {
+              const doneDate = new Date(+dp[2], +dp[1] - 1, +dp[0]);
+              const expDate = new Date(doneDate);
+              expDate.setMonth(expDate.getMonth() + expiresMonths);
+              const now = new Date();
+              const daysLeft = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
+
+              const rem = document.createElement('span');
+              rem.className = 'plan-date-remaining';
+              if (daysLeft < 0) { rem.classList.add('expired'); rem.textContent = '⚠️ Просрочено на ' + Math.abs(daysLeft) + ' дн.'; }
+              else if (daysLeft <= 30) { rem.classList.add('warn'); rem.textContent = '⚠️ Осталось ' + daysLeft + ' дн.'; }
+              else { rem.classList.add('ok'); rem.textContent = '✅ Ещё ' + daysLeft + ' дн.'; }
+              dateRow.appendChild(rem);
+            }
+          }
+
+          tipBody.appendChild(dateRow);
+        }
+
+        const noteVal = s.note || '';
+        const noteSection = document.createElement('div');
+        noteSection.className = 'plan-note-section';
+
+        const noteDisplay = document.createElement('div');
+        noteDisplay.style.display = noteVal ? 'block' : 'none';
+
+        if (noteVal) {
+          const noteText = document.createElement('span');
+          noteText.className = 'plan-note-text';
+          noteText.textContent = '📝 ' + noteVal;
+          noteDisplay.appendChild(noteText);
+        }
+
+        const noteEditBtn = document.createElement('button');
+        noteEditBtn.className = 'plan-note-edit';
+        noteEditBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
+        noteEditBtn.dataset.planNoteEdit = t.id;
+        noteDisplay.appendChild(noteEditBtn);
+        noteSection.appendChild(noteDisplay);
+
+        const noteEditBlock = document.createElement('div');
+        noteEditBlock.className = 'plan-note-edit-block hidden';
+        noteEditBlock.id = 'plan-ne-' + t.id;
+
+        const noteTa = document.createElement('textarea');
+        noteTa.className = 'plan-note-ta';
+        noteTa.rows = 2;
+        noteTa.value = noteVal;
+        noteEditBlock.appendChild(noteTa);
+
+        const noteSaveBtn = document.createElement('button');
+        noteSaveBtn.className = 'plan-note-save';
+        noteSaveBtn.textContent = '💾';
+        noteSaveBtn.dataset.planNoteSave = t.id;
+        noteEditBlock.appendChild(noteSaveBtn);
+
+        if (noteVal) {
+          const noteDelBtn = document.createElement('button');
+          noteDelBtn.className = 'plan-note-delete';
+          noteDelBtn.textContent = '🗑️';
+          noteDelBtn.dataset.planNoteDelete = t.id;
+          noteEditBlock.appendChild(noteDelBtn);
+        }
+
+        noteSection.appendChild(noteEditBlock);
+        tipBody.appendChild(noteSection);
+
+        li.appendChild(tipBody);
       }
 
       ul.appendChild(li);
@@ -809,11 +958,101 @@ if (!window.planListenerAdded) {
     st.tasks[id].checked = cb.checked;
     setPlanState(st);
     renderPlan();
-
     if (window.saveToCloud) {
-      window.saveToCloud().catch(err => console.error("Фоновое сохранение не удалось:", err));
+      window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
     }
   });
+
+  document.getElementById('timeline-root')?.addEventListener('click', e => {
+    const el = e.target;
+
+    // Tip toggle
+    if (el.classList.contains('plan-tip-toggle')) {
+      const id = el.dataset.planTip;
+      if (!id) return;
+      const body = document.querySelector('[data-plan-tip-body="' + id + '"]');
+      if (body) {
+        const isHidden = body.classList.contains('hidden');
+        body.classList.toggle('hidden');
+        el.classList.toggle('open', isHidden);
+        el.textContent = isHidden ? '▼' : '▶';
+      }
+      return;
+    }
+
+    // Date edit
+    if (el.classList.contains('plan-date-edit')) {
+      const id = el.dataset.planDateEdit;
+      if (!id) return;
+      const compact = document.getElementById('plan-dc-' + id);
+      const inputs = document.getElementById('plan-di-' + id);
+      if (compact) compact.classList.add('hidden');
+      if (inputs) inputs.classList.remove('hidden');
+      el.classList.add('hidden');
+      return;
+    }
+
+    // Date save
+    if (el.classList.contains('plan-date-save')) {
+      const id = el.dataset.planDateSave;
+      if (!id) return;
+      const inputs = document.getElementById('plan-di-' + id);
+      if (!inputs) return;
+      const dEl = inputs.querySelector('.plan-date-d');
+      const mEl = inputs.querySelector('.plan-date-m');
+      const yEl = inputs.querySelector('.plan-date-y');
+      const dd = dEl ? dEl.value.trim().padStart(2, '0') : '';
+      const mm = mEl ? mEl.value.trim().padStart(2, '0') : '';
+      const yy = yEl ? yEl.value.trim() : '';
+      if (dd && mm && yy && dd.length === 2 && mm.length === 2 && yy.length === 4) {
+        const st = getPlanState() || { tasks: {} };
+        if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+        st.tasks[id].date = dd + '.' + mm + '.' + yy;
+        setPlanState(st);
+      }
+      renderPlan();
+      return;
+    }
+
+    // Note edit
+    if (el.classList.contains('plan-note-edit')) {
+      const id = el.dataset.planNoteEdit;
+      if (!id) return;
+      const block = document.getElementById('plan-ne-' + id);
+      if (block) block.classList.remove('hidden');
+      const ta = block ? block.querySelector('.plan-note-ta') : null;
+      if (ta) { ta.focus(); ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+      return;
+    }
+
+    // Note save
+    if (el.classList.contains('plan-note-save')) {
+      const id = el.dataset.planNoteSave;
+      if (!id) return;
+      const block = document.getElementById('plan-ne-' + id);
+      const ta = block ? block.querySelector('.plan-note-ta') : null;
+      const val = ta ? ta.value.trim() : '';
+      const st = getPlanState() || { tasks: {} };
+      if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+      st.tasks[id].note = val || undefined;
+      setPlanState(st);
+      renderPlan();
+      return;
+    }
+
+    // Note delete
+    if (el.classList.contains('plan-note-delete')) {
+      const id = el.dataset.planNoteDelete;
+      if (!id) return;
+      const st = getPlanState() || { tasks: {} };
+      if (!st.tasks[id]) st.tasks[id] = { checked: false, customCost: null };
+      delete st.tasks[id].note;
+      setPlanState(st);
+      renderPlan();
+      return;
+    }
+  });
+
   window.planListenerAdded = true;
 }
 
@@ -842,6 +1081,7 @@ window.factoryReset = async function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.migrateLegacyData) window.migrateLegacyData();
   renderPlan();
   updateSyncStatusUI();
   const versionEl = document.getElementById('app-version-display');

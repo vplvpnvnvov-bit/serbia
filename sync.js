@@ -119,9 +119,18 @@ async function fetchAndLoadDoc() {
   }
 
   syncLoading = true;
+
   if (data.plan) {
     localStorage.setItem('plan-state', JSON.stringify(data.plan));
+  } else if (data.checklist || data.calc) {
+    localStorage.setItem('checklist', JSON.stringify(data.checklist || {}));
+    if (data.locked !== undefined) localStorage.setItem('checklist-locked', String(data.locked));
+    if (data.calc) localStorage.setItem('calc-state', JSON.stringify(data.calc));
+    migrateLegacyData();
   }
+
+  migrateLegacyData();
+
   window.dispatchEvent(new CustomEvent('sync-loaded'));
   syncLoading = false;
   localStorage.setItem('last-sync-time', new Date().toLocaleString());
@@ -163,6 +172,53 @@ window.deleteCloudData = async function() {
 function getPlanValues() {
   try { return JSON.parse(localStorage.getItem('plan-state') || 'null'); } catch { return {}; }
 }
+
+function migrateLegacyData() {
+  if (localStorage.getItem('plan-state')) return false;
+  const oldRaw = localStorage.getItem('checklist');
+  const oldCalc = localStorage.getItem('calc-state');
+  if (!oldRaw && !oldCalc) return false;
+
+  let oldChecklist = {};
+  try { oldChecklist = JSON.parse(oldRaw || '{}'); } catch {}
+
+  let oldCalcValues = {};
+  try { oldCalcValues = JSON.parse(oldCalc || '{}'); } catch {}
+
+  if (typeof window.masterTimeline === 'undefined') return false;
+
+  const tasks = {};
+  const timeline = window.masterTimeline;
+
+  timeline.forEach(m => {
+    m.tasks.forEach(t => {
+      const old = oldChecklist[t.id];
+      const entry = { checked: false, customCost: null };
+      if (old !== undefined && old !== null) {
+        if (typeof old === 'boolean') {
+          entry.checked = old;
+        } else if (typeof old === 'object') {
+          entry.checked = !!old.done;
+          if (old.date) entry.date = old.date;
+          if (old.note) entry.note = old.note;
+        }
+      }
+      if (oldCalcValues[t.id] !== undefined) {
+        entry.customCost = oldCalcValues[t.id];
+      }
+      tasks[t.id] = entry;
+    });
+  });
+
+  const state = { tasks };
+  localStorage.setItem('plan-state', JSON.stringify(state));
+  localStorage.removeItem('checklist');
+  localStorage.removeItem('checklist-locked');
+  localStorage.removeItem('calc-state');
+  return true;
+}
+
+window.migrateLegacyData = migrateLegacyData;
 
 
 
