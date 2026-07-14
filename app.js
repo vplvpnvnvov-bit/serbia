@@ -433,6 +433,13 @@ function showDistrictPanel(d, noFit) {
 
     const firstImg = d.images[0];
     captionContainer.textContent = typeof firstImg === 'string' ? '' : (firstImg.title || '');
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'img-placeholder carousel-slide';
+    ph.style.cssText = 'display:flex;align-items:center;justify-content:center;height:150px;color:#999;font-size:14px;';
+    ph.textContent = '📷 Нет фото';
+    gallery.appendChild(ph);
+    captionContainer.textContent = '';
   }
 
   gallery.onscroll = () => {
