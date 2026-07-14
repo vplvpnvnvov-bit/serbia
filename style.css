@@ -2089,6 +2089,11 @@ body.dark-theme .carousel-caption {
   color: #a1a1a6;
 }
 
+.poi-streetview-btn:hover {
+  background-color: #c2185b !important;
+  transform: translateY(-1px);
+}
+
 .leaflet-interactive:focus {
   outline: none;
 }

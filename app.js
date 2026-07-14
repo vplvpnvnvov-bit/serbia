@@ -112,7 +112,10 @@ MAP_POINTS.forEach(pt => {
     <div style="font-family:sans-serif;max-width:220px">
       <b>${emoji} ${pt.name}</b><br>
       <span style="color:#555;font-size:12px">${pt.desc}</span>
-      ${pt.linked ? `<br><button class="poi-link-btn" data-linked="${pt.linked}" style="margin-top:6px;padding:4px 10px;border:none;border-radius:6px;background:#1a237e;color:#fff;cursor:pointer;font-size:11px">✅ Показать в плане</button>` : ''}
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+        ${pt.linked ? `<button class="poi-link-btn" data-linked="${pt.linked}" style="padding:6px;border:none;border-radius:6px;background:#1a237e;color:#fff;cursor:pointer;font-size:11px;font-weight:bold">✅ Показать в плане</button>` : ''}
+        ${pt.streetViewUrl ? `<a href="${pt.streetViewUrl}" target="_blank" rel="noopener noreferrer" class="poi-streetview-btn" style="display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:6px;border-radius:6px;background:#e91e63;color:#fff;text-decoration:none;font-size:11px;font-weight:bold;box-shadow:0 2px 5px rgba(233,30,99,0.3)">👁️ Посмотреть в Street View</a>` : ''}
+      </div>
     </div>
   `, { maxWidth: 280 });
   marker._poiCat = pt.category;
