@@ -2,8 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{syncCode} {
-      allow write: if resource.data.isDeleted != true;
-      allow get: if true;
+      allow read, write: if request.auth != null;
       allow list: if false;
     }
     match /{document=**} {
