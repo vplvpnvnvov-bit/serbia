@@ -1111,18 +1111,27 @@ html, body {
 .plan-tip-toggle.open { opacity: 0.6; transform: rotate(90deg); }
 
 .plan-tip-body {
-  padding: 10px 12px;
-  margin: 4px 0 6px 56px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 3px solid #1a237e;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
+  opacity: 0;
+  padding: 0 12px;
+  margin: 0 0 0 56px;
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid #fbc02d;
+  border-radius: 0 8px 8px 0;
   font-size: 13px;
   line-height: 1.45;
   color: #333;
   flex-basis: 100%;
-  animation: tipFadeIn 0.15s ease;
 }
-.plan-tip-body.hidden { display: none; }
+.plan-tip-body:not(.hidden) {
+  max-height: 2000px;
+  opacity: 1;
+  margin: 4px 0 6px 56px;
+  padding: 12px 12px;
+}
+.plan-tip-body.hidden { display: block; max-height: 0; opacity: 0; padding: 0 12px; margin: 0 0 0 56px; }
 .plan-tip-text { margin-bottom: 6px; line-height: 1.55; }
 .plan-tip-text p { margin: 0 0 6px; }
 .plan-tip-text p:last-child { margin-bottom: 0; }
@@ -1130,17 +1139,30 @@ html, body {
 .plan-tip-text ul, .plan-tip-text ol { margin: 4px 0 6px; padding-left: 20px; }
 .plan-tip-text li { margin-bottom: 3px; font-size: 13px; }
 .plan-tip-text a, .plan-tip-link {
-  display: inline-block;
-  color: #1565c0;
+  color: #fbc02d !important;
   text-decoration: none;
-  padding: 4px 10px;
-  background: #e3f2fd;
-  border-radius: 6px;
+  border-bottom: 1px dashed rgba(251,192,45,0.4);
+  transition: border-color 0.2s, color 0.2s;
+  background: none;
+  padding: 0;
+  border-radius: 0;
   font-weight: 500;
-  font-size: 13px;
-  margin: 2px 4px 2px 0;
 }
-.plan-tip-text a:hover, .plan-tip-link:hover { background: #bbdefb; }
+.plan-tip-text a:hover, .plan-tip-link:hover {
+  border-bottom-style: solid;
+  color: #fffde7 !important;
+  background: none;
+}
+.plan-tip-text a::after {
+  content: " ↗";
+  font-size: 0.85em;
+  display: inline-block;
+  margin-left: 2px;
+  transition: transform 0.2s;
+}
+.plan-tip-text a:hover::after {
+  transform: translate(1px, -1px);
+}
 
 /* Shared date input styles */
 .plan-date-d, .plan-date-m, .plan-date-y {

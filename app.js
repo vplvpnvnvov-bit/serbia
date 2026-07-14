@@ -1480,6 +1480,12 @@ if (!window.planListenerAdded) {
         body.classList.toggle('hidden');
         el.classList.toggle('open', isHidden);
         el.textContent = isHidden ? '▼' : '▶';
+        if (isHidden) {
+          setTimeout(() => {
+            const step = el.closest('.tl-step');
+            if (step) step.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 120);
+        }
       }
       return;
     }
@@ -1569,6 +1575,9 @@ if (!window.planListenerAdded) {
         tipBody.classList.toggle('hidden');
         tipBtn.classList.toggle('open', isHidden);
         tipBtn.textContent = isHidden ? '▼' : '▶';
+        if (isHidden) {
+          setTimeout(() => step.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
+        }
       }
     }
   });
