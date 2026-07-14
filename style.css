@@ -1084,31 +1084,6 @@ html, body {
 .plan-note-edit-wrap { display: flex; align-items: flex-start; gap: 4px; flex-basis: 100%; margin-top: 2px; }
 .plan-note-edit-wrap.hidden { display: none; }
 
-/* MONTH STATS + PROGRESS BAR */
-.plan-month-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 13px;
-}
-.plan-stat-row {
-  display: flex;
-  gap: 4px;
-}
-.plan-stat-row strong {
-  font-weight: 700;
-}
-.plan-stat-spent strong {
-  color: #2e7d32;
-}
-.plan-stat-remain strong {
-  color: #e65100;
-}
-
 /* Plan tip toggle */
 .plan-tip-toggle {
   font-size: 14px;
@@ -1220,6 +1195,8 @@ html, body {
   font-size: 12px;
   font-weight: 600;
   color: #555;
+  max-width: 500px;
+  width: 100%;
 }
 .plan-metric-value {
   color: #333;
@@ -1353,6 +1330,12 @@ html, body {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 60px;
+  }
+}
+
+@media (min-width: 768px) {
+  .plan-metrics-group {
+    max-width: 600px;
   }
 }
 

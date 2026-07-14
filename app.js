@@ -704,16 +704,12 @@ function renderPlan() {
   const h = document.createElement('h2');
   h.textContent = '📅 Пошаговый план переезда (5 месяцев)';
   root.appendChild(h);
-  const desc = document.createElement('p');
-  desc.className = 'tl-desc';
-  desc.textContent = 'Нажимайте на кружок статуса: ⚪ В планах → 🟡 В процессе → 🟢 Выполнено. Даты и заметки видны на карточке сразу. ▶ — справочная информация.';
-  root.appendChild(desc);
 
   const lockBar = document.createElement('div');
   lockBar.className = 'plan-lock-bar';
   const lockBtn = document.createElement('button');
   lockBtn.className = 'plan-lock-btn' + (locked ? ' locked' : '');
-  lockBtn.textContent = locked ? '🔒 Заблокировано' : '🔓 Редактирование';
+  lockBtn.textContent = locked ? '👁️ Только просмотр' : '✏️ Редактирование';
   lockBtn.dataset.planLock = '1';
   lockBar.appendChild(lockBtn);
   root.appendChild(lockBar);
@@ -756,19 +752,10 @@ function renderPlan() {
       else if (s.progress === true) taskProgress++;
     });
 
-    const remaining = totalPlanned - spent;
     const spentPct = totalPlanned > 0 ? Math.round((spent / totalPlanned) * 100) : 0;
     const pendingSpentPct = totalPlanned > 0 ? Math.round((spentInProgress / totalPlanned) * 100) : 0;
     const donePct = taskTotal > 0 ? Math.round((taskDone / taskTotal) * 100) : 0;
     const progPct = taskTotal > 0 ? Math.round((taskProgress / taskTotal) * 100) : 0;
-
-    const stats = document.createElement('div');
-    stats.className = 'plan-month-stats';
-    stats.innerHTML =
-      `<div class="plan-stat-row"><span>📋 Всего запланировано:</span> <strong>${totalPlanned.toLocaleString('ru-RU')}${monthSym}</strong></div>` +
-      `<div class="plan-stat-row plan-stat-spent" style="color: #2e7d32;"><span>✅ Уже потрачено:</span> <strong>${spent.toLocaleString('ru-RU')}${monthSym}</strong></div>` +
-      `<div class="plan-stat-row plan-stat-remain" style="color: #1565c0;"><span>📅 Осталось потратить:</span> <strong>${remaining.toLocaleString('ru-RU')}${monthSym}</strong></div>`;
-    card.appendChild(stats);
 
     const pendingTasksCount = taskTotal - taskDone - taskProgress;
     const combinedBudgetPct = spentPct + pendingSpentPct;
@@ -813,7 +800,7 @@ function renderPlan() {
     taskWrapper.className = 'plan-metric-wrapper';
     const taskHeader = document.createElement('div');
     taskHeader.className = 'plan-metric-header';
-    taskHeader.innerHTML = '<span class="plan-metric-title">📋 Физический прогресс дел</span>' +
+    taskHeader.innerHTML = '<span class="plan-metric-title">📋 Физический прогресс</span>' +
       '<span class="plan-metric-percentage">' + combinedTaskPct + '%</span>';
     taskWrapper.appendChild(taskHeader);
 
