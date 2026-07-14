@@ -1052,14 +1052,16 @@ if (updateBtn) {
 }
 
 function scrollToChecklistItem(id) {
-  const el = document.getElementById('plan-' + id);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.classList.add('flash');
-    setTimeout(() => el.classList.remove('flash'), 1500);
-  }
   const tab = document.querySelector('[data-tab="plan"]');
   if (tab) tab.click();
+  setTimeout(() => {
+    const el = document.getElementById('plan-' + id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('flash');
+      setTimeout(() => el.classList.remove('flash'), 1500);
+    }
+  }, 150);
 }
 
 function getPlanState() {
