@@ -150,8 +150,8 @@ async function fetchAndLoadDoc() {
   if (data.locked !== undefined) {
     localStorage.setItem('checklist-locked', String(data.locked));
   }
-  if (data.calc) {
-    localStorage.setItem('calc-state', JSON.stringify(data.calc));
+  if (data.plan) {
+    localStorage.setItem('plan-state', JSON.stringify(data.plan));
   }
   window.dispatchEvent(new CustomEvent('sync-loaded'));
   syncLoading = false;
@@ -169,7 +169,7 @@ window.saveToCloud = async function() {
     const data = {
       checklist: sanitizeChecklist(raw),
       locked: localStorage.getItem('checklist-locked') === 'true',
-      calc: getCalcValues(),
+      plan: getPlanValues(),
       version: CURRENT_DATA_VERSION,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
 };
@@ -195,8 +195,8 @@ window.deleteCloudData = async function() {
   }
 };
 
-function getCalcValues() {
-  try { return JSON.parse(localStorage.getItem('calc-state') || 'null'); } catch { return {}; }
+function getPlanValues() {
+  try { return JSON.parse(localStorage.getItem('plan-state') || 'null'); } catch { return {}; }
 }
 
 

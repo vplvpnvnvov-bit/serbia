@@ -1,39 +1,71 @@
 window.APP_CONFIG = {
-  VERSION: "1.10.0",
-  BUILD: "3625b53",
-  CACHE_NAME: "relocation-v1.10.0-3625b53"
+  VERSION: "1.11.0",
+  BUILD: "c0aa2de",
+  CACHE_NAME: "relocation-v1.11.0-c0aa2de"
 };
 
-const defaultMonthlyExpenses = [
-  { id: "m0_apostille", month: 0, category: "Документы (РФ)", name: "Апостиль на справку о судимости", cost: 30, description: "Госпошлина за апостилирование справки МВД (2500 руб)" },
-  { id: "m0_docs", month: 0, category: "Документы (РФ)", name: "Сбор оригиналов документов", cost: 0, description: "Диплом с приложением, свидетельства о браке и рождении, синяя прививочная книжка дочки (форма № 156/у-93)" },
-
-  { id: "m1_flight", month: 1, category: "Переезд", name: "Перелет Air Serbia (3 чел + багаж)", cost: 1350, description: "Прямой рейс Москва — Белград" },
-  { id: "m1_airbnb", month: 1, category: "Жилье", name: "Airbnb (1-й месяц, всё включено)", cost: 950, description: "Временное жилье на период поиска постоянной квартиры и оформление белого картона" },
-  { id: "m1_vnz_tax", month: 1, category: "ВНЖ", name: "Пошлины за ВНЖ «Талант» (на троих)", cost: 600, description: "Административные сборы МУП" },
-  { id: "m1_insurance", month: 1, category: "ВНЖ", name: "Медстраховки на 1 год (на троих)", cost: 250, description: "Обязательные годовые полисы для подачи на ВНЖ" },
-  { id: "m1_translations", month: 1, category: "Переводы", name: "Судебные переводы документов", cost: 200, description: "Перевод диплома, свидетельств, прививок судебным переводчиком" },
-  { id: "m1_living", month: 1, category: "Быт", name: "Еда, связь, базовый быт", cost: 600, description: "Расходы на жизнь семьи из 3-х человек" },
-  { id: "m1_pediatrician", month: 1, category: "Быт", name: "Осмотр ребенка у педиатра для сада", cost: 50, description: "Медицинская справка для зачисления в частный садик" },
-
-  { id: "m2_rent", month: 2, category: "Жилье", name: "Аренда постоянной квартиры (1-й месяц)", cost: 600, description: "Двухкомнатная квартира для семьи" },
-  { id: "m2_deposit", month: 2, category: "Жилье", name: "Депозит хозяину квартиры (100%)", cost: 600, description: "Возвратный залог за сохранность имущества" },
-  { id: "m2_agency", month: 2, category: "Жилье", name: "Комиссия риелтору (50%)", cost: 300, description: "Единоразовая оплата услуг агента по недвижимости" },
-  { id: "m2_bills", month: 2, category: "Жилье", name: "Коммунальные услуги", cost: 150, description: "Инфостан (отопление, вода), электричество, домашний интернет" },
-  { id: "m2_kindergarten", month: 2, category: "Быт", name: "Частный детский сад (1-й месяц)", cost: 400, description: "Ежемесячная оплата коммерческого садика для дочки" },
-  { id: "m2_living", month: 2, category: "Быт", name: "Еда, быт, семейные расходы", cost: 600, description: "Расходы на жизнь семьи" },
-
-  { id: "m3_rent_bills", month: 3, category: "Жилье", name: "Аренда квартиры + коммуналка", cost: 750, description: "Ежемесячный платеж за проживание" },
-  { id: "m3_kindergarten", month: 3, category: "Быт", name: "Частный детский сад (2-й месяц)", cost: 400, description: "Оплата садика" },
-  { id: "m3_living", month: 3, category: "Быт", name: "Еда и базовые расходы", cost: 600, description: "Расходы на жизнь семьи" },
-  { id: "m3_ip_tax", month: 3, category: "Бизнес", name: "Пошлины за ИП и смену ВНЖ", cost: 65, description: "Регистрация ИП в APR и пошлина за переход на ВНЖ по ИП" },
-  { id: "m3_virtual_office", month: 3, category: "Бизнес", name: "Виртуальный офис / Юр. адрес (на год)", cost: 185, description: "Аренда адреса для регистрации ИП" },
-  { id: "m3_lawyer", month: 3, category: "Бизнес", name: "Услуги юриста (банк и комплаенс)", cost: 200, description: "Помощь с открытием бизнес-счета и прохождением проверок банка" },
-
-  { id: "m4_rent_bills", month: 4, category: "Жилье", name: "Аренда квартиры + коммуналка", cost: 750, description: "Ежемесячный платеж за проживание" },
-  { id: "m4_kindergarten", month: 4, category: "Быт", name: "Частный детский сад (3-й месяц)", cost: 400, description: "Оплата садика" },
-  { id: "m4_pausal_tax", month: 4, category: "Бизнес", name: "Налоги ИП (Паушал)", cost: 350, description: "Первый фиксированный налог за ИП (включает гос. медстрахование всей семьи)" },
-  { id: "m4_living", month: 4, category: "Быт", name: "Еда и быт", cost: 600, description: "Стандартные расходы на жизнь" },
+const migrationPlan = [
+  {
+    month: 0,
+    title: "Месяц 0: Подготовка в Москве",
+    focus: "Сбор документов, которые невозможно получить в Сербии",
+    tasks: [
+      { id: "m0_apostille", name: "Заказать справку об отсутствии судимости из МВД РФ с Апостилем", cost: 30, currency: "EUR", checked: true, desc: "Госпошлина ~2 500 рублей" },
+      { id: "m0_docs", name: "Собрать оригиналы диплома, свидетельства о браке и рождении ребенка", cost: 0, currency: "EUR", checked: true, desc: "Обязательно взять приложения к дипломам" },
+      { id: "m0_vaccine", name: "Взять в поликлинике синюю книжку — прививочный сертификат дочки (форма № 156/у-93)", cost: 0, currency: "EUR", checked: true, desc: "Нужен для оформления в сербский детский сад" }
+    ]
+  },
+  {
+    month: 1,
+    title: "Месяц 1: Прилет и ВНЖ «Талант»",
+    focus: "Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация",
+    tasks: [
+      { id: "m1_flight", name: "Прямой перелет Air Serbia (3 чел. с багажом)", cost: 1350, currency: "EUR", checked: true, desc: "Рейс Москва — Белград" },
+      { id: "m1_airbnb", name: "Жилье на Airbnb (1-й месяц, всё включено)", cost: 950, currency: "EUR", checked: true, desc: "Временный дом и получение белого картона от хоста" },
+      { id: "m1_vnz", name: "Пошлины МУП за ВНЖ на троих", cost: 600, currency: "EUR", checked: true, desc: "Сборы за подачу документов на ВНЖ Талант" },
+      { id: "m1_insurance", name: "Обязательные медстраховки на 1 год (на троих)", cost: 250, currency: "EUR", checked: true, desc: "Необходимы для подачи в полицию" },
+      { id: "m1_translate", name: "Судебные переводы (диплом, свидетельства, прививки)", cost: 200, currency: "EUR", checked: true, desc: "Перевод сертифицированным переводчиком в Сербии" },
+      { id: "m1_living", name: "Еда, связь, базовый быт", cost: 600, currency: "EUR", checked: true, desc: "Расходы семьи на первый месяц" },
+      { id: "m1_pediatrician", name: "Осмотр ребенка у педиатра для садика", cost: 50, currency: "EUR", checked: true, desc: "Получение справки для коммерческого сада" }
+    ]
+  },
+  {
+    month: 2,
+    title: "Месяц 2: Постоянное жилье и детский сад",
+    focus: "Поиск долгосрочной квартиры и устройство дочки в садик",
+    tasks: [
+      { id: "m2_rent", name: "Аренда постоянной квартиры (1-й месяц)", cost: 600, currency: "EUR", checked: true, desc: "Поиск двушки на долгий срок" },
+      { id: "m2_deposit", name: "Залог хозяину квартиры (100%)", cost: 600, currency: "EUR", checked: true, desc: "Возвратный депозит за сохранность" },
+      { id: "m2_agency", name: "Комиссия риелтору (50% единоразово)", cost: 300, currency: "EUR", checked: true, desc: "Оплата услуг агентства при подписании договора" },
+      { id: "m2_utility", name: "Коммунальные услуги (Инфостан, свет, интернет)", cost: 150, currency: "EUR", checked: true, desc: "Ежемесячные платежи по счетам" },
+      { id: "m2_kindergarten", name: "Частный детский сад (1-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата за дочку" },
+      { id: "m2_living", name: "Еда, быт, семейные расходы", cost: 600, currency: "EUR", checked: true, desc: "Текущие расходы на жизнь" }
+    ]
+  },
+  {
+    month: 3,
+    title: "Месяц 3: Запуск ИП и смена статуса ВНЖ",
+    focus: "Регистрация бизнеса и подготовка к первым доходам",
+    tasks: [
+      { id: "m3_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", checked: true, desc: "Арендная плата и счета" },
+      { id: "m3_kindergarten", name: "Частный детский сад (2-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата сада" },
+      { id: "m3_living", name: "Еда и базовые расходы", cost: 600, currency: "EUR", checked: true, desc: "Расходы на жизнь" },
+      { id: "m3_ip_tax", name: "Пошлина за регистрацию ИП и смену ВНЖ", cost: 65, currency: "EUR", checked: true, desc: "Подача в APR и пошлина за переход на ВНЖ по ИП" },
+      { id: "m3_office", name: "Виртуальный офис / Юр. адрес для ИП (на год вперед)", cost: 185, currency: "EUR", checked: true, desc: "Адрес для регистрации бизнеса" },
+      { id: "m3_lawyer", name: "Услуги юриста (помощь с комплаенсом в банке и МУП)", cost: 200, currency: "EUR", checked: true, desc: "Прохождение банковских проверок для бизнес-счета" }
+    ]
+  },
+  {
+    month: 4,
+    title: "Месяц 4: Жизнь на рельсах бизнеса",
+    focus: "Полноценная работа, оплата первых налогов",
+    tasks: [
+      { id: "m4_rent", name: "Аренда квартиры + коммуналка", cost: 750, currency: "EUR", checked: true, desc: "Арендная плата и счета" },
+      { id: "m4_kindergarten", name: "Частный детский сад (3-й месяц)", cost: 400, currency: "EUR", checked: true, desc: "Оплата сада" },
+      { id: "m4_pausal", name: "Первые фиксированные налоги по ИП (Паушал)", cost: 350, currency: "EUR", checked: true, desc: "Включает государственное медстрахование всей семьи" },
+      { id: "m4_living", name: "Еда и быт", cost: 600, currency: "EUR", checked: true, desc: "Стандартный ежемесячный бюджет семьи" }
+    ]
+  }
 ];
 
 // === TABS ===
@@ -640,88 +672,7 @@ function migrateChecklist(saved) {
 window.getValidChecklistIds = getValidChecklistIds;
 window.migrateChecklist = migrateChecklist;
 
-const TIMELINE_PLAN = {
-  section: "relocation_4_months_plan",
-  title: "📅 Пошаговый план (4 месяца)",
-  description: "План переезда в Белград для семьи из 3 человек: ВНЖ «Талант» ➔ ИП.",
-  timeline: [
-    {
-      id: "m0",
-      title: "Месяц 0: Подготовка в РФ",
-      focus: "Сбор документов, которые невозможно получить удаленно",
-      steps: [
-        { text: "Заказать справку об отсутствии судимости (Госуслуги).", linked_ids: ["nocrim_h","nocrim_w"] },
-        { text: "Поставить апостили на справки о несудимости (бумажные версии).", linked_ids: ["nocrim_apost_h","nocrim_apost_w"] },
-        { text: "Поставить апостиль на свидетельство о браке.", linked_ids: ["apost_marr"] },
-        { text: "Поставить апостиль на свидетельство о рождении ребенка.", linked_ids: ["apost_birth"] },
-        { text: "Оформить или обновить загранпаспорта семьи.", linked_ids: ["p10","p5w","p5d"] },
-        { text: "Проставить штамп о гражданстве на св-во о рождении ребенка.", linked_ids: ["stamp"] },
-        { text: "Оформить нотариальное согласие на выезд ребенка (если едет один родитель).", linked_ids: ["child_consent"] },
-        { text: "Взять в поликлинике карту прививок ребенка.", linked_ids: ["vaccine"] },
-        { text: "Сделать генеральную доверенность на близкого человека в РФ.", linked_ids: ["power"] },
-        { text: "Пройти стоматологов всей семьей, собрать аптечку.", linked_ids: ["dentist","pharm"] },
-        { text: "Подготовить оригиналы диплома + вкладыш.", linked_ids: ["diploma"] },
-        { text: "Выгрузить налоговые декларации и банковские выписки.", linked_ids: ["tax_decl","bank_stat"] },
-        { text: "Взять медвыписки (если есть хроника).", linked_ids: ["med_cards"] },
-        { text: "Оформить доверенность на выезд авто и КБМ справку.", linked_ids: ["car_power","kbm"] },
-        { text: "Подготовить СТС/ПТС на машину.", linked_ids: ["car_docs"] },
-      ],
-      cost_eur: "80 €",
-    },
-    {
-      id: "m1",
-      title: "Месяц 1: Прилет и ВНЖ «Талант»",
-      focus: "Перелет, адаптация, запуск нострификации, подача на ВНЖ",
-      steps: [
-        { text: "Перелет в Белград, заселение, регистрация (белый картон).", linked_ids: ["reg"] },
-        { text: "Перевод документов у сербского судебного переводчика.", linked_ids: ["translation_copies","diploma_eng"] },
-        { text: "Подача на нострификацию диплома онлайн (AZK).", linked_ids: ["talent_nostrification"] },
-        { text: "Покупка медстраховок на семью для ВНЖ.", linked_ids: ["insure"] },
-        { text: "Осмотр ребенка у педиатра для справки в сад.", linked_ids: ["pediatrician_check"] },
-        { text: "Онлайн-подача на Единое разрешение (Талант + воссоединение).", linked_ids: ["vnd"] },
-        { text: "Купить сербские сим-карты.", linked_ids: ["sim"] },
-        { text: "Открыть личный банковский счет.", linked_ids: ["bank"] },
-      ],
-      cost_eur: "3435 €",
-    },
-    {
-      id: "m2",
-      title: "Месяц 2: Жилье и сад",
-      focus: "Поиск квартиры и устройство ребенка",
-      steps: [
-        { text: "Найти квартиру, заключить договор аренды на год, подтвердить регистрацию.", linked_ids: ["rent"] },
-        { text: "Зачислить ребенка в частный детский сад.", linked_ids: ["kindergarten_enroll"] },
-      ],
-      cost_eur: "2650 €",
-    },
-    {
-      id: "m3",
-      title: "Месяц 3: ИП и смена статуса",
-      focus: "Регистрация Предузетника и переход на новое основание",
-      steps: [
-        { text: "Зарегистрировать ИП в APR (Предузетник).", linked_ids: ["preduzetnik"] },
-        { text: "Арендовать виртуальный офис для ИП.", linked_ids: ["virtual_office"] },
-        { text: "Открыть бизнес-счет в банке (комплаенс).", linked_ids: ["bank"] },
-        { text: "Подать онлайн-заявление на смену основания ВНЖ (Талант → ИП).", linked_ids: ["vnd"] },
-      ],
-      cost_eur: "2200 €",
-    },
-    {
-      id: "m4",
-      title: "Месяц 4: Первые налоги и госстраховка",
-      focus: "Регулярная работа ИП, налоги, оформление гос. медицины",
-      steps: [
-        { text: "Уплатить первые фиксированные налоги ИП (Паушал).", linked_ids: ["pay_first_taxes"] },
-        { text: "Оформить государственную медстраховку (здравственная книжица) на семью.", linked_ids: ["state_health_insurance"] },
-      ],
-      cost_eur: "2100 €",
-    },
-  ],
-  totals: {
-    safety_buffer: "9000 €",
-    monthly_burn_rate: "2100 €/мес"
-  }
-};
+
 
 function renderChecklist() {
   const root = document.getElementById('checklist-items');
@@ -833,7 +784,6 @@ function renderChecklist() {
               setItem(saved, item.id, true, getDateStr());
               lockDate();
               updateStats();
-              renderTimeline();
             }
             dateSaving = false;
           } else {
@@ -845,7 +795,6 @@ function renderChecklist() {
           setItem(saved, item.id, true, getDateStr());
           lockDate();
           updateStats();
-          renderTimeline();
         };
         if (st.date) {
           lockDate();
@@ -879,7 +828,6 @@ function renderChecklist() {
         row.classList.toggle('progress', next.progress);
         if (dateRow) dateRow.classList.toggle('hidden', !next.done);
         updateStats();
-        renderTimeline();
       });
       row.appendChild(btn);
       const textSpan = document.createElement('span');
@@ -1077,125 +1025,6 @@ if (updateBtn) {
   });
 }
 
-// === CALCULATOR (Monthly Breakdown) ===
-const MONTH_LABELS = [
-  'Месяц 0: Подготовка в Москве — Сбор документов, которые невозможно получить в Сербии',
-  'Месяц 1: Прилет и ВНЖ «Талант» — Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация',
-  'Месяц 2: Постоянное жилье и детский сад — Поиск долгосрочной квартиры и устройство дочки в садик',
-  'Месяц 3: Запуск ИП и смена статуса ВНЖ — Регистрация бизнеса и подготовка к первым доходам',
-  'Месяц 4: Жизнь на рельсах бизнеса — Полноценная работа, оплата первых налогов',
-];
-
-function getCalcState() {
-  try { return JSON.parse(localStorage.getItem('calc-state') || 'null'); } catch { return null; }
-}
-
-function setCalcState(state) {
-  localStorage.setItem('calc-state', JSON.stringify(state));
-}
-
-function calcTotal() {
-  const state = getCalcState() || {};
-  const expenses = state.expenses || {};
-  let grandTotal = 0;
-
-  for (let m = 0; m <= 4; m++) {
-    const monthTotalEl = document.getElementById('month-total-' + m);
-    let monthTotal = 0;
-    defaultMonthlyExpenses.filter(e => e.month === m).forEach(e => {
-      const s = expenses[e.id];
-      if (s && s.selected === false) return;
-      const cost = (s && s.customCost != null) ? s.customCost : e.cost;
-      monthTotal += cost;
-    });
-    grandTotal += monthTotal;
-    if (monthTotalEl) monthTotalEl.textContent = monthTotal.toLocaleString('ru-RU') + ' €';
-  }
-
-  const grandEl = document.getElementById('calc-grand-total');
-  if (grandEl) grandEl.textContent = grandTotal.toLocaleString('ru-RU') + ' €';
-}
-
-function renderCalc() {
-  const root = document.getElementById('calc-root');
-  if (!root) return;
-  let state = getCalcState();
-  if (!state) {
-    const exps = {};
-    defaultMonthlyExpenses.forEach(e => { exps[e.id] = { selected: true, customCost: null }; });
-    state = { expenses: exps };
-    setCalcState(state);
-  }
-
-  root.innerHTML = '';
-
-  for (let m = 0; m <= 4; m++) {
-    const items = defaultMonthlyExpenses.filter(e => e.month === m);
-    if (items.length === 0) continue;
-    const block = document.createElement('div');
-    block.className = 'calc-month-block';
-    block.innerHTML = `<h3 class="calc-month-title">${MONTH_LABELS[m]}</h3>`;
-
-    items.forEach(e => {
-      const s = state.expenses[e.id] || { selected: true, customCost: null };
-      const row = document.createElement('div');
-      row.className = 'calc-expense-row' + (s.selected === false ? ' calc-disabled' : '');
-      row.innerHTML = `
-        <label class="calc-expense-label">
-          <input type="checkbox" data-calc-id="${e.id}" ${s.selected !== false ? 'checked' : ''}>
-          <span class="calc-expense-name" title="${e.description}">${e.name}</span>
-        </label>
-        <input type="number" class="calc-expense-cost" data-calc-id="${e.id}" value="${(s.customCost != null ? s.customCost : e.cost)}" min="0">
-        <span class="calc-expense-currency">€</span>
-      `;
-      block.appendChild(row);
-    });
-
-    const sub = document.createElement('div');
-    sub.className = 'calc-month-total';
-    sub.innerHTML = `<strong>Итого за месяц:</strong> <span id="month-total-${m}">0 €</span>`;
-    block.appendChild(sub);
-    root.appendChild(block);
-  }
-
-  const grand = document.createElement('div');
-  grand.className = 'calc-grand-total';
-  grand.innerHTML = `<strong>Общий бюджет на 5 месяцев:</strong> <span id="calc-grand-total">0 €</span>`;
-  root.appendChild(grand);
-
-  root.addEventListener('input', e => {
-    const inp = e.target;
-    const id = inp.dataset.calcId;
-    if (!id) return;
-    const st = getCalcState() || { expenses: {} };
-    if (!st.expenses[id]) st.expenses[id] = { selected: true, customCost: null };
-    if (inp.type === 'checkbox') {
-      st.expenses[id].selected = inp.checked;
-    } else {
-      st.expenses[id].customCost = parseFloat(inp.value) || 0;
-    }
-    setCalcState(st);
-    calcTotal();
-    const row = inp.closest('.calc-expense-row');
-    if (row && inp.type === 'checkbox') row.classList.toggle('calc-disabled', !inp.checked);
-  });
-
-  calcTotal();
-}
-
-document.addEventListener('DOMContentLoaded', renderCalc);
-document.querySelector('[data-tab="calc"]')?.addEventListener('click', () => setTimeout(renderCalc, 50));
-
-// === TIMELINE PLAN ===
-function getLinkedProgress(ids) {
-  const saved = JSON.parse(localStorage.getItem('checklist') || '{}');
-  let done = 0;
-  ids.forEach(id => {
-    if (getItem(saved, id).done) done++;
-  });
-  return { done, total: ids.length, percent: ids.length ? Math.round(done / ids.length * 100) : 0 };
-}
-
 function scrollToChecklistItem(id) {
   const el = document.getElementById('cl-' + id);
   if (el) {
@@ -1207,78 +1036,130 @@ function scrollToChecklistItem(id) {
   if (tab) tab.click();
 }
 
-function renderTimeline() {
+function getPlanState() {
+  try { return JSON.parse(localStorage.getItem('plan-state') || 'null'); } catch { return null; }
+}
+
+function setPlanState(state) {
+  localStorage.setItem('plan-state', JSON.stringify(state));
+}
+
+function renderPlan() {
   const root = document.getElementById('timeline-root');
   if (!root) return;
+
+  let state = getPlanState();
+  if (!state) {
+    const tasks = {};
+    migrationPlan.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: t.checked, customCost: null }; }));
+    state = { tasks };
+    setPlanState(state);
+  }
+
   root.innerHTML = '';
   const h = document.createElement('h2');
-  h.textContent = TIMELINE_PLAN.title;
+  h.textContent = '📅 Пошаговый план переезда (5 месяцев)';
   root.appendChild(h);
   const desc = document.createElement('p');
   desc.className = 'tl-desc';
-  desc.textContent = TIMELINE_PLAN.description;
+  desc.textContent = 'План переезда в Белград для семьи из 3 человек: ВНЖ «Талант» ➔ ИП. Отмечайте выполненные шаги — бюджет пересчитается автоматически.';
   root.appendChild(desc);
 
-  TIMELINE_PLAN.timeline.forEach(m => {
+  let grandTotalStart = 0;
+  let grandTotalMonth4 = 0;
+
+  migrationPlan.forEach(m => {
     const card = document.createElement('div');
     card.className = 'tl-card';
     const header = document.createElement('div');
     header.className = 'tl-header';
-    header.innerHTML = `<span class="tl-month">${m.title}</span> <span class="tl-cost">${m.cost_eur}</span>`;
+    header.innerHTML = `<span class="tl-month">${m.title}</span>`;
     card.appendChild(header);
     const focusEl = document.createElement('div');
     focusEl.className = 'tl-focus';
     focusEl.textContent = '🎯 ' + m.focus;
     card.appendChild(focusEl);
 
-    const stepsTitle = document.createElement('div');
-    stepsTitle.className = 'tl-subtitle';
-    stepsTitle.textContent = '📋 Шаги';
-    card.appendChild(stepsTitle);
     const ul = document.createElement('ul');
     ul.className = 'tl-steps';
-    m.steps.forEach(s => {
-      const prog = getLinkedProgress(s.linked_ids);
+
+    let monthTotal = 0;
+    m.tasks.forEach(t => {
+      const s = state.tasks[t.id] || { checked: t.checked, customCost: null };
+      const checked = s.checked !== false;
+      const cost = (s.customCost != null ? s.customCost : t.cost);
+      if (checked) monthTotal += cost;
+
       const li = document.createElement('li');
-      li.className = 'tl-step' + (prog.percent === 100 ? ' done' : '');
-      const barWrap = document.createElement('span');
-      barWrap.className = 'tl-bar-wrap';
-      const bar = document.createElement('span');
-      bar.className = 'tl-bar-fill';
-      bar.style.width = prog.percent + '%';
-      barWrap.appendChild(bar);
-      if (prog.total > 1) {
-        const count = document.createElement('span');
-        count.className = 'tl-bar-count';
-        count.textContent = prog.done + '/' + prog.total;
-        barWrap.appendChild(count);
+      li.className = 'tl-step' + (checked ? '' : ' plan-disabled');
+
+      const label = document.createElement('label');
+      label.className = 'plan-task-label';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.className = 'plan-task-cb';
+      cb.checked = checked;
+      cb.dataset.planId = t.id;
+      label.appendChild(cb);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'plan-task-name';
+      nameSpan.textContent = t.name;
+      label.appendChild(nameSpan);
+
+      li.appendChild(label);
+
+      const costSpan = document.createElement('span');
+      costSpan.className = 'plan-task-cost';
+      costSpan.textContent = cost.toLocaleString('ru-RU') + ' €';
+      li.appendChild(costSpan);
+
+      if (t.desc) {
+        const descSpan = document.createElement('span');
+        descSpan.className = 'plan-task-desc';
+        descSpan.textContent = t.desc;
+        li.appendChild(descSpan);
       }
-      li.appendChild(barWrap);
-      const link = document.createElement('a');
-      link.className = 'tl-step-link';
-      link.textContent = s.text;
-      link.href = '#';
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        if (s.linked_ids.length === 1) {
-          scrollToChecklistItem(s.linked_ids[0]);
-        }
-      });
-      li.appendChild(link);
+
       ul.appendChild(li);
     });
+
     card.appendChild(ul);
 
+    const sub = document.createElement('div');
+    sub.className = 'calc-month-total';
+    sub.innerHTML = `<strong>Итого за месяц:</strong> ${monthTotal.toLocaleString('ru-RU')} €`;
+    card.appendChild(sub);
+
     root.appendChild(card);
+
+    if (m.month >= 0 && m.month <= 3) {
+      grandTotalStart += monthTotal;
+    }
+    if (m.month === 4) {
+      grandTotalMonth4 += monthTotal;
+    }
   });
 
-  const totals = TIMELINE_PLAN.totals;
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
   summary.innerHTML =
-    `<div class="tl-summary-row">🧳 Рекомендуемая подушка безопасности: <strong>${totals.safety_buffer}</strong></div>` +
-    `<div class="tl-summary-row">📊 Постоянный расход с 4-го месяца: <strong>${totals.monthly_burn_rate}</strong></div>`;
+    `<div class="tl-summary-row" style="font-size:1.2em">💰 Общий финансовый итог для старта (Месяцы 0–3): <strong>${grandTotalStart.toLocaleString('ru-RU')} €</strong></div>` +
+    `<div class="tl-summary-row" style="margin-top:8px">🔄 Повторяющийся месячный бюджет (с 4-го месяца): <strong>${grandTotalMonth4.toLocaleString('ru-RU')} €</strong></div>`;
   root.appendChild(summary);
+
+  root.addEventListener('change', e => {
+    const cb = e.target;
+    if (!cb.classList.contains('plan-task-cb')) return;
+    const id = cb.dataset.planId;
+    if (!id) return;
+    const st = getPlanState() || { tasks: {} };
+    if (!st.tasks[id]) st.tasks[id] = { checked: true, customCost: null };
+    st.tasks[id].checked = cb.checked;
+    setPlanState(st);
+    renderPlan();
+  });
 }
 
 // === СБРОС ВСЕХ НАСТРОЕК И ДАННЫХ ===
@@ -1306,7 +1187,7 @@ window.factoryReset = async function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderTimeline();
+  renderPlan();
   updateSyncStatusUI();
   const versionEl = document.getElementById('app-version-display');
   if (versionEl && window.APP_CONFIG) {
@@ -1376,7 +1257,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (confirm("Это сбросит все локальные данные: чек-лист, калькулятор, настройки. Сам код синхронизации сохранится. Продолжить?")) {
+      if (confirm("Это сбросит все локальные данные: чек-лист, план переезда, настройки. Сам код синхронизации сохранится. Продолжить?")) {
         try {
           await window.factoryReset();
         } catch (err) {
@@ -1387,15 +1268,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () => {
-  setTimeout(renderTimeline, 50);
+  setTimeout(renderPlan, 50);
 });
 
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
   renderChecklist();
-  renderCalc();
   updateLockUI();
-  renderTimeline();
+  renderPlan();
 });
 
 
