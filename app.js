@@ -877,22 +877,18 @@ function renderPlan() {
         const noteSection = document.createElement('div');
         noteSection.className = 'plan-note-section';
 
-        const noteDisplay = document.createElement('div');
-        noteDisplay.style.display = noteVal ? 'block' : 'none';
-
         if (noteVal) {
           const noteText = document.createElement('span');
           noteText.className = 'plan-note-text';
           noteText.textContent = '📝 ' + noteVal;
-          noteDisplay.appendChild(noteText);
+          noteSection.appendChild(noteText);
         }
 
         const noteEditBtn = document.createElement('button');
         noteEditBtn.className = 'plan-note-edit';
         noteEditBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
         noteEditBtn.dataset.planNoteEdit = t.id;
-        noteDisplay.appendChild(noteEditBtn);
-        noteSection.appendChild(noteDisplay);
+        noteSection.appendChild(noteEditBtn);
 
         const noteEditBlock = document.createElement('div');
         noteEditBlock.className = 'plan-note-edit-block hidden';
