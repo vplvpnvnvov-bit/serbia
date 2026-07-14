@@ -36,8 +36,18 @@ let syncPending = false;
 let syncLoading = false; // prevents write-back during loadFromCloud
 
 firebase.auth().signInAnonymously().catch(() => {});
+
+function generateSecureSyncCode() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const array = new Uint32Array(12);
+  window.crypto.getRandomValues(array);
+  let code = '';
+  for (let i = 0; i < 12; i++) code += chars[array[i] % chars.length];
+  return code;
+}
+
 window.generateNewSyncCode = function() {
-  const code = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
+  const code = generateSecureSyncCode();
   localStorage.setItem('sync-code', code);
   syncCode = code;
   document.getElementById('display-sync-code').textContent = code;
@@ -50,7 +60,7 @@ firebase.auth().onAuthStateChanged(async user => {
 
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
-      syncCode = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
+      syncCode = generateSecureSyncCode();
       localStorage.setItem('sync-code', syncCode);
     }
     document.getElementById('display-sync-code').textContent = syncCode;
