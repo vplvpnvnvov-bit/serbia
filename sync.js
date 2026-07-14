@@ -36,17 +36,14 @@ let syncPending = false;
 let syncLoading = false; // prevents write-back during loadFromCloud
 
 firebase.auth().signInAnonymously().catch(() => {});
-firebase.auth().onAuthStateChanged(user => {
+firebase.auth().onAuthStateChanged(async user => {
   if (user) {
     userId = user.uid;
 
     const resetCode = sessionStorage.getItem('reset_old_code');
     if (resetCode) {
       sessionStorage.removeItem('reset_old_code');
-      db.collection('users').doc(resetCode).set({
-        isDeleted: true,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }).catch(() => {});
+      await deleteFirestoreDoc(resetCode);
     }
 
     syncCode = localStorage.getItem('sync-code');
@@ -198,16 +195,25 @@ window.changeSyncCode = function() {
   }
 };
 
+async function deleteFirestoreDoc(code) {
+  const ref = db.collection('users').doc(code);
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      await ref.set({ isDeleted: true });
+      // Новая сессия реад — ждём ответа сервера
+      const v = await ref.get({ source: 'server' });
+      if (v.exists && v.data().isDeleted === true) return;
+      console.warn(`Попытка ${attempt}: сервер не подтвердил isDeleted, повтор...`);
+    } catch (e) {
+      console.warn(`Попытка ${attempt} не удалась:`, e.message);
+    }
+    await new Promise(r => setTimeout(r, 1500));
+  }
+  throw new Error('Не удалось подтвердить удаление облачных данных после 5 попыток');
+}
+
 window.deleteCloudData = async function() {
   const code = localStorage.getItem('sync-code');
   if (!code) return;
-  const ref = db.collection('users').doc(code);
-  await ref.set({
-    isDeleted: true,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  });
-  const verify = await ref.get({ source: 'server' });
-  if (!verify.exists || verify.data().isDeleted !== true) {
-    throw new Error('Server did not confirm isDeleted');
-  }
+  await deleteFirestoreDoc(code);
 };
