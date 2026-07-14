@@ -1158,11 +1158,20 @@ window.hardResetApplication = async function() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
-  document.getElementById('reset-btn')?.addEventListener('click', () => {
-    if (confirm('Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?')) {
-      window.hardResetApplication();
-    }
-  });
+  const resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        if (confirm('Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?')) {
+          await window.hardResetApplication();
+        }
+      } catch (err) {
+        console.error('hardResetApplication failed:', err);
+        alert('Не удалось выполнить сброс. Попробуйте ещё раз.');
+      }
+    });
+  }
 });
 document.querySelector('[data-tab="timeline"]')?.addEventListener('click', () => {
   setTimeout(renderTimeline, 50);
