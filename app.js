@@ -1143,13 +1143,24 @@ function renderTimeline() {
 }
 
 // === HARD RESET (GDPR) ===
-window.hardResetApplication = async function() {
+function showResetOverlay() {
   const root = document.getElementById('app');
   if (root) root.style.opacity = '0.3';
   const status = document.createElement('div');
   status.textContent = '🗑️ Удаляю данные...';
   status.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;background:#fff;padding:20px 30px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;';
   document.body.appendChild(status);
+}
+
+window.localHardResetWithoutCloud = async function() {
+  showResetOverlay();
+  localStorage.clear();
+  try { await caches.delete('relocation-v2026.2'); } catch (e) {}
+  location.reload();
+};
+
+window.hardResetApplication = async function() {
+  showResetOverlay();
   await window.deleteCloudData();
   localStorage.clear();
   try { await caches.delete('relocation-v2026.2'); } catch (e) {}
@@ -1158,17 +1169,17 @@ window.hardResetApplication = async function() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
-  const resetBtn = document.getElementById('reset-btn');
+  const resetBtn = document.getElementById('btn-hard-reset');
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      try {
-        if (confirm('Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?')) {
+      if (confirm("Внимание! Это действие навсегда удалит ваши данные из облака и этого устройства. Восстановить их будет невозможно. Продолжить?")) {
+        try {
           await window.hardResetApplication();
+        } catch (err) {
+          console.error("Ошибка при сбросе данных:", err);
+          alert("Произошла ошибка при удалении данных. Попробуйте еще раз.");
         }
-      } catch (err) {
-        console.error('hardResetApplication failed:', err);
-        alert('Не удалось выполнить сброс. Попробуйте ещё раз.');
       }
     });
   }

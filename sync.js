@@ -55,6 +55,18 @@ function loadFromCloud() {
     if (!doc.exists) return;
     const data = doc.data();
 
+    if (!data) {
+      console.warn('Документ существует, но он пустой.');
+      return;
+    }
+
+    if (data.isDeleted === true) {
+      console.warn('Обнаружен флаг удаления данных в облаке. Запускаю каскадный локальный сброс...');
+      syncLoading = true;
+      window.localHardResetWithoutCloud();
+      return;
+    }
+
     syncLoading = true;
     // Санация + миграция
     if (data.checklist) {
@@ -161,8 +173,15 @@ window.deleteCloudData = async function() {
   const code = localStorage.getItem('sync-code');
   if (!code) return;
   try {
-    await db.collection('users').doc(code).delete();
+    await db.collection('users').doc(code).set({
+      isDeleted: true,
+      checklist: {},
+      locked: false,
+      calc: {},
+      version: CURRENT_DATA_VERSION,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
   } catch (e) {
-    // документ уже удалён или нет сети — не фатально
+    // нет сети — не фатально
   }
 };
