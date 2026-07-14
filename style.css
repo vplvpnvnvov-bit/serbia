@@ -261,15 +261,9 @@ html, body {
   user-select: none;
 }
 #legend-arrow {
-  font-size: 14px;
-  transition: transform .2s;
+  font-size: 11px;
   display: inline-block;
-  font-weight: bold;
-  color: inherit;
   margin-left: 4px;
-}
-#legend-arrow.open {
-  transform: rotate(180deg);
 }
 .legend-list {
   margin-top: 6px;
@@ -315,9 +309,7 @@ html, body {
   display: none;
 }
 .legend-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: none;
 }
 .legend-grad {
   display: inline-block;

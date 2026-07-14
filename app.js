@@ -278,7 +278,7 @@ function updateLegend(preset) {
     listEl.appendChild(row);
   });
   document.getElementById('legend-toggle').innerHTML =
-    `${emoji} Сортировка: ${presetName(preset)} <span id="legend-arrow">▾</span>`;
+    `🏆 Рейтинг <span id="legend-arrow">▶</span>`;
 }
 
 function updateUrbanFilter(hide) {
@@ -518,7 +518,11 @@ document.getElementById('close-info').addEventListener('click', () => {
 const listEl = document.getElementById('legend-list');
 document.getElementById('legend-toggle')?.addEventListener('click', () => {
   listEl.classList.toggle('hidden');
-  document.getElementById('legend-arrow')?.classList.toggle('open');
+  const arrow = document.getElementById('legend-arrow');
+  if (arrow) {
+    const isHidden = listEl.classList.contains('hidden');
+    arrow.textContent = isHidden ? '▶' : '▼';
+  }
 });
 
 updateLegend(activePreset);
