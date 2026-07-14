@@ -1217,6 +1217,11 @@ html, body {
   color: #333;
   font-size: 11px;
 }
+.plan-metric-percentage {
+  color: #333;
+  font-weight: 700;
+  font-size: 13px;
+}
 .val-sep {
   margin: 0 5px;
   color: rgba(0,0,0,0.12);
@@ -1262,6 +1267,62 @@ html, body {
 .plan-progress-segment.segment-spent[style*="width: 100%"],
 .plan-progress-segment.segment-done[style*="width: 100%"] {
   border-radius: 4px;
+}
+
+/* Detail text stats grid */
+.plan-metric-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 4px 0 6px 0;
+  font-size: 11px;
+  color: #888;
+  background: rgba(0,0,0,0.02);
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.tl-summary .plan-metric-details {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.04);
+  color: #aaa;
+}
+
+.metric-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.metric-detail-item span:first-child {
+  font-size: 10px;
+}
+.metric-num {
+  font-weight: 700;
+  color: #444;
+}
+.tl-summary .metric-num {
+  color: #ddd;
+}
+
+.metric-detail-item.done .metric-num { color: #2e7d32; }
+.metric-detail-item.progress .metric-num { color: #f9a825; }
+.metric-detail-item.spent .metric-num { color: #1565c0; }
+.metric-detail-item.pending .metric-num { color: #03a9f4; }
+
+.tl-summary .metric-detail-item.done .metric-num { color: #81c784; }
+.tl-summary .metric-detail-item.progress .metric-num { color: #ffd54f; }
+.tl-summary .metric-detail-item.spent .metric-num { color: #64b5f6; }
+.tl-summary .metric-detail-item.pending .metric-num { color: #4fc3f7; }
+
+@media (max-width: 480px) {
+  .plan-metric-details {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .metric-detail-item {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 /* === SETTINGS DATA CENTER === */
