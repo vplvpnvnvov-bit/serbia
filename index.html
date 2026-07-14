@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=1.0.1-fb35bab" />
+<link rel="stylesheet" href="style.css?v=1.0.1-dc305f0" />
 </head>
 <body>
 
@@ -172,8 +172,8 @@
             </div>
 
             <div class="card-actions">
-              <button id="btn-sync-now" class="action-btn primary-btn">🔄 Синхронизировать сейчас</button>
-              <button id="btn-change-code" class="action-btn secondary-btn">✏️ Изменить код связи</button>
+              <button id="btn-sync-now" class="action-btn primary-btn" title="Сверяет данные вашего телефона с облаком Firebase. Если в облаке есть более свежие изменения, они скачаются. Если ваши изменения новее, они отправятся в облако.">🔄 Синхронизировать сейчас</button>
+              <button id="btn-change-code" class="action-btn secondary-btn" title="Позволяет ввести 12-значный код другого вашего устройства, чтобы объединить чек-листы и калькулятор расходов.">✏️ Изменить код связи</button>
             </div>
             <p class="action-help">«Синхронизировать сейчас» принудительно забирает свежие данные из облака или отправляет локальные изменения. «Изменить код» позволяет подключить другое устройство.</p>
           </div>
@@ -190,7 +190,7 @@
             </div>
 
             <div class="card-actions">
-              <button id="btn-check-app-update" class="action-btn update-btn">⏳ Проверить обновления программы</button>
+              <button id="btn-check-app-update" class="action-btn update-btn" title="Проверяет наличие новой версии самого приложения (исправление багов, новые списки дел или обновление карты).">⏳ Проверить обновления программы</button>
             </div>
             <p class="action-help">Скачивает новую версию приложения с сервера (карты, логику, дизайн). Программа перезагрузится сама, если найдет обновление.</p>
           </div>
@@ -203,7 +203,7 @@
             <p class="card-desc">Полное удаление всей вашей информации без возможности восстановления.</p>
 
             <div class="card-actions">
-              <button id="btn-hard-reset" class="action-btn danger-btn">🗑️ Очистить всё и удалить аккаунт</button>
+              <button id="btn-hard-reset" class="action-btn danger-btn" title="Безвозвратно удаляет всю вашу информацию из этого браузера и из облака Firebase. Процесс необратим!">🗑️ Очистить всё и удалить аккаунт</button>
             </div>
             <p class="action-help">Внимание! Это действие физически сотрет ваши данные из облака Firebase, очистит память этого телефона и сгенерирует вам новый чистый код.</p>
           </div>
@@ -226,9 +226,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=1.0.1-fb35bab"></script>
-<script src="sync.js?v=1.0.1-fb35bab"></script>
-<script src="app.js?v=1.0.1-fb35bab"></script>
+<script src="data.js?v=1.0.1-dc305f0"></script>
+<script src="sync.js?v=1.0.1-dc305f0"></script>
+<script src="app.js?v=1.0.1-dc305f0"></script>
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
   VERSION: "1.0.1",
-  BUILD: "fb35bab",
-  CACHE_NAME: "relocation-v1.0.1-fb35bab"
+  BUILD: "dc305f0",
+  CACHE_NAME: "relocation-v1.0.1-dc305f0"
 };
 
 // === TABS ===
@@ -967,22 +967,43 @@ document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () =
 });
 
 // === UPDATE BUTTON ===
-document.getElementById('btn-check-app-update')?.addEventListener('click', async () => {
-  const btn = document.getElementById('btn-check-app-update');
-  btn.disabled = true;
-  btn.textContent = '⏳ Проверяю...';
-  try {
+const updateBtn = document.getElementById('btn-check-app-update');
+if (updateBtn) {
+  updateBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    updateBtn.disabled = true;
+    const originalText = updateBtn.innerHTML;
+    updateBtn.innerHTML = '⏳ Проверяю наличие новой версии...';
+    updateBtn.style.opacity = '0.7';
+
     if ('serviceWorker' in navigator) {
-      const reg = await navigator.serviceWorker.ready;
-      console.log('Принудительно проверяем наличие новой версии на сервере...');
-      await reg.update();
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        await reg.update();
+        setTimeout(() => {
+          updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
+          updateBtn.style.background = '#28a745';
+          updateBtn.style.color = 'white';
+          updateBtn.style.opacity = '1';
+          setTimeout(() => {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = originalText;
+            updateBtn.style.background = '';
+            updateBtn.style.color = '';
+          }, 2000);
+        }, 1200);
+      } catch (err) {
+        console.error('Ошибка при проверке обновлений:', err);
+        updateBtn.innerHTML = '❌ Ошибка проверки';
+        updateBtn.disabled = false;
+        setTimeout(() => { updateBtn.innerHTML = originalText; }, 2000);
+      }
+    } else {
+      updateBtn.innerHTML = '✕ Не поддерживается браузером';
+      setTimeout(() => { updateBtn.innerHTML = originalText; updateBtn.disabled = false; }, 2000);
     }
-  } catch (e) {
-    alert('Не удалось проверить обновления. Проверьте подключение к интернету.');
-  }
-  btn.textContent = '⏳ Проверить обновления программы';
-  btn.disabled = false;
-});
+  });
+}
 
 // === CALCULATOR ===
 function calcTotal() {

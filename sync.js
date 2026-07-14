@@ -50,10 +50,24 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 function updateSyncStatusUI() {
-  const el = document.getElementById('sync-time-status');
-  if (!el) return;
-  const last = localStorage.getItem('last-sync-time');
-  el.textContent = last ? last : 'Ещё не синхронизировано';
+  const syncTimeStatus = document.getElementById('sync-time-status');
+  const displaySyncCode = document.getElementById('display-sync-code');
+  const lastSync = localStorage.getItem('last-sync-time');
+  const syncCode = localStorage.getItem('sync-code');
+
+  if (displaySyncCode) {
+    displaySyncCode.textContent = syncCode ? syncCode : 'Не установлен';
+  }
+
+  if (syncTimeStatus) {
+    if (lastSync) {
+      syncTimeStatus.textContent = lastSync;
+      syncTimeStatus.className = 'status-fresh';
+    } else {
+      syncTimeStatus.textContent = 'Еще не синхронизировано с облаком';
+      syncTimeStatus.className = 'status-none';
+    }
+  }
 }
 
 function loadFromCloud() {

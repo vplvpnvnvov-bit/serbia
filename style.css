@@ -1237,3 +1237,26 @@ html, body {
 .update-btn:hover:not(:disabled) { background: #218838; }
 .danger-btn { background: #dc3545; color: white; }
 .danger-btn:hover:not(:disabled) { background: #c82333; }
+
+.sync-status-info {
+  background: #f0f4f8;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border-left: 4px solid #007bff;
+}
+.sync-status-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+#sync-time-status {
+  display: inline-block;
+  font-weight: bold;
+}
+.status-fresh {
+  color: #2b8a3e !important;
+}
+.status-none {
+  color: #868e96 !important;
+}
