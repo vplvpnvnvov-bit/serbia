@@ -335,7 +335,7 @@ function highlightDistrict(name) {
     });
   }
   // указатель
-  if (window.arrowMarker) map.removeLayer(window.arrowMarker);
+  if (window.arrowMarker) { map.removeLayer(window.arrowMarker); window.arrowMarker = null; }
   const d = DISTRICTS.find(x => x.name === name);
   if (d && d.coords && d.coords.length > 0) {
     const lats = d.coords.map(c => c[0]);
@@ -376,6 +376,7 @@ map.on('zoomend', () => {
 });
 
 function showDistrictPanel(d, noFit) {
+  if (!document.getElementById('d-name')) return;
   document.getElementById('d-name').textContent = d.name;
   // Carousel gallery & Lightbox
   const gallery = document.getElementById('d-gallery');
@@ -400,6 +401,7 @@ function showDistrictPanel(d, noFit) {
   dotsContainer.innerHTML = '';
 
   if (d.images && d.images.length) {
+    const frag = document.createDocumentFragment();
     d.images.forEach((imgObj, idx) => {
       const url = typeof imgObj === 'string' ? imgObj : imgObj.url;
       const title = typeof imgObj === 'string' ? '' : (imgObj.title || '');
@@ -418,7 +420,7 @@ function showDistrictPanel(d, noFit) {
         ph.textContent = d.name;
         this.parentNode.replaceChild(ph, this);
       };
-      gallery.appendChild(img);
+      frag.appendChild(img);
 
       const dot = document.createElement('span');
       dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
@@ -427,6 +429,7 @@ function showDistrictPanel(d, noFit) {
       });
       dotsContainer.appendChild(dot);
     });
+    gallery.appendChild(frag);
 
     const firstImg = d.images[0];
     captionContainer.textContent = typeof firstImg === 'string' ? '' : (firstImg.title || '');
