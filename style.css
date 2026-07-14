@@ -261,9 +261,10 @@ html, body {
   user-select: none;
 }
 #legend-arrow {
-  font-size: 9px;
+  font-size: 11px;
   transition: transform .2s;
   display: inline-block;
+  font-weight: bold;
 }
 #legend-arrow.open {
   transform: rotate(180deg);
@@ -1851,9 +1852,6 @@ body.dark-theme .legend-bar {
 }
 body.dark-theme #opacity-val {
   color: #b0bec5;
-}
-body.dark-theme #legend-toggle {
-  color: #81d4fa;
 }
 body.dark-theme #display-sync-code {
   color: #81d4fa;
