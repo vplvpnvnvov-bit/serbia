@@ -665,6 +665,15 @@ function renderPlan() {
     masterTimeline.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, customCost: null }; }));
     state = { tasks };
     setPlanState(state);
+  } else {
+    let reconciled = false;
+    masterTimeline.forEach(m => m.tasks.forEach(t => {
+      if (!state.tasks[t.id]) {
+        state.tasks[t.id] = { checked: false, customCost: null };
+        reconciled = true;
+      }
+    }));
+    if (reconciled) setPlanState(state);
   }
 
   root.innerHTML = '';
