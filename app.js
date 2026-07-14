@@ -660,22 +660,39 @@ function renderPlan() {
   if (!root) return;
 
   let state = getPlanState();
+  if (!state || !state.tasks || typeof state.tasks !== 'object') {
+    state = null;
+  }
+
   if (!state) {
     const tasks = {};
-    masterTimeline.forEach(m => m.tasks.forEach(t => { tasks[t.id] = { checked: false, progress: false, customCost: null }; }));
+    if (Array.isArray(masterTimeline)) {
+      masterTimeline.forEach(m => {
+        if (m && Array.isArray(m.tasks)) {
+          m.tasks.forEach(t => { if (t && t.id) tasks[t.id] = { checked: false, progress: false, customCost: null }; });
+        }
+      });
+    }
     state = { tasks };
     setPlanState(state);
   } else {
     let reconciled = false;
-    masterTimeline.forEach(m => m.tasks.forEach(t => {
-      if (!state.tasks[t.id]) {
-        state.tasks[t.id] = { checked: false, progress: false, customCost: null };
-        reconciled = true;
-      }
-    }));
+    if (Array.isArray(masterTimeline)) {
+      masterTimeline.forEach(m => {
+        if (m && Array.isArray(m.tasks)) {
+          m.tasks.forEach(t => {
+            if (t && t.id && !state.tasks[t.id]) {
+              state.tasks[t.id] = { checked: false, progress: false, customCost: null };
+              reconciled = true;
+            }
+          });
+        }
+      });
+    }
     if (reconciled) setPlanState(state);
   }
 
+  const locked = localStorage.getItem('plan-locked') === 'true';
   root.innerHTML = '';
   root.className = 'tab-content' + (locked ? ' plan-locked-mode' : '');
 
@@ -686,8 +703,6 @@ function renderPlan() {
   desc.className = 'tl-desc';
   desc.textContent = 'Нажимайте на кружок статуса: ⚪ В планах → 🟡 В процессе → 🟢 Выполнено. Даты и заметки видны на карточке сразу. ▶ — справочная информация.';
   root.appendChild(desc);
-
-  const locked = localStorage.getItem('plan-locked') === 'true';
 
   const lockBar = document.createElement('div');
   lockBar.className = 'plan-lock-bar';
@@ -702,25 +717,31 @@ function renderPlan() {
   let eurPlanned013 = 0, eurSpent013 = 0;
   let eurPlanned4 = 0, eurSpent4 = 0;
 
+  if (!Array.isArray(masterTimeline)) { root.appendChild(document.createTextNode('Ошибка данных.')); return; }
+
   masterTimeline.forEach(m => {
+    if (!m || !Array.isArray(m.tasks)) return;
+
     const card = document.createElement('div');
     card.className = 'tl-card';
     const header = document.createElement('div');
     header.className = 'tl-header';
-    header.innerHTML = `<span class="tl-month">${m.title}</span>`;
+    header.innerHTML = `<span class="tl-month">${m.title || ''}</span>`;
     card.appendChild(header);
     const focusEl = document.createElement('div');
     focusEl.className = 'tl-focus';
-    focusEl.textContent = '🎯 ' + m.focus;
+    focusEl.textContent = '🎯 ' + (m.focus || '');
     card.appendChild(focusEl);
 
     let totalPlanned = 0, spent = 0;
     let taskDone = 0, taskProgress = 0, taskTotal = 0;
-    const monthCur = m.tasks[0]?.currency || 'EUR';
+    const firstTask = m.tasks.length > 0 ? m.tasks[0] : null;
+    const monthCur = (firstTask && firstTask.currency) || 'EUR';
     const monthSym = monthCur === 'RUB' ? ' ₽' : ' €';
     m.tasks.forEach(t => {
+      if (!t) return;
       const s = state.tasks[t.id] || { checked: false, progress: false, customCost: null };
-      const cost = (s.customCost != null ? s.customCost : t.cost);
+      const cost = (s.customCost != null ? s.customCost : t.cost) || 0;
       totalPlanned += cost;
       if (s.checked === true) spent += cost;
       taskTotal++;
@@ -775,6 +796,7 @@ function renderPlan() {
     ul.className = 'tl-steps';
 
     m.tasks.forEach(t => {
+      if (!t || !t.id) return;
       const s = state.tasks[t.id] || { checked: false, progress: false, customCost: null };
       const checked = s.checked === true;
       const prog = s.progress === true;
@@ -1010,7 +1032,7 @@ if (!window.planListenerAdded) {
       const btn = el.classList.contains('plan-lock-btn') ? el : el.closest('.plan-lock-btn');
       const isLocked = localStorage.getItem('plan-locked') === 'true';
       localStorage.setItem('plan-locked', isLocked ? 'false' : 'true');
-      renderPlan();
+      try { renderPlan(); } catch (e) { console.error(e); }
       return;
     }
 
@@ -1032,7 +1054,7 @@ if (!window.planListenerAdded) {
         cur.progress = false;
       }
       setPlanState(st);
-      renderPlan();
+      try { renderPlan(); } catch (e) { console.error(e); }
       if (window.saveToCloud) {
         window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
       }
@@ -1083,7 +1105,7 @@ if (!window.planListenerAdded) {
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
         setPlanState(st);
       }
-      renderPlan();
+      try { renderPlan(); } catch (e) { console.error(e); }
       return;
     }
 
@@ -1109,7 +1131,7 @@ if (!window.planListenerAdded) {
       if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       st.tasks[id].note = val || undefined;
       setPlanState(st);
-      renderPlan();
+      try { renderPlan(); } catch (e) { console.error(e); }
       return;
     }
 
@@ -1121,7 +1143,7 @@ if (!window.planListenerAdded) {
       if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       delete st.tasks[id].note;
       setPlanState(st);
-      renderPlan();
+      try { renderPlan(); } catch (e) { console.error(e); }
       return;
     }
 
@@ -1170,8 +1192,10 @@ window.factoryReset = async function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.migrateLegacyData) window.migrateLegacyData();
-  renderPlan();
+  if (window.migrateLegacyData) {
+    try { window.migrateLegacyData(); } catch (e) { console.error('migrateLegacyData error:', e); }
+  }
+  try { renderPlan(); } catch (e) { console.error('renderPlan error:', e); }
   updateSyncStatusUI();
   const versionEl = document.getElementById('app-version-display');
   if (versionEl && window.APP_CONFIG) {
@@ -1252,12 +1276,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
-  setTimeout(renderPlan, 50);
+  setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
 });
 
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
-  renderPlan();
+  try { renderPlan(); } catch (e) { console.error(e); }
 });
 
 
