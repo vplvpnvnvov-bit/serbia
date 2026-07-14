@@ -44,14 +44,21 @@ firebase.auth().onAuthStateChanged(user => {
       syncCode = crypto.randomUUID().split('-').slice(0,2).join('').toUpperCase();
       localStorage.setItem('sync-code', syncCode);
     }
-    document.getElementById('sync-code-display').textContent = syncCode;
+    document.getElementById('display-sync-code').textContent = syncCode;
     loadFromCloud();
   }
 });
 
+function updateSyncStatusUI() {
+  const el = document.getElementById('sync-time-status');
+  if (!el) return;
+  const last = localStorage.getItem('last-sync-time');
+  el.textContent = last ? last : 'Ещё не синхронизировано';
+}
+
 function loadFromCloud() {
-  if (!syncCode) return;
-  db.collection('users').doc(syncCode).get().then(doc => {
+  if (!syncCode) return Promise.resolve();
+  return db.collection('users').doc(syncCode).get().then(doc => {
     if (!doc.exists) return;
     const data = doc.data();
 
@@ -92,6 +99,8 @@ function loadFromCloud() {
     }
     window.dispatchEvent(new CustomEvent('sync-loaded'));
     syncLoading = false;
+    localStorage.setItem('last-sync-time', new Date().toLocaleString());
+    updateSyncStatusUI();
   }).catch(() => { syncLoading = false; });
 }
 
@@ -145,29 +154,20 @@ Storage.prototype.setItem = function(key, value) {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('sync-code-toggle').addEventListener('click', () => {
-    document.getElementById('sync-code-body').classList.toggle('hidden');
-  });
-  document.getElementById('sync-code-copy').addEventListener('click', () => {
-    const code = document.getElementById('sync-code-display').textContent;
-    navigator.clipboard.writeText(code).catch(() => {});
-  });
-  document.getElementById('sync-code-change').addEventListener('click', () => {
-    const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
-    if (raw && raw.trim()) {
-      const c = raw.trim().toUpperCase();
-      if (c.length < 6 || c.length > 18) {
-        alert('Код должен быть от 6 до 18 символов.');
-        return;
-      }
-      localStorage.setItem('sync-code', c);
-      syncCode = c;
-      document.getElementById('sync-code-display').textContent = c;
-      loadFromCloud();
+window.changeSyncCode = function() {
+  const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
+  if (raw && raw.trim()) {
+    const c = raw.trim().toUpperCase();
+    if (c.length < 6 || c.length > 18) {
+      alert('Код должен быть от 6 до 18 символов.');
+      return;
     }
-  });
-});
+    localStorage.setItem('sync-code', c);
+    syncCode = c;
+    document.getElementById('display-sync-code').textContent = c;
+    loadFromCloud();
+  }
+};
 
 window.deleteCloudData = async function() {
   const code = localStorage.getItem('sync-code');

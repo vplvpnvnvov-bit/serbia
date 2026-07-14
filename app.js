@@ -961,24 +961,16 @@ document.querySelector('[data-tab="checklist"]')?.addEventListener('click', () =
 });
 
 // === UPDATE BUTTON ===
-document.getElementById('update-btn')?.addEventListener('click', async () => {
-  const btn = document.getElementById('update-btn');
-  const label = document.getElementById('update-label');
+document.getElementById('btn-check-app-update')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btn-check-app-update');
   btn.disabled = true;
-  btn.textContent = '⏳';
-  label.textContent = 'Проверяю...';
-  const reset = () => {
-    btn.textContent = '🔄';
-    btn.disabled = false;
-    label.textContent = 'Проверить обновления';
-  };
+  btn.textContent = '⏳ Проверяю...';
   try {
     const reg = await navigator.serviceWorker.getRegistration();
     if (reg) {
       if (reg.waiting) {
-        label.textContent = '🆕 Обновление готово';
         reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        btn.textContent = '🆕';
+        btn.textContent = '🆕 Обновление готово';
         setTimeout(() => location.reload(), 800);
         return;
       }
@@ -996,7 +988,7 @@ document.getElementById('update-btn')?.addEventListener('click', async () => {
         }, { once: true });
       });
       if (found) {
-        label.textContent = '🆕 Загружаю...';
+        btn.textContent = '🆕 Загружаю...';
         const newWorker = reg.installing;
         if (newWorker) {
           await new Promise(resolve => {
@@ -1014,19 +1006,13 @@ document.getElementById('update-btn')?.addEventListener('click', async () => {
       }
       alert('У вас установлена самая свежая версия приложения!');
     } else {
-      label.textContent = '⚠️ SW не зарегистрирован';
+      alert('⚠️ Сервис-воркер не зарегистрирован.');
     }
   } catch (e) {
     alert('Не удалось проверить обновления. Проверьте подключение к интернету.');
-    label.textContent = '❌ Ошибка сети';
-    btn.textContent = '🔄';
-    btn.disabled = false;
-    setTimeout(() => { label.textContent = 'Проверить обновления'; }, 4000);
-    return;
   }
-  btn.textContent = '🔄';
+  btn.textContent = '⏳ Проверить обновления программы';
   btn.disabled = false;
-  setTimeout(() => { label.textContent = 'Проверить обновления'; }, 3000);
 });
 
 // === CALCULATOR ===
@@ -1169,6 +1155,25 @@ window.hardResetApplication = async function() {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
+  updateSyncStatusUI();
+
+  document.getElementById('btn-sync-now')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-sync-now');
+    btn.disabled = true;
+    btn.textContent = '⏳ Синхронизирую...';
+    try {
+      await loadFromCloud();
+    } catch (e) {
+      // ошибка уже обработана в loadFromCloud
+    }
+    btn.textContent = '🔄 Синхронизировать сейчас';
+    btn.disabled = false;
+  });
+
+  document.getElementById('btn-change-code')?.addEventListener('click', () => {
+    window.changeSyncCode();
+  });
+
   const resetBtn = document.getElementById('btn-hard-reset');
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {

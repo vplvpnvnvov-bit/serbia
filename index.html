@@ -22,15 +22,6 @@
 <div id="app">
   <header id="header">
     <h1>🇷🇸 Релокация в Белград</h1>
-    <div id="sync-header-group">
-      <button id="sync-code-toggle" title="Код синхронизации">🔗</button>
-      <div id="sync-code-body" class="hidden">
-        <span id="sync-code-display">---</span>
-        <button id="sync-code-copy" title="Копировать">📋</button>
-        <button id="sync-code-change" title="Изменить">✏️</button>
-      </div>
-      <button id="btn-hard-reset" class="danger-btn" title="Удалить все данные">🗑️</button>
-    </div>
   </header>
 
   <main id="content">
@@ -41,8 +32,6 @@
           <button id="lock-btn" class="lock-btn">🔓</button>
           <span id="lock-label">Режим редактирования</span>
           <span style="flex:1"></span>
-          <span id="update-label">Проверить обновления</span>
-          <button id="update-btn" class="lock-btn" title="Проверить обновления">🔄</button>
         </div>
         <h2>📋 Чек-лист для переезда</h2>
         <div id="checklist-stats"></div>
@@ -53,7 +42,6 @@
     <!-- TAB 2: Карта -->
     <section id="tab-map" class="tab">
       <div id="map"></div>
-      <!-- Layer Control -->
       <div id="layer-control" class="lc-panel">
         <div class="lc-title" id="lc-toggle">🎛️ Слои <span id="lc-arrow">▾</span></div>
         <div id="lc-body" class="hidden">
@@ -163,6 +151,65 @@
         </ul>
       </div>
     </section>
+
+    <!-- TAB 6: Настройки -->
+    <section id="tab-settings" class="tab">
+      <div class="tab-content">
+        <div class="settings-data-center">
+          <h3>⚙️ Управление данными и обновлениями</h3>
+          <p class="section-intro">Здесь вы можете управлять сохранностью ваших данных, синхронизировать устройства и обновлять само приложение.</p>
+
+          <div class="settings-card">
+            <div class="card-header">
+              <span class="card-icon">🔄</span>
+              <h4>Синхронизация данных (Облако)</h4>
+            </div>
+            <p class="card-desc">Связывает ваши устройства между собой. Данные автоматически сохраняются в облаке при каждом изменении чек-листа.</p>
+
+            <div class="sync-status-info">
+              <p><strong>Ваш код синхронизации:</strong> <span id="display-sync-code">Загрузка...</span></p>
+              <p><strong>Статус облака:</strong> <span id="sync-time-status">Нет данных о синхронизации</span></p>
+            </div>
+
+            <div class="card-actions">
+              <button id="btn-sync-now" class="action-btn primary-btn">🔄 Синхронизировать сейчас</button>
+              <button id="btn-change-code" class="action-btn secondary-btn">✏️ Изменить код связи</button>
+            </div>
+            <p class="action-help">«Синхронизировать сейчас» принудительно забирает свежие данные из облака или отправляет локальные изменения. «Изменить код» позволяет подключить другое устройство.</p>
+          </div>
+
+          <div class="settings-card">
+            <div class="card-header">
+              <span class="card-icon">🚀</span>
+              <h4>Версия программы (Код приложения)</h4>
+            </div>
+            <p class="card-desc">Само приложение работает автономно. Если разработчики добавили новые функции, карту или исправили ошибки, нужно обновить саму программу.</p>
+
+            <div class="app-version-info">
+              <p><strong>Текущая версия на устройстве:</strong> <span class="badge">v2026.2</span></p>
+            </div>
+
+            <div class="card-actions">
+              <button id="btn-check-app-update" class="action-btn update-btn">⏳ Проверить обновления программы</button>
+            </div>
+            <p class="action-help">Скачивает новую версию приложения с сервера (карты, логику, дизайн). Программа перезагрузится сама, если найдет обновление.</p>
+          </div>
+
+          <div class="settings-card danger-card">
+            <div class="card-header">
+              <span class="card-icon">⚠️</span>
+              <h4>Опасная зона</h4>
+            </div>
+            <p class="card-desc">Полное удаление всей вашей информации без возможности восстановления.</p>
+
+            <div class="card-actions">
+              <button id="btn-hard-reset" class="action-btn danger-btn">🗑️ Очистить всё и удалить аккаунт</button>
+            </div>
+            <p class="action-help">Внимание! Это действие физически сотрет ваши данные из облака Firebase, очистит память этого телефона и сгенерирует вам новый чистый код.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <nav id="tabs">
@@ -171,6 +218,7 @@
     <button class="tab-btn" data-tab="calc">💰 Расходы</button>
     <button class="tab-btn" data-tab="timeline">📅 План</button>
     <button class="tab-btn" data-tab="info">🔗 Полезно</button>
+    <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
   </nav>
 </div>
 
