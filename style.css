@@ -1745,6 +1745,53 @@ body.dark-theme .tab-btn.active {
   background: var(--accent-color);
   color: #1d1d1f;
 }
+body.dark-theme .tab-content h2,
+body.dark-theme .tab-content h3 {
+  color: #81d4fa;
+}
+body.dark-theme a {
+  color: #81d4fa;
+}
+body.dark-theme .ll-score {
+  background: rgba(255,255,255,0.08) !important;
+}
+body.dark-theme .ll-name {
+  color: #cfd8dc;
+}
+body.dark-theme #legend-toggle {
+  color: #81d4fa;
+}
+body.dark-theme #lc-title,
+body.dark-theme .ll-row {
+  color: #b0bec5;
+}
+body.dark-theme .metric-detail-item .metric-num {
+  color: #b0bec5;
+}
+body.dark-theme .metric-detail-item.done .metric-num { color: #81c784; }
+body.dark-theme .metric-detail-item.progress .metric-num { color: #ffd54f; }
+body.dark-theme .metric-detail-item.spent .metric-num { color: #64b5f6; }
+body.dark-theme .metric-detail-item.pending .metric-num { color: #4fc3f7; }
+body.dark-theme .plan-tip-text b,
+body.dark-theme .plan-tip-text strong {
+  color: #ffd54f;
+}
+body.dark-theme .plan-date-label,
+body.dark-theme .plan-date-val {
+  color: #81d4fa;
+}
+body.dark-theme .tl-step.status-done .plan-task-name {
+  color: #81c784;
+}
+body.dark-theme .tl-step.status-done .plan-task-desc {
+  color: #a5d6a7;
+}
+body.dark-theme .metric-detail-item {
+  color: #90a4ae;
+}
+body.dark-theme .metric-num {
+  color: #cfd8dc;
+}
 body.dark-theme .settings-card {
   background: var(--panel-bg);
   border-color: var(--border-color);
