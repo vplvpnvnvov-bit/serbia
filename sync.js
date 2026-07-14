@@ -79,51 +79,63 @@ function updateSyncStatusUI() {
 
 function loadFromCloud() {
   if (!syncCode) return Promise.resolve();
-  return db.collection('users').doc(syncCode).get().then(doc => {
-    if (!doc.exists) return;
-    const data = doc.data();
+  return fetchAndLoadDoc().catch(() => { syncLoading = false; });
+}
 
-    if (!data) {
-      console.warn('Документ существует, но он пустой.');
-      return;
-    }
+async function fetchAndLoadDoc() {
+  const ref = db.collection('users').doc(syncCode);
 
-    if (data.isDeleted === true) {
-      console.warn('Попытка подключиться к удаленному коду синхронизации.');
-      alert('Этот код связи был ранее удален и больше недействителен. Будет сгенерирован новый чистый код.');
-      syncLoading = true;
-      window.localHardResetWithoutCloud();
-      return;
-    }
+  // Сначала читаем с сервера — чтобы не получить stale-данные из локального кеша
+  let doc;
+  try {
+    doc = await ref.get({ source: 'server' });
+  } catch (_) {
+    doc = await ref.get({ source: 'cache' });
+  }
 
+  if (!doc.exists) return;
+  const data = doc.data();
+
+  if (!data) {
+    console.warn('Документ существует, но он пустой.');
+    return;
+  }
+
+  if (data.isDeleted === true) {
+    console.warn('Попытка подключиться к удаленному коду синхронизации.');
+    alert('Этот код связи был ранее удален и больше недействителен. Будет сгенерирован новый чистый код.');
     syncLoading = true;
-    // Санация + миграция
-    if (data.checklist) {
-      const version = data.version || '0';
-      const needsMigration = version !== CURRENT_DATA_VERSION;
-      const clean = sanitizeChecklist(data.checklist);
-      if (needsMigration && typeof window.migrateChecklist === 'function') {
-        const migrated = window.migrateChecklist(clean);
-        localStorage.setItem('checklist', JSON.stringify(migrated));
-      } else {
-        localStorage.setItem('checklist', JSON.stringify(clean));
-      }
-    }
+    window.localHardResetWithoutCloud();
+    return;
+  }
 
-    if (data.locked !== undefined) {
-      localStorage.setItem('checklist-locked', String(data.locked));
+  syncLoading = true;
+  // Санация + миграция
+  if (data.checklist) {
+    const version = data.version || '0';
+    const needsMigration = version !== CURRENT_DATA_VERSION;
+    const clean = sanitizeChecklist(data.checklist);
+    if (needsMigration && typeof window.migrateChecklist === 'function') {
+      const migrated = window.migrateChecklist(clean);
+      localStorage.setItem('checklist', JSON.stringify(migrated));
+    } else {
+      localStorage.setItem('checklist', JSON.stringify(clean));
     }
-    if (data.calc) {
-      Object.entries(data.calc).forEach(([k, v]) => {
-        const el = document.getElementById('calc-' + k);
-        if (el) el.value = v;
-      });
-    }
-    window.dispatchEvent(new CustomEvent('sync-loaded'));
-    syncLoading = false;
-    localStorage.setItem('last-sync-time', new Date().toLocaleString());
-    updateSyncStatusUI();
-  }).catch(() => { syncLoading = false; });
+  }
+
+  if (data.locked !== undefined) {
+    localStorage.setItem('checklist-locked', String(data.locked));
+  }
+  if (data.calc) {
+    Object.entries(data.calc).forEach(([k, v]) => {
+      const el = document.getElementById('calc-' + k);
+      if (el) el.value = v;
+    });
+  }
+  window.dispatchEvent(new CustomEvent('sync-loaded'));
+  syncLoading = false;
+  localStorage.setItem('last-sync-time', new Date().toLocaleString());
+  updateSyncStatusUI();
 }
 
 function saveToCloud() {
