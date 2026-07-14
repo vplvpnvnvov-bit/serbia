@@ -2,28 +2,55 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 1. Получаем версию из package.json
-const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
-const version = pkg.version;
+console.log('=== Запуск интеллектуальной автоматической сборки ===');
 
-// 2. Получаем короткий хэш последнего коммита из Git
+// 1. Получаем текущую версию из package.json
+const pkgPath = path.join(__dirname, 'package.json');
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+const currentVersion = pkg.version;
+
+let [major, minor, patch] = currentVersion.split('.').map(Number);
+
+// 2. Получаем короткий хэш и сообщение последнего коммита из Git
 let buildHash = 'dev';
+let commitMessage = '';
 try {
   buildHash = execSync('git rev-parse --short HEAD').toString().trim();
+  commitMessage = execSync('git log -1 --pretty=%B').toString().trim().toLowerCase();
+  console.log(`> Последний коммит: "${commitMessage}" (${buildHash})`);
 } catch (e) {
-  console.warn("Не удалось получить хэш из Git, используем заглушку 'dev'");
+  console.warn('⚠️ Не удалось получить данные из Git, используем значения по умолчанию.');
 }
 
-const fullVersion = `${version}-${buildHash}`;
+// 3. Автоматически определяем, какую цифру версии повышать
+if (commitMessage.includes('breaking') || commitMessage.includes('major')) {
+  major += 1;
+  minor = 0;
+  patch = 0;
+  console.log(`📈 Обнаружено мажорное изменение. Повышаем Major до v${major}.${minor}.${patch}`);
+} else if (commitMessage.includes('feat') || commitMessage.includes('feature') || commitMessage.includes('add')) {
+  minor += 1;
+  patch = 0;
+  console.log(`✨ Обнаружена новая фича. Повышаем Minor до v${major}.${minor}.${patch}`);
+} else {
+  patch += 1;
+  console.log(`🐞 Мелкая правка или багфикс. Повышаем Patch до v${major}.${minor}.${patch}`);
+}
+
+const newVersion = `${major}.${minor}.${patch}`;
+const fullVersion = `${newVersion}-${buildHash}`;
 const cacheName = `relocation-v${fullVersion}`;
 
-console.log(`=== Запуск сборки версии: v${version} (Сборка: ${buildHash}) ===`);
+// 4. Записываем обновленную версию обратно в package.json
+pkg.version = newVersion;
+fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
+console.log(`✓ package.json успешно перезаписан на версию: ${newVersion}`);
 
-// 3. Патчим app.js: находим объект конфигурации и перезаписываем его значения
+// 5. Патчим app.js
 let appJs = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf-8');
 const appConfigRegex = /window\.APP_CONFIG\s*=\s*\{[\s\S]*?\};/;
 const newAppConfig = `window.APP_CONFIG = {
-  VERSION: "${version}",
+  VERSION: "${newVersion}",
   BUILD: "${buildHash}",
   CACHE_NAME: "${cacheName}"
 };`;
@@ -36,7 +63,7 @@ if (appConfigRegex.test(appJs)) {
 fs.writeFileSync(path.join(__dirname, 'app.js'), appJs, 'utf-8');
 console.log('✓ app.js успешно обновлен!');
 
-// 4. Патчим sw.js: заменяем константу CACHE_NAME
+// 6. Патчим sw.js
 let swJs = fs.readFileSync(path.join(__dirname, 'sw.js'), 'utf-8');
 const swCacheRegex = /const\s+CACHE_NAME\s*=\s*['"`][\s\S]*?['"`];/;
 const newSwCache = `const CACHE_NAME = '${cacheName}';`;
@@ -49,7 +76,7 @@ if (swCacheRegex.test(swJs)) {
 fs.writeFileSync(path.join(__dirname, 'sw.js'), swJs, 'utf-8');
 console.log('✓ sw.js успешно обновлен!');
 
-// 5. Патчим index.html: динамически обновляем параметры кэш-бастинга (?v=...)
+// 7. Патчим index.html
 let indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
 
 indexHtml = indexHtml.replace(/(href="style\.css)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
@@ -60,4 +87,4 @@ indexHtml = indexHtml.replace(/(src="app\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVe
 fs.writeFileSync(path.join(__dirname, 'index.html'), indexHtml, 'utf-8');
 console.log('✓ index.html успешно обновлен! Кэш-бастинг настроен на ?v=' + fullVersion);
 
-console.log('=== Сборка успешно завершена! ===');
+console.log(`=== Автоматическая сборка завершена! Новая версия: v${newVersion} (${buildHash}) ===`);
