@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
   VERSION: "1.0.0",
-  BUILD: "253d64c",
-  CACHE_NAME: "relocation-v1.0.0-253d64c"
+  BUILD: "b331701",
+  CACHE_NAME: "relocation-v1.0.0-b331701"
 };
 
 // === TABS ===
@@ -1147,7 +1147,10 @@ function showResetOverlay() {
 window.localHardResetWithoutCloud = async function() {
   showResetOverlay();
   localStorage.clear();
-  try { await caches.delete('relocation-v2026.2'); } catch (e) {}
+  try {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
+  } catch (e) {}
   location.reload();
 };
 
@@ -1155,7 +1158,10 @@ window.hardResetApplication = async function() {
   showResetOverlay();
   await window.deleteCloudData();
   localStorage.clear();
-  try { await caches.delete('relocation-v2026.2'); } catch (e) {}
+  try {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
+  } catch (e) {}
   location.reload();
 };
 

@@ -68,7 +68,8 @@ function loadFromCloud() {
     }
 
     if (data.isDeleted === true) {
-      console.warn('Обнаружен флаг удаления данных в облаке. Запускаю каскадный локальный сброс...');
+      console.warn('Попытка подключиться к удаленному коду синхронизации.');
+      alert('Этот код связи был ранее удален и больше недействителен. Будет сгенерирован новый чистый код.');
       syncLoading = true;
       window.localHardResetWithoutCloud();
       return;
@@ -175,10 +176,6 @@ window.deleteCloudData = async function() {
   try {
     await db.collection('users').doc(code).set({
       isDeleted: true,
-      checklist: {},
-      locked: false,
-      calc: {},
-      version: CURRENT_DATA_VERSION,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
   } catch (e) {
