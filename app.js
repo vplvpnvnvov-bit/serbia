@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "1.7.0",
-  BUILD: "ed21eb2",
-  CACHE_NAME: "relocation-v1.7.0-ed21eb2"
+  VERSION: "1.7.1",
+  BUILD: "54bac19",
+  CACHE_NAME: "relocation-v1.7.1-54bac19"
 };
 
 // === TABS ===
@@ -1221,6 +1221,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-change-code')?.addEventListener('click', () => {
     window.changeSyncCode();
+  });
+
+  document.getElementById('btn-delete-cloud')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-delete-cloud');
+    if (!confirm('Это физически удалит все данные из облака по вашему коду. Данные на этом устройстве останутся нетронутыми. Продолжить?')) return;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Удаляю...';
+    try {
+      await window.deleteCloudData();
+      btn.innerHTML = '✅ Данные удалены из облака';
+    } catch (e) {
+      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
+    }
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = '🗑️ Удалить данные из облака';
+    }, 3000);
   });
 
   document.getElementById('btn-new-code')?.addEventListener('click', () => {

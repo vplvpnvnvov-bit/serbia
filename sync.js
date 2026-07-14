@@ -144,7 +144,19 @@ window.saveToCloud = async function() {
       calc: getCalcValues(),
       version: CURRENT_DATA_VERSION,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    };
+};
+
+window.deleteCloudData = async function() {
+  const code = localStorage.getItem('sync-code');
+  if (!code) throw new Error('Нет кода синхронизации');
+  const ref = db.collection('users').doc(code);
+  await ref.delete();
+  const v = await ref.get({ source: 'server' });
+  if (v.exists) throw new Error('Сервер не подтвердил удаление');
+  localStorage.removeItem('last-sync-time');
+  updateSyncStatusUI();
+};
+
     await db.collection('users').doc(syncCode).set(data, { merge: true });
     localStorage.setItem('last-sync-time', new Date().toLocaleString());
     updateSyncStatusUI();
