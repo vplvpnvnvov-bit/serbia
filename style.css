@@ -1591,6 +1591,20 @@ html, body {
   background: rgba(255,255,255,0.2);
 }
 
+#map {
+  background: #f5f5f7;
+}
+body.dark-theme #map,
+body.dark-theme .leaflet-container {
+  background: #1a1d20;
+}
+body.dark-theme .leaflet-tile-pane {
+  opacity: 0.99;
+}
+body.dark-theme .leaflet-tile {
+  filter: brightness(0.95);
+}
+
 /* Dark theme — plan section overrides */
 body.dark-theme #app {
   background: var(--bg-color);
