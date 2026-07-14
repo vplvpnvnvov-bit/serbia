@@ -978,19 +978,22 @@ html, body {
   color: #c62828;
 }
 
-/* Locked mode */
+/* Locked mode — status circles stay bright */
 .plan-locked-mode .plan-status-btn:disabled {
   cursor: default;
   pointer-events: none;
-  opacity: 0.9;
+  border-color: #bbb;
+  background: white;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
 }
 .plan-locked-mode .plan-status-btn:disabled.done {
-  border-color: #2e7d32;
-  background: #e8f5e9;
+  border-color: #2e7d32 !important;
+  background: #e8f5e9 !important;
 }
 .plan-locked-mode .plan-status-btn:disabled.progress {
-  border-color: #f9a825;
-  background: #fff8e1;
+  border-color: #f9a825 !important;
+  background: #fff8e1 !important;
 }
 .plan-locked-mode .plan-status-btn:hover {
   transform: none;
