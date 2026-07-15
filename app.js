@@ -326,27 +326,61 @@ document.getElementById('urban-toggle')?.addEventListener('change', e => {
   updateUrbanFilter(e.target.checked);
 });
 
+let activeSubDistrictLayers = L.layerGroup().addTo(map);
+
 function highlightDistrict(name) {
+  activeSubDistrictLayers.clearLayers();
+
   Object.keys(polygons).forEach(k => {
     const p = polygons[k];
     const d = DISTRICTS.find(x => x.name === k);
     if (urbanHide && d && !d.isUrban) {
       p.setStyle({ fillOpacity: 0, weight: 0, opacity: 0, interactive: false });
+    } else if (k === name) {
+      p.setStyle({ fillOpacity: 0.65, weight: 4, opacity: 1, interactive: true });
     } else {
-      p.setStyle({ fillOpacity: 0.35, weight: 3, interactive: true });
+      p.setStyle({ fillOpacity: 0.05, weight: 1, opacity: 0.2, interactive: true });
     }
   });
+
   const p = polygons[name];
   if (p) {
-    p.setStyle({ fillOpacity: 0.55, weight: 4 });
     const size = map.getSize();
     map.fitBounds(p.getBounds(), {
-      paddingTopLeft: [40, 40],
-      paddingBottomRight: [40, 40 + size.y * 0.55],
-      maxZoom: 13,
+      paddingTopLeft: [20, 20],
+      paddingBottomRight: [20, size.y * 0.4],
+      maxZoom: 14,
     });
   }
-  // указатель
+
+  const subs = SUB_DISTRICTS.filter(s => s.parent === name);
+  subs.forEach(sub => {
+    const subPoly = L.polygon(sub.coords, {
+      color: '#ffffff',
+      dashArray: '5, 5',
+      fillColor: '#673ab7',
+      fillOpacity: 0.25,
+      weight: 2,
+    });
+    subPoly.bindTooltip(`<div style="font-family:sans-serif;padding:4px"><strong style="color:#673ab7;font-size:13px">${sub.name}</strong><br><span style="font-size:11px;color:#555">${sub.desc}</span></div>`, { permanent: false, sticky: true });
+    activeSubDistrictLayers.addLayer(subPoly);
+
+    const slats = sub.coords.map(c => c[0]);
+    const slons = sub.coords.map(c => c[1]);
+    const cx = (Math.min(...slats) + Math.max(...slats)) / 2;
+    const cy = (Math.min(...slons) + Math.max(...slons)) / 2;
+    const labelMarker = L.marker([cx, cy], {
+      icon: L.divIcon({
+        html: `<div style="text-shadow:0 0 4px #fff, 0 0 4px #fff;font-weight:bold;color:#4a148c;font-size:11px;text-align:center;transform:translate(-50%,-50%)">${sub.name}</div>`,
+        iconSize: [100, 20],
+        iconAnchor: [50, 10],
+        className: 'sub-district-label',
+      }),
+      interactive: false,
+    });
+    activeSubDistrictLayers.addLayer(labelMarker);
+  });
+
   if (window.arrowMarker) { map.removeLayer(window.arrowMarker); window.arrowMarker = null; }
   const d = DISTRICTS.find(x => x.name === name);
   if (d && d.coords && d.coords.length > 0) {
@@ -372,6 +406,8 @@ map.on('dragstart', () => {
     map.removeLayer(window.arrowMarker);
     window.arrowMarker = null;
   }
+  if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
+  updateMapColors(activePreset);
 });
 
 map.on('zoomend', () => {
@@ -629,6 +665,21 @@ DISTRICTS.forEach(d => {
   }).addTo(map);
 });
 
+// === MICRO-DISTRICTS ===
+const SUB_DISTRICTS = [
+  { parent:"Врачар", name:"Savinac / Cvetni Trg", desc:"Элитное историческое ядро Врачара вокруг Храма Св. Саввы.", coords:[[44.8025,20.4655],[44.8005,20.4725],[44.7965,20.4695],[44.7985,20.4645]] },
+  { parent:"Врачар", name:"Čubura", desc:"Богемный Врачар с узкими улочками и Чубурским парком.", coords:[[44.7995,20.4735],[44.7965,20.4835],[44.7925,20.4775],[44.7955,20.4715]] },
+  { parent:"Врачар", name:"Crveni Krst", desc:"Тихий квартал, новые дома, Белградский драматический театр.", coords:[[44.7985,20.4835],[44.7955,20.4905],[44.7915,20.4845],[44.7945,20.4795]] },
+  { parent:"Врачар", name:"Neimar", desc:"Зелёная вилловая зона, тихий семейный премиум на холме.", coords:[[44.7945,20.4655],[44.7935,20.4725],[44.7885,20.4695],[44.7905,20.4625]] },
+  { parent:"Палилула", name:"Hadžipopovac", desc:"Старый уютный спальный район рядом со Старым градом.", coords:[[44.8145,20.4755],[44.8115,20.4865],[44.8075,20.4825],[44.8105,20.4715]] },
+  { parent:"Палилула", name:"Profesorska Kolonija", desc:"Охраняемый памятник культуры, профессорские виллы в садах.", coords:[[44.8125,20.4825],[44.8095,20.4895],[44.8065,20.4855],[44.8085,20.4795]] },
+  { parent:"Палилула", name:"Bogoslovija", desc:"Площадь Богословия, парк, ледовый дворец Пионер.", coords:[[44.8155,20.4885],[44.8155,20.4955],[44.8105,20.4955],[44.8095,20.4885]] },
+  { parent:"Стари Град", name:"Dorćol", desc:"Культовый район: нижний — модный у Дуная, верхний — исторический.", coords:[[44.8295,20.4535],[44.8215,20.4695],[44.8195,20.4585],[44.8235,20.4485]] },
+  { parent:"Стари Град", name:"Kosančićev Venac", desc:"Самая старая часть Белграда, брусчатка, вид на Саву.", coords:[[44.8185,20.4485],[44.8165,20.4525],[44.8135,20.4495],[44.8155,20.4445]] },
+  { parent:"Нови Београд", name:"Savski Blokovi (44, 45, 70)", desc:"Зелёные советские блоки у Савского Кея, рай для прогулок с детьми.", coords:[[44.7995,20.3755],[44.7915,20.3995],[44.7965,20.4045],[44.8045,20.3805]] },
+  { parent:"Нови Београд", name:"Bežanijska Kosa", desc:"Возвышенность с таунхаусами, частными школами и садами.", coords:[[44.8185,20.3655],[44.8085,20.3855],[44.8045,20.3755],[44.8145,20.3555]] }
+];
+
 // === RIVERS ===
 L.polyline(
   [[44.840, 20.345], [44.836, 20.365], [44.833, 20.385],
@@ -646,6 +697,10 @@ L.polyline(
 // === CLOSE INFO PANEL ===
 document.getElementById('close-info').addEventListener('click', () => {
   document.getElementById('district-info').classList.add('hidden');
+  if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
+  if (window.arrowMarker) { map.removeLayer(window.arrowMarker); window.arrowMarker = null; }
+  updateMapColors(activePreset);
+  map.setView([44.76, 20.48], 11);
 });
 
 // === LEGEND DROPDOWN ===
