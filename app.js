@@ -709,6 +709,20 @@ document.querySelectorAll('[data-poi-cat]').forEach(cb => {
   });
 });
 
+document.getElementById('poi-toggle-all')?.addEventListener('change', (e) => {
+  const on = e.target.checked;
+  document.querySelectorAll('[data-poi-cat]').forEach(cb => {
+    cb.checked = on;
+    const cat = cb.dataset.poiCat;
+    poiMarkers.forEach(m => {
+      if (m._poiCat === cat) {
+        if (on) poiLayer.addLayer(m);
+        else poiLayer.removeLayer(m);
+      }
+    });
+  });
+});
+
 const masterTimeline = [
   {
     month: 0,
@@ -1274,7 +1288,7 @@ function renderPlan() {
               state.tasks[t.id] = { checked: false, progress: false, customCost: null };
               reconciled = true;
             }
-          });
+});
         }
       });
     }
