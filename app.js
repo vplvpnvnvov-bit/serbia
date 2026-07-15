@@ -103,8 +103,12 @@ MAP_POINTS.forEach(pt => {
   else if (cat === 'park') emoji = '🌳';
   else if (cat === 'food') emoji = '🍽️';
   else if (cat === 'shop') emoji = '🛒';
+  else if (cat === 'secret') emoji = '🔮';
+  else if (cat === 'museum') emoji = '🏛️';
+  else if (cat === 'theater') emoji = '🎭';
+  else if (cat === 'monument') emoji = '🗿';
+  else if (cat === 'cinema') emoji = '🎬';
   else if (cat === 'sport') emoji = '🏟️';
-  else if (cat === 'culture') emoji = '🎭';
   const marker = L.marker(pt.coords, {
     icon: L.divIcon({
       html: `<div style="font-size:18px;cursor:pointer;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3))">${emoji}</div>`,
