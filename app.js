@@ -86,19 +86,31 @@ const poiLayer = L.layerGroup().addTo(map);
 const poiMarkers = [];
 
 MAP_POINTS.forEach(pt => {
-  let emoji = '🏢';
-  if (pt.category === 'gov') {
+  let emoji = '📍';
+  const cat = pt.category;
+  if (cat === 'gov') {
     const n = pt.name.toLowerCase();
     if (n.includes('полиция') || n.includes('муп')) emoji = '👮';
     else if (n.includes('почта')) emoji = '✉️';
     else if (n.includes('apr')) emoji = '📄';
-    else if (n.includes('клиника') || n.includes('больница')) emoji = '🏥';
-    else if (n.includes('садик') || n.includes('школа')) emoji = '🎒';
+    else if (n.includes('клиника') || n.includes('больница') || n.includes('аптека') || n.includes('dom zdrav')) emoji = '🏥';
+    else if (n.includes('рфзо') || n.includes('страхование')) emoji = '💊';
+    else if (n.includes('налоговая') || n.includes('пореска')) emoji = '📋';
+    else if (n.includes('посольство') || n.includes('консульство')) emoji = '🇷🇺';
+    else if (n.includes('банк') || n.includes('народн')) emoji = '🏦';
     else emoji = '🏢';
-  } else if (pt.category === 'culture') {
+  } else if (cat === 'kids') {
+    emoji = '🎒';
+  } else if (cat === 'park') {
+    emoji = '🌳';
+  } else if (cat === 'food') {
+    emoji = '🍽️';
+  } else if (cat === 'shop') {
+    emoji = '🛒';
+  } else if (cat === 'sport') {
+    emoji = '🏟️';
+  } else if (cat === 'culture') {
     emoji = '🎭';
-  } else {
-    emoji = '👶';
   }
   const marker = L.marker(pt.coords, {
     icon: L.divIcon({
