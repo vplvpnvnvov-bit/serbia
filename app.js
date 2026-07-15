@@ -88,30 +88,20 @@ const poiMarkers = [];
 MAP_POINTS.forEach(pt => {
   let emoji = '📍';
   const cat = pt.category;
-  if (cat === 'gov') {
-    const n = pt.name.toLowerCase();
-    if (n.includes('полиция') || n.includes('муп')) emoji = '👮';
-    else if (n.includes('почта')) emoji = '✉️';
-    else if (n.includes('apr')) emoji = '📄';
-    else if (n.includes('клиника') || n.includes('больница') || n.includes('аптека') || n.includes('dom zdrav')) emoji = '🏥';
-    else if (n.includes('рфзо') || n.includes('страхование')) emoji = '💊';
-    else if (n.includes('налоговая') || n.includes('пореска')) emoji = '📋';
-    else if (n.includes('посольство') || n.includes('консульство')) emoji = '🇷🇺';
-    else if (n.includes('банк') || n.includes('народн')) emoji = '🏦';
-    else emoji = '🏢';
-  } else if (cat === 'kids') {
-    emoji = '🎒';
-  } else if (cat === 'park') {
-    emoji = '🌳';
-  } else if (cat === 'food') {
-    emoji = '🍽️';
-  } else if (cat === 'shop') {
-    emoji = '🛒';
-  } else if (cat === 'sport') {
-    emoji = '🏟️';
-  } else if (cat === 'culture') {
-    emoji = '🎭';
-  }
+  if (cat === 'police') emoji = '👮';
+  else if (cat === 'post') emoji = '✉️';
+  else if (cat === 'apr') emoji = '📄';
+  else if (cat === 'clinic') emoji = '🏥';
+  else if (cat === 'rfzo') emoji = '💊';
+  else if (cat === 'tax') emoji = '📋';
+  else if (cat === 'embassy') emoji = '🇷🇺';
+  else if (cat === 'bank') emoji = '🏦';
+  else if (cat === 'kids') emoji = '🎒';
+  else if (cat === 'park') emoji = '🌳';
+  else if (cat === 'food') emoji = '🍽️';
+  else if (cat === 'shop') emoji = '🛒';
+  else if (cat === 'sport') emoji = '🏟️';
+  else if (cat === 'culture') emoji = '🎭';
   const marker = L.marker(pt.coords, {
     icon: L.divIcon({
       html: `<div style="font-size:18px;cursor:pointer;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3))">${emoji}</div>`,
