@@ -1534,7 +1534,7 @@ html, body {
 /* POI Reestr */
 .poi-reestr {
   position: absolute;
-  bottom: 8px;
+  top: 52px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
@@ -1562,7 +1562,7 @@ html, body {
 }
 .poi-reestr-toggle:hover { background: #eee; }
 .poi-reestr-list {
-  max-height: 240px;
+  max-height: 400px;
   overflow-y: auto;
 }
 .poi-reestr-list.hidden { display: none; }
