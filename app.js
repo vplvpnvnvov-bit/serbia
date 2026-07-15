@@ -96,7 +96,10 @@ MAP_POINTS.forEach(pt => {
   else if (cat === 'tax') emoji = '📋';
   else if (cat === 'embassy') emoji = '🇷🇺';
   else if (cat === 'bank') emoji = '🏦';
-  else if (cat === 'kids') emoji = '🎒';
+  else if (cat === 'school') emoji = '🏫';
+  else if (cat === 'kindergarten') emoji = '👶';
+  else if (cat === 'playground') emoji = '🎮';
+  else if (cat === 'zoo') emoji = '🦁';
   else if (cat === 'park') emoji = '🌳';
   else if (cat === 'food') emoji = '🍽️';
   else if (cat === 'shop') emoji = '🛒';
