@@ -2171,10 +2171,10 @@ function renderSchema() {
     }
   });
 
-  // Pixel-art Bird midway between current and next milestone
-  const curN = nodes[dinoIdx];
-  const nextN = dinoIdx < n - 1 ? nodes[dinoIdx + 1] : curN;
-  const dp = { x: (curN.x + nextN.x) / 2, y: (curN.y + nextN.y) / 2 };
+  // Pixel-art Bird — halfway from last done to next task
+  const prevN = dinoIdx > 0 ? nodes[dinoIdx - 1] : nodes[0];
+  const nextN = nodes[dinoIdx];
+  const dp = { x: (prevN.x + nextN.x) / 2, y: (prevN.y + nextN.y) / 2 };
   const frame = Math.floor(Date.now() / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
