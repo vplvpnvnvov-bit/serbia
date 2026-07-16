@@ -2144,50 +2144,52 @@ function renderSchema() {
     }
   });
 
-  // Pixel-art Dino (Chrome style) at current position
+  // Pixel-art Bird (flying to Serbia!) at current position
   const dp = trail[dinoIdx];
-  const frame = Math.floor(Date.now() / 200) % 2;
-  const legL = frame === 0 ? 4 : 7;
-  const legR = frame === 0 ? 7 : 4;
-  const bob = frame === 0 ? 0 : -2;
-  const dX = dp.x - 18, dY = dp.y - 30 + bob;
-  const px = 3; // pixel size
+  const frame = Math.floor(Date.now() / 250) % 4;
+  const wingUp = [0, 1, 2, 1][frame];
+  const bob = [0, -1, -2, -1][frame];
+  const dX = dp.x - 16, dY = dp.y - 32 + bob;
+  const PX = 3;
 
-  function pixel(x, y, w, h, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(dX + x * px, dY + y * px, w * px, h * px);
+  function px(x, y, w, h, c) {
+    ctx.fillStyle = c;
+    ctx.fillRect(dX + x * PX, dY + y * PX, w * PX, h * PX);
   }
-  // Body
-  pixel(4, 3, 6, 4, '#535353');
-  pixel(5, 2, 4, 1, '#535353');
-  pixel(6, 1, 2, 1, '#535353');
+  // Body — round
+  px(4, 4, 5, 4, '#1565c0');
+  px(5, 3, 3, 1, '#1565c0');
+  px(3, 5, 1, 2, '#1565c0');
+  px(9, 5, 1, 2, '#1565c0');
+  px(4, 8, 5, 1, '#1565c0');
+  // Belly
+  px(5, 6, 3, 2, '#90caf9');
   // Head
-  pixel(10, 1, 4, 2, '#535353');
-  pixel(11, 3, 3, 1, '#535353');
+  px(9, 2, 3, 3, '#1565c0');
+  // Beak
+  px(12, 3, 2, 1, '#ff8f00');
   // Eye
-  pixel(12, 2, 1, 1, '#ffffff');
-  // Mouth
-  pixel(13, 3, 1, 1, '#535353');
+  px(10, 3, 1, 1, '#ffffff');
+  px(10, 3, 1, 1, '#000000'); // pupil
+  px(10, 2, 1, 1, '#1565c0'); // brow
   // Tail
-  pixel(1, 5, 4, 1, '#535353');
-  pixel(2, 6, 2, 1, '#535353');
-  // Spikes
-  pixel(7, 0, 1, 1, '#535353');
-  pixel(8, 0, 1, 2, '#535353');
-  pixel(4, 1, 1, 1, '#535353');
-  pixel(3, 1, 1, 1, '#535353');
+  px(1, 5, 3, 1, '#0d47a1');
+  px(2, 6, 2, 1, '#0d47a1');
+  // Wing (flapping)
+  if (wingUp < 2) {
+    px(5, 0 - wingUp, 3, 2 + wingUp, '#1565c0');
+    px(4, 1 - wingUp, 1, 2 + wingUp, '#1565c0');
+  } else {
+    px(5, 9, 3, 2, '#1565c0');
+    px(4, 9, 1, 2, '#1565c0');
+  }
   // Legs
-  pixel(5, 7, 1, legL, '#535353');
-  pixel(8, 7, 1, legR, '#535353');
-  // Feet
-  pixel(4, 7 + legL, 3, 1, '#535353');
-  pixel(7, 7 + legR, 3, 1, '#535353');
-  // Arm
-  pixel(10, 4, 1, 2, '#535353');
+  px(6, 9, 1, 2, '#ff8f00');
+  px(8, 9, 1, 2, '#ff8f00');
 
   // Label
   ctx.fillStyle = '#3e2723'; ctx.font = 'bold 9px serif'; ctx.textAlign = 'center';
-  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 32);
+  ctx.fillText('🐦 ты здесь', dp.x, dp.y - 36);
 
   // Start animation loop when tab is open
   if (!window._schemaAnimating) {
