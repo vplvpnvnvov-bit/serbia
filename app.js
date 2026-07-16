@@ -2009,7 +2009,7 @@ function renderSchema() {
   const deps = new Set();
   tasks.forEach(t => {
     if ((t.dependsOn && t.dependsOn.length > 0) ||
-        tasks.some(o => o.dependsOn && o.dependsOn.includes(t.id))) {
+        tasks.some(o => o.dependsOn && o.dependsOn.length > 0 && o.dependsOn.includes(t.id))) {
       deps.add(t.id);
     }
   });
@@ -2078,14 +2078,22 @@ function renderSchema() {
     curX += NODE_W + PAD_X + 30;
   });
 
-  canvas.style.width = maxW + 'px';
-  canvas.style.height = maxH + 'px';
-  canvas.width = maxW * dpr;
-  canvas.height = maxH * dpr;
+  canvas.style.width = (maxW || 300) + 'px';
+  canvas.style.height = (maxH || 100) + 'px';
+  canvas.width = (maxW || 300) * dpr;
+  canvas.height = (maxH || 100) * dpr;
 
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, maxW, maxH);
+  ctx.clearRect(0, 0, maxW || 300, maxH || 100);
+
+  if (schemaNodes.length === 0) {
+    ctx.fillStyle = '#999';
+    ctx.font = '14px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Нет задач с зависимостями', (maxW || 300) / 2, 50);
+    return;
+  }
 
   // Draw edges: Bezier curves
   const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
