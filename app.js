@@ -2146,8 +2146,11 @@ function renderSchema() {
   });
 }
 
-canvas.addEventListener('click', e => {
-  const rect = canvas.getBoundingClientRect();
+if (!window._schemaClickSetup) {
+  const sc = document.getElementById('schema-canvas');
+  if (sc) {
+    sc.addEventListener('click', e => {
+      const rect = sc.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
@@ -2207,8 +2210,11 @@ canvas.addEventListener('click', e => {
     if (window._schemaRenderPlan) window._schemaRenderPlan();
     hide();
   };
-  show();
-});
+      show();
+    });
+  }
+  window._schemaClickSetup = true;
+}
 
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderSchema(); } catch (e) { console.error(e); } }, 100);
