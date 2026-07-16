@@ -1994,10 +1994,11 @@ function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
-  canvas.style.width = '500px';
-  canvas.style.height = '900px';
-  canvas.width = 500 * dpr;
-  canvas.height = 900 * dpr;
+  const W = 900, H = 400;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
@@ -2005,73 +2006,149 @@ function renderSchema() {
   const taskMap = {};
   masterTimeline.forEach(m => m.tasks.forEach(t => { taskMap[t.id] = t; }));
 
-  // Chain: preparation → arrival → legal → VNZ
+  // Background — desert sky + sand
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#fdd835'); sky.addColorStop(0.5, '#ffcc02'); sky.addColorStop(1, '#f9a825');
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+  // Ground
+  ctx.fillStyle = '#e8c84a'; ctx.fillRect(0, H - 80, W, 80);
+  ctx.fillStyle = '#d4a832'; ctx.fillRect(0, H - 66, W, 66);
+  // Ground dots
+  ctx.fillStyle = '#c49a28';
+  for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.arc(30 + i*30, H-50+Math.sin(i)*8, 1.5, 0, Math.PI*2); ctx.fill(); }
+
+  // Mountains silhouette in background
+  ctx.fillStyle = '#e0b830';
+  ctx.beginPath(); ctx.moveTo(0, H-80);
+  ctx.lineTo(100, H-180); ctx.lineTo(180, H-130); ctx.lineTo(250, H-200);
+  ctx.lineTo(350, H-140); ctx.lineTo(420, H-170); ctx.lineTo(500, H-110);
+  ctx.lineTo(580, H-190); ctx.lineTo(650, H-130); ctx.lineTo(750, H-160);
+  ctx.lineTo(850, H-100); ctx.lineTo(W, H-80); ctx.fill();
+
+  // Cactuses
+  function cactus(x, s) {
+    ctx.fillStyle = '#2e7d32';
+    ctx.fillRect(x, H-80-40*s, 6*s, 40*s); // trunk
+    ctx.fillRect(x-3*s, H-80-25*s, 3*s, 15*s); // left arm
+    ctx.fillRect(x+6*s, H-80-30*s, 3*s, 12*s); // right arm
+  }
+  cactus(130, 1); cactus(380, 0.8); cactus(620, 0.9); cactus(780, 0.7);
+
+  // Task milestones along the path
   const items = [
-    {id:'_rf',  label:'🇷🇺 Подготовка в РФ',            v:true},
-    {id:'p10',  label:'Загранпаспорт мужа'},
-    {id:'p5w',  label:'Загранпаспорт жены'},
-    {id:'stamp',label:'Штамп гражданства'},
-    {id:'p5d',  label:'Загранпаспорт ребёнка'},
-    {id:'nocrim_h',label:'Справка несудимости (м)'},
-    {id:'nocrim_w',label:'Справка несудимости (ж)'},
-    {id:'apost_marr',label:'Апостиль на брак'},
-    {id:'apost_birth',label:'Апостиль на рождение'},
-    {id:'power', label:'Доверенность'},
-    {id:'_ok',  label:'✅ Документы готовы',            v:true},
-    {id:'m1_flight',label:'Перелёт в Белград'},
-    {id:'m1_airbnb',label:'Жильё на Airbnb'},
-    {id:'reg',  label:'Белый картон'},
-    {id:'m1_translate',label:'Судебные переводы'},
-    {id:'m1_insurance',label:'Медстраховка на год'},
-    {id:'talent_nostrification',label:'Нострификация диплома'},
-    {id:'_ok2', label:'✅ Пакет собран',                v:true},
-    {id:'m1_vnz',label:'🎯 ВНЖ по Таланту',             goal:true},
+    {id:'_rf',  t:'🇷🇺 Подготовка', v:true},
+    {id:'p10',  t:'Загран М'},
+    {id:'p5w',  t:'Загран Ж'},
+    {id:'stamp',t:'Штамп'},
+    {id:'p5d',  t:'Загран реб'},
+    {id:'nocrim_h',t:'Несудимость М'},
+    {id:'nocrim_w',t:'Несудимость Ж'},
+    {id:'apost_marr',t:'Апостиль брак'},
+    {id:'apost_birth',t:'Апостиль рожд'},
+    {id:'power', t:'Доверенность'},
+    {id:'_ok',  t:'✅ Готово', v:true},
+    {id:'m1_flight',t:'Перелёт'},
+    {id:'m1_airbnb',t:'Жильё'},
+    {id:'reg',  t:'Белый картон'},
+    {id:'m1_translate',t:'Переводы'},
+    {id:'m1_insurance',t:'Страховка'},
+    {id:'talent_nostrification',t:'Нострификация'},
+    {id:'_ok2', t:'✅ Собрано', v:true},
+    {id:'m1_vnz',t:'🎯 ВНЖ', goal:true},
   ];
 
-  const W = 210, H = 40, GAP = 12;
+  const MARGIN = 30, STEP = (W - MARGIN * 2) / (items.length - 1);
+  const nh = 36, nw = 110;
+  // Find progress: first undone task
+  let dinoIdx = 0;
+  for (let i = items.length - 1; i >= 0; i--) {
+    if (items[i].v) continue;
+    const s = state.tasks?.[items[i].id] || {};
+    if (s.checked) { dinoIdx = Math.min(i + 1, items.length - 1); break; }
+  }
+
+  // Draw connections between milestones
   items.forEach((item, i) => {
-    const x = 20, y = 20 + i * (H + GAP);
+    if (i === 0) return;
+    const px = MARGIN + (i-1) * STEP;
+    const x = MARGIN + i * STEP;
+    const py = H - 90;
+    ctx.strokeStyle = i <= dinoIdx ? '#81c784' : '#ccc';
+    ctx.lineWidth = 2;
+    ctx.setLineDash(i <= dinoIdx ? [] : [4, 6]);
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(x, py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // Draw milestone nodes
+  items.forEach((item, i) => {
+    const x = MARGIN + i * STEP;
+    const y = H - 90;
     const s = state.tasks?.[item.id] || {};
     const done = s.checked === true;
     const prog = s.progress === true;
+    const isPast = i <= dinoIdx && !item.v;
+
     let fill, stroke, tc;
     if (item.v)        { fill='#ede7f6'; stroke='#7e57c2'; tc='#4a148c'; }
     else if (done)     { fill='#c8e6c9'; stroke='#2e7d32'; tc='#1b5e20'; }
     else if (prog)     { fill='#fff9c4'; stroke='#f9a825'; tc='#f57f17'; }
-    else               { fill='#e3f2fd'; stroke='#1565c0'; tc='#0d47a1'; }
+    else if (isPast)   { fill='#e8f5e9'; stroke='#a5d6a7'; tc='#388e3c'; }
+    else               { fill='#fff'; stroke='#bbb'; tc='#888'; }
 
+    // Pin shape
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
     ctx.lineWidth = item.goal ? 3 : 2;
-    ctx.beginPath(); roundRect(ctx, x, y, W, H, 6); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 11px -apple-system,sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.label, x + W/2, y + H/2 - 5);
-    ctx.font = '8px -apple-system,sans-serif';
-    const sub = item.v ? 'этап' : done ? '✓' : prog ? '●' : '▶';
-    ctx.fillText(sub, x + W/2, y + H/2 + 10);
+    ctx.beginPath();
+    ctx.moveTo(x - nw/2, y - nh); ctx.lineTo(x + nw/2 - 6, y - nh);
+    ctx.arcTo(x + nw/2, y - nh, x + nw/2, y - nh + 6, 6);
+    ctx.lineTo(x + nw/2, y - 6); ctx.lineTo(x + 8, y);
+    ctx.lineTo(x - 8, y); ctx.lineTo(x - nw/2, y - 6);
+    ctx.lineTo(x - nw/2, y - nh + 6); ctx.arcTo(x - nw/2, y - nh, x - nw/2 + 6, y - nh, 6);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
 
-    if (i > 0) {
-      const py = y; // top of current
-      const px = items[i-1];
-      const prevY = 20 + (i-1)*(H+GAP) + H; // bottom of previous
-      ctx.strokeStyle = '#b0bec5'; ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x + W/2, prevY);
-      ctx.bezierCurveTo(x + W/2, (prevY+py)/2, x + W/2, (prevY+py)/2, x + W/2, py);
-      ctx.stroke();
-      ctx.fillStyle = '#b0bec5';
-      ctx.beginPath(); ctx.moveTo(x+W/2, py); ctx.lineTo(x+W/2-3, py-5); ctx.lineTo(x+W/2+3, py-5); ctx.fill();
-    }
+    // Text
+    ctx.fillStyle = tc;
+    ctx.font = 'bold 9px -apple-system,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(item.t, x, y - nh/2);
   });
+
+  // Dino
+  const dx = MARGIN + dinoIdx * STEP, dy = H - 62;
+  ctx.fillStyle = '#37474f';
+  // Body
+  ctx.fillRect(dx - 8, dy - 20, 16, 14);
+  // Head
+  ctx.fillRect(dx + 6, dy - 26, 10, 10);
+  // Eye
+  ctx.fillStyle = '#fff'; ctx.fillRect(dx + 12, dy - 24, 3, 3);
+  ctx.fillStyle = '#37474f'; ctx.fillRect(dx + 13, dy - 23, 1, 1);
+  // Legs
+  ctx.fillRect(dx - 5, dy - 6, 4, 8);
+  ctx.fillRect(dx + 3, dy - 6, 4, 8);
+  // Tail
+  ctx.fillRect(dx - 12, dy - 16, 6, 4);
+  // Spikes
+  ctx.fillStyle = '#546e7a';
+  ctx.fillRect(dx, dy - 24, 2, 3); ctx.fillRect(dx - 3, dy - 22, 2, 3); ctx.fillRect(dx - 6, dy - 20, 2, 2);
+  // Dino label
+  ctx.fillStyle = '#37474f';
+  ctx.font = '8px -apple-system,sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('ты', dx, dy + 10);
+
+  // Flag at goal
+  const gx = MARGIN + (items.length - 1) * STEP;
+  ctx.fillStyle = '#e91e63';
+  ctx.fillRect(gx - 20, H - 130, 2, 50);
+  ctx.beginPath(); ctx.moveTo(gx - 18, H - 130); ctx.lineTo(gx + 14, H - 118); ctx.lineTo(gx - 18, H - 106); ctx.fill();
 }
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
-  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
-  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
-  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
-}
+
 
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderSchema(); } catch(e) { console.error(e); } }, 100);
