@@ -2025,27 +2025,12 @@ function renderSchema() {
     });
   });
 
-  // Find roots (no parents)
+  // Find roots (tasks with no parents — nothing they depend on)
   const roots = [];
   deps.forEach(id => {
     const t = taskMap[id];
-    const hasParent = deps.some(d => {
-      const o = taskMap[d];
-      return o && o.dependsOn && o.dependsOn.includes(id);
-    });
-    if (!hasParent) roots.push(id);
+    if (!t || !t.dependsOn || t.dependsOn.length === 0) roots.push(id);
   });
-
-  // DFS to get chain order
-  const visited = new Set();
-  const chainOrder = [];
-  function dfs(id) {
-    if (visited.has(id)) return;
-    visited.add(id);
-    chainOrder.push(id);
-    (children[id] || []).forEach(dfs);
-  }
-  roots.forEach(dfs);
 
   const dpr = window.devicePixelRatio || 1;
   const NODE_W = 170, NODE_H = 48, PAD_X = 24, PAD_Y = 28;
