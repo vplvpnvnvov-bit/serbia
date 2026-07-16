@@ -2005,31 +2005,45 @@ function renderSchema() {
     m.tasks.forEach(t => { taskMap[t.id] = t; tasks.push(t); });
   });
 
-  // Find all tasks that are part of dependency chains
-  const deps = new Set();
-  tasks.forEach(t => {
-    if ((t.dependsOn && t.dependsOn.length > 0) ||
-        tasks.some(o => o.dependsOn && o.dependsOn.length > 0 && o.dependsOn.includes(t.id))) {
-      deps.add(t.id);
-    }
-  });
+  // Virtual conceptual milestones (not in plan, but represent logical states)
+  const virtualNodes = [
+    { id: '_arrival', name: '✈️ Прибытие в Сербию', desc: 'Перелёт, заселение, первые шаги' },
+    { id: '_legal', name: '📋 Легализация', desc: 'Белый картон получен, можно оформлять документы' },
+  ];
+  virtualNodes.forEach(v => { taskMap[v.id] = v; });
 
-  // Build adjacency: for each task, find its children
+  // Build full dependency graph (real + virtual)
+  const graphDeps = {};
+  // Real deps from masterTimeline
+  tasks.forEach(t => { if (t.dependsOn) graphDeps[t.id] = [...t.dependsOn]; });
+  // Virtual connections: arrival needs flight + airbnb
+  graphDeps['_arrival'] = ['m1_flight', 'm1_airbnb'];
+  graphDeps['_legal'] = ['reg'];
+  // reg needs arrival (you must be in Serbia to get white card)
+  graphDeps['reg'] = ['_arrival'];
+  // sim needs arrival
+  graphDeps['sim'] = ['_arrival'];
+  // m1_insurance needs legal status
+  graphDeps['m1_insurance'] = ['_legal'];
+
+  // All tasks in graph
+  const deps = new Set();
+  Object.keys(graphDeps).forEach(id => { deps.add(id); graphDeps[id].forEach(p => deps.add(p)); });
+
+  // Build children map
   const children = {};
   deps.forEach(id => { children[id] = []; });
   deps.forEach(id => {
-    const t = taskMap[id];
-    if (t && t.dependsOn) t.dependsOn.forEach(p => {
+    (graphDeps[id] || []).forEach(p => {
       if (!children[p]) children[p] = [];
       children[p].push(id);
     });
   });
 
-  // Find roots (tasks with no parents — nothing they depend on)
+  // Find roots
   const roots = [];
   deps.forEach(id => {
-    const t = taskMap[id];
-    if (!t || !t.dependsOn || t.dependsOn.length === 0) roots.push(id);
+    if (!graphDeps[id] || graphDeps[id].length === 0) roots.push(id);
   });
 
   const dpr = window.devicePixelRatio || 1;
@@ -2085,9 +2099,9 @@ function renderSchema() {
   let edgeIdx = 0;
   const critical = ['p10','preduzetnik','bank','m4_pausal'];
   schemaNodes.forEach(node => {
-    const task = taskMap[node.id];
-    if (!task || !task.dependsOn) return;
-    task.dependsOn.forEach(depId => {
+    const parents = graphDeps[node.id];
+    if (!parents) return;
+    parents.forEach(depId => {
       const parent = schemaNodes.find(n => n.id === depId);
       if (!parent) return;
       const x1 = parent.x + parent.w / 2;
@@ -2116,16 +2130,19 @@ function renderSchema() {
 
   // Draw nodes
   schemaNodes.forEach(node => {
+    const isVirtual = node.id.startsWith('_');
     const s = (state.tasks && state.tasks[node.id]) || {};
     const done = s.checked === true;
     const prog = s.progress === true;
-    const depsMet = (taskMap[node.id]?.dependsOn || []).every(dep => {
+    const depsMet = (graphDeps[node.id] || []).every(dep => {
+      if (dep.startsWith('_')) return true;
       const ds = (state.tasks && state.tasks[dep]) || {};
       return ds.checked === true;
     });
 
     let fill, stroke, textColor;
-    if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; textColor = '#1b5e20'; }
+    if (isVirtual) { fill = '#ede7f6'; stroke = '#7e57c2'; textColor = '#4a148c'; }
+    else if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; textColor = '#1b5e20'; }
     else if (prog) { fill = '#fff9c4'; stroke = '#f9a825'; textColor = '#f57f17'; }
     else if (!depsMet) { fill = '#eceff1'; stroke = '#90a4ae'; textColor = '#90a4ae'; }
     else { fill = '#e3f2fd'; stroke = '#1565c0'; textColor = '#0d47a1'; }
@@ -2167,14 +2184,15 @@ if (!window._schemaClickSetup) {
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
   const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-  if (!node) return;
+  if (!node || node.id.startsWith('_')) return;
   
   const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
   if (!task) return;
   
   const st = getPlanState() || { tasks: {} };
   const s = (st.tasks && st.tasks[node.id]) || {};
-  const depsMet = (task.dependsOn || []).every(dep => {
+  const depsMet = (graphDeps[node.id] || []).every(dep => {
+    if (dep.startsWith('_')) return true;
     const ds = (st.tasks && st.tasks[dep]) || {};
     return ds.checked === true;
   });
