@@ -1088,7 +1088,7 @@ const masterTimeline = [
         tip: "<p><b>Где делать:</b> Регистрация бизнеса осуществляется государственным органом — <a href='https://www.apr.gov.rs' target='_blank' rel='noopener noreferrer'>Агентством по хозяйственным регистрам (APR)</a>. Можно подать документы лично в главном офисе APR в Белграде (ул. Brankova 25) или подать онлайн при наличии сербской электронной подписи.</p><p><b>Пошаговый процесс:</b></p><p>1. Выберите код деятельности (шифра делатности). Для IT-разработчиков стандартным является код <b>62.01</b> (Računarsko programiranje).</p><p>2. Заполните заявление установленного образца (Registraciona prijava osnivanja preduzetnika).</p><p>3. Оплатите государственную пошлину в размере 2 500 RSD по реквизитам APR в кассе почты.</p><p>4. Сдайте документы лично. Решение о регистрации (Rešenje) выдается в течение 3–5 рабочих дней. Решение нужно будет лично забрать в APR в бумажном виде с синей печатью.</p>" 
       },
       { 
-        id: "m3_office", 
+        id: "m3_office",dependsOn:["preduzetnik"], 
         name: "Виртуальный офис для ИП (на год)", 
         cost: 185, 
         currency: "EUR", 
@@ -1112,7 +1112,7 @@ const masterTimeline = [
         tip: "<p><b>Зачем это банку:</b> Служба комплаенса любого сербского банка обязана осуществлять жесткую проверку происхождения денежных средств иностранных граждан. Требования к проверке регулируются директивами <a href='https://www.nbs.rs' target='_blank' rel='noopener noreferrer'>Народного банка Сербии (NBS)</a>.</p><p><b>Что подготовить:</b> Предоставьте налоговые справки 2-НДФЛ или декларации 3-НДФЛ из РФ за последние 1-2 года, подтверждающие, что вы официально зарабатывали деньги и платили налоги в РФ. Дополнительно закажите выписку по личному российскому банковскому счету за последние 6 месяцев с движением средств (желательно сразу на английском языке).</p>" 
       },
       { 
-        id: "m3_lawyer", 
+        id: "m3_lawyer",dependsOn:["preduzetnik"], 
         name: "Услуги юриста (банк, комплаенс, смена ВНЖ)", 
         cost: 200, 
         currency: "EUR", 
@@ -1151,7 +1151,7 @@ const masterTimeline = [
         tip: "<p><b>Правила и сроки:</b> Если вы выбрали упрощенную систему налогообложения (Paušal), вы обязаны ежемесячно уплачивать фиксированную сумму налогов и социальных взносов. Налоги рассчитываются автоматически и выставляются в налоговом решении (Rešenje) от <a href='https://www.purs.gov.rs' target='_blank' rel='noopener noreferrer'>Налогового управления Сербии (Poreska uprava)</a>.</p><p><b>⚠️ Срок оплаты:</b> Налоги должны уплачиваться строго до 15-го числа каждого текущего месяца за предыдущий месяц. Квитанции формируются в вашем налоговом кабинете. Не допускайте просрочек — пени начисляются автоматически с первого дня просрочки, а систематическая неуплата может повлечь блокировку счетов и аннулирование ВНЖ.</p>" 
       },
       { 
-        id: "state_health_insurance", 
+        id: "state_health_insurance",dependsOn:["m4_pausal"], 
         name: "Оформление гос. медстраховки (здравственная книжица)", 
         cost: 0, 
         currency: "EUR", 
@@ -2070,7 +2070,7 @@ function renderSchema() {
     });
   }
 
-  // Draw edges: Bezier from bottom of parent to top of child
+  // Draw edges: straight down from parent, horizontal if offset, down to child
   const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
   let edgeIdx = 0;
   const critical = ['p10','preduzetnik','bank','m4_pausal'];
@@ -2088,11 +2088,14 @@ function renderSchema() {
       const color = isCritical ? '#e91e63' : edgeColors[edgeIdx % edgeColors.length];
       if (!isCritical) edgeIdx++;
 
+      const my = (y1 + y2) / 2;
       ctx.strokeStyle = color;
       ctx.lineWidth = isCritical ? 2.8 : 1.8;
       ctx.beginPath();
       ctx.moveTo(x1, y1);
-      ctx.bezierCurveTo(x1, (y1 + y2) / 2, x2, (y1 + y2) / 2, x2, y2);
+      ctx.lineTo(x1, my);
+      ctx.lineTo(x2, my);
+      ctx.lineTo(x2, y2);
       ctx.stroke();
 
       ctx.fillStyle = color;
