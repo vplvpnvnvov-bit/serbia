@@ -2070,33 +2070,36 @@ function renderSchema() {
     });
   }
 
-  // Draw edges
+  // Draw edges as Bezier curves
+  const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
+  let edgeIdx = 0;
+  const critical = ['p10','preduzetnik','bank','m4_pausal'];
   schemaNodes.forEach(node => {
     const task = taskMap[node.id];
     if (!task || !task.dependsOn) return;
     task.dependsOn.forEach(depId => {
       const parent = schemaNodes.find(n => n.id === depId);
       if (!parent) return;
-      const fromX = parent.x + parent.w;
-      const fromY = parent.y + parent.h / 2;
-      const toX = node.x;
-      const toY = node.y + node.h / 2;
-      schemaEdges.push({ from: depId, to: node.id, x1: fromX, y1: fromY, x2: toX, y2: toY });
-      ctx.strokeStyle = '#90a4ae';
-      ctx.lineWidth = 1.5;
+      const x1 = parent.x + parent.w;
+      const y1 = parent.y + parent.h / 2;
+      const x2 = node.x;
+      const y2 = node.y + node.h / 2;
+      const isCritical = critical.includes(node.id) && critical.includes(depId);
+      const color = isCritical ? '#e91e63' : edgeColors[edgeIdx % edgeColors.length];
+      if (!isCritical) edgeIdx++;
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = isCritical ? 2.8 : 1.8;
       ctx.beginPath();
-      ctx.moveTo(fromX, fromY);
-      const mx = (fromX + toX) / 2;
-      ctx.lineTo(mx, fromY);
-      ctx.lineTo(mx, toY);
-      ctx.lineTo(toX, toY);
+      ctx.moveTo(x1, y1);
+      ctx.bezierCurveTo((x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2);
       ctx.stroke();
-      // Arrowhead
-      ctx.fillStyle = '#90a4ae';
+
+      ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.moveTo(toX, toY);
-      ctx.lineTo(toX - 6, toY - 4);
-      ctx.lineTo(toX - 6, toY + 4);
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 6, y2 - 4);
+      ctx.lineTo(x2 - 6, y2 + 4);
       ctx.fill();
     });
   });
