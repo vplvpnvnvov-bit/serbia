@@ -2144,28 +2144,50 @@ function renderSchema() {
     }
   });
 
-  // Dino at current position — animated
+  // Pixel-art Dino (Chrome style) at current position
   const dp = trail[dinoIdx];
-  const frame = Math.floor(Date.now() / 200) % 4;
-  const legOff = [0, 3, 0, -3][frame];
-  const bob = [0, -2, 0, -2][frame];
-  ctx.fillStyle = '#4e342e';
+  const frame = Math.floor(Date.now() / 200) % 2;
+  const legL = frame === 0 ? 4 : 7;
+  const legR = frame === 0 ? 7 : 4;
+  const bob = frame === 0 ? 0 : -2;
+  const dX = dp.x - 18, dY = dp.y - 30 + bob;
+  const px = 3; // pixel size
+
+  function pixel(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(dX + x * px, dY + y * px, w * px, h * px);
+  }
   // Body
-  ctx.beginPath(); ctx.ellipse(dp.x, dp.y - 10 + bob, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+  pixel(4, 3, 6, 4, '#535353');
+  pixel(5, 2, 4, 1, '#535353');
+  pixel(6, 1, 2, 1, '#535353');
   // Head
-  ctx.fillRect(dp.x + 7, dp.y - 18 + bob, 9, 9);
+  pixel(10, 1, 4, 2, '#535353');
+  pixel(11, 3, 3, 1, '#535353');
   // Eye
-  ctx.fillStyle = '#fff'; ctx.fillRect(dp.x + 12, dp.y - 16 + bob, 3, 3);
-  ctx.fillStyle = '#000'; ctx.fillRect(dp.x + 13, dp.y - 15 + bob, 1, 1);
-  // Spike
-  ctx.fillStyle = '#6d4c41'; ctx.fillRect(dp.x + 1, dp.y - 20 + bob, 2, 4);
-  // Animated legs
-  ctx.fillStyle = '#4e342e';
-  ctx.fillRect(dp.x - 5, dp.y - 3, 3, 6 + legOff);     // back leg
-  ctx.fillRect(dp.x + 3, dp.y - 3, 3, 6 - legOff);     // front leg
+  pixel(12, 2, 1, 1, '#ffffff');
+  // Mouth
+  pixel(13, 3, 1, 1, '#535353');
+  // Tail
+  pixel(1, 5, 4, 1, '#535353');
+  pixel(2, 6, 2, 1, '#535353');
+  // Spikes
+  pixel(7, 0, 1, 1, '#535353');
+  pixel(8, 0, 1, 2, '#535353');
+  pixel(4, 1, 1, 1, '#535353');
+  pixel(3, 1, 1, 1, '#535353');
+  // Legs
+  pixel(5, 7, 1, legL, '#535353');
+  pixel(8, 7, 1, legR, '#535353');
+  // Feet
+  pixel(4, 7 + legL, 3, 1, '#535353');
+  pixel(7, 7 + legR, 3, 1, '#535353');
+  // Arm
+  pixel(10, 4, 1, 2, '#535353');
+
   // Label
   ctx.fillStyle = '#3e2723'; ctx.font = 'bold 9px serif'; ctx.textAlign = 'center';
-  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 28);
+  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 32);
 
   // Start animation loop when tab is open
   if (!window._schemaAnimating) {
