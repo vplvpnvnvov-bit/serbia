@@ -2057,20 +2057,56 @@ function renderSchema() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, totalW, totalH);
 
-  // Layout: levels top→bottom, same-level nodes centered left→right
+  // Layout: levels top→bottom, nodes sorted to minimize edge crossings
   schemaNodes = [];
+
+  // First pass: create nodes with naive positions
   for (let col = 0; col <= maxCol; col++) {
     const ids = cols[col] || [];
-    const rowW = ids.length * (NODE_W + PAD_X) - PAD_X;
-    const offsetX = Math.max(10, (totalW - rowW) / 2);
     ids.forEach((id, row) => {
-      const x = offsetX + row * (NODE_W + PAD_X);
+      const x = 10 + row * (NODE_W + PAD_X);
       const y = col * (NODE_H + PAD_Y) + 10;
       schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
     });
   }
 
-  // Draw edges: straight down from parent, horizontal if offset, down to child
+  // Barycenter heuristic: reorder nodes within each level
+  for (let iter = 0; iter < 4; iter++) {
+    for (let col = 0; col <= maxCol; col++) {
+      const levelNodes = schemaNodes.filter(n => Math.abs(n.y - (col * (NODE_H + PAD_Y) + 10)) < 5);
+      levelNodes.forEach(node => {
+        const task = taskMap[node.id];
+        if (!task) return;
+        // Get average X of parents (from previous level)
+        let parentX = 0, pCount = 0;
+        if (task.dependsOn) {
+          task.dependsOn.forEach(depId => {
+            const p = schemaNodes.find(n => n.id === depId);
+            if (p) { parentX += p.x + p.w / 2; pCount++; }
+          });
+        }
+        // Get average X of children (from next level)
+        let childX = 0, cCount = 0;
+        schemaNodes.forEach(n => {
+          const t = taskMap[n.id];
+          if (t && t.dependsOn && t.dependsOn.includes(node.id)) {
+            childX += n.x + n.w / 2; cCount++;
+          }
+        });
+        const ideal = pCount + cCount > 0 ? (parentX + childX) / (pCount + cCount) : node.x + node.w / 2;
+        node._ideal = ideal;
+      });
+      // Sort levelNodes by ideal position and reassign X
+      levelNodes.sort((a, b) => (a._ideal || a.x) - (b._ideal || b.x));
+      const rowW = levelNodes.length * (NODE_W + PAD_X) - PAD_X;
+      const offsetX = Math.max(10, (totalW - rowW) / 2);
+      levelNodes.forEach((node, i) => {
+        node.x = offsetX + i * (NODE_W + PAD_X);
+      });
+    }
+  }
+
+  // Draw edges: Bezier from bottom of parent to top of child
   const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
   let edgeIdx = 0;
   const critical = ['p10','preduzetnik','bank','m4_pausal'];
@@ -2088,14 +2124,11 @@ function renderSchema() {
       const color = isCritical ? '#e91e63' : edgeColors[edgeIdx % edgeColors.length];
       if (!isCritical) edgeIdx++;
 
-      const my = (y1 + y2) / 2;
       ctx.strokeStyle = color;
       ctx.lineWidth = isCritical ? 2.8 : 1.8;
       ctx.beginPath();
       ctx.moveTo(x1, y1);
-      ctx.lineTo(x1, my);
-      ctx.lineTo(x2, my);
-      ctx.lineTo(x2, y2);
+      ctx.bezierCurveTo(x1, (y1 + y2) / 2, x2, (y1 + y2) / 2, x2, y2);
       ctx.stroke();
 
       ctx.fillStyle = color;
