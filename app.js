@@ -1209,42 +1209,48 @@ if ('serviceWorker' in navigator) {
 
 // Функция мягкого уведомления пользователя об обновлении
 function showUpdateNotification(worker) {
-  const userAccepted = confirm('Доступна новая версия приложения! Обновить сейчас?');
-  if (userAccepted) {
-    if (worker) {
-      worker.postMessage({ action: 'skipWaiting' });
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
+  setTimeout(() => {
+    const userAccepted = confirm('Доступна новая версия приложения с улучшениями! Обновить сейчас?');
+    if (userAccepted) {
+      if (worker) {
+        worker.postMessage({ action: 'skipWaiting' });
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
         window.location.reload();
-      });
-      setTimeout(() => window.location.reload(), 2000);
-    } else {
-      window.location.reload();
+      }
     }
-  }
+  }, 800);
 }
 
 // 2. Обработчик кнопки ручной проверки обновлений
 const updateBtn = document.getElementById('btn-check-app-update');
 if (updateBtn) {
-  let checking = false;
   updateBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    if (checking) return;
-    checking = true;
     updateBtn.disabled = true;
-    updateBtn.textContent = '🔍 Проверяю...';
+    updateBtn.innerHTML = '🔍 Проверяю сервер...';
 
     try {
       const reg = await navigator.serviceWorker.ready;
-      reg.update().catch(() => {});
+      await reg.update();
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      if (!reg.installing && !reg.waiting) {
+        updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
+      } else {
+        updateBtn.innerHTML = '🚀 Найдено обновление! Устанавливаю...';
+      }
     } catch (err) {
-      // ignore
+      console.error('Ошибка при ручной проверке обновлений:', err);
+      updateBtn.innerHTML = '❌ Ошибка проверки';
     } finally {
       setTimeout(() => {
         updateBtn.disabled = false;
-        updateBtn.textContent = '🔄 Проверить обновления';
-        checking = false;
-      }, 2000);
+        updateBtn.innerHTML = '🔄 Проверить обновления';
+      }, 3000);
     }
   });
 }
