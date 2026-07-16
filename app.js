@@ -2171,23 +2171,18 @@ function renderSchema() {
     }
   });
 
-  // Pixel-art Bird — rotated toward next task
+  // Pixel-art Bird
   const prevN = dinoIdx > 0 ? nodes[dinoIdx - 1] : nodes[0];
   const nextN = nodes[dinoIdx];
   const dp = { x: (prevN.x + nextN.x) / 2, y: (prevN.y + nextN.y) / 2 };
-  const angle = Math.atan2(nextN.y - prevN.y, nextN.x - prevN.x) + Math.PI;
   const frame = Math.floor(Date.now() / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
-
-  ctx.save();
-  ctx.translate(dp.x, dp.y + bob);
-  ctx.rotate(angle);
-  ctx.translate(-16, -32);
+  const dX = dp.x - 16, dY = dp.y - 32 + bob;
 
   function px(x, y, w, h, c) {
     ctx.fillStyle = c;
-    ctx.fillRect(x * PX, y * PX, w * PX, h * PX);
+    ctx.fillRect(dX + x * PX, dY + y * PX, w * PX, h * PX);
   }
   // Body — round
   px(4, 4, 5, 4, '#1565c0');
@@ -2219,7 +2214,6 @@ function renderSchema() {
   // Legs
   px(6, 9, 1, 2, '#ff8f00');
   px(8, 9, 1, 2, '#ff8f00');
-  ctx.restore();
 
   // Start animation loop when tab is open
   if (!window._schemaAnimating) {
