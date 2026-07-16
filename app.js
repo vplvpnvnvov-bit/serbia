@@ -1994,7 +1994,7 @@ function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
-  const CW = 600, CH = 1400;
+  const CW = 600, CH = 1400, PX = 3; // PX = pixel size for retro art
   canvas.style.width = CW + 'px';
   canvas.style.height = CH + 'px';
   canvas.width = CW * dpr;
@@ -2138,12 +2138,11 @@ function renderSchema() {
     if (i === dinoIdx) { ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 12; }
 
     // Wooden post — two vertical planks
-    const P = PX; // reuse bird pixel size
     ctx.fillStyle = '#6d4c41';
-    ctx.fillRect(sx - P, poy + ph * P, P * 2, 6 * P);
+    ctx.fillRect(sx - PX, poy + ph * PX, PX * 2, 6 * PX);
     ctx.fillStyle = '#5d4037';
-    ctx.fillRect(sx - P + 1, poy + ph * P, 1, 5 * P);
-    ctx.fillRect(sx + 1, poy + ph * P, 1, 5 * P);
+    ctx.fillRect(sx - PX + 1, poy + ph * PX, 1, 5 * PX);
+    ctx.fillRect(sx + 1, poy + ph * PX, 1, 5 * PX);
 
     // Plank board — pixel-style rectangle with nail details
     ctx.fillStyle = bg;
@@ -2182,7 +2181,6 @@ function renderSchema() {
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
   const dX = dp.x - 16, dY = dp.y - 32 + bob;
-  const PX = 3;
 
   function px(x, y, w, h, c) {
     ctx.fillStyle = c;
