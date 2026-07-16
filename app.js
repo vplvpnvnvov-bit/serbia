@@ -2146,18 +2146,18 @@ function renderSchema() {
 
     // Plank board — pixel-style rectangle with nail details
     ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * P, ph * P); // main board
+    ctx.fillRect(pox, poy, pw * PX, ph * PX);
     ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * P, P);               // top edge
-    ctx.fillRect(pox, poy + (ph-1) * P, pw * P, P);  // bottom edge
-    ctx.fillRect(pox, poy, P, ph * P);               // left edge
-    ctx.fillRect(pox + (pw-1) * P, poy, P, ph * P);  // right edge
+    ctx.fillRect(pox, poy, pw * PX, PX);
+    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
+    ctx.fillRect(pox, poy, PX, ph * PX);
+    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
     // Nails
     ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + P, poy + P, 2, 2);
-    ctx.fillRect(pox + (pw-2) * P, poy + P, 2, 2);
-    ctx.fillRect(pox + P, poy + (ph-2) * P, 2, 2);
-    ctx.fillRect(pox + (pw-2) * P, poy + (ph-2) * P, 2, 2);
+    ctx.fillRect(pox + PX, poy + PX, 2, 2);
+    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
+    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
+    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
 
     if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
 
@@ -2165,13 +2165,13 @@ function renderSchema() {
     ctx.fillStyle = tc;
     ctx.font = 'bold 9px monospace';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.t, sx, poy + (ph * P) / 2);
+    ctx.fillText(item.t, sx, poy + (ph * PX) / 2);
 
     // Status icon
     if (!item.v) {
       ctx.font = '12px serif';
       const icon = done ? '✓' : prog ? '●' : '○';
-      ctx.fillText(icon, sx, poy + ph * P + 16);
+      ctx.fillText(icon, sx, poy + ph * PX + 16);
     }
   });
 
