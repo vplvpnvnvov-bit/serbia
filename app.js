@@ -2034,11 +2034,6 @@ function renderSchema() {
   ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(cx, cy0 + 1, 16, 0, Math.PI*2); ctx.stroke();
 
-  // Title
-  ctx.fillStyle = '#3e2723';
-  ctx.font = 'bold 16px serif'; ctx.textAlign = 'center';
-  ctx.fillText('🗺️ Карта релокации: путь к ВНЖ', CW / 2, 30);
-
   // Milestones along a winding trail
   const items = [
     {id:'_rf',  t:'🇷🇺 Сбор документов', v:true},
