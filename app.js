@@ -787,7 +787,7 @@ const masterTimeline = [
     focus: "Сбор документов, которые невозможно получить за границей, подготовка здоровья и аптечки",
     tasks: [
       { 
-        id: "p10",dependsOn:[], 
+        id: "p10", 
         name: "Загранпаспорт мужа (10 лет)", 
         cost: 6000, 
         currency: "RUB", 
@@ -817,7 +817,7 @@ const masterTimeline = [
         expires: 60 
       },
       { 
-        id: "stamp",dependsOn:[], 
+        id: "stamp", 
         name: "Штамп о гражданстве РФ на свидетельство о рождении", 
         cost: 0, 
         currency: "RUB", 
@@ -926,7 +926,7 @@ const masterTimeline = [
         tip: "<p>Бронируйте апартаменты на <a href='https://www.airbnb.com' target='_blank' rel='noopener noreferrer'>Airbnb</a> на срок от 28–30 дней — это автоматически активирует долгосрочные скидки сервиса (до 40-50%).</p><p><b>⚠️ Самое главное условие:</b> До совершения оплаты напишите владельцу квартиры в чате: <i>'Da li možete da nam uradite beli karton u policiji u roku od 24 sata?'</i> (Можете ли вы оформить нам белый картон в полиции в течение 24 часов?). Если хост сомневается, отказывается или предлагает вам сделать это самостоятельно — отменяйте бронь. Без белого картона вы будете находиться в Сербии нелегально.</p>" 
       },
       { 
-        id: "reg",dependsOn:[], 
+        id: "reg", 
         name: "Белый картон (Beli karton) — регистрация", 
         cost: 0, 
         currency: "EUR", 
@@ -943,7 +943,7 @@ const masterTimeline = [
         tip: "<p><b>Где купить:</b> Зайдите в любой сетевой газетный киоск (Moj Kiosk) или фирменный салон оператора. Попросите prepaid-карту (на сербском: 'pripejd kartica'). Паспорт для покупки предоплаченного пакета не требуется.</p><p><b>Какого оператора выбрать:</b> Основные игроки — Yettel, A1 и mts. Для быстрого старта рекомендуем туристические пакеты от <a href='https://www.yettel.rs' target='_blank' rel='noopener noreferrer'>Yettel</a> (например, 15–50 ГБ интернета на 15–30 дней за ~600-1000 RSD). Покрытие в Белграде у всех операторов отличное. После получения ВНЖ вы сможете переоформить эту карту на выгодный контракт (postpaid).</p>" 
       },
       { 
-        id: "m1_translate",dependsOn:[], 
+        id: "m1_translate", 
         name: "Судебные переводы документов", 
         cost: 200, 
         currency: "EUR", 
@@ -951,7 +951,7 @@ const masterTimeline = [
         tip: "<p><b>Как это работает:</b> В Сербии государственные органы принимают переводы только от сертифицированных судебных переводчиков (<b>sudski tumač</b>), назначенных судом. Российские нотариальные переводы не имеют юридической силы на территории Сербии. Сверить список активных судебных переводчиков с русского на сербский язык можно на официальном сайте <a href='https://www.mpravde.gov.rs' target='_blank' rel='noopener noreferrer'>Министерства юстиции Сербии</a>.</p><p><b>Что переводить в первую очередь:</b> Диплом о высшем образовании (с приложением оценок), свидетельство о браке, свидетельство о рождении ребенка, справку о несудимости.</p>" 
       },
       { 
-        id: "talent_nostrification",dependsOn:["reg","m1_translate"], 
+        id: "talent_nostrification",dependsOn:["m1_translate"], 
         name: "Нострификация диплома онлайн", 
         cost: 64, 
         currency: "EUR", 
@@ -959,7 +959,7 @@ const masterTimeline = [
         tip: "<p><b>Куда подавать:</b> Заявление на профессиональное признание высшего образования (nostrifikacija) подается в электронном виде на портале <a href='https://azk.gov.rs/' target='_blank' rel='noopener noreferrer'>Агентства по квалификациям Сербии (AZK)</a>.</p><p><b>Что загрузить:</b> Скан загранпаспорта, оригинал диплома и приложения с оценками, а также их заверенные судебным переводчиком сербские переводы.</p><p><b>Пошлина и сроки:</b> Стоимость государственной таксы составляет 7 500 RSD. Срок рассмотрения по закону — до 60 дней, но для IT-специальностей процедура часто проходит быстрее (за 3–4 недели). Наличие поданной заявки на нострификацию (подтверждается электронной квитанцией и номером дела) уже дает право подавать документы на ВНЖ 'Талант'.</p>" 
       },
       { 
-        id: "m1_insurance",dependsOn:[], 
+        id: "m1_insurance", 
         name: "Медстраховки на 1 год (на троих)", 
         cost: 250, 
         currency: "EUR", 
@@ -2014,99 +2014,80 @@ function renderSchema() {
     }
   });
 
-  // Topological sort to compute levels
-  const levels = {};
-  function getLevel(id, visited) {
-    if (levels[id] !== undefined) return levels[id];
-    if (visited.has(id)) return 0;
-    visited.add(id);
-    const task = taskMap[id];
-    if (!task || !task.dependsOn || task.dependsOn.length === 0) {
-      levels[id] = 0;
-      return 0;
-    }
-    let max = 0;
-    task.dependsOn.forEach(dep => { max = Math.max(max, getLevel(dep, visited) + 1); });
-    levels[id] = max;
-    return max;
-  }
-  deps.forEach(id => getLevel(id, new Set()));
-
-  const cols = {};
-  let maxCol = 0;
+  // Build adjacency: for each task, find its children
+  const children = {};
+  deps.forEach(id => { children[id] = []; });
   deps.forEach(id => {
-    const lvl = levels[id] || 0;
-    if (!cols[lvl]) cols[lvl] = [];
-    cols[lvl].push(id);
-    maxCol = Math.max(maxCol, lvl);
+    const t = taskMap[id];
+    if (t && t.dependsOn) t.dependsOn.forEach(p => {
+      if (!children[p]) children[p] = [];
+      children[p].push(id);
+    });
   });
 
-  // Canvas sizing
-  const dpr = window.devicePixelRatio || 1;
-  const NODE_W = 170, NODE_H = 48, PAD_X = 16, PAD_Y = 40;
-  const maxInRow = Math.max(...Object.values(cols).map(a => a.length), 1);
-  const totalW = maxInRow * (NODE_W + PAD_X) + 20;
-  const totalH = (maxCol + 1) * (NODE_H + PAD_Y) + 20;
+  // Find roots (no parents)
+  const roots = [];
+  deps.forEach(id => {
+    const t = taskMap[id];
+    const hasParent = deps.some(d => {
+      const o = taskMap[d];
+      return o && o.dependsOn && o.dependsOn.includes(id);
+    });
+    if (!hasParent) roots.push(id);
+  });
 
-  canvas.style.width = totalW + 'px';
-  canvas.style.height = totalH + 'px';
-  canvas.width = totalW * dpr;
-  canvas.height = totalH * dpr;
+  // DFS to get chain order
+  const visited = new Set();
+  const chainOrder = [];
+  function dfs(id) {
+    if (visited.has(id)) return;
+    visited.add(id);
+    chainOrder.push(id);
+    (children[id] || []).forEach(dfs);
+  }
+  roots.forEach(dfs);
+
+  const dpr = window.devicePixelRatio || 1;
+  const NODE_W = 170, NODE_H = 48, PAD_X = 24, PAD_Y = 28;
+
+  // Free-form layout: place nodes along their chains
+  schemaNodes = [];
+  let curX = 20, curY = 10;
+  let maxW = 0, maxH = 0;
+  let chainIdx = 0;
+
+  roots.forEach(root => {
+    const chain = [];
+    const q = [root];
+    const inChain = new Set();
+    while (q.length) {
+      const id = q.shift();
+      if (inChain.has(id)) continue;
+      inChain.add(id);
+      chain.push(id);
+      (children[id] || []).forEach(c => q.push(c));
+    }
+    chainIdx++;
+    chain.forEach((id, i) => {
+      const x = curX;
+      const y = curY + i * (NODE_H + PAD_Y);
+      schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
+    });
+    maxW = Math.max(maxW, curX + NODE_W + 20);
+    maxH = Math.max(maxH, curY + chain.length * (NODE_H + PAD_Y) + 10);
+    curX += NODE_W + PAD_X + 30;
+  });
+
+  canvas.style.width = maxW + 'px';
+  canvas.style.height = maxH + 'px';
+  canvas.width = maxW * dpr;
+  canvas.height = maxH * dpr;
 
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, totalW, totalH);
+  ctx.clearRect(0, 0, maxW, maxH);
 
-  // Layout: levels top→bottom, nodes sorted to minimize edge crossings
-  schemaNodes = [];
-
-  // First pass: create nodes with naive positions
-  for (let col = 0; col <= maxCol; col++) {
-    const ids = cols[col] || [];
-    ids.forEach((id, row) => {
-      const x = 10 + row * (NODE_W + PAD_X);
-      const y = col * (NODE_H + PAD_Y) + 10;
-      schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
-    });
-  }
-
-  // Barycenter heuristic: reorder nodes within each level
-  for (let iter = 0; iter < 4; iter++) {
-    for (let col = 0; col <= maxCol; col++) {
-      const levelNodes = schemaNodes.filter(n => Math.abs(n.y - (col * (NODE_H + PAD_Y) + 10)) < 5);
-      levelNodes.forEach(node => {
-        const task = taskMap[node.id];
-        if (!task) return;
-        // Get average X of parents (from previous level)
-        let parentX = 0, pCount = 0;
-        if (task.dependsOn) {
-          task.dependsOn.forEach(depId => {
-            const p = schemaNodes.find(n => n.id === depId);
-            if (p) { parentX += p.x + p.w / 2; pCount++; }
-          });
-        }
-        // Get average X of children (from next level)
-        let childX = 0, cCount = 0;
-        schemaNodes.forEach(n => {
-          const t = taskMap[n.id];
-          if (t && t.dependsOn && t.dependsOn.includes(node.id)) {
-            childX += n.x + n.w / 2; cCount++;
-          }
-        });
-        const ideal = pCount + cCount > 0 ? (parentX + childX) / (pCount + cCount) : node.x + node.w / 2;
-        node._ideal = ideal;
-      });
-      // Sort levelNodes by ideal position and reassign X
-      levelNodes.sort((a, b) => (a._ideal || a.x) - (b._ideal || b.x));
-      const rowW = levelNodes.length * (NODE_W + PAD_X) - PAD_X;
-      const offsetX = Math.max(10, (totalW - rowW) / 2);
-      levelNodes.forEach((node, i) => {
-        node.x = offsetX + i * (NODE_W + PAD_X);
-      });
-    }
-  }
-
-  // Draw edges: Bezier from bottom of parent to top of child
+  // Draw edges: Bezier curves
   const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
   let edgeIdx = 0;
   const critical = ['p10','preduzetnik','bank','m4_pausal'];
