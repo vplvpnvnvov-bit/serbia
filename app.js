@@ -1210,7 +1210,7 @@ if ('serviceWorker' in navigator) {
 // Функция мягкого уведомления пользователя об обновлении
 function showUpdateNotification(worker) {
   setTimeout(() => {
-    const userAccepted = confirm('Доступна новая версия приложения с улучшениями! Обновить сейчас?');
+    const userAccepted = confirm('Доступна новая версия приложения! Обновить сейчас?');
     if (userAccepted) {
       if (worker) {
         worker.postMessage({ action: 'skipWaiting' });
@@ -1222,7 +1222,7 @@ function showUpdateNotification(worker) {
         window.location.reload();
       }
     }
-  }, 800);
+  }, 200);
 }
 
 // 2. Обработчик кнопки ручной проверки обновлений
@@ -1240,8 +1240,6 @@ if (updateBtn) {
     try {
       const reg = await navigator.serviceWorker.ready;
       await reg.update();
-      await new Promise(resolve => setTimeout(resolve, 800));
-
       if (!reg.installing && !reg.waiting) {
         updateBtn.textContent = '✨ Актуальная версия';
       } else {
