@@ -2110,20 +2110,10 @@ function renderSchema() {
     ctx.arc(nodes[i].x, nodes[i].y, 5, 0, Math.PI * 2); ctx.fill();
   }
 
-  // Draw milestone signs — offset from nodes, alternating sides
+  // Draw milestone signs — on the trail
   items.forEach((item, i) => {
     const p = nodes[i];
-    // Perpendicular offset from trail direction
-    let dx = 0, dy = 0;
-    if (i < n - 1) { dx = nodes[i+1].x - p.x; dy = nodes[i+1].y - p.y; }
-    else { dx = p.x - nodes[i-1].x; dy = p.y - nodes[i-1].y; }
-    const len = Math.sqrt(dx*dx + dy*dy) || 1;
-    const perpX = -dy / len, perpY = dx / len;
-    const side = i % 2 === 0 ? 1 : -1; // alternate sides
-    const offset = 55;
-
-    const sx = p.x + perpX * offset * side;
-    const sy = p.y + perpY * offset * side;
+    const sx = p.x, sy = p.y;
 
     const s = state.tasks?.[item.id] || {};
     const done = s.checked, prog = s.progress;
@@ -2139,11 +2129,6 @@ function renderSchema() {
     const ph = 10; // plank height in pixels
     const pox = sx - (pw * PX) / 2; // plank origin X
     const poy = sy - ph * PX - 6 * PX; // plank origin Y
-
-    // Dashed line from trail to sign
-    ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
-    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(sx, sy); ctx.stroke();
-    ctx.setLineDash([]);
 
     // Neon glow on current
     if (i === dinoIdx) { ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 12; }
