@@ -2050,7 +2050,8 @@ function renderSchema() {
   schemaNodes = [];
 
   // Position main chain vertically, starting after RF branch space
-  const TOP_OFFSET = 60; // space for RF branch above
+  const mainIds = nodes.filter(n => n.main).map(n => n.id);
+  const TOP_OFFSET = 60;
   const rfRootIdx = mainIds.indexOf('_rf_done');
   const mainY0 = TOP_OFFSET + NH + PAD_Y + MH + PAD_Y; // space for RF kids + p5d row + gateway
 
