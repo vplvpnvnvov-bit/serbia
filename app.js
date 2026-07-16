@@ -787,7 +787,7 @@ const masterTimeline = [
     focus: "Сбор документов, которые невозможно получить за границей, подготовка здоровья и аптечки",
     tasks: [
       { 
-        id: "p10", 
+        id: "p10",dependsOn:[], 
         name: "Загранпаспорт мужа (10 лет)", 
         cost: 6000, 
         currency: "RUB", 
@@ -807,7 +807,7 @@ const masterTimeline = [
         expires: 120 
       },
       { 
-        id: "p5d", 
+        id: "p5d",dependsOn:["stamp"], 
         name: "Загранпаспорт ребёнка (5 лет)", 
         cost: 1000, 
         currency: "RUB", 
@@ -817,7 +817,7 @@ const masterTimeline = [
         expires: 60 
       },
       { 
-        id: "stamp", 
+        id: "stamp",dependsOn:[], 
         name: "Штамп о гражданстве РФ на свидетельство о рождении", 
         cost: 0, 
         currency: "RUB", 
@@ -926,7 +926,7 @@ const masterTimeline = [
         tip: "<p>Бронируйте апартаменты на <a href='https://www.airbnb.com' target='_blank' rel='noopener noreferrer'>Airbnb</a> на срок от 28–30 дней — это автоматически активирует долгосрочные скидки сервиса (до 40-50%).</p><p><b>⚠️ Самое главное условие:</b> До совершения оплаты напишите владельцу квартиры в чате: <i>'Da li možete da nam uradite beli karton u policiji u roku od 24 sata?'</i> (Можете ли вы оформить нам белый картон в полиции в течение 24 часов?). Если хост сомневается, отказывается или предлагает вам сделать это самостоятельно — отменяйте бронь. Без белого картона вы будете находиться в Сербии нелегально.</p>" 
       },
       { 
-        id: "reg", 
+        id: "reg",dependsOn:[], 
         name: "Белый картон (Beli karton) — регистрация", 
         cost: 0, 
         currency: "EUR", 
@@ -943,7 +943,7 @@ const masterTimeline = [
         tip: "<p><b>Где купить:</b> Зайдите в любой сетевой газетный киоск (Moj Kiosk) или фирменный салон оператора. Попросите prepaid-карту (на сербском: 'pripejd kartica'). Паспорт для покупки предоплаченного пакета не требуется.</p><p><b>Какого оператора выбрать:</b> Основные игроки — Yettel, A1 и mts. Для быстрого старта рекомендуем туристические пакеты от <a href='https://www.yettel.rs' target='_blank' rel='noopener noreferrer'>Yettel</a> (например, 15–50 ГБ интернета на 15–30 дней за ~600-1000 RSD). Покрытие в Белграде у всех операторов отличное. После получения ВНЖ вы сможете переоформить эту карту на выгодный контракт (postpaid).</p>" 
       },
       { 
-        id: "m1_translate", 
+        id: "m1_translate",dependsOn:[], 
         name: "Судебные переводы документов", 
         cost: 200, 
         currency: "EUR", 
@@ -951,7 +951,7 @@ const masterTimeline = [
         tip: "<p><b>Как это работает:</b> В Сербии государственные органы принимают переводы только от сертифицированных судебных переводчиков (<b>sudski tumač</b>), назначенных судом. Российские нотариальные переводы не имеют юридической силы на территории Сербии. Сверить список активных судебных переводчиков с русского на сербский язык можно на официальном сайте <a href='https://www.mpravde.gov.rs' target='_blank' rel='noopener noreferrer'>Министерства юстиции Сербии</a>.</p><p><b>Что переводить в первую очередь:</b> Диплом о высшем образовании (с приложением оценок), свидетельство о браке, свидетельство о рождении ребенка, справку о несудимости.</p>" 
       },
       { 
-        id: "talent_nostrification", 
+        id: "talent_nostrification",dependsOn:["reg","m1_translate"], 
         name: "Нострификация диплома онлайн", 
         cost: 64, 
         currency: "EUR", 
@@ -959,7 +959,7 @@ const masterTimeline = [
         tip: "<p><b>Куда подавать:</b> Заявление на профессиональное признание высшего образования (nostrifikacija) подается в электронном виде на портале <a href='https://azk.gov.rs/' target='_blank' rel='noopener noreferrer'>Агентства по квалификациям Сербии (AZK)</a>.</p><p><b>Что загрузить:</b> Скан загранпаспорта, оригинал диплома и приложения с оценками, а также их заверенные судебным переводчиком сербские переводы.</p><p><b>Пошлина и сроки:</b> Стоимость государственной таксы составляет 7 500 RSD. Срок рассмотрения по закону — до 60 дней, но для IT-специальностей процедура часто проходит быстрее (за 3–4 недели). Наличие поданной заявки на нострификацию (подтверждается электронной квитанцией и номером дела) уже дает право подавать документы на ВНЖ 'Талант'.</p>" 
       },
       { 
-        id: "m1_insurance", 
+        id: "m1_insurance",dependsOn:[], 
         name: "Медстраховки на 1 год (на троих)", 
         cost: 250, 
         currency: "EUR", 
@@ -969,7 +969,7 @@ const masterTimeline = [
         expires: 12 
       },
       { 
-        id: "m1_vnz", 
+        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance"], 
         name: "Пошлины МУП за ВНЖ «Талант» на троих", 
         cost: 600, 
         currency: "EUR", 
@@ -985,7 +985,7 @@ const masterTimeline = [
         tip: "<p><b>Ориентировочные траты на первый месяц для семьи из 3 человек:</b></p><p>— Покупка продуктов в сетевых супермаркетах (Maxi, Idea, Roda, Lidl) или на местных рынках (Zeleni Venac, Kalenić): ~450 €.</p><p>— Проездные билеты на общественный транспорт Белграда (система Beograd Plus, оплата по SMS или через мобильное приложение): ~30 €.</p><p>— Хозяйственные мелочи для временной квартиры (химия, средства гигиены): ~70 €.</p><p>— Мобильный интернет и связь: ~50 €.</p>" 
       },
       { 
-        id: "m1_pediatrician", 
+        id: "m1_pediatrician",dependsOn:["p5d"], 
         name: "Осмотр ребёнка у педиатра для сада", 
         cost: 50, 
         currency: "EUR", 
@@ -1033,7 +1033,7 @@ const masterTimeline = [
         tip: "<p><b>Что входит в счета:</b></p><p>1. <b>Infostan:</b> Единый коммунальный счет за отопление, холодную воду, вывоз мусора и обслуживание дома. Управляется и администрируется компанией <a href='https://www.infostan.rs' target='_blank' rel='noopener noreferrer'>JKP Infostan Tehnologije</a>. Сумма зависит от площади и наличия центрального отопления (в среднем 60–120 €).</p><p>2. <b>Электроэнергия (EPS):</b> Оплачивается по счетчику. Электричество в Сербии дорогое, особенно при переходе в 'красную зону' потребления. Старайтесь включать бойлер и стиральную машину в часы ночного льготного тарифа (с 22:00 до 06:00).</p><p>3. <b>Интернет:</b> Провайдеры SBB, mts или Orion. Стоимость тарифа — около 25–35 € в месяц.</p>" 
       },
       { 
-        id: "m2_kindergarten", 
+        id: "m2_kindergarten",dependsOn:["m1_pediatrician"], 
         name: "Частный детский сад (1-й месяц)", 
         cost: 400, 
         currency: "EUR", 
@@ -1080,7 +1080,7 @@ const masterTimeline = [
         tip: "<p>Расходы семьи на питание, быт и текущие транспортные расходы.</p>" 
       },
       { 
-        id: "preduzetnik", 
+        id: "preduzetnik",dependsOn:["p10"], 
         name: "Регистрация ИП в APR (Предузетник)", 
         cost: 21, 
         currency: "EUR", 
@@ -1096,7 +1096,7 @@ const masterTimeline = [
         tip: "<p><b>Зачем нужен:</b> По закону Сербии при регистрации ИП вы обязаны указать юридический адрес (sedište). Если хозяин вашей квартиры категорически отказывается разрешать регистрацию бизнеса по адресу проживания, вам необходимо арендовать виртуальный офис (virtualna kancelarija).</p><p><b>⚠️ Проверка безопасности:</b> На рынке присутствует множество посредников, предлагающих виртуальные адреса. Чтобы не наткнуться на мошеннические фирмы-'пустышки', обязательно проверяйте юридический статус, ИНН (PIB) и финансовую активность компании-арендодателя через официальный реестр на сайте <a href='https://www.apr.gov.rs' target='_blank' rel='noopener noreferrer'>APR</a>.</p>" 
       },
       { 
-        id: "bank", 
+        id: "bank",dependsOn:["preduzetnik"], 
         name: "Открытие личного и бизнес-счёта в банке", 
         cost: 0, 
         currency: "EUR", 
@@ -1143,7 +1143,7 @@ const masterTimeline = [
         tip: "<p><b>Важный документ:</b> Попросите у руководства вашего детского сада выдать вам официальную справку о регулярном посещении ребенком учреждения (Potvrda o pohađanju vrtića). Этот документ с синей печатью сада может служить весомым доказательством интеграции вашей семьи в сербское общество при рассмотрении инспектором МУП документов на продление вашего ВНЖ на следующий год.</p>" 
       },
       { 
-        id: "m4_pausal", 
+        id: "m4_pausal",dependsOn:["bank"], 
         name: "Первые фиксированные налоги ИП (Паушал)", 
         cost: 350, 
         currency: "EUR", 
@@ -1167,7 +1167,7 @@ const masterTimeline = [
         tip: "<p>Стабильные ежемесячные расходы семьи на продукты, мелкие бытовые нужды и транспортные издержки на четвертом месяце жизни в стране.</p>" 
       },
       { 
-        id: "license", 
+        id: "license",dependsOn:["m1_vnz"], 
         name: "Перевод водительских прав на сербский", 
         cost: 30, 
         currency: "EUR", 
@@ -1989,9 +1989,235 @@ document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
 });
 
+// === SCHEMA TAB ===
+let schemaNodes = [];
+let schemaEdges = [];
+
+function renderSchema() {
+  const canvas = document.getElementById('schema-canvas');
+  if (!canvas) return;
+
+  const state = getPlanState() || { tasks: {} };
+  const tasks = [];
+  const taskMap = {};
+
+  masterTimeline.forEach(m => {
+    m.tasks.forEach(t => { taskMap[t.id] = t; tasks.push(t); });
+  });
+
+  // Find all tasks that are part of dependency chains
+  const deps = new Set();
+  tasks.forEach(t => {
+    if ((t.dependsOn && t.dependsOn.length > 0) ||
+        tasks.some(o => o.dependsOn && o.dependsOn.includes(t.id))) {
+      deps.add(t.id);
+    }
+  });
+
+  // Topological sort to compute levels
+  const levels = {};
+  function getLevel(id, visited) {
+    if (levels[id] !== undefined) return levels[id];
+    if (visited.has(id)) return 0;
+    visited.add(id);
+    const task = taskMap[id];
+    if (!task || !task.dependsOn || task.dependsOn.length === 0) {
+      levels[id] = 0;
+      return 0;
+    }
+    let max = 0;
+    task.dependsOn.forEach(dep => { max = Math.max(max, getLevel(dep, visited) + 1); });
+    levels[id] = max;
+    return max;
+  }
+  deps.forEach(id => getLevel(id, new Set()));
+
+  const cols = {};
+  let maxCol = 0;
+  deps.forEach(id => {
+    const lvl = levels[id] || 0;
+    if (!cols[lvl]) cols[lvl] = [];
+    cols[lvl].push(id);
+    maxCol = Math.max(maxCol, lvl);
+  });
+
+  // Canvas sizing
+  const dpr = window.devicePixelRatio || 1;
+  const NODE_W = 160, NODE_H = 52, PAD_X = 40, PAD_Y = 30;
+  const totalW = (maxCol + 1) * (NODE_W + PAD_X) + 20;
+  const maxRows = Math.max(...Object.values(cols).map(a => a.length));
+  const totalH = maxRows * (NODE_H + PAD_Y) + 20;
+
+  canvas.style.width = totalW + 'px';
+  canvas.style.height = totalH + 'px';
+  canvas.width = totalW * dpr;
+  canvas.height = totalH * dpr;
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, totalW, totalH);
+
+  // Layout positions
+  schemaNodes = [];
+  schemaEdges = [];
+
+  for (let col = 0; col <= maxCol; col++) {
+    const ids = cols[col] || [];
+    ids.forEach((id, row) => {
+      const x = col * (NODE_W + PAD_X) + 10;
+      const y = row * (NODE_H + PAD_Y) + 10;
+      schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
+    });
+  }
+
+  // Draw edges
+  schemaNodes.forEach(node => {
+    const task = taskMap[node.id];
+    if (!task || !task.dependsOn) return;
+    task.dependsOn.forEach(depId => {
+      const parent = schemaNodes.find(n => n.id === depId);
+      if (!parent) return;
+      const fromX = parent.x + parent.w;
+      const fromY = parent.y + parent.h / 2;
+      const toX = node.x;
+      const toY = node.y + node.h / 2;
+      schemaEdges.push({ from: depId, to: node.id, x1: fromX, y1: fromY, x2: toX, y2: toY });
+      ctx.strokeStyle = '#90a4ae';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      const mx = (fromX + toX) / 2;
+      ctx.lineTo(mx, fromY);
+      ctx.lineTo(mx, toY);
+      ctx.lineTo(toX, toY);
+      ctx.stroke();
+      // Arrowhead
+      ctx.fillStyle = '#90a4ae';
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(toX - 6, toY - 4);
+      ctx.lineTo(toX - 6, toY + 4);
+      ctx.fill();
+    });
+  });
+
+  // Draw nodes
+  schemaNodes.forEach(node => {
+    const s = (state.tasks && state.tasks[node.id]) || {};
+    const done = s.checked === true;
+    const prog = s.progress === true;
+    const depsMet = (taskMap[node.id]?.dependsOn || []).every(dep => {
+      const ds = (state.tasks && state.tasks[dep]) || {};
+      return ds.checked === true;
+    });
+
+    let fill, stroke, textColor;
+    if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; textColor = '#1b5e20'; }
+    else if (prog) { fill = '#fff9c4'; stroke = '#f9a825'; textColor = '#f57f17'; }
+    else if (!depsMet) { fill = '#eceff1'; stroke = '#90a4ae'; textColor = '#90a4ae'; }
+    else { fill = '#e3f2fd'; stroke = '#1565c0'; textColor = '#0d47a1'; }
+
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const r = 6;
+    ctx.moveTo(node.x + r, node.y);
+    ctx.lineTo(node.x + node.w - r, node.y);
+    ctx.arcTo(node.x + node.w, node.y, node.x + node.w, node.y + r, r);
+    ctx.lineTo(node.x + node.w, node.y + node.h - r);
+    ctx.arcTo(node.x + node.w, node.y + node.h, node.x + node.w - r, node.y + node.h, r);
+    ctx.lineTo(node.x + r, node.y + node.h);
+    ctx.arcTo(node.x, node.y + node.h, node.x, node.y + node.h - r, r);
+    ctx.lineTo(node.x, node.y + r);
+    ctx.arcTo(node.x, node.y, node.x + r, node.y, r);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold 11px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const name = (taskMap[node.id]?.name || node.id).slice(0, 25);
+    ctx.fillText(name, node.x + node.w / 2, node.y + node.h / 2 - 6);
+    ctx.font = '9px -apple-system, sans-serif';
+    ctx.fillText(done ? '✓ Выполнено' : prog ? '● В процессе' : depsMet ? '▶ Доступно' : '🔒 Заблокировано', node.x + node.w / 2, node.y + node.h / 2 + 11);
+  });
+}
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
+  if (!node) return;
+  
+  const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
+  if (!task) return;
+  
+  const st = getPlanState() || { tasks: {} };
+  const s = (st.tasks && st.tasks[node.id]) || {};
+  const depsMet = (task.dependsOn || []).every(dep => {
+    const ds = (st.tasks && st.tasks[dep]) || {};
+    return ds.checked === true;
+  });
+  if (!depsMet && !s.checked && !s.progress) return;
+
+  let box = document.getElementById('schema-modal');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'schema-modal';
+    box.className = 'schema-modal';
+    box.innerHTML = '<div class="schema-modal-bg"></div><div class="schema-modal-body"><h3 id="sm-title"></h3><p id="sm-desc"></p><div class="sm-actions"><button id="sm-progress">🟡 В процессе</button><button id="sm-done">🟢 Выполнено</button><button id="sm-reset">⚪ Сбросить</button></div><button id="sm-close">✕</button></div>';
+    document.body.appendChild(box);
+  }
+  document.getElementById('sm-title').textContent = task.name;
+  document.getElementById('sm-desc').textContent = task.desc || '';
+
+  const show = () => { box.classList.add('visible'); };
+  const hide = () => { box.classList.remove('visible'); };
+  
+  box.querySelector('.schema-modal-bg').onclick = hide;
+  document.getElementById('sm-close').onclick = hide;
+  document.getElementById('sm-progress').onclick = () => {
+    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+    st.tasks[node.id].progress = true;
+    st.tasks[node.id].checked = false;
+    setPlanState(st);
+    renderSchema();
+    if (window._schemaRenderPlan) window._schemaRenderPlan();
+    hide();
+  };
+  document.getElementById('sm-done').onclick = () => {
+    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+    st.tasks[node.id].checked = true;
+    st.tasks[node.id].progress = false;
+    setPlanState(st);
+    renderSchema();
+    if (window._schemaRenderPlan) window._schemaRenderPlan();
+    hide();
+  };
+  document.getElementById('sm-reset').onclick = () => {
+    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+    st.tasks[node.id].checked = false;
+    st.tasks[node.id].progress = false;
+    setPlanState(st);
+    renderSchema();
+    if (window._schemaRenderPlan) window._schemaRenderPlan();
+    hide();
+  };
+  show();
+});
+
+document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
+  setTimeout(() => { try { renderSchema(); } catch (e) { console.error(e); } }, 100);
+});
+
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
   try { renderPlan(); } catch (e) { console.error(e); }
+  try { renderSchema(); } catch (e) { console.error(e); }
 });
 
 // === Theme toggle ===

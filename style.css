@@ -2101,3 +2101,48 @@ body.dark-theme .carousel-caption {
 .leaflet-interactive:focus {
   outline: none;
 }
+
+/* Schema canvas */
+#schema-canvas {
+  display: block;
+  margin: 10px auto;
+  cursor: pointer;
+  max-width: 100%;
+}
+.schema-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 100000;
+  display: none;
+  align-items: center; justify-content: center;
+}
+.schema-modal.visible { display: flex; }
+.schema-modal-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.schema-modal-body {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 320px; width: 90%;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+body.dark-theme .schema-modal-body { background: #1e1e1e; color: #e3e3e7; }
+#sm-title { font-size: 15px; margin-bottom: 8px; }
+#sm-desc { font-size: 12px; color: #666; margin-bottom: 14px; }
+body.dark-theme #sm-desc { color: #999; }
+.sm-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.sm-actions button {
+  flex: 1; min-width: 80px;
+  padding: 7px 10px; border: none; border-radius: 6px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+#sm-progress { background: #fff9c4; color: #f57f17; }
+#sm-done { background: #c8e6c9; color: #1b5e20; }
+#sm-reset { background: #eee; color: #555; }
+#sm-close {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: #999;
+}
