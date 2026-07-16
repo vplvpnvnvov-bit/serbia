@@ -2171,8 +2171,10 @@ function renderSchema() {
     }
   });
 
-  // Pixel-art Bird (flying to Serbia!) at current position
-  const dp = nodes[dinoIdx];
+  // Pixel-art Bird midway between current and next milestone
+  const curN = nodes[dinoIdx];
+  const nextN = dinoIdx < n - 1 ? nodes[dinoIdx + 1] : curN;
+  const dp = { x: (curN.x + nextN.x) / 2, y: (curN.y + nextN.y) / 2 };
   const frame = Math.floor(Date.now() / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
