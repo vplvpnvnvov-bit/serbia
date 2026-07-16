@@ -926,7 +926,7 @@ const masterTimeline = [
         tip: "<p>Бронируйте апартаменты на <a href='https://www.airbnb.com' target='_blank' rel='noopener noreferrer'>Airbnb</a> на срок от 28–30 дней — это автоматически активирует долгосрочные скидки сервиса (до 40-50%).</p><p><b>⚠️ Самое главное условие:</b> До совершения оплаты напишите владельцу квартиры в чате: <i>'Da li možete da nam uradite beli karton u policiji u roku od 24 sata?'</i> (Можете ли вы оформить нам белый картон в полиции в течение 24 часов?). Если хост сомневается, отказывается или предлагает вам сделать это самостоятельно — отменяйте бронь. Без белого картона вы будете находиться в Сербии нелегально.</p>" 
       },
       { 
-        id: "reg",dependsOn:["m1_airbnb"], 
+        id: "reg", 
         name: "Белый картон (Beli karton) — регистрация", 
         cost: 0, 
         currency: "EUR", 
@@ -943,7 +943,7 @@ const masterTimeline = [
         tip: "<p><b>Где купить:</b> Зайдите в любой сетевой газетный киоск (Moj Kiosk) или фирменный салон оператора. Попросите prepaid-карту (на сербском: 'pripejd kartica'). Паспорт для покупки предоплаченного пакета не требуется.</p><p><b>Какого оператора выбрать:</b> Основные игроки — Yettel, A1 и mts. Для быстрого старта рекомендуем туристические пакеты от <a href='https://www.yettel.rs' target='_blank' rel='noopener noreferrer'>Yettel</a> (например, 15–50 ГБ интернета на 15–30 дней за ~600-1000 RSD). Покрытие в Белграде у всех операторов отличное. После получения ВНЖ вы сможете переоформить эту карту на выгодный контракт (postpaid).</p>" 
       },
       { 
-        id: "m1_translate",dependsOn:["reg"], 
+        id: "m1_translate", 
         name: "Судебные переводы документов", 
         cost: 200, 
         currency: "EUR", 
@@ -951,7 +951,7 @@ const masterTimeline = [
         tip: "<p><b>Как это работает:</b> В Сербии государственные органы принимают переводы только от сертифицированных судебных переводчиков (<b>sudski tumač</b>), назначенных судом. Российские нотариальные переводы не имеют юридической силы на территории Сербии. Сверить список активных судебных переводчиков с русского на сербский язык можно на официальном сайте <a href='https://www.mpravde.gov.rs' target='_blank' rel='noopener noreferrer'>Министерства юстиции Сербии</a>.</p><p><b>Что переводить в первую очередь:</b> Диплом о высшем образовании (с приложением оценок), свидетельство о браке, свидетельство о рождении ребенка, справку о несудимости.</p>" 
       },
       { 
-        id: "talent_nostrification",dependsOn:["m1_translate"], 
+        id: "talent_nostrification", 
         name: "Нострификация диплома онлайн", 
         cost: 64, 
         currency: "EUR", 
@@ -959,7 +959,7 @@ const masterTimeline = [
         tip: "<p><b>Куда подавать:</b> Заявление на профессиональное признание высшего образования (nostrifikacija) подается в электронном виде на портале <a href='https://azk.gov.rs/' target='_blank' rel='noopener noreferrer'>Агентства по квалификациям Сербии (AZK)</a>.</p><p><b>Что загрузить:</b> Скан загранпаспорта, оригинал диплома и приложения с оценками, а также их заверенные судебным переводчиком сербские переводы.</p><p><b>Пошлина и сроки:</b> Стоимость государственной таксы составляет 7 500 RSD. Срок рассмотрения по закону — до 60 дней, но для IT-специальностей процедура часто проходит быстрее (за 3–4 недели). Наличие поданной заявки на нострификацию (подтверждается электронной квитанцией и номером дела) уже дает право подавать документы на ВНЖ 'Талант'.</p>" 
       },
       { 
-        id: "m1_insurance",dependsOn:["reg"], 
+        id: "m1_insurance", 
         name: "Медстраховки на 1 год (на троих)", 
         cost: 250, 
         currency: "EUR", 
@@ -969,7 +969,7 @@ const masterTimeline = [
         expires: 12 
       },
       { 
-        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance","reg"], 
+        id: "m1_vnz", 
         name: "Пошлины МУП за ВНЖ «Талант» на троих", 
         cost: 600, 
         currency: "EUR", 
@@ -1989,255 +1989,92 @@ document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
 });
 
-// === SCHEMA TAB: ВНЖ по Таланту ===
-let schemaNodes = [];
-
+// === SCHEMA TAB ===
 function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.style.width = '500px';
+  canvas.style.height = '900px';
+  canvas.width = 500 * dpr;
+  canvas.height = 900 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const state = getPlanState() || { tasks: {} };
   const taskMap = {};
   masterTimeline.forEach(m => m.tasks.forEach(t => { taskMap[t.id] = t; }));
 
-  // === GRAPH DEFINITION ===
-  // Nodes: { id, name, virtual?, col? (branch index), level? }
-  const nodes = [
-    // Month 0 — РФ (col 0-5, level 0)
-    { id: 'p10',       name: 'Загранпаспорт мужа', col: 0 },
-    { id: 'p5w',       name: 'Загранпаспорт жены', col: 1 },
-    { id: 'stamp',     name: 'Штамп гражданства', col: 2, children: ['p5d'] },
-    { id: 'nocrim_h',  name: 'Справка несудимости (муж)', col: 3 },
-    { id: 'nocrim_w',  name: 'Справка несудимости (жена)', col: 4 },
-    { id: 'apost_marr', name: 'Апостиль на брак', col: 5 },
-    { id: 'apost_birth',name: 'Апостиль на рождение', col: 6 },
-    { id: 'power',     name: 'Доверенность в РФ', col: 7 },
-    { id: 'p5d',       name: 'Загранпаспорт ребёнка', col: 2, level: 1, children: ['m1_pediatrician'] },
-    // Gateway + main chain
-    { id: '_rf_done',  name: '📦 Документы собраны', virtual: true, main: true },
-    { id: 'm1_flight', name: 'Перелёт в Белград', main: true },
-    { id: 'm1_airbnb', name: 'Жильё на Airbnb', main: true },
-    // Serbia steps (col=main)
-    { id: 'reg',       name: 'Белый картон', main: true },
-    { id: 'm1_translate', name: 'Судебные переводы', main: true },
-    { id: 'm1_insurance', name: 'Медстраховка на год', main: true },
-    { id: 'talent_nostrification', name: 'Нострификация диплома', main: true },
-    { id: 'm1_vnz',    name: '🎯 ВНЖ по Таланту', main: true, goal: true },
-    // Virtual milestones
-    { id: '_docs',     name: '📄 Пакет готов', virtual: true, main: true },
+  // Chain: preparation → arrival → legal → VNZ
+  const items = [
+    {id:'_rf',  label:'🇷🇺 Подготовка в РФ',            v:true},
+    {id:'p10',  label:'Загранпаспорт мужа'},
+    {id:'p5w',  label:'Загранпаспорт жены'},
+    {id:'stamp',label:'Штамп гражданства'},
+    {id:'p5d',  label:'Загранпаспорт ребёнка'},
+    {id:'nocrim_h',label:'Справка несудимости (м)'},
+    {id:'nocrim_w',label:'Справка несудимости (ж)'},
+    {id:'apost_marr',label:'Апостиль на брак'},
+    {id:'apost_birth',label:'Апостиль на рождение'},
+    {id:'power', label:'Доверенность'},
+    {id:'_ok',  label:'✅ Документы готовы',            v:true},
+    {id:'m1_flight',label:'Перелёт в Белград'},
+    {id:'m1_airbnb',label:'Жильё на Airbnb'},
+    {id:'reg',  label:'Белый картон'},
+    {id:'m1_translate',label:'Судебные переводы'},
+    {id:'m1_insurance',label:'Медстраховка на год'},
+    {id:'talent_nostrification',label:'Нострификация диплома'},
+    {id:'_ok2', label:'✅ Пакет собран',                v:true},
+    {id:'m1_vnz',label:'🎯 ВНЖ по Таланту',             goal:true},
   ];
 
-  // Build edges: what must be done before each
-  const deps = {};
-  const addDep = (child, ...parents) => { deps[child] = parents; };
-  // Month 0 tasks are independent, all feed into _rf_done
-  addDep('_rf_done', 'p10','p5w','stamp','nocrim_h','nocrim_w','apost_marr','apost_birth','power');
-  addDep('m1_flight', '_rf_done');
-  addDep('m1_airbnb', '_rf_done');
-  addDep('reg', 'm1_airbnb');
-  addDep('m1_translate', 'reg');
-  addDep('m1_insurance', 'reg');
-  addDep('talent_nostrification', 'm1_translate');
-  addDep('_docs', 'talent_nostrification', 'm1_insurance');
-  addDep('m1_vnz', '_docs');
-
-  // Layout
-  const PAD_X = 14, PAD_Y = 24;
-  const NA = 140, NH = 40; // narrow node for RF branch
-  const MA = 200, MH = 46; // main node
-  let maxW = 0, maxH = 0;
-  schemaNodes = [];
-
-  // Position main chain vertically, starting after RF branch space
-  const mainIds = nodes.filter(n => n.main).map(n => n.id);
-  const TOP_OFFSET = 60;
-  const rfRootIdx = mainIds.indexOf('_rf_done');
-  const mainY0 = TOP_OFFSET + NH + PAD_Y + MH + PAD_Y; // space for RF kids + p5d row + gateway
-
-  mainIds.forEach((id, i) => {
-    if (id === '_rf_done') return;
-    const s = nodes.find(n => n.id === id);
-    const x = 80, y = mainY0 + i * (MH + PAD_Y);
-    schemaNodes.push({ id, x, y, w: MA, h: MH, virtual: s.virtual, goal: s.goal, name: s.name });
-    maxW = Math.max(maxW, x + MA + 20);
-    maxH = Math.max(maxH, y + MH + 20);
-  });
-
-  // RF branch: spread above _rf_done
-  const rfGateY = TOP_OFFSET + NH + PAD_Y; // where _rf_done sits
-  const rfKids = nodes.filter(n => n.col !== undefined && !n.level);
-  const rfSpan = rfKids.length * (NA + PAD_X) - PAD_X;
-  const rfStartX = 80 + (MA - rfSpan) / 2;
-
-  rfKids.forEach((s, i) => {
-    const x = rfStartX + i * (NA + PAD_X);
-    const y = TOP_OFFSET;
-    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, name: s.name });
-    maxW = Math.max(maxW, x + NA + 20);
-  });
-
-  // Second row: p5d
-  nodes.filter(n => n.level === 1).forEach((s, i) => {
-    const parentNode = nodes.find(p => p.id === s.id);
-    const colIdx = parentNode?.col ?? 0;
-    const x = rfStartX + colIdx * (NA + PAD_X);
-    const y = TOP_OFFSET + NH + PAD_Y;
-    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, name: s.name });
-  });
-
-  // _rf_done gateway
-  schemaNodes.push({ id: '_rf_done', x: 80, y: rfGateY, w: MA, h: MH, virtual: true, name: '📦 Документы собраны' });
-
-  // Draw edges on canvas
-  const dpr = window.devicePixelRatio || 1;
-  const totalW = Math.max(maxW || 400, 500);
-
-  canvas.style.width = totalW + 'px';
-  canvas.style.height = totalH + 'px';
-  canvas.width = totalW * dpr;
-  canvas.height = totalH * dpr;
-
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, totalW, totalH);
-
-  // Draw edges
-  schemaNodes.forEach(node => {
-    const parents = deps[node.id];
-    if (!parents) return;
-    parents.forEach(pid => {
-      const parent = schemaNodes.find(n => n.id === pid);
-      if (!parent) return;
-      const x1 = parent.x + parent.w / 2;
-      const y1 = parent.y + parent.h;
-      const x2 = node.x + node.w / 2;
-      const y2 = node.y;
-
-      ctx.strokeStyle = '#90a4ae';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.bezierCurveTo(x1, (y1 + y2) / 2, x2, (y1 + y2) / 2, x2, y2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#90a4ae';
-      ctx.beginPath();
-      ctx.moveTo(x2, y2);
-      ctx.lineTo(x2 - 4, y2 - 6);
-      ctx.lineTo(x2 + 4, y2 - 6);
-      ctx.fill();
-    });
-  });
-
-  // Draw nodes
-  schemaNodes.forEach(node => {
-    const s = (state.tasks && state.tasks[node.id]) || {};
+  const W = 210, H = 40, GAP = 12;
+  items.forEach((item, i) => {
+    const x = 20, y = 20 + i * (H + GAP);
+    const s = state.tasks?.[item.id] || {};
     const done = s.checked === true;
     const prog = s.progress === true;
-    const depsMet = (deps[node.id] || []).every(dep => {
-      const depNode = nodes.find(n => n.id === dep);
-      if (depNode && depNode.virtual) return true;
-      const ds = state.tasks?.[dep] || {};
-      return ds.checked === true;
-    });
-
-    let fill, stroke, tColor;
-    if (node.virtual) { fill = '#ede7f6'; stroke = '#7e57c2'; tColor = '#4a148c'; }
-    else if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; tColor = '#1b5e20'; }
-    else if (prog) { fill = '#fff9c4'; stroke = '#f9a825'; tColor = '#f57f17'; }
-    else if (!depsMet) { fill = '#eceff1'; stroke = '#b0bec5'; tColor = '#90a4ae'; }
-    else { fill = '#e3f2fd'; stroke = '#1565c0'; tColor = '#0d47a1'; }
-
-    const name = (taskMap[node.id]?.name || node.name || node.id).slice(0, 28);
+    let fill, stroke, tc;
+    if (item.v)        { fill='#ede7f6'; stroke='#7e57c2'; tc='#4a148c'; }
+    else if (done)     { fill='#c8e6c9'; stroke='#2e7d32'; tc='#1b5e20'; }
+    else if (prog)     { fill='#fff9c4'; stroke='#f9a825'; tc='#f57f17'; }
+    else               { fill='#e3f2fd'; stroke='#1565c0'; tc='#0d47a1'; }
 
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
-    ctx.lineWidth = node.id === 'm1_vnz' ? 3 : 2;
-    ctx.beginPath();
-    const r = 6;
-    ctx.moveTo(node.x + r, node.y);
-    ctx.lineTo(node.x + node.w - r, node.y);
-    ctx.arcTo(node.x + node.w, node.y, node.x + node.w, node.y + r, r);
-    ctx.lineTo(node.x + node.w, node.y + node.h - r);
-    ctx.arcTo(node.x + node.w, node.y + node.h, node.x + node.w - r, node.y + node.h, r);
-    ctx.lineTo(node.x + r, node.y + node.h);
-    ctx.arcTo(node.x, node.y + node.h, node.x, node.y + node.h - r, r);
-    ctx.lineTo(node.x, node.y + r);
-    ctx.arcTo(node.x, node.y, node.x + r, node.y, r);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    ctx.lineWidth = item.goal ? 3 : 2;
+    ctx.beginPath(); roundRect(ctx, x, y, W, H, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = tc;
+    ctx.font = 'bold 11px -apple-system,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(item.label, x + W/2, y + H/2 - 5);
+    ctx.font = '8px -apple-system,sans-serif';
+    const sub = item.v ? 'этап' : done ? '✓' : prog ? '●' : '▶';
+    ctx.fillText(sub, x + W/2, y + H/2 + 10);
 
-    ctx.fillStyle = tColor;
-    ctx.font = 'bold 11px -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(name, node.x + node.w / 2, node.y + node.h / 2 - 6);
-    ctx.font = '9px -apple-system, sans-serif';
-    ctx.fillText(node.virtual ? 'этап' : done ? '✓ Выполнено' : prog ? '● В процессе' : depsMet ? '▶ Доступно' : '🔒 Ждёт предыдущих', node.x + node.w / 2, node.y + node.h / 2 + 10);
+    if (i > 0) {
+      const py = y; // top of current
+      const px = items[i-1];
+      const prevY = 20 + (i-1)*(H+GAP) + H; // bottom of previous
+      ctx.strokeStyle = '#b0bec5'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x + W/2, prevY);
+      ctx.bezierCurveTo(x + W/2, (prevY+py)/2, x + W/2, (prevY+py)/2, x + W/2, py);
+      ctx.stroke();
+      ctx.fillStyle = '#b0bec5';
+      ctx.beginPath(); ctx.moveTo(x+W/2, py); ctx.lineTo(x+W/2-3, py-5); ctx.lineTo(x+W/2+3, py-5); ctx.fill();
+    }
   });
 }
-
-// Click handler
-if (!window._schemaClickSetup) {
-  const sc = document.getElementById('schema-canvas');
-  if (sc) {
-    sc.addEventListener('click', e => {
-      const rect = sc.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-      if (!node || node.virtual) return;
-
-      const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
-      if (!task) return;
-
-      const st = getPlanState() || { tasks: {} };
-      const s = (st.tasks && st.tasks[node.id]) || {};
-      const depsMet = (deps[node.id] || []).every(dep => {
-        const depNode = nodes.find(n => n.id === dep);
-        if (depNode && depNode.virtual) return true;
-        return (st.tasks?.[dep] || {}).checked === true;
-      });
-      if (!depsMet && !s.checked && !s.progress) return;
-
-      let box = document.getElementById('schema-modal');
-      if (!box) {
-        box = document.createElement('div');
-        box.id = 'schema-modal';
-        box.className = 'schema-modal';
-        box.innerHTML = '<div class="schema-modal-bg"></div><div class="schema-modal-body"><h3 id="sm-title"></h3><p id="sm-desc"></p><div class="sm-actions"><button id="sm-progress">🟡 В процессе</button><button id="sm-done">🟢 Выполнено</button><button id="sm-reset">⚪ Сбросить</button></div><button id="sm-close">✕</button></div>';
-        document.body.appendChild(box);
-      }
-      document.getElementById('sm-title').textContent = task.name;
-      document.getElementById('sm-desc').textContent = task.desc || '';
-      const show = () => box.classList.add('visible');
-      const hide = () => { box.classList.remove('visible'); renderSchema(); try { renderPlan(); } catch(e){} };
-      box.querySelector('.schema-modal-bg').onclick = hide;
-      document.getElementById('sm-close').onclick = hide;
-      document.getElementById('sm-progress').onclick = () => {
-        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-        st.tasks[node.id].progress = true; st.tasks[node.id].checked = false;
-        setPlanState(st); hide();
-      };
-      document.getElementById('sm-done').onclick = () => {
-        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-        st.tasks[node.id].checked = true; st.tasks[node.id].progress = false;
-        setPlanState(st); hide();
-      };
-      document.getElementById('sm-reset').onclick = () => {
-        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-        st.tasks[node.id].checked = false; st.tasks[node.id].progress = false;
-        setPlanState(st); hide();
-      };
-      show();
-    });
-  }
-  window._schemaClickSetup = true;
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
 }
 
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
-  setTimeout(() => { try { renderSchema(); } catch (e) { console.error(e); } }, 100);
+  setTimeout(() => { try { renderSchema(); } catch(e) { console.error(e); } }, 100);
 });
 
 // Sync: обновление после загрузки из облака
