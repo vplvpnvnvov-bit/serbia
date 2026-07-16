@@ -2099,9 +2099,21 @@ function renderSchema() {
     ctx.arc(trail[i].x, trail[i].y, 5, 0, Math.PI * 2); ctx.fill();
   }
 
-  // Draw milestone signs
+  // Draw milestone signs — offset from trail, alternating sides
   items.forEach((item, i) => {
     const p = trail[i];
+    // Perpendicular offset from trail direction
+    let dx = 0, dy = 0;
+    if (i < n - 1) { dx = trail[i+1].x - p.x; dy = trail[i+1].y - p.y; }
+    else { dx = p.x - trail[i-1].x; dy = p.y - trail[i-1].y; }
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    const perpX = -dy / len, perpY = dx / len;
+    const side = i % 2 === 0 ? 1 : -1; // alternate sides
+    const offset = 55;
+
+    const sx = p.x + perpX * offset * side;
+    const sy = p.y + perpY * offset * side;
+
     const s = state.tasks?.[item.id] || {};
     const done = s.checked, prog = s.progress;
 
@@ -2114,6 +2126,11 @@ function renderSchema() {
     const w = ctx.measureText(item.t).width + 20;
     const h = 24, ox = -w / 2, oy = -h - 18;
 
+    // Dashed line from trail point to sign
+    ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(sx, sy); ctx.stroke();
+    ctx.setLineDash([]);
+
     // Neon glow on current milestone
     if (i === dinoIdx) {
       ctx.shadowColor = '#00e5ff';
@@ -2121,19 +2138,19 @@ function renderSchema() {
     }
 
     // Sign post
-    ctx.fillStyle = '#5d4037'; ctx.fillRect(p.x - 1.5, p.y - h - 18, 3, h + 18 + 12);
+    ctx.fillStyle = '#5d4037'; ctx.fillRect(sx - 1.5, sy - h - 18, 3, h + 18 + 12);
     // Board
     ctx.fillStyle = bg; ctx.strokeStyle = border; ctx.lineWidth = item.goal ? 3 : 2;
     ctx.beginPath();
     const r = 6;
-    ctx.moveTo(p.x + ox + r, p.y + oy); ctx.lineTo(p.x - ox - r, p.y + oy);
-    ctx.arcTo(p.x - ox, p.y + oy, p.x - ox, p.y + oy + r, r);
-    ctx.lineTo(p.x - ox, p.y + oy + h - r);
-    ctx.arcTo(p.x - ox, p.y + oy + h, p.x - ox + r, p.y + oy + h, r);
-    ctx.lineTo(p.x + ox - r, p.y + oy + h);
-    ctx.arcTo(p.x + ox, p.y + oy + h, p.x + ox, p.y + oy + h - r, r);
-    ctx.lineTo(p.x + ox, p.y + oy + r);
-    ctx.arcTo(p.x + ox, p.y + oy, p.x + ox - r, p.y + oy, r);
+    ctx.moveTo(sx + ox + r, sy + oy); ctx.lineTo(sx - ox - r, sy + oy);
+    ctx.arcTo(sx - ox, sy + oy, sx - ox, sy + oy + r, r);
+    ctx.lineTo(sx - ox, sy + oy + h - r);
+    ctx.arcTo(sx - ox, sy + oy + h, sx - ox + r, sy + oy + h, r);
+    ctx.lineTo(sx + ox - r, sy + oy + h);
+    ctx.arcTo(sx + ox, sy + oy + h, sx + ox, sy + oy + h - r, r);
+    ctx.lineTo(sx + ox, sy + oy + r);
+    ctx.arcTo(sx + ox, sy + oy, sx + ox - r, sy + oy, r);
     ctx.closePath();
     ctx.fill(); ctx.stroke();
     if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
@@ -2141,13 +2158,13 @@ function renderSchema() {
     ctx.fillStyle = tc;
     ctx.font = 'bold 10px -apple-system,sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.t, p.x, p.y + oy + h / 2);
+    ctx.fillText(item.t, sx, sy + oy + h / 2);
 
     // Status icon below
     if (!item.v) {
       ctx.font = '14px serif';
       const icon = done ? '✓' : prog ? '●' : '○';
-      ctx.fillText(icon, p.x, p.y + 14);
+      ctx.fillText(icon, sx, sy + 14);
     }
   });
 
