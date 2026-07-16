@@ -1994,159 +1994,181 @@ function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
-  const W = 900, H = 400;
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  canvas.width = W * dpr;
-  canvas.height = H * dpr;
+  const CW = 600, CH = 1400;
+  canvas.style.width = CW + 'px';
+  canvas.style.height = CH + 'px';
+  canvas.width = CW * dpr;
+  canvas.height = CH * dpr;
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const state = getPlanState() || { tasks: {} };
-  const taskMap = {};
-  masterTimeline.forEach(m => m.tasks.forEach(t => { taskMap[t.id] = t; }));
 
-  // Background — desert sky + sand
-  const sky = ctx.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, '#fdd835'); sky.addColorStop(0.5, '#ffcc02'); sky.addColorStop(1, '#f9a825');
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-  // Ground
-  ctx.fillStyle = '#e8c84a'; ctx.fillRect(0, H - 80, W, 80);
-  ctx.fillStyle = '#d4a832'; ctx.fillRect(0, H - 66, W, 66);
-  // Ground dots
-  ctx.fillStyle = '#c49a28';
-  for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.arc(30 + i*30, H-50+Math.sin(i)*8, 1.5, 0, Math.PI*2); ctx.fill(); }
-
-  // Mountains silhouette in background
-  ctx.fillStyle = '#e0b830';
-  ctx.beginPath(); ctx.moveTo(0, H-80);
-  ctx.lineTo(100, H-180); ctx.lineTo(180, H-130); ctx.lineTo(250, H-200);
-  ctx.lineTo(350, H-140); ctx.lineTo(420, H-170); ctx.lineTo(500, H-110);
-  ctx.lineTo(580, H-190); ctx.lineTo(650, H-130); ctx.lineTo(750, H-160);
-  ctx.lineTo(850, H-100); ctx.lineTo(W, H-80); ctx.fill();
-
-  // Cactuses
-  function cactus(x, s) {
-    ctx.fillStyle = '#2e7d32';
-    ctx.fillRect(x, H-80-40*s, 6*s, 40*s); // trunk
-    ctx.fillRect(x-3*s, H-80-25*s, 3*s, 15*s); // left arm
-    ctx.fillRect(x+6*s, H-80-30*s, 3*s, 12*s); // right arm
+  // Parchment background
+  ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, CH);
+  // Aged edges
+  for (let i = 0; i < 200; i++) {
+    const rx = Math.random() * CW, ry = Math.random() * CH;
+    ctx.fillStyle = 'rgba(180,140,80,' + (0.03 + Math.random() * 0.05) + ')';
+    ctx.fillRect(rx, ry, 2 + Math.random() * 4, 2 + Math.random() * 4);
   }
-  cactus(130, 1); cactus(380, 0.8); cactus(620, 0.9); cactus(780, 0.7);
+  // Burnt border
+  ctx.strokeStyle = '#8d6e3f'; ctx.lineWidth = 6;
+  ctx.strokeRect(4, 4, CW - 8, CH - 8);
+  ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 2;
+  ctx.strokeRect(8, 8, CW - 16, CH - 16);
 
-  // Task milestones along the path
+  // Compass rose
+  const cx = CW - 50, cy0 = 60;
+  ctx.fillStyle = '#5d4037';
+  ctx.font = 'bold 12px serif'; ctx.textAlign = 'center';
+  ctx.fillText('N', cx, cy0 - 20);
+  ctx.fillText('S', cx, cy0 + 30);
+  ctx.fillText('W', cx - 30, cy0 + 7);
+  ctx.fillText('E', cx + 30, cy0 + 7);
+  ctx.beginPath(); ctx.moveTo(cx, cy0 - 18); ctx.lineTo(cx + 4, cy0 + 2); ctx.lineTo(cx - 4, cy0 + 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx, cy0 + 20); ctx.lineTo(cx + 4, cy0); ctx.lineTo(cx - 4, cy0); ctx.fill();
+  ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy0 + 1, 16, 0, Math.PI*2); ctx.stroke();
+
+  // Title
+  ctx.fillStyle = '#3e2723';
+  ctx.font = 'bold 16px serif'; ctx.textAlign = 'center';
+  ctx.fillText('🗺️ Карта релокации: путь к ВНЖ', CW / 2, 30);
+
+  // Milestones along a winding trail
   const items = [
-    {id:'_rf',  t:'🇷🇺 Подготовка', v:true},
-    {id:'p10',  t:'Загран М'},
-    {id:'p5w',  t:'Загран Ж'},
-    {id:'stamp',t:'Штамп'},
-    {id:'p5d',  t:'Загран реб'},
-    {id:'nocrim_h',t:'Несудимость М'},
-    {id:'nocrim_w',t:'Несудимость Ж'},
-    {id:'apost_marr',t:'Апостиль брак'},
-    {id:'apost_birth',t:'Апостиль рожд'},
+    {id:'_rf',  t:'🇷🇺 Сбор документов', v:true},
+    {id:'p10',  t:'Загранпаспорт мужа'},
+    {id:'p5w',  t:'Загранпаспорт жены'},
+    {id:'stamp',t:'Штамп гражданства'},
+    {id:'p5d',  t:'Загранпаспорт ребёнка'},
+    {id:'nocrim_h',t:'Справка несудимости М'},
+    {id:'nocrim_w',t:'Справка несудимости Ж'},
+    {id:'apost_marr',t:'Апостиль на брак'},
+    {id:'apost_birth',t:'Апостиль на рождение'},
     {id:'power', t:'Доверенность'},
-    {id:'_ok',  t:'✅ Готово', v:true},
-    {id:'m1_flight',t:'Перелёт'},
-    {id:'m1_airbnb',t:'Жильё'},
+    {id:'_ok',  t:'✅ Документы собраны', v:true},
+    {id:'m1_flight',t:'Перелёт в Белград'},
+    {id:'m1_airbnb',t:'Жильё на Airbnb'},
     {id:'reg',  t:'Белый картон'},
-    {id:'m1_translate',t:'Переводы'},
-    {id:'m1_insurance',t:'Страховка'},
-    {id:'talent_nostrification',t:'Нострификация'},
-    {id:'_ok2', t:'✅ Собрано', v:true},
-    {id:'m1_vnz',t:'🎯 ВНЖ', goal:true},
+    {id:'m1_translate',t:'Судебные переводы'},
+    {id:'m1_insurance',t:'Медстраховка'},
+    {id:'talent_nostrification',t:'Нострификация диплома'},
+    {id:'_ok2', t:'✅ Пакет готов', v:true},
+    {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
   ];
 
-  const MARGIN = 30, STEP = (W - MARGIN * 2) / (items.length - 1);
-  const nh = 36, nw = 110;
-  // Find progress: first undone task
-  let dinoIdx = 0;
-  for (let i = items.length - 1; i >= 0; i--) {
-    if (items[i].v) continue;
-    const s = state.tasks?.[items[i].id] || {};
-    if (s.checked) { dinoIdx = Math.min(i + 1, items.length - 1); break; }
+  // Winding trail points — go top-left to bottom-right with curves
+  const trail = [];
+  const n = items.length;
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const x = 60 + t * (CW - 120) + Math.sin(t * Math.PI * 3) * 80;
+    const y = 80 + t * (CH - 160);
+    trail.push({ x, y });
   }
 
-  // Draw connections between milestones
-  items.forEach((item, i) => {
-    if (i === 0) return;
-    const px = MARGIN + (i-1) * STEP;
-    const x = MARGIN + i * STEP;
-    const py = H - 90;
-    ctx.strokeStyle = i <= dinoIdx ? '#81c784' : '#ccc';
-    ctx.lineWidth = 2;
-    ctx.setLineDash(i <= dinoIdx ? [] : [4, 6]);
-    ctx.beginPath();
-    ctx.moveTo(px, py);
-    ctx.lineTo(x, py);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  });
+  // Find dino position: last done task
+  let dinoIdx = 0;
+  for (let i = n - 1; i >= 0; i--) {
+    if (items[i].v) continue;
+    const s = state.tasks?.[items[i].id] || {};
+    if (s.checked) { dinoIdx = Math.min(i + 1, n - 1); break; }
+  }
 
-  // Draw milestone nodes
+  // Draw trail
+  ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(trail[0].x, trail[0].y);
+  for (let i = 1; i < n; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  ctx.stroke();
+  // Done portion
+  ctx.strokeStyle = '#81c784'; ctx.lineWidth = 10;
+  ctx.beginPath(); ctx.moveTo(trail[0].x, trail[0].y);
+  for (let i = 1; i <= dinoIdx; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  ctx.stroke();
+  // Dotted future portion
+  ctx.strokeStyle = '#bbb'; ctx.lineWidth = 8; ctx.setLineDash([8, 12]);
+  ctx.beginPath(); ctx.moveTo(trail[dinoIdx].x, trail[dinoIdx].y);
+  for (let i = dinoIdx + 1; i < n; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Dino footprint dots on path
+  for (let i = 0; i <= dinoIdx; i++) {
+    ctx.fillStyle = '#388e3c'; ctx.beginPath();
+    ctx.arc(trail[i].x, trail[i].y, 5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Draw milestone signs
   items.forEach((item, i) => {
-    const x = MARGIN + i * STEP;
-    const y = H - 90;
+    const p = trail[i];
     const s = state.tasks?.[item.id] || {};
-    const done = s.checked === true;
-    const prog = s.progress === true;
-    const isPast = i <= dinoIdx && !item.v;
+    const done = s.checked, prog = s.progress;
 
-    let fill, stroke, tc;
-    if (item.v)        { fill='#ede7f6'; stroke='#7e57c2'; tc='#4a148c'; }
-    else if (done)     { fill='#c8e6c9'; stroke='#2e7d32'; tc='#1b5e20'; }
-    else if (prog)     { fill='#fff9c4'; stroke='#f9a825'; tc='#f57f17'; }
-    else if (isPast)   { fill='#e8f5e9'; stroke='#a5d6a7'; tc='#388e3c'; }
-    else               { fill='#fff'; stroke='#bbb'; tc='#888'; }
+    let bg, border, tc;
+    if (item.v)        { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
+    else if (done)     { bg='#c8e6c9'; border='#2e7d32'; tc='#1b5e20'; }
+    else if (prog)     { bg='#fff9c4'; border='#f9a825'; tc='#f57f17'; }
+    else               { bg='#fdf5c9'; border='#8d6e3f'; tc='#5d4037'; }
 
-    // Pin shape
-    ctx.fillStyle = fill;
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = item.goal ? 3 : 2;
+    const w = ctx.measureText(item.t).width + 20;
+    const h = 24, ox = -w / 2, oy = -h - 18;
+
+    // Sign post
+    ctx.fillStyle = '#5d4037'; ctx.fillRect(p.x - 1.5, p.y - h - 18, 3, h + 18 + 12);
+    // Board
+    ctx.fillStyle = bg; ctx.strokeStyle = border; ctx.lineWidth = item.goal ? 3 : 2;
     ctx.beginPath();
-    ctx.moveTo(x - nw/2, y - nh); ctx.lineTo(x + nw/2 - 6, y - nh);
-    ctx.arcTo(x + nw/2, y - nh, x + nw/2, y - nh + 6, 6);
-    ctx.lineTo(x + nw/2, y - 6); ctx.lineTo(x + 8, y);
-    ctx.lineTo(x - 8, y); ctx.lineTo(x - nw/2, y - 6);
-    ctx.lineTo(x - nw/2, y - nh + 6); ctx.arcTo(x - nw/2, y - nh, x - nw/2 + 6, y - nh, 6);
+    const r = 6;
+    ctx.moveTo(p.x + ox + r, p.y + oy); ctx.lineTo(p.x - ox - r, p.y + oy);
+    ctx.arcTo(p.x - ox, p.y + oy, p.x - ox, p.y + oy + r, r);
+    ctx.lineTo(p.x - ox, p.y + oy + h - r);
+    ctx.arcTo(p.x - ox, p.y + oy + h, p.x - ox + r, p.y + oy + h, r);
+    ctx.lineTo(p.x + ox - r, p.y + oy + h);
+    ctx.arcTo(p.x + ox, p.y + oy + h, p.x + ox, p.y + oy + h - r, r);
+    ctx.lineTo(p.x + ox, p.y + oy + r);
+    ctx.arcTo(p.x + ox, p.y + oy, p.x + ox - r, p.y + oy, r);
     ctx.closePath();
     ctx.fill(); ctx.stroke();
 
-    // Text
     ctx.fillStyle = tc;
-    ctx.font = 'bold 9px -apple-system,sans-serif';
+    ctx.font = 'bold 10px -apple-system,sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.t, x, y - nh/2);
+    ctx.fillText(item.t, p.x, p.y + oy + h / 2);
+
+    // Status icon below
+    if (!item.v) {
+      ctx.font = '14px serif';
+      const icon = done ? '✓' : prog ? '●' : '○';
+      ctx.fillText(icon, p.x, p.y + 14);
+    }
   });
 
-  // Dino
-  const dx = MARGIN + dinoIdx * STEP, dy = H - 62;
-  ctx.fillStyle = '#37474f';
+  // Dino at current position
+  const dp = trail[dinoIdx];
+  ctx.fillStyle = '#4e342e';
   // Body
-  ctx.fillRect(dx - 8, dy - 20, 16, 14);
+  ctx.beginPath(); ctx.ellipse(dp.x, dp.y - 10, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
   // Head
-  ctx.fillRect(dx + 6, dy - 26, 10, 10);
+  ctx.fillRect(dp.x + 7, dp.y - 18, 9, 9);
   // Eye
-  ctx.fillStyle = '#fff'; ctx.fillRect(dx + 12, dy - 24, 3, 3);
-  ctx.fillStyle = '#37474f'; ctx.fillRect(dx + 13, dy - 23, 1, 1);
+  ctx.fillStyle = '#fff'; ctx.fillRect(dp.x + 12, dp.y - 16, 3, 3);
+  ctx.fillStyle = '#000'; ctx.fillRect(dp.x + 13, dp.y - 15, 1, 1);
+  // Spike
+  ctx.fillStyle = '#6d4c41'; ctx.fillRect(dp.x + 1, dp.y - 20, 2, 4);
   // Legs
-  ctx.fillRect(dx - 5, dy - 6, 4, 8);
-  ctx.fillRect(dx + 3, dy - 6, 4, 8);
-  // Tail
-  ctx.fillRect(dx - 12, dy - 16, 6, 4);
-  // Spikes
-  ctx.fillStyle = '#546e7a';
-  ctx.fillRect(dx, dy - 24, 2, 3); ctx.fillRect(dx - 3, dy - 22, 2, 3); ctx.fillRect(dx - 6, dy - 20, 2, 2);
-  // Dino label
-  ctx.fillStyle = '#37474f';
-  ctx.font = '8px -apple-system,sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText('ты', dx, dy + 10);
+  ctx.fillStyle = '#4e342e';
+  ctx.fillRect(dp.x - 5, dp.y - 3, 3, 6); ctx.fillRect(dp.x + 3, dp.y - 3, 3, 6);
+  // Label
+  ctx.fillStyle = '#3e2723'; ctx.font = 'bold 9px serif'; ctx.textAlign = 'center';
+  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 26);
 
-  // Flag at goal
-  const gx = MARGIN + (items.length - 1) * STEP;
-  ctx.fillStyle = '#e91e63';
-  ctx.fillRect(gx - 20, H - 130, 2, 50);
-  ctx.beginPath(); ctx.moveTo(gx - 18, H - 130); ctx.lineTo(gx + 14, H - 118); ctx.lineTo(gx - 18, H - 106); ctx.fill();
+  // Treasure X at the end
+  const last = trail[n - 1];
+  ctx.fillStyle = '#c62828'; ctx.font = 'bold 28px serif';
+  ctx.fillText('✘', last.x, last.y - 30);
+  ctx.fillStyle = '#b71c1c'; ctx.font = 'bold 10px serif';
+  ctx.fillText('ЦЕЛЬ', last.x, last.y - 45);
 }
 
 
