@@ -2024,7 +2024,6 @@ function renderSchema() {
     { id: 'talent_nostrification', name: 'Нострификация диплома', main: true },
     { id: 'm1_vnz',    name: '🎯 ВНЖ по Таланту', main: true, goal: true },
     // Virtual milestones
-    { id: '_rf_done',  name: '📦 Документы собраны', virtual: true, main: true },
     { id: '_docs',     name: '📄 Пакет готов', virtual: true, main: true },
   ];
 
