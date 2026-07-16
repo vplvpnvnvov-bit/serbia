@@ -2022,7 +2022,7 @@ function renderSchema() {
   ctx.strokeRect(8, 8, CW - 16, CH - 16);
 
   // Compass rose
-  const cx = CW - 50, cy0 = 60;
+  const cx = 50, cy0 = 60;
   ctx.fillStyle = '#5d4037';
   ctx.font = 'bold 12px serif'; ctx.textAlign = 'center';
   ctx.fillText('N', cx, cy0 - 20);
