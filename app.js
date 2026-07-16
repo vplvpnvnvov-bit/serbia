@@ -1994,7 +1994,10 @@ function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
-  const CW = 700, CH = 1400, PX = 3; // PX = pixel size for retro art
+  const container = canvas.parentElement;
+  const CW = container ? container.clientWidth - 2 : window.innerWidth - 20;
+  const CH = Math.max(window.innerHeight - 100, 800);
+  const PX = CW < 500 ? 2 : 3;
   canvas.style.width = CW + 'px';
   canvas.style.height = CH + 'px';
   canvas.width = CW * dpr;
@@ -2059,12 +2062,12 @@ function renderSchema() {
     {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
   ];
 
-  // Winding trail points — go top-left to bottom-right with curves
+  // Winding trail points — centered, dynamic
   const trail = [];
   const n = items.length;
   for (let i = 0; i < n; i++) {
     const t = i / (n - 1);
-    const x = 100 + t * (CW - 200) + Math.sin(t * Math.PI * 2.5) * 50;
+    const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
     const y = 80 + t * (CH - 160);
     trail.push({ x, y });
   }
