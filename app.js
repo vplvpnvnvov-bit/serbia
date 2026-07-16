@@ -910,7 +910,7 @@ const masterTimeline = [
     focus: "Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация диплома",
     tasks: [
       { 
-        id: "m1_flight", 
+        id: "m1_flight",dependsOn:["p10"], 
         name: "Прямой перелет Air Serbia (3 чел. с багажом)", 
         cost: 1350, 
         currency: "EUR", 
@@ -918,7 +918,7 @@ const masterTimeline = [
         tip: "<p>Прямые беспересадочные рейсы осуществляет национальный перевозчик Сербии <a href='https://www.airserbia.com' target='_blank' rel='noopener noreferrer'>Air Serbia</a> из аэропорта Шереметьево (SVO) в аэропорт Никола Тесла (BEG) Белграда.</p><p><b>Правила багажа:</b> Стандартный тариф обычно включает 1 место багажа весом до 23 кг и ручную кладь до 8 кг на каждого пассажира. Внимательно проверяйте габариты ручной клади перед вылетом на сайте авиакомпании — сербские стойки регистрации часто заставляют помещать сумки в калибраторы.</p>" 
       },
       { 
-        id: "m1_airbnb", 
+        id: "m1_airbnb",dependsOn:["p10"], 
         name: "Жилье на Airbnb (1-й месяц)", 
         cost: 950, 
         currency: "EUR", 
@@ -926,7 +926,7 @@ const masterTimeline = [
         tip: "<p>Бронируйте апартаменты на <a href='https://www.airbnb.com' target='_blank' rel='noopener noreferrer'>Airbnb</a> на срок от 28–30 дней — это автоматически активирует долгосрочные скидки сервиса (до 40-50%).</p><p><b>⚠️ Самое главное условие:</b> До совершения оплаты напишите владельцу квартиры в чате: <i>'Da li možete da nam uradite beli karton u policiji u roku od 24 sata?'</i> (Можете ли вы оформить нам белый картон в полиции в течение 24 часов?). Если хост сомневается, отказывается или предлагает вам сделать это самостоятельно — отменяйте бронь. Без белого картона вы будете находиться в Сербии нелегально.</p>" 
       },
       { 
-        id: "reg", 
+        id: "reg",dependsOn:["m1_airbnb","p10"], 
         name: "Белый картон (Beli karton) — регистрация", 
         cost: 0, 
         currency: "EUR", 
@@ -935,7 +935,7 @@ const masterTimeline = [
         hasDate: true 
       },
       { 
-        id: "sim", 
+        id: "sim",dependsOn:["m1_flight"], 
         name: "Сим-карта сербского оператора", 
         cost: 10, 
         currency: "EUR", 
@@ -943,7 +943,7 @@ const masterTimeline = [
         tip: "<p><b>Где купить:</b> Зайдите в любой сетевой газетный киоск (Moj Kiosk) или фирменный салон оператора. Попросите prepaid-карту (на сербском: 'pripejd kartica'). Паспорт для покупки предоплаченного пакета не требуется.</p><p><b>Какого оператора выбрать:</b> Основные игроки — Yettel, A1 и mts. Для быстрого старта рекомендуем туристические пакеты от <a href='https://www.yettel.rs' target='_blank' rel='noopener noreferrer'>Yettel</a> (например, 15–50 ГБ интернета на 15–30 дней за ~600-1000 RSD). Покрытие в Белграде у всех операторов отличное. После получения ВНЖ вы сможете переоформить эту карту на выгодный контракт (postpaid).</p>" 
       },
       { 
-        id: "m1_translate", 
+        id: "m1_translate",dependsOn:["reg","nocrim_h","nocrim_w"], 
         name: "Судебные переводы документов", 
         cost: 200, 
         currency: "EUR", 
@@ -959,7 +959,7 @@ const masterTimeline = [
         tip: "<p><b>Куда подавать:</b> Заявление на профессиональное признание высшего образования (nostrifikacija) подается в электронном виде на портале <a href='https://azk.gov.rs/' target='_blank' rel='noopener noreferrer'>Агентства по квалификациям Сербии (AZK)</a>.</p><p><b>Что загрузить:</b> Скан загранпаспорта, оригинал диплома и приложения с оценками, а также их заверенные судебным переводчиком сербские переводы.</p><p><b>Пошлина и сроки:</b> Стоимость государственной таксы составляет 7 500 RSD. Срок рассмотрения по закону — до 60 дней, но для IT-специальностей процедура часто проходит быстрее (за 3–4 недели). Наличие поданной заявки на нострификацию (подтверждается электронной квитанцией и номером дела) уже дает право подавать документы на ВНЖ 'Талант'.</p>" 
       },
       { 
-        id: "m1_insurance", 
+        id: "m1_insurance",dependsOn:["reg"], 
         name: "Медстраховки на 1 год (на троих)", 
         cost: 250, 
         currency: "EUR", 
@@ -969,7 +969,7 @@ const masterTimeline = [
         expires: 12 
       },
       { 
-        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance"], 
+        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance","reg","p10"], 
         name: "Пошлины МУП за ВНЖ «Талант» на троих", 
         cost: 600, 
         currency: "EUR", 
@@ -1080,7 +1080,7 @@ const masterTimeline = [
         tip: "<p>Расходы семьи на питание, быт и текущие транспортные расходы.</p>" 
       },
       { 
-        id: "preduzetnik",dependsOn:["p10"], 
+        id: "preduzetnik",dependsOn:["m1_vnz"], 
         name: "Регистрация ИП в APR (Предузетник)", 
         cost: 21, 
         currency: "EUR", 
@@ -1088,7 +1088,7 @@ const masterTimeline = [
         tip: "<p><b>Где делать:</b> Регистрация бизнеса осуществляется государственным органом — <a href='https://www.apr.gov.rs' target='_blank' rel='noopener noreferrer'>Агентством по хозяйственным регистрам (APR)</a>. Можно подать документы лично в главном офисе APR в Белграде (ул. Brankova 25) или подать онлайн при наличии сербской электронной подписи.</p><p><b>Пошаговый процесс:</b></p><p>1. Выберите код деятельности (шифра делатности). Для IT-разработчиков стандартным является код <b>62.01</b> (Računarsko programiranje).</p><p>2. Заполните заявление установленного образца (Registraciona prijava osnivanja preduzetnika).</p><p>3. Оплатите государственную пошлину в размере 2 500 RSD по реквизитам APR в кассе почты.</p><p>4. Сдайте документы лично. Решение о регистрации (Rešenje) выдается в течение 3–5 рабочих дней. Решение нужно будет лично забрать в APR в бумажном виде с синей печатью.</p>" 
       },
       { 
-        id: "m3_office",dependsOn:["preduzetnik"], 
+        id: "m3_office", 
         name: "Виртуальный офис для ИП (на год)", 
         cost: 185, 
         currency: "EUR", 
@@ -1112,7 +1112,7 @@ const masterTimeline = [
         tip: "<p><b>Зачем это банку:</b> Служба комплаенса любого сербского банка обязана осуществлять жесткую проверку происхождения денежных средств иностранных граждан. Требования к проверке регулируются директивами <a href='https://www.nbs.rs' target='_blank' rel='noopener noreferrer'>Народного банка Сербии (NBS)</a>.</p><p><b>Что подготовить:</b> Предоставьте налоговые справки 2-НДФЛ или декларации 3-НДФЛ из РФ за последние 1-2 года, подтверждающие, что вы официально зарабатывали деньги и платили налоги в РФ. Дополнительно закажите выписку по личному российскому банковскому счету за последние 6 месяцев с движением средств (желательно сразу на английском языке).</p>" 
       },
       { 
-        id: "m3_lawyer",dependsOn:["preduzetnik"], 
+        id: "m3_lawyer", 
         name: "Услуги юриста (банк, комплаенс, смена ВНЖ)", 
         cost: 200, 
         currency: "EUR", 
@@ -2005,26 +2005,22 @@ function renderSchema() {
     m.tasks.forEach(t => { taskMap[t.id] = t; tasks.push(t); });
   });
 
-  // Virtual conceptual milestones (not in plan, but represent logical states)
+  // Virtual milestones — logical states between tasks
   const virtualNodes = [
-    { id: '_arrival', name: '✈️ Прибытие в Сербию', desc: 'Перелёт, заселение, первые шаги' },
-    { id: '_legal', name: '📋 Легализация', desc: 'Белый картон получен, можно оформлять документы' },
+    { id: '_rf_done', name: '🇷🇺 Подготовка в РФ', desc: 'Документы собраны, пора вылетать' },
+    { id: '_arrived', name: '✈️ Прибытие в Сербию', desc: 'Перелёт, заселение, белый картон' },
+    { id: '_docs_ready', name: '📄 Документы готовы', desc: 'Переводы сделаны, можно подавать' },
   ];
   virtualNodes.forEach(v => { taskMap[v.id] = v; });
 
-  // Build full dependency graph (real + virtual)
+  // === ПОЛНЫЙ ГРАФ: ВНЖ по Таланту ===
   const graphDeps = {};
-  // Real deps from masterTimeline
-  tasks.forEach(t => { if (t.dependsOn) graphDeps[t.id] = [...t.dependsOn]; });
-  // Virtual connections: arrival needs flight + airbnb
-  graphDeps['_arrival'] = ['m1_flight', 'm1_airbnb'];
-  graphDeps['_legal'] = ['reg'];
-  // reg needs arrival (you must be in Serbia to get white card)
-  graphDeps['reg'] = ['_arrival'];
-  // sim needs arrival
-  graphDeps['sim'] = ['_arrival'];
-  // m1_insurance needs legal status
-  graphDeps['m1_insurance'] = ['_legal'];
+  // Реальные зависимости из masterTimeline
+  tasks.forEach(t => { if (t.dependsOn && t.dependsOn.length) graphDeps[t.id] = [...t.dependsOn]; });
+  // Виртуальные связи
+  graphDeps['_rf_done'] = [];
+  graphDeps['_arrived'] = ['_rf_done', 'm1_flight', 'm1_airbnb'];
+  graphDeps['_docs_ready'] = ['reg', 'm1_translate'];
 
   // All tasks in graph
   const deps = new Set();
