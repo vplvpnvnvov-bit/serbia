@@ -2109,6 +2109,22 @@ body.dark-theme .carousel-caption {
   cursor: pointer;
   max-width: 100%; min-height: 600px; min-width: 320px;
 }
+
+/* Schema legend */
+#legend-title {
+  margin: 16px auto 4px;
+  max-width: 360px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: #5d4037;
+  text-align: center;
+}
+body.dark-theme #legend-title { color: #d7ccc8; }
+#legend-canvas {
+  display: block;
+  margin: 0 auto 20px;
+}
+
 .schema-modal {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   z-index: 100000;

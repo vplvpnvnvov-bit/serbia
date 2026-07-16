@@ -2021,6 +2021,321 @@ function renderSchema() {
   ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 2;
   ctx.strokeRect(8, 8, CW - 16, CH - 16);
 
+  // ── DECORATIONS: terrain, flora, fauna, boundaries ──
+  if (!window._schemaDecor || window._schemaDecor._cw !== CW || window._schemaDecor._ch !== CH) {
+    let rngSeed = 1;
+    const rnd = () => { rngSeed = (rngSeed * 16807) % 2147483647; return (rngSeed - 1) / 2147483646; };
+    const rint = (a, b) => Math.floor(rnd() * (b - a + 1)) + a;
+    const dec = [];
+    const bY = 80 + 0.53 * (CH - 160); // boundary Y
+
+    // ── Russia zone helpers ──
+    const ruY = (t) => t * bY;
+    const ruX = () => 20 + rnd() * (CW - 40);
+
+    // Northern lights (top 15%)
+    for (let i = 0; i < 5; i++) {
+      dec.push({ t:'aurora', x:ruX(), y:ruY(rnd()*0.15), w:40+rint(20,80), h:rint(10,20) });
+    }
+
+    // Russian mountains — more in north, fewer south
+    for (let i = 0; i < 8; i++) {
+      dec.push({ t:'mt_ru', x:ruX(), y:ruY(0.03+rnd()*0.85) });
+    }
+
+    // Spruce (north 10-55% of Russia zone)
+    for (let i = 0; i < 14; i++) {
+      dec.push({ t:'spruce', x:ruX(), y:ruY(0.05+rnd()*0.5) });
+    }
+    // Birch (south 50-100% of Russia zone)
+    for (let i = 0; i < 12; i++) {
+      dec.push({ t:'birch', x:ruX(), y:ruY(0.5+rnd()*0.49) });
+    }
+
+    // Russian rivers (bezier, stored as curves)
+    for (let i = 0; i < 2; i++) {
+      const y0 = ruY(0.1 + rnd() * 0.3), y1 = ruY(0.4 + rnd() * 0.5);
+      const x0 = 10 + rnd() * (CW*0.3), x1 = CW*0.4 + rnd() * (CW*0.5);
+      const cpx = (x0+x1)/2 + (rnd()-0.5)*CW*0.2, cpy = (y0+y1)/2 + (rnd()-0.5)*50;
+      dec.push({ t:'river', x0,y0,x1,y1,cpx,cpy, rw:1.5+rint(1,3) });
+    }
+
+    // Lakes Russia
+    for (let i = 0; i < 3; i++) {
+      dec.push({ t:'lake', x:ruX(), y:ruY(0.1+rnd()*0.8), r:rint(3,6) });
+    }
+
+    // Russian fauna
+    dec.push({ t:'bear_track', x:ruX(), y:ruY(0.05+rnd()*0.3) });
+    dec.push({ t:'bear_track', x:ruX(), y:ruY(0.1+rnd()*0.4) });
+    dec.push({ t:'elk', x:ruX(), y:ruY(0.3+rnd()*0.4) });
+    dec.push({ t:'swan', x:ruX(), y:ruY(0.4+rnd()*0.4) });
+
+    // Russian buildings
+    dec.push({ t:'church_dome', x:ruX(), y:ruY(0.5+rnd()*0.4) });
+    dec.push({ t:'church_dome', x:ruX(), y:ruY(0.6+rnd()*0.3) });
+
+    // ── Serbia zone helpers ──
+    const srY = (t) => bY + 20 + t * (CH - bY - 40);
+    const srX = () => 20 + rnd() * (CW - 40);
+
+    // Serbian hills (green)
+    for (let i = 0; i < 6; i++) {
+      dec.push({ t:'hill_sr', x:srX(), y:srY(0.02+rnd()*0.5), w:rint(6,14), h:rint(4,8) });
+    }
+
+    // Oak (north Serbia, 0-35%)
+    for (let i = 0; i < 8; i++) {
+      dec.push({ t:'oak', x:srX(), y:srY(0.02+rnd()*0.33), h:rint(5,9), w:rint(3,5) });
+    }
+    // Linden (mid Serbia, 20-60%)
+    for (let i = 0; i < 6; i++) {
+      dec.push({ t:'linden', x:srX(), y:srY(0.2+rnd()*0.4), h:rint(5,8), w:rint(3,5) });
+    }
+    // Plum (south Serbia, 40-100%)
+    for (let i = 0; i < 6; i++) {
+      const h = rint(4,7);
+      const th = h * PX;
+      const dots = [];
+      for (let p = 0; p < 3; p++) dots.push({ dx: -th*0.15+rnd()*th*0.3, dy: th*0.15+rnd()*th*0.25 });
+      dec.push({ t:'plum', x:srX(), y:srY(0.4+rnd()*0.55), h, w:rint(2,4), dots });
+    }
+
+    // Serbian rivers (Danube + Sava)
+    dec.push({ t:'river', x0:10+rnd()*CW*0.3, y0:srY(0.1), x1:CW*0.5+rnd()*CW*0.4, y1:srY(0.3+rnd()*0.3),
+      cpx:CW*0.5, cpy:srY(0.15), rw:rint(3,6) });
+    dec.push({ t:'river', x0:CW*0.4, y0:srY(0.2+rnd()*0.2), x1:CW-30, y1:srY(0.5+rnd()*0.3),
+      cpx:CW*0.7, cpy:srY(0.35), rw:rint(2,4) });
+
+    // Lakes Serbia
+    for (let i = 0; i < 2; i++) {
+      dec.push({ t:'lake', x:srX(), y:srY(0.05+rnd()*0.8), r:rint(2,5) });
+    }
+
+    // Serbian fauna
+    dec.push({ t:'stork', x:srX(), y:srY(0.05+rnd()*0.2) });
+    dec.push({ t:'stork', x:srX(), y:srY(0.1+rnd()*0.25) });
+    dec.push({ t:'eagle', x:srX(), y:srY(0.3+rnd()*0.3) });
+    dec.push({ t:'pigeon', x:srX(), y:srY(0.5+rnd()*0.35) });
+    dec.push({ t:'pigeon', x:srX(), y:srY(0.6+rnd()*0.3) });
+
+    // Serbian buildings
+    dec.push({ t:'fortress', x:srX(), y:srY(0.15+rnd()*0.3) });
+    dec.push({ t:'serb_cross', x:srX(), y:srY(0.4+rnd()*0.3) });
+    // City spires near the end (south)
+    for (let i = 0; i < 3; i++) {
+      dec.push({ t:'spire', x:srX(), y:srY(0.65+rnd()*0.3), h:rint(6,10) });
+    }
+
+    // ── Clouds (all over, denser in transition) ──
+    for (let i = 0; i < 25; i++) {
+      const zoneR = rnd();
+      let cy;
+      if (zoneR < 0.15) cy = bY - 40 + rnd() * 80; // dense transition
+      else if (zoneR < 0.55) cy = 20 + rnd() * (bY - 60); // Russia
+      else cy = bY + 20 + rnd() * (CH - bY - 60); // Serbia
+      dec.push({ t:'cloud', x:15+rnd()*(CW-30), y:cy, rw:rint(8,22), rh:rint(3,7),
+        isRu: cy < bY });
+    }
+
+    // ── Boundary line ──
+    dec.push({ t:'boundary', y:bY });
+
+    window._schemaDecor = dec;
+    window._schemaDecor._cw = CW;
+    window._schemaDecor._ch = CH;
+  }
+
+  // ── Draw all decorations ──
+  {
+    const S = PX; // pixel size
+    const bY = 80 + 0.53 * (CH - 160);
+
+    window._schemaDecor.forEach(d => {
+      ctx.save();
+      const bPx = (x,y,w,h,c) => { ctx.fillStyle=c; ctx.fillRect(x,y,w,h); };
+
+      if (d.t === 'aurora') {
+
+
+        for (let k = 0; k < 3; k++) {
+          ctx.fillStyle = k===0 ? '#a5d6a7' : k===1 ? '#81c784' : '#e8f5e9';
+          ctx.beginPath(); ctx.ellipse(d.x, d.y + k*4, d.w/2, d.h/2, 0, 0, Math.PI*2); ctx.fill();
+        }
+      }
+      else if (d.t === 'mt_ru') {
+        ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
+      }
+      else if (d.t === 'spruce') {
+
+
+        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🌲', d.x, d.y);
+      }
+      else if (d.t === 'birch') {
+        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🌳', d.x, d.y);
+      }
+      else if (d.t === 'oak') {
+        const th = d.h*S, tw = d.w*S, tx = d.x-tw/2, ty = d.y-th;
+        bPx(tx+tw*0.35, ty+th*0.5, tw*0.3, th*0.5, '#6d4c41');
+        ctx.fillStyle='#558b2f'; ctx.beginPath();
+        ctx.ellipse(d.x, ty+th*0.35, th*0.45, th*0.3, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle='#33691e'; ctx.beginPath();
+        ctx.arc(d.x-tw*0.1, ty+th*0.25, th*0.25, 0, Math.PI*2); ctx.fill();
+      }
+      else if (d.t === 'linden') {
+        const th = d.h*S, tw = d.w*S, tx = d.x-tw/2, ty = d.y-th;
+        bPx(tx+tw*0.35, ty+th*0.5, tw*0.3, th*0.5, '#8d6e63');
+        ctx.fillStyle='#aed581'; ctx.beginPath();
+        ctx.ellipse(d.x, ty+th*0.35, th*0.4, th*0.3, 0, 0, Math.PI*2); ctx.fill();
+        // heart-shaped leaves: two small circles
+        ctx.fillStyle='#9ccc65'; ctx.beginPath();
+        ctx.arc(d.x-th*0.15, ty+th*0.22, th*0.2, 0, Math.PI*2); ctx.fill();
+        ctx.arc(d.x+th*0.15, ty+th*0.22, th*0.2, 0, Math.PI*2); ctx.fill();
+      }
+      else if (d.t === 'plum') {
+        const th = d.h*S, tw = d.w*S, tx = d.x-tw/2, ty = d.y-th;
+        bPx(tx+tw*0.35, ty+th*0.5, tw*0.3, th*0.5, '#5d4037');
+        ctx.fillStyle='#7cb342'; ctx.beginPath();
+        ctx.ellipse(d.x, ty+th*0.35, th*0.35, th*0.28, 0, 0, Math.PI*2); ctx.fill();
+        if (d.dots) d.dots.forEach(dt => {
+          bPx(d.x + dt.dx, ty + dt.dy, S, S, '#7b1fa2');
+        });
+      }
+      else if (d.t === 'hill_sr') {
+        const bw = d.w*S, bh = d.h*S, bx = d.x - bw/2, by = d.y;
+        ctx.fillStyle='#8bc34a'; ctx.beginPath();
+        ctx.moveTo(bx, by+bh); ctx.lineTo(bx+bw/2, by); ctx.lineTo(bx+bw, by+bh); ctx.fill();
+        ctx.fillStyle='#689f38'; ctx.beginPath();
+        ctx.moveTo(bx+bw*0.15, by+bh*0.7); ctx.lineTo(bx+bw/2, by+bh*0.2); ctx.lineTo(bx+bw*0.85, by+bh*0.65); ctx.fill();
+      }
+      else if (d.t === 'river') {
+
+
+        ctx.strokeStyle = d.y0 < bY ? '#1a237e' : '#1565c0';
+        ctx.lineWidth = d.rw * S; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(d.x0, d.y0);
+        ctx.quadraticCurveTo(d.cpx, d.cpy, d.x1, d.y1); ctx.stroke();
+      }
+      else if (d.t === 'lake') {
+        const r = (d.r || 4) * 5;
+        const seed = Math.sin(d.x * 0.7) * 10 + Math.cos(d.y * 0.5) * 8;
+        ctx.fillStyle = '#42a5f5';
+        ctx.beginPath();
+        for (let a = 0; a < Math.PI * 2; a += 0.25) {
+          const ripple = r * (0.75 + 0.25 * Math.sin(a * 3.5 + seed));
+          const px = d.x + ripple * Math.cos(a);
+          const py = d.y + ripple * Math.sin(a);
+          a === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath(); ctx.fill();
+      }
+      else if (d.t === 'bear_track') {
+
+
+        ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🐾', d.x, d.y);
+      }
+      else if (d.t === 'elk') {
+        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🦌', d.x, d.y);
+      }
+      else if (d.t === 'swan') {
+        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🦢', d.x, d.y);
+      }
+      else if (d.t === 'stork') {
+
+
+        const sx3 = d.x, sy3 = d.y;
+        bPx(sx3-2*S, sy3, 4*S, 1*S, '#e53935'); // body
+        bPx(sx3-2*S, sy3-3*S, 2*S, 3*S, '#e0e0e0'); // neck
+        bPx(sx3-2*S, sy3-S, 4*S, S, '#424242'); // wing tips
+      }
+      else if (d.t === 'eagle') {
+
+
+        bPx(d.x-3*S, d.y-S, 6*S, 3*S, '#4e342e');
+        bPx(d.x-4*S, d.y-2*S, 8*S, 2*S, '#3e2723'); // wings spread
+        bPx(d.x, d.y-3*S, 2*S, 2*S, '#fdd835'); // beak
+      }
+      else if (d.t === 'pigeon') {
+
+
+        bPx(d.x-2*S, d.y, 4*S, 2*S, '#9e9e9e');
+        bPx(d.x-3*S, d.y-S, S, 2*S, '#616161');
+      }
+      else if (d.t === 'church_dome') {
+
+
+        const cx2 = d.x, cy2 = d.y;
+        bPx(cx2-3*S, cy2-5*S, 6*S, 5*S, '#fff9c4'); // base
+        bPx(cx2-2*S, cy2-9*S, 4*S, 5*S, '#ffcc02'); // dome body
+        ctx.beginPath(); ctx.fillStyle='#ffcc02';
+        ctx.arc(cx2, cy2-11*S, 3*S, Math.PI, 0); ctx.fill(); // onion top
+        bPx(cx2-S/2, cy2-14*S, S, 3*S, '#bf360c'); // cross
+      }
+      else if (d.t === 'fortress') {
+
+
+        const fx = d.x, fy = d.y;
+        bPx(fx-4*S, fy-7*S, 8*S, 7*S, '#bdbdbd');
+        for (let cr=0; cr<3; cr++) {
+          bPx(fx-4*S+cr*4*S, fy-10*S, 3*S, 4*S, '#9e9e9e'); // crenellations
+        }
+        bPx(fx-2*S, fy-7*S, 4*S, 4*S, '#5d4037'); // gate
+      }
+      else if (d.t === 'serb_cross') {
+
+
+        const cx3 = d.x, cy3 = d.y;
+        bPx(cx3-S, cy3-5*S, 3*S, 6*S, '#3e2723'); // vertical
+        bPx(cx3-3*S, cy3-2*S, 7*S, 2*S, '#3e2723'); // horizontal
+        bPx(cx3, cy3-5*S, S, S, '#f44336'); // firesteel top-right
+        bPx(cx3-2*S, cy3-5*S, S, S, '#f44336'); // firesteel top-left
+        bPx(cx3, cy3-2*S, S, S, '#f44336');
+        bPx(cx3-2*S, cy3-2*S, S, S, '#f44336');
+      }
+      else if (d.t === 'spire') {
+
+
+        const dh = d.h*S;
+        bPx(d.x-S, d.y-dh, 2*S, dh, '#bdbdbd');
+        ctx.beginPath(); ctx.fillStyle='#9e9e9e';
+        ctx.moveTo(d.x-3*S, d.y-dh); ctx.lineTo(d.x, d.y-dh-4*S); ctx.lineTo(d.x+3*S, d.y-dh); ctx.fill();
+      }
+      else if (d.t === 'cloud') {
+        const dx = ((d.x + Date.now() * 0.015) % (CW + 40)) - 20;
+        const rw = d.rw * S, rh = d.rh * S;
+        const bumps = 4;
+        const bW = rw * 2 / bumps;
+        ctx.fillStyle = d.isRu ? '#cfd8dc' : '#f5f5f5';
+        ctx.beginPath();
+        ctx.moveTo(dx - rw, d.y);
+        for (let b = 0; b < bumps; b++) {
+          const bx = dx - rw + b * bW + bW / 2;
+          const by = d.y - rh + rh * 0.2 * Math.sin(b * 1.3 + d.x);
+          ctx.arc(bx, by, bW / 2 + rh * 0.1 * Math.sin(b * 0.7), Math.PI, 0);
+        }
+        ctx.lineTo(dx + rw, d.y);
+        ctx.quadraticCurveTo(dx, d.y + rh * 0.2, dx - rw, d.y);
+        ctx.fill();
+      }
+      else if (d.t === 'boundary') {
+
+
+        ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
+        ctx.beginPath(); ctx.moveTo(10, d.y); ctx.lineTo(CW-10, d.y); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = '#5d4037'; ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'left'; ctx.fillText('🇷🇺', 12, d.y-4);
+        ctx.textAlign = 'right'; ctx.fillText('🇷🇸', CW-12, d.y-4);
+      }
+      ctx.restore();
+    });
+  }
+
   // Compass rose
   const cx = 50, cy0 = 60;
   ctx.fillStyle = '#5d4037';
@@ -2242,9 +2557,85 @@ function renderSchema() {
   ctx.fillText('ЦЕЛЬ', last.x, last.y - 45);
 }
 
+function renderLegend() {
+  const canvas = document.getElementById('legend-canvas');
+  if (!canvas) return;
+  const container = canvas.parentElement;
+  const CW = container ? container.clientWidth - 20 : 360;
+  const dpr = window.devicePixelRatio || 1;
+  const ICON = 20, ROW_H = 22, PAD = 10;
+  const COL_W = (CW / 2) | 0;
+
+  const p = (c, X, Y, W, H, C) => { c.fillStyle = C; c.fillRect(X, Y, W, H); };
+
+  const items = [
+    {z:0, hdr:'🇷🇺 РОССИЯ'},
+    {z:0, la:'Северное сияние', dr(c,x,y,s){c.globalAlpha=0.3;c.fillStyle='#a5d6a7';c.beginPath();c.ellipse(x+6*s,y+3*s,3*s,2*s,0,0,Math.PI*2);c.fill();c.globalAlpha=1;}},
+    {z:0, la:'Ель', dr(c,x,y,s){c.font='14px serif';c.fillText('🌲',x+2,y+12);}},
+    {z:0, la:'Берёза', dr(c,x,y,s){c.font='14px serif';c.fillText('🌳',x+1,y+12);}},
+    {z:0, la:'Горы (сопки)', dr(c,x,y,s){c.font='14px serif';c.fillText('🏔',x+2,y+12);}},
+    {z:0, la:'Река (замёрзшая)', dr(c,x,y,s){c.globalAlpha=0.4;c.strokeStyle='#1a237e';c.lineWidth=s*2;c.lineCap='round';c.beginPath();c.moveTo(x,y+9*s);c.quadraticCurveTo(x+4*s,y+7*s,x+9*s,y+10*s);c.stroke();c.globalAlpha=1;}},
+    {z:0, la:'Озеро', dr(c,x,y,s){c.fillStyle='#42a5f5';c.beginPath();for(let a=0;a<6.28;a+=0.7){const r=3*(0.7+0.3*Math.sin(a*3.5)),px=x+6+r*Math.cos(a),py=y+6+r*Math.sin(a);a===0?c.moveTo(px,py):c.lineTo(px,py);}c.closePath();c.fill();}},
+    {z:0, la:'Медвежий след', dr(c,x,y,s){c.font='14px serif';c.fillText('🐾',x+6,y+8);}},
+    {z:0, la:'Лось', dr(c,x,y,s){c.font='16px serif';c.fillText('🦌',x+2,y+12);}},
+    {z:0, la:'Лебедь', dr(c,x,y,s){c.font='14px serif';c.fillText('🦢',x+2,y+12);}},
+    {z:0, la:'Церковь (купол)', dr(c,x,y,s){c.globalAlpha=0.4;p(c,x+3*s,y+7*s,6*s,5*s,'#fff9c4');p(c,x+4*s,y+4*s,4*s,4*s,'#ffcc02');c.beginPath();c.fillStyle='#ffcc02';c.arc(x+5*s,y+2*s,3*s,Math.PI,0);c.fill();p(c,x+5*s,y+0*s,s,3*s,'#bf360c');c.globalAlpha=1;}},
+    {z:0, la:'Облака', dr(c,x,y,s){c.fillStyle='#cfd8dc';c.beginPath();c.moveTo(x+2,y+8);for(let b=0;b<3;b++){const bx=x+3+b*6,by=y+4+Math.sin(b)*2;c.arc(bx,by,4,Math.PI,0);}c.lineTo(x+16,y+8);c.closePath();c.fill();}},
+
+    {z:1, hdr:'🇷🇸 СЕРБИЯ'},
+    {z:1, la:'Дуб', dr(c,x,y,s){p(c,x+4*s,y+8*s,2*s,4*s,'#6d4c41');c.fillStyle='#558b2f';c.beginPath();c.ellipse(x+4*s,y+5*s,4*s,3*s,0,0,Math.PI*2);c.fill();c.fillStyle='#33691e';c.beginPath();c.arc(x+3*s,y+4*s,3*s,0,Math.PI*2);c.fill();}},
+    {z:1, la:'Липа', dr(c,x,y,s){p(c,x+4*s,y+8*s,2*s,4*s,'#8d6e63');c.fillStyle='#aed581';c.beginPath();c.ellipse(x+4*s,y+5*s,4*s,3*s,0,0,Math.PI*2);c.fill();c.fillStyle='#9ccc65';c.beginPath();c.arc(x+3*s,y+3*s,2*s,0,Math.PI*2);c.fill();c.arc(x+5*s,y+3*s,2*s,0,Math.PI*2);c.fill();}},
+    {z:1, la:'Слива', dr(c,x,y,s){p(c,x+4*s,y+8*s,2*s,4*s,'#5d4037');c.fillStyle='#7cb342';c.beginPath();c.ellipse(x+4*s,y+5*s,3*s,2*s,0,0,Math.PI*2);c.fill();p(c,x+3*s,y+5*s,s,s,'#7b1fa2');p(c,x+5*s,y+5*s,s,s,'#7b1fa2');p(c,x+4*s,y+6*s,s,s,'#7b1fa2');}},
+    {z:1, la:'Холмы', dr(c,x,y,s){const bw=6*s,bh=5*s,bx=x+2*s,by=y+7*s;c.fillStyle='#8bc34a';c.beginPath();c.moveTo(bx,by+bh);c.lineTo(bx+bw/2,by);c.lineTo(bx+bw,by+bh);c.fill();c.fillStyle='#689f38';c.beginPath();c.moveTo(bx+bw*0.15,by+bh*0.7);c.lineTo(bx+bw/2,by+bh*0.2);c.lineTo(bx+bw*0.85,by+bh*0.65);c.fill();}},
+    {z:1, la:'Река (Дунай/Сава)', dr(c,x,y,s){c.globalAlpha=0.4;c.strokeStyle='#1565c0';c.lineWidth=s*3;c.lineCap='round';c.beginPath();c.moveTo(x,y+8*s);c.quadraticCurveTo(x+4*s,y+5*s,x+9*s,y+9*s);c.stroke();c.globalAlpha=1;}},
+    {z:1, la:'Озеро', dr(c,x,y,s){c.fillStyle='#42a5f5';c.beginPath();for(let a=0;a<6.28;a+=0.7){const r=3*(0.7+0.3*Math.sin(a*3.5-1)),px=x+6+r*Math.cos(a),py=y+6+r*Math.sin(a);a===0?c.moveTo(px,py):c.lineTo(px,py);}c.closePath();c.fill();}},
+    {z:1, la:'Аист', dr(c,x,y,s){c.globalAlpha=0.35;p(c,x+3*s,y+8*s,5*s,s,'#e53935');p(c,x+3*s,y+5*s,2*s,3*s,'#e0e0e0');p(c,x+3*s,y+8*s,5*s,s,'#424242');c.globalAlpha=1;}},
+    {z:1, la:'Орёл', dr(c,x,y,s){c.globalAlpha=0.3;p(c,x+2*s,y+7*s,7*s,3*s,'#4e342e');p(c,x+0*s,y+5*s,10*s,2*s,'#3e2723');p(c,x+5*s,y+4*s,2*s,2*s,'#fdd835');c.globalAlpha=1;}},
+    {z:1, la:'Голубь', dr(c,x,y,s){c.globalAlpha=0.3;p(c,x+3*s,y+7*s,5*s,2*s,'#9e9e9e');p(c,x+2*s,y+6*s,s,2*s,'#616161');c.globalAlpha=1;}},
+    {z:1, la:'Крепость Калемегдан', dr(c,x,y,s){c.globalAlpha=0.4;p(c,x+1*s,y+5*s,10*s,7*s,'#bdbdbd');for(let i=0;i<3;i++)p(c,x+1*s+i*4*s,y+2*s,3*s,4*s,'#9e9e9e');p(c,x+3*s,y+5*s,5*s,4*s,'#5d4037');c.globalAlpha=1;}},
+    {z:1, la:'Сербский крест', dr(c,x,y,s){c.globalAlpha=0.35;p(c,x+4*s,y+2*s,3*s,6*s,'#3e2723');p(c,x+1*s,y+5*s,8*s,2*s,'#3e2723');p(c,x+5*s,y+2*s,s,s,'#f44336');p(c,x+3*s,y+2*s,s,s,'#f44336');p(c,x+5*s,y+6*s,s,s,'#f44336');p(c,x+3*s,y+6*s,s,s,'#f44336');c.globalAlpha=1;}},
+    {z:1, la:'Шпиль (город)', dr(c,x,y,s){c.globalAlpha=0.35;p(c,x+4*s,y+7*s,2*s,5*s,'#bdbdbd');c.beginPath();c.fillStyle='#9e9e9e';c.moveTo(x+2*s,y+7*s);c.lineTo(x+5*s,y+3*s);c.lineTo(x+8*s,y+7*s);c.fill();c.globalAlpha=1;}},
+    {z:1, la:'Облака', dr(c,x,y,s){c.fillStyle='#f5f5f5';c.beginPath();c.moveTo(x+2,y+8);for(let b=0;b<3;b++){const bx=x+3+b*6,by=y+4+Math.sin(b+1)*2;c.arc(bx,by,4,Math.PI,0);}c.lineTo(x+16,y+8);c.closePath();c.fill();}},
+  ];
+
+  const rCnt = [0, 0];
+  items.forEach(it => { if (it.hdr) return; rCnt[it.z]++; });
+  const maxR = Math.max(rCnt[0], rCnt[1]) + 1;
+  const H = maxR * ROW_H + PAD * 2 + 10;
+
+  canvas.style.width = CW + 'px';
+  canvas.style.height = H + 'px';
+  canvas.width = CW * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, H);
+  ctx.strokeStyle = '#d7ccc8'; ctx.lineWidth = 1;
+  ctx.strokeRect(3, 3, CW - 6, H - 6);
+
+  let row0 = 0, row1 = 0;
+  items.forEach(item => {
+    const col = item.z;
+    const row = col === 0 ? row0++ : row1++;
+    const cx = col * COL_W + 8;
+    const cy = PAD + row * ROW_H;
+    if (item.hdr) {
+      ctx.fillStyle = '#5d4037'; ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.hdr, cx, cy + 14);
+    } else {
+      item.dr(ctx, cx, cy, 1);
+      ctx.fillStyle = '#4e342e'; ctx.font = '10px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.la, cx + ICON + 6, cy + 13);
+    }
+  });
+}
+
 
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
-  setTimeout(() => { try { renderSchema(); } catch(e) { console.error(e); } }, 100);
+  setTimeout(() => { try { renderSchema(); renderLegend(); } catch(e) { console.error(e); } }, 100);
 });
 
 // Sync: обновление после загрузки из облака
