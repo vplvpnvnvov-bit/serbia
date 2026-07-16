@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.2.0",
-  BUILD: "1d24af0",
-  CACHE_NAME: "relocation-v6.2.0-1d24af0"
+  VERSION: "6.3.0",
+  BUILD: "756f8a0",
+  CACHE_NAME: "relocation-v6.3.0-756f8a0"
 };
 
 
@@ -2132,7 +2132,7 @@ function renderSchema() {
 
   const state = getPlanState() || { tasks: {} };
   const bY = 80 + 0.53 * (trailH - 160);
-  const bFY = 80 + (36/38) * (trailH - 160);
+  const bFY = 80 + (18/23) * (trailH - 160);
 
   // Parchment background
   ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, CH);
@@ -2246,7 +2246,7 @@ function renderSchema() {
     }
 
     // ── Boundary line (wavy state border at flight level) ──
-    const bFlightT = 36 / 38; // Between "Перелёт" (idx 12) and "Жильё" (idx 13)
+    const bFlightT = 18 / 23; // Midpoint between "Перелёт" (12) and "Заселение" (13)
     const bFY = 80 + bFlightT * (trailH - 160);
     const bPts = [];
     const bSteps = 24;
