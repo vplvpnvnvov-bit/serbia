@@ -2062,14 +2062,25 @@ function renderSchema() {
     {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
   ];
 
-  // Winding trail points — centered, dynamic
+  // Smooth winding trail — many points for curves
   const trail = [];
   const n = items.length;
+  const STEPS = 8; // sub-steps between milestones for smooth curves
+  for (let i = 0; i < n; i++) {
+    for (let s = 0; s < (i < n - 1 ? STEPS : 1); s++) {
+      const t = (i + s / STEPS) / (n - 1);
+      const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
+      const y = 80 + t * (CH - 160);
+      trail.push({ x, y, isNode: s === 0 });
+    }
+  }
+  // Nodes at exact milestone positions (for signs and bird)
+  const nodes = [];
   for (let i = 0; i < n; i++) {
     const t = i / (n - 1);
     const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
     const y = 80 + t * (CH - 160);
-    trail.push({ x, y });
+    nodes.push({ x, y });
   }
 
   // Find dino position: last done task
@@ -2080,35 +2091,37 @@ function renderSchema() {
     if (s.checked) { dinoIdx = Math.min(i + 1, n - 1); break; }
   }
 
-  // Draw trail
-  ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+  // Draw smooth trail — all points
+  const tn = trail.length;
+  ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   ctx.beginPath(); ctx.moveTo(trail[0].x, trail[0].y);
-  for (let i = 1; i < n; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  for (let i = 1; i < tn; i++) ctx.lineTo(trail[i].x, trail[i].y);
   ctx.stroke();
   // Done portion
   ctx.strokeStyle = '#81c784'; ctx.lineWidth = 10;
   ctx.beginPath(); ctx.moveTo(trail[0].x, trail[0].y);
-  for (let i = 1; i <= dinoIdx; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  const doneIdx = dinoIdx * STEPS;
+  for (let i = 1; i <= doneIdx && i < tn; i++) ctx.lineTo(trail[i].x, trail[i].y);
   ctx.stroke();
-  // Dotted future portion
+  // Dotted future
   ctx.strokeStyle = '#bbb'; ctx.lineWidth = 8; ctx.setLineDash([8, 12]);
-  ctx.beginPath(); ctx.moveTo(trail[dinoIdx].x, trail[dinoIdx].y);
-  for (let i = dinoIdx + 1; i < n; i++) ctx.lineTo(trail[i].x, trail[i].y);
+  ctx.beginPath(); ctx.moveTo(trail[doneIdx]?.x || trail[0].x, trail[doneIdx]?.y || trail[0].y);
+  for (let i = doneIdx + 1; i < tn; i++) ctx.lineTo(trail[i].x, trail[i].y);
   ctx.stroke(); ctx.setLineDash([]);
 
-  // Dino footprint dots on path
+  // Footprints on nodes
   for (let i = 0; i <= dinoIdx; i++) {
     ctx.fillStyle = '#388e3c'; ctx.beginPath();
-    ctx.arc(trail[i].x, trail[i].y, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.arc(nodes[i].x, nodes[i].y, 5, 0, Math.PI * 2); ctx.fill();
   }
 
-  // Draw milestone signs — offset from trail, alternating sides
+  // Draw milestone signs — offset from nodes, alternating sides
   items.forEach((item, i) => {
-    const p = trail[i];
+    const p = nodes[i];
     // Perpendicular offset from trail direction
     let dx = 0, dy = 0;
-    if (i < n - 1) { dx = trail[i+1].x - p.x; dy = trail[i+1].y - p.y; }
-    else { dx = p.x - trail[i-1].x; dy = p.y - trail[i-1].y; }
+    if (i < n - 1) { dx = nodes[i+1].x - p.x; dy = nodes[i+1].y - p.y; }
+    else { dx = p.x - nodes[i-1].x; dy = p.y - nodes[i-1].y; }
     const len = Math.sqrt(dx*dx + dy*dy) || 1;
     const perpX = -dy / len, perpY = dx / len;
     const side = i % 2 === 0 ? 1 : -1; // alternate sides
@@ -2179,7 +2192,7 @@ function renderSchema() {
   });
 
   // Pixel-art Bird (flying to Serbia!) at current position
-  const dp = trail[dinoIdx];
+  const dp = nodes[dinoIdx];
   const frame = Math.floor(Date.now() / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
@@ -2234,7 +2247,7 @@ function renderSchema() {
   }
 
   // Treasure X at the end
-  const last = trail[n - 1];
+  const last = nodes[n - 1];
   ctx.fillStyle = '#c62828'; ctx.font = 'bold 28px serif';
   ctx.fillText('✘', last.x, last.y - 30);
   ctx.fillStyle = '#b71c1c'; ctx.font = 'bold 10px serif';
