@@ -2144,24 +2144,41 @@ function renderSchema() {
     }
   });
 
-  // Dino at current position
+  // Dino at current position — animated
   const dp = trail[dinoIdx];
+  const frame = Math.floor(Date.now() / 200) % 4;
+  const legOff = [0, 3, 0, -3][frame];
+  const bob = [0, -2, 0, -2][frame];
   ctx.fillStyle = '#4e342e';
   // Body
-  ctx.beginPath(); ctx.ellipse(dp.x, dp.y - 10, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(dp.x, dp.y - 10 + bob, 10, 7, 0, 0, Math.PI * 2); ctx.fill();
   // Head
-  ctx.fillRect(dp.x + 7, dp.y - 18, 9, 9);
+  ctx.fillRect(dp.x + 7, dp.y - 18 + bob, 9, 9);
   // Eye
-  ctx.fillStyle = '#fff'; ctx.fillRect(dp.x + 12, dp.y - 16, 3, 3);
-  ctx.fillStyle = '#000'; ctx.fillRect(dp.x + 13, dp.y - 15, 1, 1);
+  ctx.fillStyle = '#fff'; ctx.fillRect(dp.x + 12, dp.y - 16 + bob, 3, 3);
+  ctx.fillStyle = '#000'; ctx.fillRect(dp.x + 13, dp.y - 15 + bob, 1, 1);
   // Spike
-  ctx.fillStyle = '#6d4c41'; ctx.fillRect(dp.x + 1, dp.y - 20, 2, 4);
-  // Legs
+  ctx.fillStyle = '#6d4c41'; ctx.fillRect(dp.x + 1, dp.y - 20 + bob, 2, 4);
+  // Animated legs
   ctx.fillStyle = '#4e342e';
-  ctx.fillRect(dp.x - 5, dp.y - 3, 3, 6); ctx.fillRect(dp.x + 3, dp.y - 3, 3, 6);
+  ctx.fillRect(dp.x - 5, dp.y - 3, 3, 6 + legOff);     // back leg
+  ctx.fillRect(dp.x + 3, dp.y - 3, 3, 6 - legOff);     // front leg
   // Label
   ctx.fillStyle = '#3e2723'; ctx.font = 'bold 9px serif'; ctx.textAlign = 'center';
-  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 26);
+  ctx.fillText('🦕 ты здесь', dp.x, dp.y - 28);
+
+  // Start animation loop when tab is open
+  if (!window._schemaAnimating) {
+    window._schemaAnimating = true;
+    function animLoop() {
+      if (!document.getElementById('tab-schema')?.classList.contains('active')) {
+        window._schemaAnimating = false; return;
+      }
+      renderSchema();
+      requestAnimationFrame(() => setTimeout(animLoop, 200));
+    }
+    animLoop();
+  }
 
   // Treasure X at the end
   const last = trail[n - 1];
