@@ -1228,31 +1228,34 @@ function showUpdateNotification(worker) {
 // 2. Обработчик кнопки ручной проверки обновлений
 const updateBtn = document.getElementById('btn-check-app-update');
 if (updateBtn) {
+  let checking = false;
+  updateBtn.style.minWidth = updateBtn.offsetWidth + 'px';
   updateBtn.addEventListener('click', async (e) => {
     e.preventDefault();
+    if (checking) return;
+    checking = true;
     updateBtn.disabled = true;
-    updateBtn.innerHTML = '🔍 Проверяю сервер...';
+    updateBtn.textContent = '🔍 Проверяю сервер...';
 
     try {
       const reg = await navigator.serviceWorker.ready;
-
       await reg.update();
-
       await new Promise(resolve => setTimeout(resolve, 800));
 
       if (!reg.installing && !reg.waiting) {
-        updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
+        updateBtn.textContent = '✨ Актуальная версия';
       } else {
-        updateBtn.innerHTML = '🚀 Найдено обновление! Устанавливаю...';
+        updateBtn.textContent = '🚀 Обновление найдено';
       }
     } catch (err) {
-      console.error('Ошибка при ручной проверке обновлений:', err);
-      updateBtn.innerHTML = '❌ Ошибка проверки';
+      console.error(err);
+      updateBtn.textContent = '❌ Ошибка проверки';
     } finally {
       setTimeout(() => {
         updateBtn.disabled = false;
-        updateBtn.innerHTML = '🔄 Проверить обновления';
-      }, 3000);
+        updateBtn.textContent = '🔄 Проверить обновления';
+        checking = false;
+      }, 2500);
     }
   });
 }
