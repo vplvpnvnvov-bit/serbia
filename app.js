@@ -2064,7 +2064,7 @@ function renderSchema() {
   const n = items.length;
   for (let i = 0; i < n; i++) {
     const t = i / (n - 1);
-    const x = 70 + t * (CW - 140) + Math.sin(t * Math.PI * 3) * 60;
+    const x = 100 + t * (CW - 200) + Math.sin(t * Math.PI * 2.5) * 50;
     const y = 80 + t * (CH - 160);
     trail.push({ x, y });
   }
