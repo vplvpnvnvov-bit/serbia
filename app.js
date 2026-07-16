@@ -2000,35 +2000,96 @@ function renderSchema() {
   const taskMap = {};
   masterTimeline.forEach(m => m.tasks.forEach(t => { taskMap[t.id] = t; }));
 
-  // Virtual milestones + real tasks in dependency order
-  const chain = [
-    { id: '_rf',    name: '🇷🇺 Сбор документов в РФ', virtual: true },
-    { id: 'm1_flight', name: 'Перелёт в Белград' },
-    { id: 'm1_airbnb', name: 'Жильё на Airbnb' },
-    { id: 'reg',    name: 'Белый картон' },
-    { id: 'm1_translate', name: 'Судебные переводы' },
-    { id: 'm1_insurance', name: 'Медстраховка на год' },
-    { id: 'talent_nostrification', name: 'Нострификация диплома' },
-    { id: '_docs',  name: '📄 Пакет документов собран', virtual: true },
-    { id: 'm1_vnz', name: '🎯 ВНЖ по Таланту' },
+  // === GRAPH DEFINITION ===
+  // Nodes: { id, name, virtual?, col? (branch index), level? }
+  const nodes = [
+    // Month 0 — РФ (col 0-5, level 0)
+    { id: 'p10',       name: 'Загранпаспорт мужа', col: 0 },
+    { id: 'p5w',       name: 'Загранпаспорт жены', col: 1 },
+    { id: 'stamp',     name: 'Штамп гражданства', col: 2, children: ['p5d'] },
+    { id: 'nocrim_h',  name: 'Справка несудимости (муж)', col: 3 },
+    { id: 'nocrim_w',  name: 'Справка несудимости (жена)', col: 4 },
+    { id: 'apost_marr', name: 'Апостиль на брак', col: 5 },
+    { id: 'apost_birth',name: 'Апостиль на рождение', col: 6 },
+    { id: 'power',     name: 'Доверенность в РФ', col: 7 },
+    { id: 'p5d',       name: 'Загранпаспорт ребёнка', col: 2, level: 1, children: ['m1_pediatrician'] },
+    // Arrival (col=main, level 1)
+    { id: 'm1_flight', name: 'Перелёт в Белград', main: true },
+    { id: 'm1_airbnb', name: 'Жильё на Airbnb', main: true },
+    // Serbia steps (col=main)
+    { id: 'reg',       name: 'Белый картон', main: true },
+    { id: 'm1_translate', name: 'Судебные переводы', main: true },
+    { id: 'm1_insurance', name: 'Медстраховка на год', main: true },
+    { id: 'talent_nostrification', name: 'Нострификация диплома', main: true },
+    { id: 'm1_vnz',    name: '🎯 ВНЖ по Таланту', main: true, goal: true },
+    // Virtual milestones
+    { id: '_rf_done',  name: '📦 Документы собраны', virtual: true, main: true },
+    { id: '_docs',     name: '📄 Пакет готов', virtual: true, main: true },
   ];
 
-  // Dependencies: who must be done before this step
-  const deps = {
-    m1_flight: ['_rf'],
-    m1_airbnb: ['_rf'],
-    reg: ['m1_airbnb'],
-    m1_translate: ['reg'],
-    m1_insurance: ['reg'],
-    talent_nostrification: ['m1_translate'],
-    _docs: ['talent_nostrification', 'm1_insurance', 'reg'],
-    m1_vnz: ['_docs'],
-  };
+  // Build edges: what must be done before each
+  const deps = {};
+  const addDep = (child, ...parents) => { deps[child] = parents; };
+  // Month 0 tasks are independent, all feed into _rf_done
+  addDep('_rf_done', 'p10','p5w','stamp','nocrim_h','nocrim_w','apost_marr','apost_birth','power');
+  addDep('m1_flight', '_rf_done');
+  addDep('m1_airbnb', '_rf_done');
+  addDep('reg', 'm1_airbnb');
+  addDep('m1_translate', 'reg');
+  addDep('m1_insurance', 'reg');
+  addDep('talent_nostrification', 'm1_translate');
+  addDep('_docs', 'talent_nostrification', 'm1_insurance');
+  addDep('m1_vnz', '_docs');
 
+  // Layout
+  const PAD_X = 14, PAD_Y = 24;
+  const NA = 140, NH = 40; // narrow node for RF branch
+  const MA = 200, MH = 46; // main node
+  let maxW = 0, maxH = 0;
+  schemaNodes = [];
+
+  // Position main chain vertically
+  const mainIds = nodes.filter(n => n.main).map(n => n.id);
+  mainIds.forEach((id, i) => {
+    if (id === '_rf_done') return; // positioned with RF branch
+    const s = nodes.find(n => n.id === id);
+    const x = 80, y = 60 + i * (MH + PAD_Y);
+    schemaNodes.push({ id, x, y, w: MA, h: MH, virtual: s.virtual, goal: s.goal, name: s.name });
+    maxW = Math.max(maxW, x + MA + 20);
+    maxH = Math.max(maxH, y + MH + 20);
+  });
+
+  // Position RF branch — spread horizontally above _rf_done
+  const rfRootY = 60 + mainIds.indexOf('_rf_done') * (MH + PAD_Y);
+  const rfKids = nodes.filter(n => n.col !== undefined && !n.level);
+  const rfSpan = rfKids.length * (NA + PAD_X) - PAD_X;
+  const rfStartX = 80 + (MA - rfSpan) / 2;
+  let rowOffset = 0;
+
+  // First row of RF tasks
+  rfKids.forEach((s, i) => {
+    const x = rfStartX + i * (NA + PAD_X);
+    const y = rfRootY - MH - PAD_Y;
+    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, virtual: s.virtual, name: s.name });
+    maxW = Math.max(maxW, x + NA + 20);
+  });
+  rowOffset++;
+
+  // Second row: tasks with level:1 (p5d)
+  nodes.filter(n => n.level === 1).forEach((s, i) => {
+    const parentNode = nodes.find(p => p.id === s.id);
+    const colIdx = parentNode?.col ?? 0;
+    const x = rfStartX + colIdx * (NA + PAD_X);
+    const y = rfRootY - MH - PAD_Y - (NH + PAD_Y);
+    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, name: s.name });
+  });
+
+  // _rf_done gateway
+  schemaNodes.push({ id: '_rf_done', x: 80, y: rfRootY, w: MA, h: MH, virtual: true, name: '📦 Документы собраны' });
+
+  // Draw edges on canvas
   const dpr = window.devicePixelRatio || 1;
-  const NODE_W = 210, NODE_H = 44, PAD = 20;
-  const totalW = NODE_W + 40;
-  const totalH = chain.length * (NODE_H + PAD) + 20;
+  const totalW = Math.max(maxW || 400, 500);
 
   canvas.style.width = totalW + 'px';
   canvas.style.height = totalH + 'px';
@@ -2038,13 +2099,6 @@ function renderSchema() {
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, totalW, totalH);
-
-  // Layout — centered vertical chain
-  schemaNodes = [];
-  chain.forEach((item, i) => {
-    const y = PAD + i * (NODE_H + PAD);
-    schemaNodes.push({ id: item.id, x: 20, y, w: NODE_W, h: NODE_H, virtual: item.virtual, name: item.name });
-  });
 
   // Draw edges
   schemaNodes.forEach(node => {
@@ -2080,7 +2134,8 @@ function renderSchema() {
     const done = s.checked === true;
     const prog = s.progress === true;
     const depsMet = (deps[node.id] || []).every(dep => {
-      if (chain.find(c => c.id === dep)?.virtual) return true;
+      const depNode = nodes.find(n => n.id === dep);
+      if (depNode && depNode.virtual) return true;
       const ds = state.tasks?.[dep] || {};
       return ds.checked === true;
     });
@@ -2131,7 +2186,7 @@ if (!window._schemaClickSetup) {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-      if (!node || node.virtual || node.id === '_rf' || node.id === '_docs') return;
+      if (!node || node.virtual) return;
 
       const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
       if (!task) return;
@@ -2139,7 +2194,8 @@ if (!window._schemaClickSetup) {
       const st = getPlanState() || { tasks: {} };
       const s = (st.tasks && st.tasks[node.id]) || {};
       const depsMet = (deps[node.id] || []).every(dep => {
-        if (chain.find(c => c.id === dep)?.virtual) return true;
+        const depNode = nodes.find(n => n.id === dep);
+        if (depNode && depNode.virtual) return true;
         return (st.tasks?.[dep] || {}).checked === true;
       });
       if (!depsMet && !s.checked && !s.progress) return;
