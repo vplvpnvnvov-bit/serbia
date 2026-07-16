@@ -807,7 +807,7 @@ const masterTimeline = [
         expires: 120 
       },
       { 
-        id: "p5d",dependsOn:["stamp"], 
+        id: "p5d", 
         name: "Загранпаспорт ребёнка (5 лет)", 
         cost: 1000, 
         currency: "RUB", 
@@ -910,7 +910,7 @@ const masterTimeline = [
     focus: "Перелет, адаптация на Airbnb, подача на первый ВНЖ и нострификация диплома",
     tasks: [
       { 
-        id: "m1_flight",dependsOn:["p10"], 
+        id: "m1_flight", 
         name: "Прямой перелет Air Serbia (3 чел. с багажом)", 
         cost: 1350, 
         currency: "EUR", 
@@ -918,7 +918,7 @@ const masterTimeline = [
         tip: "<p>Прямые беспересадочные рейсы осуществляет национальный перевозчик Сербии <a href='https://www.airserbia.com' target='_blank' rel='noopener noreferrer'>Air Serbia</a> из аэропорта Шереметьево (SVO) в аэропорт Никола Тесла (BEG) Белграда.</p><p><b>Правила багажа:</b> Стандартный тариф обычно включает 1 место багажа весом до 23 кг и ручную кладь до 8 кг на каждого пассажира. Внимательно проверяйте габариты ручной клади перед вылетом на сайте авиакомпании — сербские стойки регистрации часто заставляют помещать сумки в калибраторы.</p>" 
       },
       { 
-        id: "m1_airbnb",dependsOn:["p10"], 
+        id: "m1_airbnb", 
         name: "Жилье на Airbnb (1-й месяц)", 
         cost: 950, 
         currency: "EUR", 
@@ -926,7 +926,7 @@ const masterTimeline = [
         tip: "<p>Бронируйте апартаменты на <a href='https://www.airbnb.com' target='_blank' rel='noopener noreferrer'>Airbnb</a> на срок от 28–30 дней — это автоматически активирует долгосрочные скидки сервиса (до 40-50%).</p><p><b>⚠️ Самое главное условие:</b> До совершения оплаты напишите владельцу квартиры в чате: <i>'Da li možete da nam uradite beli karton u policiji u roku od 24 sata?'</i> (Можете ли вы оформить нам белый картон в полиции в течение 24 часов?). Если хост сомневается, отказывается или предлагает вам сделать это самостоятельно — отменяйте бронь. Без белого картона вы будете находиться в Сербии нелегально.</p>" 
       },
       { 
-        id: "reg",dependsOn:["m1_airbnb","p10"], 
+        id: "reg",dependsOn:["m1_airbnb"], 
         name: "Белый картон (Beli karton) — регистрация", 
         cost: 0, 
         currency: "EUR", 
@@ -935,7 +935,7 @@ const masterTimeline = [
         hasDate: true 
       },
       { 
-        id: "sim",dependsOn:["m1_flight"], 
+        id: "sim", 
         name: "Сим-карта сербского оператора", 
         cost: 10, 
         currency: "EUR", 
@@ -943,7 +943,7 @@ const masterTimeline = [
         tip: "<p><b>Где купить:</b> Зайдите в любой сетевой газетный киоск (Moj Kiosk) или фирменный салон оператора. Попросите prepaid-карту (на сербском: 'pripejd kartica'). Паспорт для покупки предоплаченного пакета не требуется.</p><p><b>Какого оператора выбрать:</b> Основные игроки — Yettel, A1 и mts. Для быстрого старта рекомендуем туристические пакеты от <a href='https://www.yettel.rs' target='_blank' rel='noopener noreferrer'>Yettel</a> (например, 15–50 ГБ интернета на 15–30 дней за ~600-1000 RSD). Покрытие в Белграде у всех операторов отличное. После получения ВНЖ вы сможете переоформить эту карту на выгодный контракт (postpaid).</p>" 
       },
       { 
-        id: "m1_translate",dependsOn:["reg","nocrim_h","nocrim_w"], 
+        id: "m1_translate",dependsOn:["reg"], 
         name: "Судебные переводы документов", 
         cost: 200, 
         currency: "EUR", 
@@ -969,7 +969,7 @@ const masterTimeline = [
         expires: 12 
       },
       { 
-        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance","reg","p10"], 
+        id: "m1_vnz",dependsOn:["talent_nostrification","m1_insurance","reg"], 
         name: "Пошлины МУП за ВНЖ «Талант» на троих", 
         cost: 600, 
         currency: "EUR", 
@@ -985,7 +985,7 @@ const masterTimeline = [
         tip: "<p><b>Ориентировочные траты на первый месяц для семьи из 3 человек:</b></p><p>— Покупка продуктов в сетевых супермаркетах (Maxi, Idea, Roda, Lidl) или на местных рынках (Zeleni Venac, Kalenić): ~450 €.</p><p>— Проездные билеты на общественный транспорт Белграда (система Beograd Plus, оплата по SMS или через мобильное приложение): ~30 €.</p><p>— Хозяйственные мелочи для временной квартиры (химия, средства гигиены): ~70 €.</p><p>— Мобильный интернет и связь: ~50 €.</p>" 
       },
       { 
-        id: "m1_pediatrician",dependsOn:["p5d"], 
+        id: "m1_pediatrician", 
         name: "Осмотр ребёнка у педиатра для сада", 
         cost: 50, 
         currency: "EUR", 
@@ -1033,7 +1033,7 @@ const masterTimeline = [
         tip: "<p><b>Что входит в счета:</b></p><p>1. <b>Infostan:</b> Единый коммунальный счет за отопление, холодную воду, вывоз мусора и обслуживание дома. Управляется и администрируется компанией <a href='https://www.infostan.rs' target='_blank' rel='noopener noreferrer'>JKP Infostan Tehnologije</a>. Сумма зависит от площади и наличия центрального отопления (в среднем 60–120 €).</p><p>2. <b>Электроэнергия (EPS):</b> Оплачивается по счетчику. Электричество в Сербии дорогое, особенно при переходе в 'красную зону' потребления. Старайтесь включать бойлер и стиральную машину в часы ночного льготного тарифа (с 22:00 до 06:00).</p><p>3. <b>Интернет:</b> Провайдеры SBB, mts или Orion. Стоимость тарифа — около 25–35 € в месяц.</p>" 
       },
       { 
-        id: "m2_kindergarten",dependsOn:["m1_pediatrician"], 
+        id: "m2_kindergarten", 
         name: "Частный детский сад (1-й месяц)", 
         cost: 400, 
         currency: "EUR", 
@@ -1080,7 +1080,7 @@ const masterTimeline = [
         tip: "<p>Расходы семьи на питание, быт и текущие транспортные расходы.</p>" 
       },
       { 
-        id: "preduzetnik",dependsOn:["m1_vnz"], 
+        id: "preduzetnik", 
         name: "Регистрация ИП в APR (Предузетник)", 
         cost: 21, 
         currency: "EUR", 
@@ -1096,7 +1096,7 @@ const masterTimeline = [
         tip: "<p><b>Зачем нужен:</b> По закону Сербии при регистрации ИП вы обязаны указать юридический адрес (sedište). Если хозяин вашей квартиры категорически отказывается разрешать регистрацию бизнеса по адресу проживания, вам необходимо арендовать виртуальный офис (virtualna kancelarija).</p><p><b>⚠️ Проверка безопасности:</b> На рынке присутствует множество посредников, предлагающих виртуальные адреса. Чтобы не наткнуться на мошеннические фирмы-'пустышки', обязательно проверяйте юридический статус, ИНН (PIB) и финансовую активность компании-арендодателя через официальный реестр на сайте <a href='https://www.apr.gov.rs' target='_blank' rel='noopener noreferrer'>APR</a>.</p>" 
       },
       { 
-        id: "bank",dependsOn:["preduzetnik"], 
+        id: "bank", 
         name: "Открытие личного и бизнес-счёта в банке", 
         cost: 0, 
         currency: "EUR", 
@@ -1143,7 +1143,7 @@ const masterTimeline = [
         tip: "<p><b>Важный документ:</b> Попросите у руководства вашего детского сада выдать вам официальную справку о регулярном посещении ребенком учреждения (Potvrda o pohađanju vrtića). Этот документ с синей печатью сада может служить весомым доказательством интеграции вашей семьи в сербское общество при рассмотрении инспектором МУП документов на продление вашего ВНЖ на следующий год.</p>" 
       },
       { 
-        id: "m4_pausal",dependsOn:["bank"], 
+        id: "m4_pausal", 
         name: "Первые фиксированные налоги ИП (Паушал)", 
         cost: 350, 
         currency: "EUR", 
@@ -1151,7 +1151,7 @@ const masterTimeline = [
         tip: "<p><b>Правила и сроки:</b> Если вы выбрали упрощенную систему налогообложения (Paušal), вы обязаны ежемесячно уплачивать фиксированную сумму налогов и социальных взносов. Налоги рассчитываются автоматически и выставляются в налоговом решении (Rešenje) от <a href='https://www.purs.gov.rs' target='_blank' rel='noopener noreferrer'>Налогового управления Сербии (Poreska uprava)</a>.</p><p><b>⚠️ Срок оплаты:</b> Налоги должны уплачиваться строго до 15-го числа каждого текущего месяца за предыдущий месяц. Квитанции формируются в вашем налоговом кабинете. Не допускайте просрочек — пени начисляются автоматически с первого дня просрочки, а систематическая неуплата может повлечь блокировку счетов и аннулирование ВНЖ.</p>" 
       },
       { 
-        id: "state_health_insurance",dependsOn:["m4_pausal"], 
+        id: "state_health_insurance", 
         name: "Оформление гос. медстраховки (здравственная книжица)", 
         cost: 0, 
         currency: "EUR", 
@@ -1167,7 +1167,7 @@ const masterTimeline = [
         tip: "<p>Стабильные ежемесячные расходы семьи на продукты, мелкие бытовые нужды и транспортные издержки на четвертом месяце жизни в стране.</p>" 
       },
       { 
-        id: "license",dependsOn:["m1_vnz"], 
+        id: "license", 
         name: "Перевод водительских прав на сербский", 
         cost: 30, 
         currency: "EUR", 
@@ -1989,133 +1989,83 @@ document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
 });
 
-// === SCHEMA TAB ===
+// === SCHEMA TAB: ВНЖ по Таланту ===
 let schemaNodes = [];
-let schemaEdges = [];
 
 function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
 
   const state = getPlanState() || { tasks: {} };
-  const tasks = [];
   const taskMap = {};
+  masterTimeline.forEach(m => m.tasks.forEach(t => { taskMap[t.id] = t; }));
 
-  masterTimeline.forEach(m => {
-    m.tasks.forEach(t => { taskMap[t.id] = t; tasks.push(t); });
-  });
-
-  // Virtual milestones — logical states between tasks
-  const virtualNodes = [
-    { id: '_rf_done', name: '🇷🇺 Подготовка в РФ', desc: 'Документы собраны, пора вылетать' },
-    { id: '_arrived', name: '✈️ Прибытие в Сербию', desc: 'Перелёт, заселение, белый картон' },
-    { id: '_docs_ready', name: '📄 Документы готовы', desc: 'Переводы сделаны, можно подавать' },
+  // Virtual milestones + real tasks in dependency order
+  const chain = [
+    { id: '_rf',    name: '🇷🇺 Сбор документов в РФ', virtual: true },
+    { id: 'm1_flight', name: 'Перелёт в Белград' },
+    { id: 'm1_airbnb', name: 'Жильё на Airbnb' },
+    { id: 'reg',    name: 'Белый картон' },
+    { id: 'm1_translate', name: 'Судебные переводы' },
+    { id: 'm1_insurance', name: 'Медстраховка на год' },
+    { id: 'talent_nostrification', name: 'Нострификация диплома' },
+    { id: '_docs',  name: '📄 Пакет документов собран', virtual: true },
+    { id: 'm1_vnz', name: '🎯 ВНЖ по Таланту' },
   ];
-  virtualNodes.forEach(v => { taskMap[v.id] = v; });
 
-  // === ПОЛНЫЙ ГРАФ: ВНЖ по Таланту ===
-  const graphDeps = {};
-  // Реальные зависимости из masterTimeline
-  tasks.forEach(t => { if (t.dependsOn && t.dependsOn.length) graphDeps[t.id] = [...t.dependsOn]; });
-  // Виртуальные связи
-  graphDeps['_rf_done'] = [];
-  graphDeps['_arrived'] = ['_rf_done', 'm1_flight', 'm1_airbnb'];
-  graphDeps['_docs_ready'] = ['reg', 'm1_translate'];
-
-  // All tasks in graph
-  const deps = new Set();
-  Object.keys(graphDeps).forEach(id => { deps.add(id); graphDeps[id].forEach(p => deps.add(p)); });
-
-  // Build children map
-  const children = {};
-  deps.forEach(id => { children[id] = []; });
-  deps.forEach(id => {
-    (graphDeps[id] || []).forEach(p => {
-      if (!children[p]) children[p] = [];
-      children[p].push(id);
-    });
-  });
-
-  // Find roots
-  const roots = [];
-  deps.forEach(id => {
-    if (!graphDeps[id] || graphDeps[id].length === 0) roots.push(id);
-  });
+  // Dependencies: who must be done before this step
+  const deps = {
+    m1_flight: ['_rf'],
+    m1_airbnb: ['_rf'],
+    reg: ['m1_airbnb'],
+    m1_translate: ['reg'],
+    m1_insurance: ['reg'],
+    talent_nostrification: ['m1_translate'],
+    _docs: ['talent_nostrification', 'm1_insurance', 'reg'],
+    m1_vnz: ['_docs'],
+  };
 
   const dpr = window.devicePixelRatio || 1;
-  const NODE_W = 170, NODE_H = 48, PAD_X = 24, PAD_Y = 28;
+  const NODE_W = 210, NODE_H = 44, PAD = 20;
+  const totalW = NODE_W + 40;
+  const totalH = chain.length * (NODE_H + PAD) + 20;
 
-  // Free-form layout: place nodes along their chains
-  schemaNodes = [];
-  let curX = 20, curY = 10;
-  let maxW = 0, maxH = 0;
-  let chainIdx = 0;
-
-  roots.forEach(root => {
-    const chain = [];
-    const q = [root];
-    const inChain = new Set();
-    while (q.length) {
-      const id = q.shift();
-      if (inChain.has(id)) continue;
-      inChain.add(id);
-      chain.push(id);
-      (children[id] || []).forEach(c => q.push(c));
-    }
-    chainIdx++;
-    chain.forEach((id, i) => {
-      const x = curX;
-      const y = curY + i * (NODE_H + PAD_Y);
-      schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
-    });
-    maxW = Math.max(maxW, curX + NODE_W + 20);
-    maxH = Math.max(maxH, curY + chain.length * (NODE_H + PAD_Y) + 10);
-    curX += NODE_W + PAD_X + 30;
-  });
-
-  canvas.style.width = (maxW || 300) + 'px';
-  canvas.style.height = (maxH || 100) + 'px';
-  canvas.width = (maxW || 300) * dpr;
-  canvas.height = (maxH || 100) * dpr;
+  canvas.style.width = totalW + 'px';
+  canvas.style.height = totalH + 'px';
+  canvas.width = totalW * dpr;
+  canvas.height = totalH * dpr;
 
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, maxW || 300, maxH || 100);
+  ctx.clearRect(0, 0, totalW, totalH);
 
-  if (schemaNodes.length === 0) {
-    ctx.fillStyle = '#999';
-    ctx.font = '14px -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Нет задач с зависимостями', (maxW || 300) / 2, 50);
-    return;
-  }
+  // Layout — centered vertical chain
+  schemaNodes = [];
+  chain.forEach((item, i) => {
+    const y = PAD + i * (NODE_H + PAD);
+    schemaNodes.push({ id: item.id, x: 20, y, w: NODE_W, h: NODE_H, virtual: item.virtual, name: item.name });
+  });
 
-  // Draw edges: Bezier curves
-  const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
-  let edgeIdx = 0;
-  const critical = ['p10','preduzetnik','bank','m4_pausal'];
+  // Draw edges
   schemaNodes.forEach(node => {
-    const parents = graphDeps[node.id];
+    const parents = deps[node.id];
     if (!parents) return;
-    parents.forEach(depId => {
-      const parent = schemaNodes.find(n => n.id === depId);
+    parents.forEach(pid => {
+      const parent = schemaNodes.find(n => n.id === pid);
       if (!parent) return;
       const x1 = parent.x + parent.w / 2;
       const y1 = parent.y + parent.h;
       const x2 = node.x + node.w / 2;
       const y2 = node.y;
-      const isCritical = critical.includes(node.id) && critical.includes(depId);
-      const color = isCritical ? '#e91e63' : edgeColors[edgeIdx % edgeColors.length];
-      if (!isCritical) edgeIdx++;
 
-      ctx.strokeStyle = color;
-      ctx.lineWidth = isCritical ? 2.8 : 1.8;
+      ctx.strokeStyle = '#90a4ae';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.bezierCurveTo(x1, (y1 + y2) / 2, x2, (y1 + y2) / 2, x2, y2);
       ctx.stroke();
 
-      ctx.fillStyle = color;
+      ctx.fillStyle = '#90a4ae';
       ctx.beginPath();
       ctx.moveTo(x2, y2);
       ctx.lineTo(x2 - 4, y2 - 6);
@@ -2126,26 +2076,27 @@ function renderSchema() {
 
   // Draw nodes
   schemaNodes.forEach(node => {
-    const isVirtual = node.id.startsWith('_');
     const s = (state.tasks && state.tasks[node.id]) || {};
     const done = s.checked === true;
     const prog = s.progress === true;
-    const depsMet = (graphDeps[node.id] || []).every(dep => {
-      if (dep.startsWith('_')) return true;
-      const ds = (state.tasks && state.tasks[dep]) || {};
+    const depsMet = (deps[node.id] || []).every(dep => {
+      if (chain.find(c => c.id === dep)?.virtual) return true;
+      const ds = state.tasks?.[dep] || {};
       return ds.checked === true;
     });
 
-    let fill, stroke, textColor;
-    if (isVirtual) { fill = '#ede7f6'; stroke = '#7e57c2'; textColor = '#4a148c'; }
-    else if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; textColor = '#1b5e20'; }
-    else if (prog) { fill = '#fff9c4'; stroke = '#f9a825'; textColor = '#f57f17'; }
-    else if (!depsMet) { fill = '#eceff1'; stroke = '#90a4ae'; textColor = '#90a4ae'; }
-    else { fill = '#e3f2fd'; stroke = '#1565c0'; textColor = '#0d47a1'; }
+    let fill, stroke, tColor;
+    if (node.virtual) { fill = '#ede7f6'; stroke = '#7e57c2'; tColor = '#4a148c'; }
+    else if (done) { fill = '#c8e6c9'; stroke = '#2e7d32'; tColor = '#1b5e20'; }
+    else if (prog) { fill = '#fff9c4'; stroke = '#f9a825'; tColor = '#f57f17'; }
+    else if (!depsMet) { fill = '#eceff1'; stroke = '#b0bec5'; tColor = '#90a4ae'; }
+    else { fill = '#e3f2fd'; stroke = '#1565c0'; tColor = '#0d47a1'; }
+
+    const name = (taskMap[node.id]?.name || node.name || node.id).slice(0, 28);
 
     ctx.fillStyle = fill;
     ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = node.id === 'm1_vnz' ? 3 : 2;
     ctx.beginPath();
     const r = 6;
     ctx.moveTo(node.x + r, node.y);
@@ -2161,82 +2112,67 @@ function renderSchema() {
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = textColor;
+    ctx.fillStyle = tColor;
     ctx.font = 'bold 11px -apple-system, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const name = (taskMap[node.id]?.name || node.id).slice(0, 25);
     ctx.fillText(name, node.x + node.w / 2, node.y + node.h / 2 - 6);
     ctx.font = '9px -apple-system, sans-serif';
-    ctx.fillText(done ? '✓ Выполнено' : prog ? '● В процессе' : depsMet ? '▶ Доступно' : '🔒 Заблокировано', node.x + node.w / 2, node.y + node.h / 2 + 11);
+    ctx.fillText(node.virtual ? 'этап' : done ? '✓ Выполнено' : prog ? '● В процессе' : depsMet ? '▶ Доступно' : '🔒 Ждёт предыдущих', node.x + node.w / 2, node.y + node.h / 2 + 10);
   });
 }
 
+// Click handler
 if (!window._schemaClickSetup) {
   const sc = document.getElementById('schema-canvas');
   if (sc) {
     sc.addEventListener('click', e => {
       const rect = sc.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-  if (!node || node.id.startsWith('_')) return;
-  
-  const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
-  if (!task) return;
-  
-  const st = getPlanState() || { tasks: {} };
-  const s = (st.tasks && st.tasks[node.id]) || {};
-  const depsMet = (graphDeps[node.id] || []).every(dep => {
-    if (dep.startsWith('_')) return true;
-    const ds = (st.tasks && st.tasks[dep]) || {};
-    return ds.checked === true;
-  });
-  if (!depsMet && !s.checked && !s.progress) return;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const node = schemaNodes.find(n => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
+      if (!node || node.virtual || node.id === '_rf' || node.id === '_docs') return;
 
-  let box = document.getElementById('schema-modal');
-  if (!box) {
-    box = document.createElement('div');
-    box.id = 'schema-modal';
-    box.className = 'schema-modal';
-    box.innerHTML = '<div class="schema-modal-bg"></div><div class="schema-modal-body"><h3 id="sm-title"></h3><p id="sm-desc"></p><div class="sm-actions"><button id="sm-progress">🟡 В процессе</button><button id="sm-done">🟢 Выполнено</button><button id="sm-reset">⚪ Сбросить</button></div><button id="sm-close">✕</button></div>';
-    document.body.appendChild(box);
-  }
-  document.getElementById('sm-title').textContent = task.name;
-  document.getElementById('sm-desc').textContent = task.desc || '';
+      const task = masterTimeline.flatMap(m => m.tasks).find(t => t.id === node.id);
+      if (!task) return;
 
-  const show = () => { box.classList.add('visible'); };
-  const hide = () => { box.classList.remove('visible'); };
-  
-  box.querySelector('.schema-modal-bg').onclick = hide;
-  document.getElementById('sm-close').onclick = hide;
-  document.getElementById('sm-progress').onclick = () => {
-    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-    st.tasks[node.id].progress = true;
-    st.tasks[node.id].checked = false;
-    setPlanState(st);
-    renderSchema();
-    if (window._schemaRenderPlan) window._schemaRenderPlan();
-    hide();
-  };
-  document.getElementById('sm-done').onclick = () => {
-    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-    st.tasks[node.id].checked = true;
-    st.tasks[node.id].progress = false;
-    setPlanState(st);
-    renderSchema();
-    if (window._schemaRenderPlan) window._schemaRenderPlan();
-    hide();
-  };
-  document.getElementById('sm-reset').onclick = () => {
-    if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
-    st.tasks[node.id].checked = false;
-    st.tasks[node.id].progress = false;
-    setPlanState(st);
-    renderSchema();
-    if (window._schemaRenderPlan) window._schemaRenderPlan();
-    hide();
-  };
+      const st = getPlanState() || { tasks: {} };
+      const s = (st.tasks && st.tasks[node.id]) || {};
+      const depsMet = (deps[node.id] || []).every(dep => {
+        if (chain.find(c => c.id === dep)?.virtual) return true;
+        return (st.tasks?.[dep] || {}).checked === true;
+      });
+      if (!depsMet && !s.checked && !s.progress) return;
+
+      let box = document.getElementById('schema-modal');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'schema-modal';
+        box.className = 'schema-modal';
+        box.innerHTML = '<div class="schema-modal-bg"></div><div class="schema-modal-body"><h3 id="sm-title"></h3><p id="sm-desc"></p><div class="sm-actions"><button id="sm-progress">🟡 В процессе</button><button id="sm-done">🟢 Выполнено</button><button id="sm-reset">⚪ Сбросить</button></div><button id="sm-close">✕</button></div>';
+        document.body.appendChild(box);
+      }
+      document.getElementById('sm-title').textContent = task.name;
+      document.getElementById('sm-desc').textContent = task.desc || '';
+      const show = () => box.classList.add('visible');
+      const hide = () => { box.classList.remove('visible'); renderSchema(); try { renderPlan(); } catch(e){} };
+      box.querySelector('.schema-modal-bg').onclick = hide;
+      document.getElementById('sm-close').onclick = hide;
+      document.getElementById('sm-progress').onclick = () => {
+        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+        st.tasks[node.id].progress = true; st.tasks[node.id].checked = false;
+        setPlanState(st); hide();
+      };
+      document.getElementById('sm-done').onclick = () => {
+        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+        st.tasks[node.id].checked = true; st.tasks[node.id].progress = false;
+        setPlanState(st); hide();
+      };
+      document.getElementById('sm-reset').onclick = () => {
+        if (!st.tasks[node.id]) st.tasks[node.id] = { checked: false, progress: false, customCost: null };
+        st.tasks[node.id].checked = false; st.tasks[node.id].progress = false;
+        setPlanState(st); hide();
+      };
       show();
     });
   }
@@ -2250,7 +2186,6 @@ document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
   try { renderPlan(); } catch (e) { console.error(e); }
-  try { renderSchema(); } catch (e) { console.error(e); }
 });
 
 // === Theme toggle ===
