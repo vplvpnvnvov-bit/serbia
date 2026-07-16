@@ -1213,10 +1213,11 @@ function showUpdateNotification(worker) {
     const userAccepted = confirm('Доступна новая версия приложения с улучшениями! Обновить сейчас?');
     if (userAccepted) {
       if (worker) {
-        worker.postMessage({ action: 'skipWaiting' });
+        // Сначала слушатель, потом skipWaiting — иначе race condition
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           window.location.reload();
         });
+        worker.postMessage({ action: 'skipWaiting' });
         setTimeout(() => window.location.reload(), 2000);
       } else {
         window.location.reload();
@@ -1235,17 +1236,18 @@ if (updateBtn) {
 
     try {
       const reg = await navigator.serviceWorker.ready;
-      await reg.update();
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 15000));
+      await Promise.race([reg.update(), timeout]);
       await new Promise(resolve => setTimeout(resolve, 800));
 
       if (!reg.installing && !reg.waiting) {
-        updateBtn.innerHTML = '✨ У вас установлена актуальная версия!';
+        updateBtn.innerHTML = '✨ Установлена актуальная версия';
       } else {
-        updateBtn.innerHTML = '🚀 Найдено обновление! Устанавливаю...';
+        updateBtn.innerHTML = '🚀 Найдено обновление';
       }
     } catch (err) {
-      console.error('Ошибка при ручной проверке обновлений:', err);
-      updateBtn.innerHTML = '❌ Ошибка проверки';
+      console.error(err);
+      updateBtn.innerHTML = '❌ Нет соединения';
     } finally {
       setTimeout(() => {
         updateBtn.disabled = false;
