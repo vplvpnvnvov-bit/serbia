@@ -1996,7 +1996,7 @@ function renderSchema() {
   const dpr = window.devicePixelRatio || 1;
   const container = canvas.parentElement;
   const CW = container ? container.clientWidth - 2 : window.innerWidth - 20;
-  const CH = Math.max(window.innerHeight - 100, 800);
+  const CH = Math.max((window.innerHeight - 100) * 2, 1600);
   const PX = CW < 500 ? 2 : 3;
   canvas.style.width = CW + 'px';
   canvas.style.height = CH + 'px';
