@@ -1994,7 +1994,7 @@ function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
-  const CW = 600, CH = 1400, PX = 3; // PX = pixel size for retro art
+  const CW = 700, CH = 1400, PX = 3; // PX = pixel size for retro art
   canvas.style.width = CW + 'px';
   canvas.style.height = CH + 'px';
   canvas.width = CW * dpr;
@@ -2064,7 +2064,7 @@ function renderSchema() {
   const n = items.length;
   for (let i = 0; i < n; i++) {
     const t = i / (n - 1);
-    const x = 60 + t * (CW - 120) + Math.sin(t * Math.PI * 3) * 80;
+    const x = 70 + t * (CW - 140) + Math.sin(t * Math.PI * 3) * 60;
     const y = 80 + t * (CH - 160);
     trail.push({ x, y });
   }
