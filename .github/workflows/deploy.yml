@@ -1,13 +1,10 @@
-name: Deploy to Surge
+name: Check Build
 on:
   push:
     branches: [main]
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npx surge ./ serbia.surge.sh
-        env:
-          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+      - run: node --check app.js && node --check sync.js && node --check data.js && echo "All OK"
