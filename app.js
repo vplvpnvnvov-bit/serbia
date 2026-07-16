@@ -2119,52 +2119,60 @@ function renderSchema() {
 
     let bg, border, tc;
     if (item.v)        { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
-    else if (done)     { bg='#c8e6c9'; border='#2e7d32'; tc='#1b5e20'; }
-    else if (prog)     { bg='#fff9c4'; border='#f9a825'; tc='#f57f17'; }
-    else               { bg='#fdf5c9'; border='#8d6e3f'; tc='#5d4037'; }
+    else if (done)     { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
+    else if (prog)     { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
+    else               { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
 
-    const w = ctx.measureText(item.t).width + 20;
-    const h = 24, ox = -w / 2, oy = -h - 18;
+    const txtW = ctx.measureText(item.t).width;
+    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14); // plank width in pixels
+    const ph = 10; // plank height in pixels
+    const pox = sx - (pw * PX) / 2; // plank origin X
+    const poy = sy - ph * PX - 6 * PX; // plank origin Y
 
-    // Dashed line from trail point to sign
+    // Dashed line from trail to sign
     ctx.strokeStyle = '#c9a84b'; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
     ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(sx, sy); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Neon glow on current milestone
-    if (i === dinoIdx) {
-      ctx.shadowColor = '#00e5ff';
-      ctx.shadowBlur = 14;
-    }
+    // Neon glow on current
+    if (i === dinoIdx) { ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 12; }
 
-    // Sign post
-    ctx.fillStyle = '#5d4037'; ctx.fillRect(sx - 1.5, sy - h - 18, 3, h + 18 + 12);
-    // Board
-    ctx.fillStyle = bg; ctx.strokeStyle = border; ctx.lineWidth = item.goal ? 3 : 2;
-    ctx.beginPath();
-    const r = 6;
-    ctx.moveTo(sx + ox + r, sy + oy); ctx.lineTo(sx - ox - r, sy + oy);
-    ctx.arcTo(sx - ox, sy + oy, sx - ox, sy + oy + r, r);
-    ctx.lineTo(sx - ox, sy + oy + h - r);
-    ctx.arcTo(sx - ox, sy + oy + h, sx - ox + r, sy + oy + h, r);
-    ctx.lineTo(sx + ox - r, sy + oy + h);
-    ctx.arcTo(sx + ox, sy + oy + h, sx + ox, sy + oy + h - r, r);
-    ctx.lineTo(sx + ox, sy + oy + r);
-    ctx.arcTo(sx + ox, sy + oy, sx + ox - r, sy + oy, r);
-    ctx.closePath();
-    ctx.fill(); ctx.stroke();
+    // Wooden post — two vertical planks
+    const P = PX; // reuse bird pixel size
+    ctx.fillStyle = '#6d4c41';
+    ctx.fillRect(sx - P, poy + ph * P, P * 2, 6 * P);
+    ctx.fillStyle = '#5d4037';
+    ctx.fillRect(sx - P + 1, poy + ph * P, 1, 5 * P);
+    ctx.fillRect(sx + 1, poy + ph * P, 1, 5 * P);
+
+    // Plank board — pixel-style rectangle with nail details
+    ctx.fillStyle = bg;
+    ctx.fillRect(pox, poy, pw * P, ph * P); // main board
+    ctx.fillStyle = border;
+    ctx.fillRect(pox, poy, pw * P, P);               // top edge
+    ctx.fillRect(pox, poy + (ph-1) * P, pw * P, P);  // bottom edge
+    ctx.fillRect(pox, poy, P, ph * P);               // left edge
+    ctx.fillRect(pox + (pw-1) * P, poy, P, ph * P);  // right edge
+    // Nails
+    ctx.fillStyle = '#3e2723';
+    ctx.fillRect(pox + P, poy + P, 2, 2);
+    ctx.fillRect(pox + (pw-2) * P, poy + P, 2, 2);
+    ctx.fillRect(pox + P, poy + (ph-2) * P, 2, 2);
+    ctx.fillRect(pox + (pw-2) * P, poy + (ph-2) * P, 2, 2);
+
     if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
 
+    // Text on plank
     ctx.fillStyle = tc;
-    ctx.font = 'bold 10px -apple-system,sans-serif';
+    ctx.font = 'bold 9px monospace';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.t, sx, sy + oy + h / 2);
+    ctx.fillText(item.t, sx, poy + (ph * P) / 2);
 
-    // Status icon below
+    // Status icon
     if (!item.v) {
-      ctx.font = '14px serif';
+      ctx.font = '12px serif';
       const icon = done ? '✓' : prog ? '●' : '○';
-      ctx.fillText(icon, sx, sy + 14);
+      ctx.fillText(icon, sx, poy + ph * P + 16);
     }
   });
 
