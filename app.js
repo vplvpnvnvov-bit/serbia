@@ -2013,7 +2013,8 @@ function renderSchema() {
     { id: 'apost_birth',name: 'Апостиль на рождение', col: 6 },
     { id: 'power',     name: 'Доверенность в РФ', col: 7 },
     { id: 'p5d',       name: 'Загранпаспорт ребёнка', col: 2, level: 1, children: ['m1_pediatrician'] },
-    // Arrival (col=main, level 1)
+    // Gateway + main chain
+    { id: '_rf_done',  name: '📦 Документы собраны', virtual: true, main: true },
     { id: 'm1_flight', name: 'Перелёт в Белград', main: true },
     { id: 'm1_airbnb', name: 'Жильё на Airbnb', main: true },
     // Serbia steps (col=main)
@@ -2048,44 +2049,44 @@ function renderSchema() {
   let maxW = 0, maxH = 0;
   schemaNodes = [];
 
-  // Position main chain vertically
-  const mainIds = nodes.filter(n => n.main).map(n => n.id);
+  // Position main chain vertically, starting after RF branch space
+  const TOP_OFFSET = 60; // space for RF branch above
+  const rfRootIdx = mainIds.indexOf('_rf_done');
+  const mainY0 = TOP_OFFSET + NH + PAD_Y + MH + PAD_Y; // space for RF kids + p5d row + gateway
+
   mainIds.forEach((id, i) => {
-    if (id === '_rf_done') return; // positioned with RF branch
+    if (id === '_rf_done') return;
     const s = nodes.find(n => n.id === id);
-    const x = 80, y = 60 + i * (MH + PAD_Y);
+    const x = 80, y = mainY0 + i * (MH + PAD_Y);
     schemaNodes.push({ id, x, y, w: MA, h: MH, virtual: s.virtual, goal: s.goal, name: s.name });
     maxW = Math.max(maxW, x + MA + 20);
     maxH = Math.max(maxH, y + MH + 20);
   });
 
-  // Position RF branch — spread horizontally above _rf_done
-  const rfRootY = 60 + mainIds.indexOf('_rf_done') * (MH + PAD_Y);
+  // RF branch: spread above _rf_done
+  const rfGateY = TOP_OFFSET + NH + PAD_Y; // where _rf_done sits
   const rfKids = nodes.filter(n => n.col !== undefined && !n.level);
   const rfSpan = rfKids.length * (NA + PAD_X) - PAD_X;
   const rfStartX = 80 + (MA - rfSpan) / 2;
-  let rowOffset = 0;
 
-  // First row of RF tasks
   rfKids.forEach((s, i) => {
     const x = rfStartX + i * (NA + PAD_X);
-    const y = rfRootY - MH - PAD_Y;
-    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, virtual: s.virtual, name: s.name });
+    const y = TOP_OFFSET;
+    schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, name: s.name });
     maxW = Math.max(maxW, x + NA + 20);
   });
-  rowOffset++;
 
-  // Second row: tasks with level:1 (p5d)
+  // Second row: p5d
   nodes.filter(n => n.level === 1).forEach((s, i) => {
     const parentNode = nodes.find(p => p.id === s.id);
     const colIdx = parentNode?.col ?? 0;
     const x = rfStartX + colIdx * (NA + PAD_X);
-    const y = rfRootY - MH - PAD_Y - (NH + PAD_Y);
+    const y = TOP_OFFSET + NH + PAD_Y;
     schemaNodes.push({ id: s.id, x, y, w: NA, h: NH, name: s.name });
   });
 
   // _rf_done gateway
-  schemaNodes.push({ id: '_rf_done', x: 80, y: rfRootY, w: MA, h: MH, virtual: true, name: '📦 Документы собраны' });
+  schemaNodes.push({ id: '_rf_done', x: 80, y: rfGateY, w: MA, h: MH, virtual: true, name: '📦 Документы собраны' });
 
   // Draw edges on canvas
   const dpr = window.devicePixelRatio || 1;
