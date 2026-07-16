@@ -2175,7 +2175,7 @@ function renderSchema() {
   const prevN = dinoIdx > 0 ? nodes[dinoIdx - 1] : nodes[0];
   const nextN = nodes[dinoIdx];
   const dp = { x: (prevN.x + nextN.x) / 2, y: (prevN.y + nextN.y) / 2 };
-  const angle = Math.atan2(nextN.y - prevN.y, nextN.x - prevN.x);
+  const angle = Math.atan2(nextN.y - prevN.y, nextN.x - prevN.x) + Math.PI;
   const frame = Math.floor(Date.now() / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
