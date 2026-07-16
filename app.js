@@ -2043,10 +2043,10 @@ function renderSchema() {
 
   // Canvas sizing
   const dpr = window.devicePixelRatio || 1;
-  const NODE_W = 160, NODE_H = 52, PAD_X = 40, PAD_Y = 30;
-  const totalW = (maxCol + 1) * (NODE_W + PAD_X) + 20;
-  const maxRows = Math.max(...Object.values(cols).map(a => a.length));
-  const totalH = maxRows * (NODE_H + PAD_Y) + 20;
+  const NODE_W = 170, NODE_H = 48, PAD_X = 16, PAD_Y = 40;
+  const maxInRow = Math.max(...Object.values(cols).map(a => a.length), 1);
+  const totalW = maxInRow * (NODE_W + PAD_X) + 20;
+  const totalH = (maxCol + 1) * (NODE_H + PAD_Y) + 20;
 
   canvas.style.width = totalW + 'px';
   canvas.style.height = totalH + 'px';
@@ -2057,20 +2057,20 @@ function renderSchema() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, totalW, totalH);
 
-  // Layout positions
+  // Layout: levels top→bottom, same-level nodes centered left→right
   schemaNodes = [];
-  schemaEdges = [];
-
   for (let col = 0; col <= maxCol; col++) {
     const ids = cols[col] || [];
+    const rowW = ids.length * (NODE_W + PAD_X) - PAD_X;
+    const offsetX = Math.max(10, (totalW - rowW) / 2);
     ids.forEach((id, row) => {
-      const x = col * (NODE_W + PAD_X) + 10;
-      const y = row * (NODE_H + PAD_Y) + 10;
+      const x = offsetX + row * (NODE_W + PAD_X);
+      const y = col * (NODE_H + PAD_Y) + 10;
       schemaNodes.push({ id, x, y, w: NODE_W, h: NODE_H });
     });
   }
 
-  // Draw edges as Bezier curves
+  // Draw edges: Bezier from bottom of parent to top of child
   const edgeColors = ['#5c6bc0','#7e57c2','#26a69a','#ef5350','#ff7043','#42a5f5','#ab47bc','#66bb6a'];
   let edgeIdx = 0;
   const critical = ['p10','preduzetnik','bank','m4_pausal'];
@@ -2080,10 +2080,10 @@ function renderSchema() {
     task.dependsOn.forEach(depId => {
       const parent = schemaNodes.find(n => n.id === depId);
       if (!parent) return;
-      const x1 = parent.x + parent.w;
-      const y1 = parent.y + parent.h / 2;
-      const x2 = node.x;
-      const y2 = node.y + node.h / 2;
+      const x1 = parent.x + parent.w / 2;
+      const y1 = parent.y + parent.h;
+      const x2 = node.x + node.w / 2;
+      const y2 = node.y;
       const isCritical = critical.includes(node.id) && critical.includes(depId);
       const color = isCritical ? '#e91e63' : edgeColors[edgeIdx % edgeColors.length];
       if (!isCritical) edgeIdx++;
@@ -2092,14 +2092,14 @@ function renderSchema() {
       ctx.lineWidth = isCritical ? 2.8 : 1.8;
       ctx.beginPath();
       ctx.moveTo(x1, y1);
-      ctx.bezierCurveTo((x1 + x2) / 2, y1, (x1 + x2) / 2, y2, x2, y2);
+      ctx.bezierCurveTo(x1, (y1 + y2) / 2, x2, (y1 + y2) / 2, x2, y2);
       ctx.stroke();
 
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(x2, y2);
-      ctx.lineTo(x2 - 6, y2 - 4);
-      ctx.lineTo(x2 - 6, y2 + 4);
+      ctx.lineTo(x2 - 4, y2 - 6);
+      ctx.lineTo(x2 + 4, y2 - 6);
       ctx.fill();
     });
   });
