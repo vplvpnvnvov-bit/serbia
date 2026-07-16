@@ -2114,6 +2114,12 @@ function renderSchema() {
     const w = ctx.measureText(item.t).width + 20;
     const h = 24, ox = -w / 2, oy = -h - 18;
 
+    // Neon glow on current milestone
+    if (i === dinoIdx) {
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 14;
+    }
+
     // Sign post
     ctx.fillStyle = '#5d4037'; ctx.fillRect(p.x - 1.5, p.y - h - 18, 3, h + 18 + 12);
     // Board
@@ -2130,6 +2136,7 @@ function renderSchema() {
     ctx.arcTo(p.x + ox, p.y + oy, p.x + ox - r, p.y + oy, r);
     ctx.closePath();
     ctx.fill(); ctx.stroke();
+    if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
 
     ctx.fillStyle = tc;
     ctx.font = 'bold 10px -apple-system,sans-serif';
@@ -2186,10 +2193,6 @@ function renderSchema() {
   // Legs
   px(6, 9, 1, 2, '#ff8f00');
   px(8, 9, 1, 2, '#ff8f00');
-
-  // Label
-  ctx.fillStyle = '#3e2723'; ctx.font = 'bold 9px serif'; ctx.textAlign = 'center';
-  ctx.fillText('🐦 ты здесь', dp.x, dp.y - 36);
 
   // Start animation loop when tab is open
   if (!window._schemaAnimating) {
