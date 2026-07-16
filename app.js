@@ -1239,7 +1239,8 @@ if (updateBtn) {
 
     try {
       const reg = await navigator.serviceWorker.ready;
-      await reg.update();
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+      await Promise.race([reg.update(), timeout]);
       if (!reg.installing && !reg.waiting) {
         updateBtn.textContent = '✨ Актуальная версия';
       } else {
@@ -1247,7 +1248,7 @@ if (updateBtn) {
       }
     } catch (err) {
       console.error(err);
-      updateBtn.textContent = '❌ Ошибка проверки';
+      updateBtn.textContent = '❌ Нет соединения';
     } finally {
       setTimeout(() => {
         updateBtn.disabled = false;
