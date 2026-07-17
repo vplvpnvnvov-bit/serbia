@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.11.0",
-  BUILD: "b8393f5",
-  CACHE_NAME: "relocation-v6.11.0-b8393f5"
+  VERSION: "6.12.0",
+  BUILD: "f7ca3eb",
+  CACHE_NAME: "relocation-v6.12.0-f7ca3eb"
 };
 
 let arrowMarker = null;
@@ -3375,13 +3375,24 @@ try {
 } catch { _landscapeOverrides = {}; }
 
 function exportManualPositions() {
-  const lines = ['// Offsets from parent node (dx, dy):',
-    'const MANUAL_OFFSETS = {'];
-  Object.keys(_manualPositions).forEach(id => {
-    const p = _manualPositions[id];
-    lines.push(`  ${id}: { dx: ${Math.round(p.dx)}, dy: ${Math.round(p.dy)} },`);
-  });
-  lines.push('};');
+  const lines = [];
+  if (_landscapeMode) {
+    lines.push('// Landscape overrides:');
+    lines.push('const LANDSCAPE_OVERRIDES = {');
+    Object.keys(_landscapeOverrides).forEach(id => {
+      const p = _landscapeOverrides[id];
+      lines.push(`  ${id}: { x: ${Math.round(p.x)}, y: ${Math.round(p.y)} },`);
+    });
+    lines.push('};');
+  } else {
+    lines.push('// Offsets from parent node (dx, dy):');
+    lines.push('const MANUAL_OFFSETS = {');
+    Object.keys(_manualPositions).forEach(id => {
+      const p = _manualPositions[id];
+      lines.push(`  ${id}: { dx: ${Math.round(p.dx)}, dy: ${Math.round(p.dy)} },`);
+    });
+    lines.push('};');
+  }
   const text = lines.join('\n');
   navigator.clipboard.writeText(text).then(() => {
     alert('Скопировано в буфер обмена!');
