@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.10",
-  BUILD: "894fb0c",
-  CACHE_NAME: "relocation-v6.6.10-894fb0c"
+  VERSION: "6.6.11",
+  BUILD: "04d80df",
+  CACHE_NAME: "relocation-v6.6.11-04d80df"
 };
 
 let arrowMarker = null;
@@ -3287,17 +3287,17 @@ let _dragTarget = null;
 let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
 const DEFAULT_MANUAL_OFFSETS = {
-  pharm:             { dx: 85,  dy: -33 },
+  pharm:             { dx: 98,  dy: -42 },
   med_vyps:          { dx: 165, dy: -106 },
   dentist:           { dx: -10, dy: -109 },
-  power:             { dx: 115, dy: -10 },
-  child_consent:     { dx: -44, dy: 41 },
+  power:             { dx: 102, dy: 31 },
+  child_consent:     { dx: -53, dy: 72 },
   diplomas:          { dx: 196, dy: -90 },
-  driving_licenses:  { dx: 142, dy: 12 },
+  driving_licenses:  { dx: 137, dy: 35 },
   apost_nocrim_h:    { dx: 104, dy: 32 },
-  apost_nocrim_w:    { dx: 105, dy: 53 },
+  apost_nocrim_w:    { dx: 93,  dy: 53 },
   ticket_buy:        { dx: 66,  dy: -104 },
-  airbnb_book:       { dx: -116,dy: -88 },
+  airbnb_book:       { dx: -125,dy: -71 },
 };
 
 try {
