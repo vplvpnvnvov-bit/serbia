@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.3",
-  BUILD: "a89897c",
-  CACHE_NAME: "relocation-v6.6.3-a89897c"
+  VERSION: "6.6.4",
+  BUILD: "d51a8d3",
+  CACHE_NAME: "relocation-v6.6.4-d51a8d3"
 };
 
 let arrowMarker = null;
@@ -2730,7 +2730,7 @@ function renderSchema() {
 
     const count = children.length;
     const signFootprint = 12 * PX + 25;
-    const maxSpread = baseStep * ((items[pIdx].gap || 1) - 1) + 30;
+    const maxSpread = baseStep * ((items[pIdx].gap || 1) - 1) + baseStep * 0.6;
 
     // Parent signboard bounds (approximate)
     const parentText = items[pIdx].t || '';
@@ -2769,13 +2769,10 @@ function renderSchema() {
       const availableOnSide = child.side === 1
         ? pNode.x - parentSignW / 2 - 10
         : CW - pNode.x - parentSignW / 2 - 10;
-      const distRatio = 0.25 + child.col * 0.25;
-      const dist = Math.max(CW * 0.10, Math.min(availableOnSide - 20, availableOnSide * distRatio));
-      const gapY = Math.max(signFootprint * 1.5, maxSpread / (count || 1));
-      const totalSpread = (child.col > 0 ? gapY * child.col : 0);
-      // Alternate spread direction for variety
-      const spreadDir = child.col % 2 === 0 ? 1 : -1;
-      const offset = totalSpread * spreadDir;
+      const distRatio = 0.35 + child.col * 0.35;
+      const dist = Math.max(CW * 0.12, Math.min(availableOnSide - 20, availableOnSide * distRatio));
+      const gapY = maxSpread / (count + 1);
+      const offset = (child.col + 1 - count / 2) * gapY;
 
       let sx = pNode.x + child.side * perpX * dist + offset * (tdx / tLen);
       let sy = pNode.y + child.side * perpY * dist + offset * (tdy / tLen);
