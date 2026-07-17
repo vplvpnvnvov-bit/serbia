@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.19.0",
-  BUILD: "1af2eea",
-  CACHE_NAME: "relocation-v6.19.0-1af2eea"
+  VERSION: "6.19.1",
+  BUILD: "f26960a",
+  CACHE_NAME: "relocation-v6.19.1-f26960a"
 };
 
 let arrowMarker = null;
@@ -2452,6 +2452,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Click on sync code to change it
   document.getElementById('display-sync-code')?.addEventListener('click', () => {
     window.changeSyncCode();
+  });
+
+  // Collapsible settings cards
+  document.querySelectorAll('.settings-card .card-header').forEach(header => {
+    header.addEventListener('click', e => {
+      if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input') || e.target.closest('label')) return;
+      const body = header.nextElementSibling;
+      const btn = header.querySelector('.card-collapse-btn');
+      if (body && body.classList.contains('card-body')) {
+        body.classList.toggle('hidden');
+        if (btn) btn.classList.toggle('open');
+      }
+    });
   });
 
   // Company buttons

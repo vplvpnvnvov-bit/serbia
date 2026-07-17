@@ -145,6 +145,41 @@
 #company-screen.hidden { display: none; }
 .company-actions { display: flex; flex-direction: column; gap: 6px; }
 
+/* Settings version line */
+.settings-version-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--panel-bg, #fff);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  border: 1px solid var(--border-color, #d2d2d7);
+}
+
+/* Collapsible card */
+.settings-card .card-header {
+  cursor: pointer;
+  user-select: none;
+}
+.card-collapse-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--text-muted, #86868b);
+  cursor: pointer;
+  padding: 0 4px;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.card-collapse-btn.open {
+  transform: rotate(90deg);
+}
+.card-body.hidden {
+  display: none;
+}
+
 :root {
   --bg-color: #f5f5f7;
   --panel-bg: #ffffff;
