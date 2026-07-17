@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.2",
-  BUILD: "a34b704",
-  CACHE_NAME: "relocation-v6.6.2-a34b704"
+  VERSION: "6.6.3",
+  BUILD: "a89897c",
+  CACHE_NAME: "relocation-v6.6.3-a89897c"
 };
 
 let arrowMarker = null;
@@ -2823,18 +2823,30 @@ function renderSchema() {
       const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
       const cpx = -towardY / tpLen;
       const cpy = towardX / tpLen;
-      const curveStr = dist * 0.35;
-      const cp1x = sx + towardX * 0.35 + cpx * curveStr;
-      const cp1y = sy + towardY * 0.35 + cpy * curveStr;
-      const cp2x = pNode.x - towardX * 0.3 + cpx * curveStr;
-      const cp2y = pNode.y - towardY * 0.3 + cpy * curveStr;
+      const waveAmp = Math.min(tpLen * 0.2, 30);
+
+      const segs = [
+        { t: 0.25, sign: 1 },
+        { t: 0.5, sign: -1 },
+        { t: 0.75, sign: 1 },
+      ];
 
       ctx.strokeStyle = done ? '#81c784' : '#bbb';
-      ctx.lineWidth = done ? 3 : 2;
+      ctx.lineWidth = done ? 2.5 : 1.8;
       ctx.lineCap = 'round';
       if (!done) ctx.setLineDash([6, 10]);
       ctx.beginPath(); ctx.moveTo(sx, sy);
-      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pNode.x, pNode.y);
+
+      let fromX = sx, fromY = sy;
+      segs.forEach((seg, segI) => {
+        const toX = segI < 2 ? sx + towardX * seg.t : pNode.x;
+        const toY = segI < 2 ? sy + towardY * seg.t : pNode.y;
+        const midX = (fromX + toX) / 2 + cpx * waveAmp * seg.sign;
+        const midY = (fromY + toY) / 2 + cpy * waveAmp * seg.sign;
+        ctx.quadraticCurveTo(midX, midY, toX, toY);
+        fromX = toX; fromY = toY;
+      });
+
       ctx.stroke();
       if (!done) ctx.setLineDash([]);
 
