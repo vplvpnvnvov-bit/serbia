@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.24.3",
-  BUILD: "873f3de",
-  CACHE_NAME: "relocation-v6.24.3-873f3de"
+  VERSION: "6.24.4",
+  BUILD: "c2ed156",
+  CACHE_NAME: "relocation-v6.24.4-c2ed156"
 };
 
 let arrowMarker = null;
@@ -381,7 +381,7 @@ function updateMapColors(preset) {
     const sc = getNormalizedScore(d, preset, visible);
     const fill = scoreColor(sc);
     const edge = darkenHex(fill, 30);
-    p.setStyle({ fillColor: fill, color: edge });
+    p.setStyle({ fillColor: fill, color: edge, fillOpacity: 0.35, weight: 3 });
     if (labelMarkers[d.name]) {
       const el = labelMarkers[d.name].getElement();
       if (el) {
@@ -850,12 +850,20 @@ L.polyline(
 ).addTo(map).bindPopup('Сава');
 
 // === CLOSE INFO PANEL ===
-document.getElementById('close-info').addEventListener('click', () => {
+function closeDistrictPanel() {
   document.getElementById('district-info').classList.add('hidden');
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
   if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
   updateMapColors(activePreset);
   map.setView([44.76, 20.48], 11);
+}
+
+document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
+
+// Click on empty map → deselect
+map.on('click', (e) => {
+  if (e.originalEvent.target?.closest?.('.leaflet-interactive')) return;
+  closeDistrictPanel();
 });
 
 // === LEGEND DROPDOWN ===
