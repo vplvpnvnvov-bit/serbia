@@ -1,6 +1,6 @@
 {
   "name": "belgrad-relocation-app",
-  "version": "6.12.5",
+  "version": "6.12.6",
   "private": true,
   "description": "Serbia Relocation Tracker",
   "scripts": {
