@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.16.2",
-  BUILD: "d2aa7c9",
-  CACHE_NAME: "relocation-v6.16.2-d2aa7c9"
+  VERSION: "6.17.0",
+  BUILD: "dabb277",
+  CACHE_NAME: "relocation-v6.17.0-dabb277"
 };
 
 let arrowMarker = null;
@@ -1464,20 +1464,49 @@ if ('serviceWorker' in navigator) {
 
 // Автоматическое обновление через 2 секунды после обнаружения
 function autoUpdate(worker) {
-  // Показать тост
-  const toast = document.createElement('div');
-  toast.textContent = '🔄 Обновление через 2 сек...';
-  toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a237e;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:modalFadeIn 0.2s ease;';
-  document.body.appendChild(toast);
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:100002;display:flex;align-items:center;justify-content:center;animation:modalFadeIn 0.3s ease;';
+  overlay.innerHTML = `
+    <div style="background:linear-gradient(145deg,#fdf5c9,#f0e6b8);border:4px solid #8d6e3f;border-radius:16px;padding:28px 32px;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.3);text-align:center;animation:modalSlideUp 0.35s ease;position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:#8d6e3f;border-radius:16px 16px 0 0"></div>
+      <div style="font-size:48px;margin-bottom:8px">🚀</div>
+      <h3 style="font-size:18px;color:#4e342e;margin-bottom:6px">Доступно обновление</h3>
+      <p style="font-size:13px;color:#6d4c41;margin-bottom:16px">Установить новую версию приложения</p>
+      <div style="width:100%;height:6px;background:#d7ccc8;border-radius:3px;overflow:hidden;margin-bottom:16px">
+        <div id="update-progress" style="width:0%;height:100%;background:linear-gradient(90deg,#8d6e3f,#c9a84b);border-radius:3px;transition:width 0.1s linear"></div>
+      </div>
+      <button id="update-now-btn" style="padding:10px 24px;border:none;border-radius:8px;background:#43a047;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Обновить сейчас</button>
+      <p style="font-size:11px;color:#8d6e3f;margin-top:10px;opacity:0.6">Авто-обновление через <span id="update-countdown">2</span> сек</p>
+    </div>`;
+  document.body.appendChild(overlay);
 
-  setTimeout(() => {
-    toast.remove();
+  let remaining = 2;
+  const countdownEl = document.getElementById('update-countdown');
+  const progressEl = document.getElementById('update-progress');
+
+  const timer = setInterval(() => {
+    remaining -= 0.1;
+    if (countdownEl) countdownEl.textContent = Math.ceil(remaining);
+    if (progressEl) progressEl.style.width = ((2 - remaining) / 2 * 100) + '%';
+    if (remaining <= 0) {
+      clearInterval(timer);
+      doUpdate();
+    }
+  }, 100);
+
+  document.getElementById('update-now-btn')?.addEventListener('click', () => {
+    clearInterval(timer);
+    doUpdate();
+  });
+
+  function doUpdate() {
+    overlay.remove();
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       window.location.reload();
     });
     worker.postMessage({ action: 'skipWaiting' });
-    setTimeout(() => window.location.reload(), 2000);
-  }, 2000);
+    setTimeout(() => window.location.reload(), 1000);
+  }
 }
 
 // Кнопка ручной проверки обновлений
