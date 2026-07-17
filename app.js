@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.23.8",
-  BUILD: "06289fa",
-  CACHE_NAME: "relocation-v6.23.8-06289fa"
+  VERSION: "6.24.0",
+  BUILD: "8ce001d",
+  CACHE_NAME: "relocation-v6.24.0-8ce001d"
 };
 
 let arrowMarker = null;
@@ -474,8 +474,10 @@ document.getElementById('urban-toggle')?.addEventListener('change', e => {
 });
 
 document.getElementById('price-toggle')?.addEventListener('change', e => {
-  document.getElementById('legend').classList.toggle('hide-prices', e.target.checked);
+  document.body.classList.toggle('hide-prices', e.target.checked);
 });
+// Init — prices hidden by default
+document.body.classList.add('hide-prices');
 
 let activeSubDistrictLayers = L.layerGroup().addTo(map);
 
