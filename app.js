@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.14.1",
-  BUILD: "0b4bb0c",
-  CACHE_NAME: "relocation-v6.14.1-0b4bb0c"
+  VERSION: "6.15.0",
+  BUILD: "6fd9318",
+  CACHE_NAME: "relocation-v6.15.0-6fd9318"
 };
 
 let arrowMarker = null;
@@ -2391,6 +2391,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (editorToggle) {
     editorToggle.checked = localStorage.getItem('schema-editor-enabled') === 'true';
   }
+
+  // Click on sync code to change it
+  document.getElementById('display-sync-code')?.addEventListener('click', () => {
+    window.changeSyncCode();
+  });
 });
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
