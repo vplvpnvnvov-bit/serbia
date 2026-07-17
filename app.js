@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.4",
-  BUILD: "d51a8d3",
-  CACHE_NAME: "relocation-v6.6.4-d51a8d3"
+  VERSION: "6.6.5",
+  BUILD: "2211f9d",
+  CACHE_NAME: "relocation-v6.6.5-2211f9d"
 };
 
 let arrowMarker = null;
@@ -3277,9 +3277,24 @@ let _manualPositions = {};
 let _dragTarget = null;
 let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
+const DEFAULT_MANUAL_POSITIONS = {
+  pharm: { x: 271, y: 963 },
+  med_vyps: { x: 228, y: 629 },
+  dentist: { x: 53, y: 626 },
+  power: { x: 178, y: 725 },
+  child_consent: { x: 60, y: 906 },
+  diplomas: { x: 300, y: 775 },
+  driving_licenses: { x: 246, y: 877 },
+  apost_nocrim_h: { x: 328, y: 439 },
+  apost_nocrim_w: { x: 290, y: 526 },
+  ticket_buy: { x: 335, y: 1089 },
+  airbnb_book: { x: 153, y: 1105 },
+};
+
 try {
-  _manualPositions = JSON.parse(localStorage.getItem('schema-manual-positions') || '{}');
-} catch { _manualPositions = {}; }
+  const saved = JSON.parse(localStorage.getItem('schema-manual-positions') || 'null');
+  _manualPositions = saved || DEFAULT_MANUAL_POSITIONS;
+} catch { _manualPositions = DEFAULT_MANUAL_POSITIONS; }
 
 function exportManualPositions() {
   const lines = ['// Manual positions — paste into SIDE_TASKS as overrides:',
