@@ -133,8 +133,8 @@
   display: none;
 }
 
-/* Room screen */
-#room-screen {
+/* Company screen */
+#company-screen {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,8 +142,8 @@
   padding: 20px;
   background: #f5f5f7;
 }
-#room-screen.hidden { display: none; }
-.room-actions { display: flex; flex-direction: column; gap: 6px; }
+#company-screen.hidden { display: none; }
+.company-actions { display: flex; flex-direction: column; gap: 6px; }
 
 :root {
   --bg-color: #f5f5f7;

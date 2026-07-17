@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.17.0",
-  BUILD: "dabb277",
-  CACHE_NAME: "relocation-v6.17.0-dabb277"
+  VERSION: "6.18.0",
+  BUILD: "eacf343",
+  CACHE_NAME: "relocation-v6.18.0-eacf343"
 };
 
 let arrowMarker = null;
@@ -2454,20 +2454,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.changeSyncCode();
   });
 
-  // Room buttons
-  document.getElementById('btn-room-create')?.addEventListener('click', () => {
+  // Company buttons
+  document.getElementById('btn-company-create')?.addEventListener('click', () => {
     window.generateNewSyncCode();
-    document.getElementById('room-screen').classList.add('hidden');
+    document.getElementById('company-screen').classList.add('hidden');
     window.dispatchEvent(new CustomEvent('auth-ready'));
   });
 
-  document.getElementById('btn-room-join')?.addEventListener('click', () => {
+  document.getElementById('btn-company-join')?.addEventListener('click', () => {
     window.changeSyncCode();
-    // changeSyncCode already triggers loadFromCloud
-    document.getElementById('room-screen').classList.add('hidden');
+    document.getElementById('company-screen').classList.add('hidden');
     window.dispatchEvent(new CustomEvent('auth-ready'));
   });
+
+  // Share company code
+  document.getElementById('btn-share-company')?.addEventListener('click', () => {
+    const code = localStorage.getItem('sync-code') || '—';
+    if (navigator.share) {
+      navigator.share({ title: 'Моя компания', text: 'Код моей компании: ' + code }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(code).then(() => alert('Код скопирован: ' + code)).catch(() => {});
+    }
+  });
 });
+
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
 });

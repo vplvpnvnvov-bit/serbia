@@ -17,14 +17,14 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.17.0-dabb277" />
+<link rel="stylesheet" href="style.css?v=6.18.0-eacf343" />
 </head>
 <body>
 
 <div id="auth-screen">
   <div class="auth-card">
     <h1 class="auth-logo">🇷🇸 Релокация в Белград</h1>
-    <p class="auth-subtitle">Войдите или создайте аккаунт для синхронизации данных</p>
+    <p class="auth-subtitle">Войдите или создайте аккаунт чтобы войти в компанию</p>
     <div class="auth-tabs">
       <button class="auth-tab active" data-auth-tab="login">Вход</button>
       <button class="auth-tab" data-auth-tab="register">Регистрация</button>
@@ -44,15 +44,15 @@
   </div>
 </div>
 
-<div id="room-screen" class="hidden">
+<div id="company-screen" class="hidden">
   <div class="auth-card">
-    <h1 class="auth-logo">🔑 Код синхронизации</h1>
-    <p class="auth-subtitle">Создайте свою комнату или подключитесь к существующей</p>
-    <div class="room-actions">
-      <button id="btn-room-create" class="auth-submit-btn" style="margin-bottom:10px">🔑 Создать новую комнату</button>
-      <button id="btn-room-join" class="auth-submit-btn" style="background:#43a047">🔗 Подключиться к комнате</button>
+    <h1 class="auth-logo">🏢 Код компании</h1>
+    <p class="auth-subtitle">Создайте свою компанию или войдите в существующую</p>
+    <div class="company-actions">
+      <button id="btn-company-create" class="auth-submit-btn" style="margin-bottom:10px">🏢 Создать компанию</button>
+      <button id="btn-company-join" class="auth-submit-btn" style="background:#43a047">🔗 Войти в компанию</button>
     </div>
-    <p class="action-help" style="margin-top:14px;text-align:center;font-size:12px;color:#86868b">Если у вас уже есть код — подключайтесь. Если нет — создайте, и скажите код тому, с кем хотите синхронизироваться.</p>
+    <p class="action-help" style="margin-top:14px;text-align:center;font-size:12px;color:#86868b">Компания объединяет устройства. Создайте компанию и передайте код тому, с кем хотите синхронизироваться. Или введите код существующей компании.</p>
   </div>
 </div>
 
@@ -209,13 +209,16 @@
 
             <div class="settings-card">
               <div class="card-header">
-                <span class="card-icon">🔄</span>
-                <h4>Синхронизация данных</h4>
+                <span class="card-icon">🏢</span>
+                <h4>Компания</h4>
               </div>
-              <p class="card-desc">Все устройства с одним кодом синхронизируются автоматически ☁️</p>
+              <p class="card-desc">Все устройства в одной компании синхронизируются автоматически ☁️</p>
               <div class="sync-status-info">
-                <p><strong>Код:</strong> <span id="display-sync-code" style="cursor:pointer;font-weight:700;letter-spacing:2px;font-family:monospace;color:#1a237e" title="Нажмите чтобы изменить">—</span></p>
+                <p><strong>Код компании:</strong> <span id="display-sync-code" style="cursor:pointer;font-weight:700;letter-spacing:2px;font-family:monospace;color:#1a237e" title="Нажмите чтобы изменить">—</span></p>
                 <p><strong>Облако:</strong> <span id="cloud-status">Проверка...</span></p>
+              </div>
+              <div class="card-actions">
+                <button id="btn-share-company" class="action-btn primary-btn" title="Отправить код компании">📤 Поделиться кодом</button>
               </div>
             </div>
 
@@ -295,9 +298,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.17.0-dabb277"></script>
-<script src="sync.js?v=6.17.0-dabb277"></script>
-<script src="app.js?v=6.17.0-dabb277"></script>
+<script src="data.js?v=6.18.0-eacf343"></script>
+<script src="sync.js?v=6.18.0-eacf343"></script>
+<script src="app.js?v=6.18.0-eacf343"></script>
 
 </body>
 </html>

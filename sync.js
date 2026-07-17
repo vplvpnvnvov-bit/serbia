@@ -62,7 +62,7 @@ firebase.auth().onAuthStateChanged(async user => {
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
       document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('room-screen').classList.remove('hidden');
+      document.getElementById('company-screen').classList.remove('hidden');
       return;
     }
     document.getElementById('display-sync-code').textContent = syncCode;
