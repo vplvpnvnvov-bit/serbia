@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.14",
-  BUILD: "a6d6834",
-  CACHE_NAME: "relocation-v6.6.14-a6d6834"
+  VERSION: "6.7.0",
+  BUILD: "996a9cd",
+  CACHE_NAME: "relocation-v6.7.0-996a9cd"
 };
 
 let arrowMarker = null;
@@ -2468,20 +2468,16 @@ function renderSchema() {
   _schemaItems = items;
   _schemaNodes = nodes;
 
-  // Zonal terrain background
-  const ruGrad = ctx.createLinearGradient(0, 0, 0, bFY);
-  ruGrad.addColorStop(0, '#dce5ed');
-  ruGrad.addColorStop(0.7, '#e8ecdf');
-  ruGrad.addColorStop(1, '#f0eddc');
-  ctx.fillStyle = ruGrad;
-  ctx.fillRect(0, 0, CW, bFY);
-
-  const srGrad = ctx.createLinearGradient(0, bFY, 0, CH);
-  srGrad.addColorStop(0, '#f2efda');
-  srGrad.addColorStop(0.3, '#e8e4c8');
-  srGrad.addColorStop(1, '#d9d0a8');
-  ctx.fillStyle = srGrad;
-  ctx.fillRect(0, bFY, CW, CH - bFY);
+  // Zonal terrain: snowy Russia → green Serbia → sandy south
+  const terrGrad = ctx.createLinearGradient(0, 0, 0, CH);
+  terrGrad.addColorStop(0,      '#dce5ed'); // far north — snowy blue-white
+  terrGrad.addColorStop(0.25,   '#e0e8d8'); // mid Russia — grey-green
+  terrGrad.addColorStop(0.45,   '#d5e0c4'); // transition — light green
+  terrGrad.addColorStop(0.55,   '#c8d8a8'); // Serbia north — lush green
+  terrGrad.addColorStop(0.75,   '#d4ce9a'); // Serbia center — grassy
+  terrGrad.addColorStop(1,      '#d9cfa0'); // Serbia south — sandy yellow
+  ctx.fillStyle = terrGrad;
+  ctx.fillRect(0, 0, CW, CH);
 
   // Parchment overlay (aged edges)
   for (let i = 0; i < 200; i++) {
