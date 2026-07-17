@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.15.3",
-  BUILD: "c0b1423",
-  CACHE_NAME: "relocation-v6.15.3-c0b1423"
+  VERSION: "6.16.0",
+  BUILD: "04377c1",
+  CACHE_NAME: "relocation-v6.16.0-04377c1"
 };
 
 let arrowMarker = null;
@@ -1464,7 +1464,14 @@ if ('serviceWorker' in navigator) {
 
 // Автоматическое обновление через 2 секунды после обнаружения
 function autoUpdate(worker) {
+  // Показать тост
+  const toast = document.createElement('div');
+  toast.textContent = '🔄 Обновление через 2 сек...';
+  toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a237e;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:modalFadeIn 0.2s ease;';
+  document.body.appendChild(toast);
+
   setTimeout(() => {
+    toast.remove();
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       window.location.reload();
     });
