@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.10.2",
-  BUILD: "0522d40",
-  CACHE_NAME: "relocation-v6.10.2-0522d40"
+  VERSION: "6.10.3",
+  BUILD: "ae2c800",
+  CACHE_NAME: "relocation-v6.10.3-ae2c800"
 };
 
 let arrowMarker = null;
@@ -2506,6 +2506,7 @@ function renderSchema() {
     const dec = [];
 
     const randX = () => 15 + rnd() * (CW - 30);
+    const rsz = (base, v) => base + rint(-v, v);
 
     const ruTop = 20, ruBot = bFY;
     const srTop = bFY, srBot = CH - 20;
@@ -2514,68 +2515,87 @@ function renderSchema() {
 
     // ══════ 🇷🇺 RUSSIA ══════
 
-    // Far north taiga (0-30%): overlaps with mid zone
-    for (let i = 0; i < 18; i++) dec.push({ t:'spruce', x:randX(), y:ruZ(0, 0.30) });
-    for (let i = 0; i < 8; i++)  dec.push({ t:'mt_ru', x:randX(), y:ruZ(0, 0.30) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'peak', x:randX(), y:ruZ(0, 0.22) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'snow', x:randX(), y:ruZ(0, 0.28), r:rint(8, 20) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'boulder', x:randX(), y:ruZ(0, 0.32) });
-    dec.push({ t:'bear_track', x:randX(), y:ruZ(0, 0.22) });
-    dec.push({ t:'bear_track', x:randX(), y:ruZ(0.02, 0.28) });
+    // Taiga north (0–25%): conifers, mountains, snow, rocks
+    for (let i = 0; i < 16; i++) dec.push({ t:'spruce', x:randX(), y:ruZ(0, 0.25), sz:rsz(28, 6) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'spruce', x:randX(), y:ruZ(0.08, 0.35) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'mt_ru', x:randX(), y:ruZ(0, 0.28), sz:rsz(70, 15) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'peak', x:randX(), y:ruZ(0, 0.2), sz:rsz(60, 10) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'snow', x:randX(), y:ruZ(0, 0.25), r:rint(8, 20) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'boulder', x:randX(), y:ruZ(0, 0.32), sz:rsz(24, 6) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'bear_track', x:randX(), y:ruZ(0, 0.25) });
+    dec.push({ t:'elk', x:randX(), y:ruZ(0.02, 0.22) });
 
-    // Mid Russia mixed forest (20-65%): overlaps with both north and south
-    for (let i = 0; i < 14; i++) dec.push({ t:'birch', x:randX(), y:ruZ(0.20, 0.65) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'rain', x:randX(), y:ruZ(0.20, 0.65) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'hut', x:randX(), y:ruZ(0.25, 0.60) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:randX(), y:ruZ(0.22, 0.62) });
-    dec.push({ t:'elk', x:randX(), y:ruZ(0.22, 0.55) });
+    // Mixed forest centre (18–60%): birch, lakes, huts, fox, mushrooms
+    for (let i = 0; i < 12; i++) dec.push({ t:'birch', x:randX(), y:ruZ(0.18, 0.60), sz:rsz(28, 6) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'mushroom', x:randX(), y:ruZ(0.20, 0.55), sz:rsz(16, 4) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'rain', x:randX(), y:ruZ(0.18, 0.60) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'hut', x:randX(), y:ruZ(0.22, 0.58) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:randX(), y:ruZ(0.18, 0.60) });
+    dec.push({ t:'fox', x:randX(), y:ruZ(0.22, 0.55) });
+    dec.push({ t:'elk', x:randX(), y:ruZ(0.15, 0.45) });
     const lakes = [];
     for (let i = 0; i < 4; i++) {
       const lx = randX(), ly = ruZ(0.08, 0.58);
-      dec.push({ t:'lake', x:lx, y:ly, r:rint(3, 6) });
+      dec.push({ t:'lake', x:lx, y:ly, r:rint(3, 7) });
       lakes.push({ x:lx, y:ly });
     }
     lakes.sort((a, b) => b.y - a.y).slice(0, 2).forEach(l => dec.push({ t:'swan', x:l.x, y:l.y }));
 
-    // South Russia fields (55-100%): overlaps with mid zone
-    for (let i = 0; i < 6; i++)  dec.push({ t:'sunflower', x:randX(), y:ruZ(0.55, 1) });
-    for (let i = 0; i < 5; i++)  dec.push({ t:'wheat', x:randX(), y:ruZ(0.55, 1) });
+    // Steppe south (50–100%): fields, horses, villages
+    for (let i = 0; i < 5; i++)  dec.push({ t:'sunflower', x:randX(), y:ruZ(0.50, 1), sz:rsz(22, 6) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'wheat', x:randX(), y:ruZ(0.50, 1), sz:rsz(18, 4) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'horse', x:randX(), y:ruZ(0.55, 0.95) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'tractor', x:randX(), y:ruZ(0.55, 0.98) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'village', x:randX(), y:ruZ(0.60, 0.98) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:randX(), y:ruZ(0.55, 0.95) });
+    // Mixed greenery throughout Russia
+    for (let i = 0; i < 6; i++)  dec.push({ t:'birch', x:randX(), y:ruZ(0.10, 0.90), sz:rsz(22, 4) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'boulder', x:randX(), y:ruZ(0.05, 0.60), sz:rsz(18, 6) });
 
     // ══════ 🇷🇸 SERBIA ══════
 
-    // Vojvodina plain (0-35%): overlaps with Belgrade
-    for (let i = 0; i < 5; i++)  dec.push({ t:'sunflower', x:randX(), y:srZ(0, 0.35) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'wheat', x:randX(), y:srZ(0, 0.35) });
+    // Vojvodina fields (0–35%): sunflowers, wheat, corn, farms, tractors
+    for (let i = 0; i < 4; i++)  dec.push({ t:'sunflower', x:randX(), y:srZ(0, 0.35), sz:rsz(22, 6) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'wheat', x:randX(), y:srZ(0, 0.35), sz:rsz(18, 4) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'corn', x:randX(), y:srZ(0, 0.35) });
     for (let i = 0; i < 3; i++)  dec.push({ t:'house', x:randX(), y:srZ(0, 0.32) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'hut', x:randX(), y:srZ(0.02, 0.32) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'linden', x:randX(), y:srZ(0, 0.35) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'tractor', x:randX(), y:srZ(0.02, 0.33) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'horse', x:randX(), y:srZ(0.05, 0.32) });
     dec.push({ t:'eagle', x:randX(), y:srZ(0.02, 0.30) });
 
-    // Belgrade + Sumadija (25-60%): overlaps with both
-    for (let i = 0; i < 6; i++)  dec.push({ t:'oak', x:randX(), y:srZ(0.25, 0.60) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'spire', x:randX(), y:srZ(0.25, 0.60), h:rint(6, 12) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'block', x:randX(), y:srZ(0.28, 0.60) });
+    // Belgrade + Sumadija (25–65%): city, fortress, parks, vineyards
+    for (let i = 0; i < 2; i++)  dec.push({ t:'spire', x:randX(), y:srZ(0.25, 0.60), sz:rsz(32, 8), h:rint(6, 12) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'spire', x:randX(), y:srZ(0.30, 0.55), sz:rsz(24, 4), h:rint(4, 8) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'block', x:randX(), y:srZ(0.28, 0.62) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'pigeon', x:randX(), y:srZ(0.25, 0.58) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'clover', x:randX(), y:srZ(0.28, 0.60) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'clover', x:randX(), y:srZ(0.28, 0.62) });
     dec.push({ t:'fortress', x:randX(), y:srZ(0.25, 0.50) });
-    dec.push({ t:'bridge', x:randX(), y:srZ(0.30, 0.55) });
     dec.push({ t:'ferris', x:randX(), y:srZ(0.35, 0.55) });
     dec.push({ t:'beach', x:randX(), y:srZ(0.32, 0.56) });
     dec.push({ t:'construction', x:randX(), y:srZ(0.30, 0.55) });
-    dec.push({ t:'factory', x:randX(), y:srZ(0.42, 0.60) });
+    dec.push({ t:'factory', x:randX(), y:srZ(0.42, 0.62) });
+    // Trees + hills throughout Belgrade zone
+    for (let i = 0; i < 5; i++)  dec.push({ t:'oak', x:randX(), y:srZ(0.25, 0.65), sz:rsz(32, 6) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'linden', x:randX(), y:srZ(0.25, 0.65), sz:rsz(18, 4) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'hill_sr', x:randX(), y:srZ(0.28, 0.60), w:rint(10, 22), h:rint(6, 14) });
 
-    // South Serbia mountains (50-100%): overlaps with Belgrade
-    for (let i = 0; i < 12; i++) dec.push({ t:'hill_sr', x:randX(), y:srZ(0.50, 1), w:rint(12, 28), h:rint(8, 16) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'pine', x:randX(), y:srZ(0.50, 1) });
+    // South mountains (50–100%): hills, pine, sheep, eagles, rabbits
+    for (let i = 0; i < 10; i++) dec.push({ t:'hill_sr', x:randX(), y:srZ(0.50, 1), w:rint(12, 28), h:rint(8, 18) });
+    for (let i = 0; i < 8; i++)  dec.push({ t:'pine', x:randX(), y:srZ(0.50, 1), sz:rsz(28, 6) });
     for (let i = 0; i < 4; i++)  dec.push({ t:'sheep', x:randX(), y:srZ(0.50, 0.95) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'eagle', x:randX(), y:srZ(0.52, 0.95) });
     for (let i = 0; i < 3; i++)  dec.push({ t:'rabbit', x:randX(), y:srZ(0.55, 0.98) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'mushroom', x:randX(), y:srZ(0.55, 0.95), sz:rsz(16, 4) });
     for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:randX(), y:srZ(0.50, 0.95) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'boulder', x:randX(), y:srZ(0.55, 1), sz:rsz(24, 8) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'rock', x:randX(), y:srZ(0.60, 1) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:randX(), y:srZ(0.50, 0.98) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'rock', x:randX(), y:srZ(0.55, 1) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'spring', x:randX(), y:srZ(0.55, 0.98) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'lake', x:randX(), y:srZ(0.50, 0.95), r:rint(2, 5) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'lake', x:randX(), y:srZ(0.50, 0.95), r:rint(2, 6) });
+    // Mixed greenery throughout Serbia
+    for (let i = 0; i < 5; i++)  dec.push({ t:'oak', x:randX(), y:srZ(0.05, 0.95), sz:rsz(24, 4) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'linden', x:randX(), y:srZ(0.05, 0.95), sz:rsz(14, 2) });
 
     // ── Clouds (all over, denser near boundary) ──
     for (let i = 0; i < 25; i++) {
@@ -2681,10 +2701,10 @@ function renderSchema() {
       if (d.t === 'rain') return;
       if (d.t === 'butterfly') return;
       // Emoji-based elements
-      const emojiMap = {mt_ru:'🏔',spruce:'🌲',birch:'🌳',oak:'🌳',linden:'🌿',peak:'🗻',boulder:'🪨',hut:'🏚',wheat:'🌾',sunflower:'🌻',village:'🏘',tent:'🏕',house:'🏡',construction:'🏗',clover:'☘️',bridge:'🌉',beach:'🏖',sheep:'🐑',rabbit:'🐇',rock:'🪨',spring:'🌊',ferris:'🎡',factory:'🏭',pine:'🌲',block:'🏘',bear_track:'🐾',elk:'🦌',swan:'🦢',eagle:'🦅',pigeon:'🕊',fortress:'🏰',spire:'🏛️'};
-      const szMap = {mt_ru:70,spruce:28,birch:28,oak:32,linden:16,peak:60,boulder:24,hut:22,wheat:18,sunflower:22,village:28,tent:20,house:26,construction:24,clover:16,bridge:30,beach:26,sheep:20,rabbit:18,rock:22,spring:20,ferris:32,factory:26,pine:28,block:26,bear_track:20,elk:16,swan:14,eagle:16,pigeon:14,fortress:20,spire:32};
+      const emojiMap = {mt_ru:'🏔',spruce:'🌲',birch:'🌳',oak:'🌳',linden:'🌿',peak:'🗻',boulder:'🪨',hut:'🏚',wheat:'🌾',sunflower:'🌻',village:'🏘',tent:'🏕',house:'🏡',construction:'🏗',clover:'☘️',beach:'🏖',sheep:'🐑',rabbit:'🐇',rock:'🪨',spring:'🌊',ferris:'🎡',factory:'🏭',pine:'🌲',block:'🏘',bear_track:'🐾',elk:'🦌',swan:'🦢',eagle:'🦅',pigeon:'🕊',fortress:'🏰',spire:'🏛️',fox:'🦊',horse:'🐎',mushroom:'🍄',corn:'🌽',tractor:'🚜'};
+      const szMap = {mt_ru:70,spruce:28,birch:28,oak:32,linden:16,peak:60,boulder:24,hut:22,wheat:18,sunflower:22,village:28,tent:20,house:26,construction:24,clover:16,beach:26,sheep:20,rabbit:18,rock:22,spring:20,ferris:32,factory:26,pine:28,block:26,bear_track:20,elk:16,swan:14,eagle:16,pigeon:14,fortress:20,spire:32,fox:22,horse:26,mushroom:16,corn:20,tractor:24};
       if (emojiMap[d.t]) {
-        ctx.font = (szMap[d.t] || 20) + 'px serif';
+        ctx.font = (d.sz || szMap[d.t] || 20) + 'px serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillStyle = d.t === 'eagle' || d.t === 'pigeon' || d.t === 'oak' ? '#000' : '#000';
         ctx.fillText(emojiMap[d.t], d.x, d.y);
