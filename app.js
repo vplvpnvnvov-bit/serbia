@@ -1,13 +1,14 @@
 window.APP_CONFIG = {
-  VERSION: "6.7.1",
-  BUILD: "d085f93",
-  CACHE_NAME: "relocation-v6.7.1-d085f93"
+  VERSION: "6.8.0",
+  BUILD: "4b125ca",
+  CACHE_NAME: "relocation-v6.8.0-4b125ca"
 };
 
 let arrowMarker = null;
 let _schemaDecor = null;
 let _schemaClouds = null;
 let _schemaSnow = null;
+let _schemaRain = null;
 let _schemaHitAreas = null;
 let _schemaItems = null;
 let _schemaNodes = null;
@@ -2539,6 +2540,11 @@ function renderSchema() {
       dec.push({ t:'snow', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.25, 10, CW * 0.35), y:ruTop + rnd() * (ruBot - ruTop) * 0.25, r:rint(8, 20) });
     }
 
+    // Rain (mid Russia)
+    for (let i = 0; i < 6; i++) {
+      dec.push({ t:'rain', x:safeX(ruTop + (ruBot - ruTop) * 0.3 + rnd() * (ruBot - ruTop) * 0.3, 30, CW * 0.3), y:ruTop + (ruBot - ruTop) * 0.3 + rnd() * (ruBot - ruTop) * 0.3 });
+    }
+
     // Lakes Russia (spread across)
     const lakes = [];
     for (let i = 0; i < 4; i++) {
@@ -2608,7 +2614,7 @@ function renderSchema() {
 
     // Push objects away from the trail
     dec.forEach(d => {
-      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow') return;
+      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow' || d.t === 'rain') return;
       const margin = d.t === 'mt_ru' ? 35 : 22;
       const tx = trailXAt(d.y);
       const dist = d.x - tx;
@@ -2622,6 +2628,7 @@ function renderSchema() {
     _schemaDecor._ch = CH;
     _schemaClouds = dec.filter(d => d.t === 'cloud');
     _schemaSnow = dec.filter(d => d.t === 'snow');
+    _schemaRain = dec.filter(d => d.t === 'rain');
   }
 
   // ── Draw lakes (background) ──
@@ -2882,6 +2889,7 @@ function renderSchema() {
     _schemaDecor.forEach(d => {
       if (d.t === 'lake') return;
       if (d.t === 'snow') return;
+      if (d.t === 'rain') return;
       if (d.t === 'mt_ru') {
         ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
@@ -3186,6 +3194,18 @@ function renderSchema() {
     ctx.translate(dx, d.y);
     ctx.scale(1, 0.45);
     pts.forEach(p => { ctx.beginPath(); ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2); ctx.fill(); });
+    ctx.restore();
+  });
+
+  // Animated rain (mid Russia)
+  const raindrops = _schemaRain || [];
+  raindrops.forEach(d => {
+    const fallY = (now * 0.05 + d.y * 0.03) % 60;
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.font = '16px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🌧️', d.x, d.y + fallY - 30);
     ctx.restore();
   });
 
