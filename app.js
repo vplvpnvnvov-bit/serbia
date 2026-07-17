@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.13.0",
-  BUILD: "23b7819",
-  CACHE_NAME: "relocation-v6.13.0-23b7819"
+  VERSION: "6.13.1",
+  BUILD: "efa3d32",
+  CACHE_NAME: "relocation-v6.13.1-efa3d32"
 };
 
 let arrowMarker = null;
@@ -3537,8 +3537,8 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
         const ovr = _landscapeOverrides[id];
         if (ovr) {
           _dragStartX = pos.x; _dragStartY = pos.y;
-          _dragOrigX = ovr.xr * CW;
-          _dragOrigY = ovr.yr * CH;
+          _dragOrigX = ovr.xr * _currentCW;
+          _dragOrigY = ovr.yr * _currentCH;
         } else if (el) {
           _dragStartX = pos.x; _dragStartY = pos.y;
           _dragOrigX = el.x;
@@ -3572,8 +3572,8 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
       const absX = Math.round(_dragOrigX + pos.x - _dragStartX);
       const absY = Math.round(_dragOrigY + pos.y - _dragStartY);
       _landscapeOverrides[_dragTarget] = {
-        xr: absX / CW,
-        yr: absY / CH,
+        xr: absX / _currentCW,
+        yr: absY / _currentCH,
       };
       renderSchema();
       return;
