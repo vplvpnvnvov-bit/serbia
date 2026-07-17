@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.10.3",
-  BUILD: "ae2c800",
-  CACHE_NAME: "relocation-v6.10.3-ae2c800"
+  VERSION: "6.11.0",
+  BUILD: "b8393f5",
+  CACHE_NAME: "relocation-v6.11.0-b8393f5"
 };
 
 let arrowMarker = null;
@@ -13,6 +13,9 @@ let _schemaHitAreas = null;
 let _schemaItems = null;
 let _schemaNodes = null;
 let _schemaAnimating = false;
+let _landscapeMode = false;
+let _landscapeOverrides = {};
+let _landscapeElements = [];
 let planListenerAdded = false;
 
 // === AUTH SCREEN ===
@@ -2641,6 +2644,16 @@ function renderSchema() {
     _schemaClouds = dec.filter(d => d.t === 'cloud');
     _schemaSnow = dec.filter(d => d.t === 'snow');
     _schemaRain = dec.filter(d => d.t === 'rain');
+
+    // Assign stable IDs for landscape editing
+    const typeCounts = {};
+    dec.forEach(d => {
+      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow' || d.t === 'rain') return;
+      typeCounts[d.t] = (typeCounts[d.t] || 0) + 1;
+      d._id = d.t + '_' + typeCounts[d.t];
+    });
+    // Build lookup for drag
+    _landscapeElements = dec.filter(d => d._id);
   }
 
   // ── Draw lakes (background) ──
@@ -2704,14 +2717,30 @@ function renderSchema() {
       const emojiMap = {mt_ru:'🏔',spruce:'🌲',birch:'🌳',oak:'🌳',linden:'🌿',peak:'🗻',boulder:'🪨',hut:'🏚',wheat:'🌾',sunflower:'🌻',village:'🏘',tent:'🏕',house:'🏡',construction:'🏗',clover:'☘️',beach:'🏖',sheep:'🐑',rabbit:'🐇',rock:'🪨',spring:'🌊',ferris:'🎡',factory:'🏭',pine:'🌲',block:'🏘',bear_track:'🐾',elk:'🦌',swan:'🦢',eagle:'🦅',pigeon:'🕊',fortress:'🏰',spire:'🏛️',fox:'🦊',horse:'🐎',mushroom:'🍄',corn:'🌽',tractor:'🚜'};
       const szMap = {mt_ru:70,spruce:28,birch:28,oak:32,linden:16,peak:60,boulder:24,hut:22,wheat:18,sunflower:22,village:28,tent:20,house:26,construction:24,clover:16,beach:26,sheep:20,rabbit:18,rock:22,spring:20,ferris:32,factory:26,pine:28,block:26,bear_track:20,elk:16,swan:14,eagle:16,pigeon:14,fortress:20,spire:32,fox:22,horse:26,mushroom:16,corn:20,tractor:24};
       if (emojiMap[d.t]) {
+        let ex = d.x, ey = d.y;
+        if (_landscapeMode && _landscapeOverrides[d._id]) {
+          ex = _landscapeOverrides[d._id].x;
+          ey = _landscapeOverrides[d._id].y;
+        }
         ctx.font = (d.sz || szMap[d.t] || 20) + 'px serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = d.t === 'eagle' || d.t === 'pigeon' || d.t === 'oak' ? '#000' : '#000';
-        ctx.fillText(emojiMap[d.t], d.x, d.y);
+        ctx.fillStyle = '#000';
+        ctx.fillText(emojiMap[d.t], ex, ey);
+        if (_landscapeMode) {
+          ctx.strokeStyle = '#ff6d00'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(ex, ey, 14, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = 'rgba(255,109,0,0.2)';
+          ctx.beginPath(); ctx.arc(ex, ey, 14, 0, Math.PI * 2); ctx.fill();
+        }
         return;
       }
       if (d.t === 'hill_sr') {
-        const bw = d.w*S, bh = d.h*S, bx = d.x - bw/2, by = d.y;
+        let hx = d.x, hy = d.y;
+        if (_landscapeMode && _landscapeOverrides[d._id]) {
+          hx = _landscapeOverrides[d._id].x;
+          hy = _landscapeOverrides[d._id].y;
+        }
+        const bw = d.w*S, bh = d.h*S, bx = hx - bw/2, by = hy;
         ctx.lineJoin = 'round';
         ctx.fillStyle='#33691e'; ctx.beginPath();
         ctx.moveTo(bx-1, by+bh); ctx.lineTo(bx+bw/2, by); ctx.lineTo(bx+bw+1, by+bh); ctx.fill();
@@ -2720,6 +2749,13 @@ function renderSchema() {
         ctx.fillStyle='#aed581'; ctx.beginPath();
         ctx.moveTo(bx+bw*0.25, by+bh); ctx.lineTo(bx+bw/2, by+bh*0.2); ctx.lineTo(bx+bw*0.75, by+bh); ctx.fill();
         ctx.lineJoin = 'miter';
+        if (_landscapeMode) {
+          ctx.strokeStyle = '#ff6d00'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(hx, hy, 14, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = 'rgba(255,109,0,0.2)';
+          ctx.beginPath(); ctx.arc(hx, hy, 14, 0, Math.PI * 2); ctx.fill();
+        }
+        return;
       }
       else if (d.t === 'boundary') {
         const pts = d.pts || [{x:10,y:d.y},{x:CW-10,y:d.y}];
@@ -3099,7 +3135,7 @@ function renderSchema() {
       if (!document.getElementById('tab-schema')?.classList.contains('active')) {
         _schemaAnimating = false; return;
       }
-      if (!_editMode && (ts - lastFrame >= 200)) {
+      if (!_editMode && !_landscapeMode && (ts - lastFrame >= 200)) {
         lastFrame = ts;
         renderSchema();
       }
@@ -3334,6 +3370,10 @@ try {
   _manualPositions = saved || DEFAULT_MANUAL_OFFSETS;
 } catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
 
+try {
+  _landscapeOverrides = JSON.parse(localStorage.getItem('schema-landscape-overrides') || '{}');
+} catch { _landscapeOverrides = {}; }
+
 function exportManualPositions() {
   const lines = ['// Offsets from parent node (dx, dy):',
     'const MANUAL_OFFSETS = {'];
@@ -3352,7 +3392,21 @@ function exportManualPositions() {
 
 document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
   _editMode = true;
+  _landscapeMode = false;
   document.getElementById('btn-schema-edit').classList.add('hidden');
+  document.getElementById('btn-landscape-edit').classList.add('hidden');
+  document.getElementById('btn-schema-export').classList.remove('hidden');
+  document.getElementById('btn-schema-exit').classList.remove('hidden');
+  schemaCanvas.style.touchAction = 'none';
+  _schemaDecor = null;
+  renderSchema();
+});
+
+document.getElementById('btn-landscape-edit')?.addEventListener('click', () => {
+  _landscapeMode = true;
+  _editMode = false;
+  document.getElementById('btn-schema-edit').classList.add('hidden');
+  document.getElementById('btn-landscape-edit').classList.add('hidden');
   document.getElementById('btn-schema-export').classList.remove('hidden');
   document.getElementById('btn-schema-exit').classList.remove('hidden');
   schemaCanvas.style.touchAction = 'none';
@@ -3362,7 +3416,9 @@ document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
 
 document.getElementById('btn-schema-exit')?.addEventListener('click', () => {
   _editMode = false;
+  _landscapeMode = false;
   document.getElementById('btn-schema-edit').classList.remove('hidden');
+  document.getElementById('btn-landscape-edit').classList.remove('hidden');
   document.getElementById('btn-schema-export').classList.add('hidden');
   document.getElementById('btn-schema-exit').classList.add('hidden');
   schemaCanvas.style.touchAction = '';
@@ -3382,6 +3438,17 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  function findLandscapeAt(mx, my) {
+    for (const el of _landscapeElements) {
+      if (!el._id) continue;
+      const ovr = _landscapeOverrides[el._id];
+      const ex = ovr ? ovr.x : el.x;
+      const ey = ovr ? ovr.y : el.y;
+      if (mx >= ex - 20 && mx <= ex + 20 && my >= ey - 20 && my <= ey + 20) return el._id;
+    }
+    return null;
+  }
+
   function findChildAt(mx, my) {
     for (const id of Object.keys(_manualPositions)) {
       const off = _manualPositions[id];
@@ -3398,34 +3465,65 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
   }
 
   schemaCanvas.addEventListener('pointerdown', e => {
-    if (!_editMode) return;
+    if (!_editMode && !_landscapeMode) return;
     const pos = getCanvasPos(e);
-    const id = findChildAt(pos.x, pos.y);
-    if (id) {
-      e.preventDefault();
-      _dragTarget = id;
-      _dragStartX = pos.x; _dragStartY = pos.y;
-      _dragOrigX = _manualPositions[id].dx;
-      _dragOrigY = _manualPositions[id].dy;
-      schemaCanvas.setPointerCapture(e.pointerId);
+
+    if (_landscapeMode) {
+      const id = findLandscapeAt(pos.x, pos.y);
+      if (id) {
+        e.preventDefault();
+        _dragTarget = id;
+        _dragStartX = pos.x; _dragStartY = pos.y;
+        const ovr = _landscapeOverrides[id];
+        _dragOrigX = ovr ? ovr.x : _landscapeElements.find(el => el._id === id)?.x || 0;
+        _dragOrigY = ovr ? ovr.y : _landscapeElements.find(el => el._id === id)?.y || 0;
+        schemaCanvas.setPointerCapture(e.pointerId);
+        return;
+      }
+    }
+
+    if (_editMode) {
+      const id = findChildAt(pos.x, pos.y);
+      if (id) {
+        e.preventDefault();
+        _dragTarget = id;
+        _dragStartX = pos.x; _dragStartY = pos.y;
+        const off = _manualPositions[id];
+        _dragOrigX = off.dx;
+        _dragOrigY = off.dy;
+        schemaCanvas.setPointerCapture(e.pointerId);
+      }
     }
   });
 
   schemaCanvas.addEventListener('pointermove', e => {
-    if (!_editMode || !_dragTarget) return;
+    if ((!_editMode && !_landscapeMode) || !_dragTarget) return;
     e.preventDefault();
     const pos = getCanvasPos(e);
-    _manualPositions[_dragTarget] = {
-      dx: Math.round(_dragOrigX + pos.x - _dragStartX),
-      dy: Math.round(_dragOrigY + pos.y - _dragStartY),
-    };
-    renderSchema();
+
+    if (_landscapeMode) {
+      _landscapeOverrides[_dragTarget] = {
+        x: Math.round(_dragOrigX + pos.x - _dragStartX),
+        y: Math.round(_dragOrigY + pos.y - _dragStartY),
+      };
+      renderSchema();
+      return;
+    }
+
+    if (_editMode) {
+      _manualPositions[_dragTarget] = {
+        dx: Math.round(_dragOrigX + pos.x - _dragStartX),
+        dy: Math.round(_dragOrigY + pos.y - _dragStartY),
+      };
+      renderSchema();
+    }
   });
 
   schemaCanvas.addEventListener('pointerup', () => {
-    if (!_editMode) return;
+    if (!_editMode && !_landscapeMode) return;
     if (_dragTarget) {
-      localStorage.setItem('schema-manual-offsets', JSON.stringify(_manualPositions));
+      if (_landscapeMode) localStorage.setItem('schema-landscape-overrides', JSON.stringify(_landscapeOverrides));
+      else localStorage.setItem('schema-manual-offsets', JSON.stringify(_manualPositions));
       _dragTarget = null;
     }
   });
