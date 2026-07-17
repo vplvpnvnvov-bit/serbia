@@ -384,6 +384,9 @@ html, body {
 .legend-urban {
   margin-bottom: 6px;
   font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 .urban-label {
   display: inline-flex;
