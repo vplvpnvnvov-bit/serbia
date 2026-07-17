@@ -116,16 +116,16 @@ async function updateCloudStatus() {
   if (!syncCode) { el.textContent = 'Нет кода'; return; }
   try {
     const doc = await db.collection('users').doc(syncCode).get({ source: 'default' });
-    if (!doc.exists) { el.textContent = '❌ Данные в облаке не найдены'; return; }
+    if (!doc.exists) { el.textContent = '❌ Нет данных'; return; }
     const data = doc.data();
     if (data.updatedAt) {
       const ts = data.updatedAt.toDate ? data.updatedAt.toDate().toLocaleString() : 'есть данные';
-      el.textContent = `✅ Данные есть в облаке (${ts})`;
+      el.textContent = `✅ ${ts}`;
     } else {
-      el.textContent = '✅ Данные есть в облаке';
+      el.textContent = '✅ Есть данные';
     }
   } catch (_) {
-    el.textContent = '⚠️ Нет соединения с сервером';
+    el.textContent = '⚠️ Ошибка сети';
   }
 }
 
