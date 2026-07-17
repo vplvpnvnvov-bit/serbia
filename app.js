@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.12",
-  BUILD: "26c1458",
-  CACHE_NAME: "relocation-v6.6.12-26c1458"
+  VERSION: "6.6.13",
+  BUILD: "29e1159",
+  CACHE_NAME: "relocation-v6.6.13-29e1159"
 };
 
 let arrowMarker = null;
@@ -2813,7 +2813,7 @@ function renderSchema() {
       const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
       const cpx = -towardY / tpLen;
       const cpy = towardX / tpLen;
-      const waveAmp = Math.min(tpLen * 0.2, 30);
+      const waveAmp = Math.min(tpLen * 0.12, 20);
 
       const segs = [
         { t: 0.25, sign: 1 },
@@ -3287,13 +3287,13 @@ let _dragTarget = null;
 let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
 const DEFAULT_MANUAL_OFFSETS = {
-  pharm:             { dx: 98,  dy: -42 },
-  med_vyps:          { dx: 165, dy: -106 },
-  dentist:           { dx: -10, dy: -109 },
+  pharm:             { dx: 114, dy: -32 },
+  med_vyps:          { dx: 165, dy: -100 },
+  dentist:           { dx: -32, dy: -94 },
   power:             { dx: 102, dy: 31 },
   child_consent:     { dx: -53, dy: 72 },
-  diplomas:          { dx: 196, dy: -90 },
-  driving_licenses:  { dx: 137, dy: 35 },
+  diplomas:          { dx: 158, dy: -78 },
+  driving_licenses:  { dx: 135, dy: 62 },
   apost_nocrim_h:    { dx: 104, dy: 32 },
   apost_nocrim_w:    { dx: 93,  dy: 53 },
   ticket_buy:        { dx: 66,  dy: -104 },
