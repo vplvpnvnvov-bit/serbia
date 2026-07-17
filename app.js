@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.9.0",
-  BUILD: "404b8af",
-  CACHE_NAME: "relocation-v6.9.0-404b8af"
+  VERSION: "6.9.1",
+  BUILD: "0913ad0",
+  CACHE_NAME: "relocation-v6.9.1-0913ad0"
 };
 
 let arrowMarker = null;
@@ -3200,12 +3200,14 @@ function renderSchema() {
   // Animated rain (mid Russia)
   const raindrops = _schemaRain || [];
   raindrops.forEach(d => {
-    const fallY = (now * 0.05 + d.y * 0.03) % 60;
+    const fallY = (now * 0.08 + d.x * 0.02) % 70;
+    const driftX = Math.sin(now * 0.002 + d.y * 0.03) * 5;
+    const alpha = 0.2 + Math.sin(now * 0.005 + d.x * 0.03) * 0.2;
     ctx.save();
-    ctx.globalAlpha = 0.35;
-    ctx.font = '16px serif';
+    ctx.globalAlpha = alpha;
+    ctx.font = '14px serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('💧', d.x, d.y + fallY - 30);
+    ctx.fillText('💧', d.x + driftX, d.y + fallY - 35);
     ctx.restore();
   });
 
