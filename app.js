@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.12.1",
-  BUILD: "4d16048",
-  CACHE_NAME: "relocation-v6.12.1-4d16048"
+  VERSION: "6.12.2",
+  BUILD: "47edcae",
+  CACHE_NAME: "relocation-v6.12.2-47edcae"
 };
 
 let arrowMarker = null;
@@ -2720,7 +2720,7 @@ function renderSchema() {
       const szMap = {mt_ru:70,spruce:28,birch:28,oak:32,linden:16,peak:60,boulder:24,hut:22,wheat:18,sunflower:22,village:28,tent:20,house:26,construction:24,clover:16,beach:26,sheep:20,rabbit:18,rock:22,spring:20,ferris:32,factory:26,pine:28,block:26,bear_track:20,elk:16,swan:14,eagle:16,pigeon:14,fortress:20,spire:32,fox:22,horse:26,mushroom:16,corn:20,tractor:24};
       if (emojiMap[d.t]) {
         let ex = d.x, ey = d.y;
-        if (_landscapeMode && _landscapeOverrides[d._id]) {
+        if (_landscapeOverrides[d._id]) {
           ex = _landscapeOverrides[d._id].x;
           ey = _landscapeOverrides[d._id].y;
         }
@@ -2738,7 +2738,7 @@ function renderSchema() {
       }
       if (d.t === 'hill_sr') {
         let hx = d.x, hy = d.y;
-        if (_landscapeMode && _landscapeOverrides[d._id]) {
+        if (_landscapeOverrides[d._id]) {
           hx = _landscapeOverrides[d._id].x;
           hy = _landscapeOverrides[d._id].y;
         }
