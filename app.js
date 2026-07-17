@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.9",
-  BUILD: "5fe9d2e",
-  CACHE_NAME: "relocation-v6.6.9-5fe9d2e"
+  VERSION: "6.6.10",
+  BUILD: "894fb0c",
+  CACHE_NAME: "relocation-v6.6.10-894fb0c"
 };
 
 let arrowMarker = null;
@@ -2803,8 +2803,6 @@ function renderSchema() {
         _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y };
       }
 
-      if (_editMode) console.log('child', child.id, 'pNode', pNode.x, pNode.y, 'manual', _manualPositions[child.id], '-> sx,sy', sx, sy);
-
       const done = (state.tasks?.[child.id] || {}).checked;
       const prog = (state.tasks?.[child.id] || {}).progress;
 
@@ -2846,7 +2844,7 @@ function renderSchema() {
       placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
 
       if (_editMode) {
-        _manualPositions[child.id] = { x: sx, y: sy };
+        _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y };
         // Drag handle
         ctx.strokeStyle = '#ff6d00';
         ctx.lineWidth = 3;
@@ -3367,7 +3365,6 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
       const sx = nd.x + off.dx, sy = nd.y + off.dy;
       if (mx >= sx - 40 && mx <= sx + 40 && my >= sy - 30 && my <= sy + 20) return id;
     }
-    console.log('findChildAt no match, mx,my:', mx, my, 'keys:', Object.keys(_manualPositions).length, 'nodes:', _schemaNodes?.length);
     return null;
   }
 
@@ -3375,7 +3372,6 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     if (!_editMode) return;
     const pos = getCanvasPos(e);
     const id = findChildAt(pos.x, pos.y);
-    console.log('pointerdown', pos.x, pos.y, 'found:', id, '_schemaNodes len:', _schemaNodes?.length, '_schemaItems len:', _schemaItems?.length);
     if (id) {
       e.preventDefault();
       _dragTarget = id;
