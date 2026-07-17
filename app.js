@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.23.1",
-  BUILD: "01a14d3",
-  CACHE_NAME: "relocation-v6.23.1-01a14d3"
+  VERSION: "6.23.2",
+  BUILD: "663220a",
+  CACHE_NAME: "relocation-v6.23.2-663220a"
 };
 
 let arrowMarker = null;
@@ -740,7 +740,8 @@ function openLightbox(url, title) {
 
 function districtLabel(name, price, score) {
   let dotColor = score >= 8 ? '#43a047' : score >= 5 ? '#fbc02d' : '#d32f2f';
-  return `<div class="map-price-badge"><span class="badge-status-dot" style="background-color:${dotColor}"></span><span class="badge-price">${price}</span></div>`;
+  const short = price.replace(/^(\d+).*/, 'от $1€');
+  return `<div class="map-price-badge"><span class="badge-status-dot" style="background-color:${dotColor}"></span><span class="badge-price">${short}</span></div>`;
 }
 
 function popupHTML(d) {
