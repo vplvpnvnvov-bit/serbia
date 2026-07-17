@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.12.2",
-  BUILD: "47edcae",
-  CACHE_NAME: "relocation-v6.12.2-47edcae"
+  VERSION: "6.12.3",
+  BUILD: "2dbb444",
+  CACHE_NAME: "relocation-v6.12.3-2dbb444"
 };
 
 let arrowMarker = null;
@@ -2625,9 +2625,9 @@ function renderSchema() {
 
     // Push away from trail — shift toward nearest edge
     dec.forEach(d => {
-      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow' || d.t === 'rain' || d.t === 'butterfly') return;
+      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'snow' || d.t === 'rain' || d.t === 'butterfly') return;
       const tx = trailXAt(d.y);
-      const margin = d.t === 'mt_ru' || d.t === 'peak' ? 50 : 35;
+      const margin = d.t === 'lake' ? 60 : d.t === 'mt_ru' || d.t === 'peak' ? 50 : 35;
       const dist = d.x - tx;
       const absDist = Math.abs(dist);
       if (absDist < margin) {
