@@ -2067,13 +2067,13 @@ body.dark-theme .badge {
   color: #81d4fa;
 }
 body.dark-theme .lc-check input {
-  accent-color: #81d4fa;
+  accent-color: #c9a84b;
 }
 body.dark-theme input[type="range"] {
-  accent-color: #81d4fa;
+  accent-color: #c9a84b;
 }
 body.dark-theme input[type="checkbox"] {
-  accent-color: #81d4fa;
+  accent-color: #c9a84b;
 }
 body.dark-theme .preset-btn {
   background: rgba(255,255,255,0.06);
@@ -2104,8 +2104,8 @@ body.dark-theme #opacity-slider {
   background: #455a64;
 }
 body.dark-theme #opacity-slider::-webkit-slider-thumb {
-  background: #81d4fa;
-  border-color: #81d4fa;
+  background: #c9a84b;
+  border-color: #c9a84b;
 }
 body.dark-theme .legend-bar {
   color: #78909c;
