@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.13.4",
-  BUILD: "5e6220c",
-  CACHE_NAME: "relocation-v6.13.4-5e6220c"
+  VERSION: "6.13.5",
+  BUILD: "05663e4",
+  CACHE_NAME: "relocation-v6.13.5-05663e4"
 };
 
 let arrowMarker = null;
@@ -2386,6 +2386,11 @@ document.addEventListener('DOMContentLoaded', () => {
       await window.logoutUser();
     }
   });
+
+  const editorToggle = document.getElementById('toggle-schema-editor');
+  if (editorToggle) {
+    editorToggle.checked = localStorage.getItem('schema-editor-enabled') === 'true';
+  }
 });
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
@@ -3353,7 +3358,12 @@ function renderLegend() {
 
 
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
-  setTimeout(() => { try { renderSchema(); renderLegend(); } catch(e) { console.error(e); } }, 100);
+  setTimeout(() => { try {
+    const toggle = document.getElementById('toggle-schema-editor');
+    if (toggle) { toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true'; }
+    updateSchemaToolbar();
+    renderSchema(); renderLegend();
+  } catch(e) { console.error(e); } }, 100);
 });
 
 const schemaCanvas = document.getElementById('schema-canvas');
@@ -3495,6 +3505,20 @@ document.getElementById('btn-schema-exit')?.addEventListener('click', () => {
 
 document.getElementById('btn-schema-export')?.addEventListener('click', () => {
   exportManualPositions();
+});
+
+// Toolbar visibility toggle
+function updateSchemaToolbar() {
+  const show = localStorage.getItem('schema-editor-enabled') === 'true';
+  document.getElementById('schema-toolbar')?.classList.toggle('hidden', !show);
+  if (!show) { _editMode = false; _landscapeMode = false; }
+}
+
+document.getElementById('toggle-schema-editor')?.addEventListener('change', e => {
+  const on = e.target.checked;
+  localStorage.setItem('schema-editor-enabled', on ? 'true' : 'false');
+  if (!on) { _editMode = false; _landscapeMode = false; }
+  updateSchemaToolbar();
 });
 
 if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
