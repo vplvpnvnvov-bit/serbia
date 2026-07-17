@@ -1802,6 +1802,7 @@ html, body {
   font-weight: 700;
   color: #1a237e;
   pointer-events: none;
+  white-space: nowrap;
   transition: transform 0.2s ease, background-color 0.2s;
   position: relative;
 }

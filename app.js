@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.23.3",
-  BUILD: "5481ecc",
-  CACHE_NAME: "relocation-v6.23.3-5481ecc"
+  VERSION: "6.23.4",
+  BUILD: "a5b17b2",
+  CACHE_NAME: "relocation-v6.23.4-a5b17b2"
 };
 
 let arrowMarker = null;
