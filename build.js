@@ -48,7 +48,7 @@ console.log(`✓ package.json успешно перезаписан на вер�
 
 // 5. Патчим app.js
 let appJs = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf-8');
-const appConfigRegex = /window\.APP_CONFIG\s*=\s*\{[\s\S]*?\};/;
+const appConfigRegex = /window\.APP_CONFIG\s*=\s*\{[\s\S]*?\n\};/;
 const newAppConfig = `window.APP_CONFIG = {
   VERSION: "${newVersion}",
   BUILD: "${buildHash}",

@@ -1,10 +1,124 @@
 window.APP_CONFIG = {
-  VERSION: "6.3.1",
-  BUILD: "0501054",
-  CACHE_NAME: "relocation-v6.3.1-0501054"
+  VERSION: "6.4.0",
+  BUILD: "5eb6ac1",
+  CACHE_NAME: "relocation-v6.4.0-5eb6ac1"
 };
 
+let arrowMarker = null;
+let _schemaDecor = null;
+let _schemaHitAreas = null;
+let _schemaAnimating = false;
+let planListenerAdded = false;
 
+// === AUTH SCREEN ===
+let authMode = 'login';
+
+function showApp() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+}
+
+function showAuthScreen() {
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+}
+
+function hideAuthError() {
+  const el = document.getElementById('auth-error');
+  if (el) { el.classList.add('hidden'); el.textContent = ''; }
+}
+
+function setAuthLoading(loading) {
+  const btn = document.getElementById('auth-submit');
+  const email = document.getElementById('auth-email');
+  const pass = document.getElementById('auth-password');
+  if (btn) { btn.disabled = loading; btn.textContent = loading ? '⏳ Подождите...' : (authMode === 'login' ? 'Войти' : 'Создать аккаунт'); }
+  if (email) email.disabled = loading;
+  if (pass) pass.disabled = loading;
+}
+
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    authMode = tab.dataset.authTab;
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('auth-submit').textContent = authMode === 'login' ? 'Войти' : 'Создать аккаунт';
+    hideAuthError();
+  });
+});
+
+document.getElementById('auth-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  hideAuthError();
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+
+  if (!email || !password) {
+    showAuthError('Заполните email и пароль.');
+    return;
+  }
+  if (password.length < 6) {
+    showAuthError('Пароль должен быть не менее 6 символов.');
+    return;
+  }
+
+  setAuthLoading(true);
+  try {
+    if (authMode === 'register') {
+      await window.registerUser(email, password);
+    } else {
+      await window.loginUser(email, password);
+    }
+  } catch (err) {
+    const code = err.code || '';
+    if (code === 'auth/email-already-in-use') showAuthError('Этот email уже зарегистрирован. Войдите вместо регистрации.');
+    else if (code === 'auth/invalid-email') showAuthError('Некорректный email.');
+    else if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') showAuthError('Неверный email или пароль.');
+    else if (code === 'auth/too-many-requests') showAuthError('Слишком много попыток. Попробуйте позже.');
+    else showAuthError('Ошибка: ' + (err.message || 'неизвестная ошибка'));
+  } finally {
+    setAuthLoading(false);
+  }
+});
+
+window.addEventListener('auth-ready', () => {
+  showApp();
+  const user = firebase.auth().currentUser;
+  const emailEl = document.getElementById('display-email');
+  if (emailEl && user) emailEl.textContent = user.email;
+});
+
+window.addEventListener('auth-logout', () => {
+  showAuthScreen();
+});
+
+// === CONFIRM MODAL ===
+function showConfirm(title, message) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-modal');
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-message').textContent = message;
+    overlay.classList.remove('hidden');
+
+    function cleanup() {
+      overlay.classList.add('hidden');
+      overlay.removeEventListener('click', onBgClick);
+    }
+
+    function onBgClick(e) {
+      if (e.target === overlay) { cleanup(); resolve(false); }
+    }
+
+    overlay.addEventListener('click', onBgClick);
+    document.getElementById('modal-cancel').onclick = () => { cleanup(); resolve(false); };
+    document.getElementById('modal-confirm').onclick = () => { cleanup(); resolve(true); };
+  });
+}
 
 // === TABS ===
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -241,11 +355,16 @@ function updateMapColors(preset) {
     const edge = darkenHex(fill, 30);
     p.setStyle({ fillColor: fill, color: edge });
     if (labelMarkers[d.name]) {
-      labelMarkers[d.name].setIcon(L.divIcon({
-        html: districtLabel(d.name, d.price, sc),
-        iconSize: [0, 0],
-        iconAnchor: [0, 0],
-      }));
+      const el = labelMarkers[d.name].getElement();
+      if (el) {
+        el.innerHTML = districtLabel(d.name, d.price, sc);
+      } else {
+        labelMarkers[d.name].setIcon(L.divIcon({
+          html: districtLabel(d.name, d.price, sc),
+          iconSize: [0, 0],
+          iconAnchor: [0, 0],
+        }));
+      }
     }
   });
   updateLegend(preset);
@@ -381,14 +500,14 @@ function highlightDistrict(name) {
     activeSubDistrictLayers.addLayer(labelMarker);
   });
 
-  if (window.arrowMarker) { map.removeLayer(window.arrowMarker); window.arrowMarker = null; }
+  if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
   const d = DISTRICTS.find(x => x.name === name);
   if (d && d.coords && d.coords.length > 0) {
     const lats = d.coords.map(c => c[0]);
     const lons = d.coords.map(c => c[1]);
     const cx = (Math.min(...lats) + Math.max(...lats)) / 2;
     const cy = (Math.min(...lons) + Math.max(...lons)) / 2;
-    window.arrowMarker = L.marker([cx, cy], {
+    arrowMarker = L.marker([cx, cy], {
       icon: L.divIcon({
         html: '<div class="map-pulse-ring"></div><div class="map-pulse-dot"></div>',
         iconSize: [40, 40],
@@ -402,9 +521,9 @@ function highlightDistrict(name) {
 }
 
 map.on('dragstart', () => {
-  if (window.arrowMarker) {
-    map.removeLayer(window.arrowMarker);
-    window.arrowMarker = null;
+  if (arrowMarker) {
+    map.removeLayer(arrowMarker);
+    arrowMarker = null;
   }
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
   updateMapColors(activePreset);
@@ -416,9 +535,9 @@ map.on('zoomend', () => {
     const marker = labelMarkers[d.name];
     if (!marker) return;
     if (zoom < 11 || (urbanHide && !d.isUrban)) {
-      if (map.hasLayer(marker)) map.removeLayer(marker);
+      map.removeLayer(marker);
     } else {
-      if (!map.hasLayer(marker)) map.addLayer(marker);
+      map.addLayer(marker);
     }
   });
 });
@@ -700,7 +819,7 @@ L.polyline(
 document.getElementById('close-info').addEventListener('click', () => {
   document.getElementById('district-info').classList.add('hidden');
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
-  if (window.arrowMarker) { map.removeLayer(window.arrowMarker); window.arrowMarker = null; }
+  if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
   updateMapColors(activePreset);
   map.setView([44.76, 20.48], 11);
 });
@@ -730,21 +849,26 @@ document.getElementById('base-map-select')?.addEventListener('change', e => {
   });
 });
 // Opacity slider
+let _opacityRAF = null;
 document.getElementById('opacity-slider')?.addEventListener('input', e => {
-  const val = parseInt(e.target.value);
-  document.getElementById('opacity-val').textContent = val + '%';
-  const opacity = val / 100;
-  DISTRICTS.forEach(d => {
-    const p = polygons[d.name];
-    if (!p) return;
-    p.setStyle({ fillOpacity: opacity });
-  });
-  const labelVis = val > 8;
-  DISTRICTS.forEach(d => {
-    const m = labelMarkers[d.name];
-    if (!m) return;
-    if (labelVis && !urbanHide) { if (!map.hasLayer(m)) map.addLayer(m); }
-    else if (!labelVis || urbanHide) { if (map.hasLayer(m)) map.removeLayer(m); }
+  document.getElementById('opacity-val').textContent = e.target.value + '%';
+  if (_opacityRAF) cancelAnimationFrame(_opacityRAF);
+  _opacityRAF = requestAnimationFrame(() => {
+    _opacityRAF = null;
+    const val = parseInt(e.target.value);
+    const opacity = val / 100;
+    DISTRICTS.forEach(d => {
+      const p = polygons[d.name];
+      if (!p) return;
+      p.setStyle({ fillOpacity: opacity });
+    });
+    const labelVis = val > 8;
+    DISTRICTS.forEach(d => {
+      const m = labelMarkers[d.name];
+      if (!m) return;
+      if (labelVis && !urbanHide) { map.addLayer(m); }
+      else if (!labelVis || urbanHide) { map.removeLayer(m); }
+    });
   });
 });
 // Layer control toggle
@@ -1305,8 +1429,8 @@ if ('serviceWorker' in navigator) {
 
 // Функция мягкого уведомления пользователя об обновлении
 function showUpdateNotification(worker) {
-  setTimeout(() => {
-    const userAccepted = confirm('Доступна новая версия приложения с улучшениями! Обновить сейчас?');
+  setTimeout(async () => {
+    const userAccepted = await showConfirm('Обновление', 'Доступна новая версия приложения с улучшениями! Обновить сейчас?');
     if (userAccepted) {
       if (worker) {
         // Сначала слушатель, потом skipWaiting — иначе race condition
@@ -1367,7 +1491,13 @@ function scrollToChecklistItem(id) {
 }
 
 function getPlanState() {
-  try { return JSON.parse(localStorage.getItem('plan-state') || 'null'); } catch { return null; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('plan-state') || 'null');
+    if (raw && typeof raw === 'object' && !Array.isArray(raw) && raw.tasks && typeof raw.tasks === 'object') {
+      return raw;
+    }
+    return null;
+  } catch { return null; }
 }
 
 function setPlanState(state) {
@@ -1477,6 +1607,7 @@ function renderPlan() {
 
     const card = document.createElement('div');
     card.className = 'tl-card';
+    card.id = 'plan-month-' + m.month;
     const header = document.createElement('div');
     header.className = 'tl-header';
     header.innerHTML = `<span class="tl-month">${m.title || ''}</span>`;
@@ -1591,6 +1722,7 @@ function renderPlan() {
       const li = document.createElement('li');
       li.className = 'tl-step' + statusClass;
       li.id = 'plan-' + t.id;
+      li.dataset.month = m.month;
 
       const statusBtn = document.createElement('button');
       statusBtn.className = 'plan-status-btn' + (checked ? ' done' : prog ? ' progress' : '');
@@ -1790,6 +1922,7 @@ function renderPlan() {
   const eurCombined = eurSpentPct + eurProgPct;
   const summary = document.createElement('div');
   summary.className = 'tl-summary';
+  summary.id = 'plan-summary';
   summary.innerHTML =
     `<div class="tl-summary-row" style="font-size:1.2em">💰 Стартовая подушка (Месяцы 0–3)</div>` +
     `<div class="tl-summary-row" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">` +
@@ -1822,7 +1955,130 @@ function renderPlan() {
   root.appendChild(summary);
 }
 
-if (!window.planListenerAdded) {
+function refreshMetrics() {
+  const state = getPlanState() || { tasks: {} };
+  let rubPlanned = 0, rubSpent = 0, rubInProgress = 0;
+  let eurPlanned013 = 0, eurSpent013 = 0, eurInProgress013 = 0;
+  let eurPlanned4 = 0, eurSpent4 = 0;
+  let globalTaskDone = 0, globalTaskProgress = 0, globalTaskTotal = 0;
+
+  masterTimeline.forEach(m => {
+    if (!m || !Array.isArray(m.tasks)) return;
+    const M = calculateMonthMetrics(m.tasks, state);
+    const card = document.getElementById('plan-month-' + m.month);
+    if (card) {
+      const mg = card.querySelector('.plan-metrics-group');
+      if (mg) {
+        const firstTask = m.tasks.length > 0 ? m.tasks[0] : null;
+        const monthCur = (firstTask && firstTask.currency) || 'EUR';
+        mg.innerHTML =
+          '<div class="plan-metric-wrapper">' +
+            '<div class="plan-metric-header">' +
+              '<span class="plan-metric-title">💶 Финансовый бюджет</span>' +
+              '<span class="plan-metric-percentage">' + M.combinedBudgetPct + '%</span>' +
+            '</div>' +
+            '<div class="plan-metric-details">' +
+              '<div class="metric-detail-item"><span>📋 Запланировано</span><span class="metric-num">' + formatPrice(M.totalPlanned, monthCur === 'RUB' ? '₽' : '€') + '</span></div>' +
+              '<div class="metric-detail-item spent"><span>🔵 Потрачено</span><span class="metric-num">' + formatPrice(M.spent, monthCur === 'RUB' ? '₽' : '€') + ' (' + M.spentPct + '%)</span></div>' +
+              '<div class="metric-detail-item pending"><span>🔷 В работе</span><span class="metric-num">' + formatPrice(M.spentInProgress, monthCur === 'RUB' ? '₽' : '€') + ' (' + M.pendingSpentPct + '%)</span></div>' +
+            '</div>' +
+            '<div class="plan-progress-track budget-combined">' +
+              '<div class="plan-progress-segment segment-spent" style="width:' + M.spentPct + '%"></div>' +
+              (M.pendingSpentPct > 0 ? '<div class="plan-progress-segment segment-pending-spent" style="left:' + M.spentPct + '%;width:' + M.pendingSpentPct + '%"></div>' : '') +
+            '</div>' +
+          '</div>' +
+          '<div class="plan-metric-wrapper">' +
+            '<div class="plan-metric-header">' +
+              '<span class="plan-metric-title">📋 Физический прогресс</span>' +
+              '<span class="plan-metric-percentage">' + M.combinedTaskPct + '%</span>' +
+            '</div>' +
+            '<div class="plan-metric-details">' +
+              '<div class="metric-detail-item"><span>🎯 Всего задач</span><span class="metric-num">' + M.taskTotal + '</span></div>' +
+              '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + M.taskDone + ' из ' + M.taskTotal + ' (' + M.donePct + '%)</span></div>' +
+              '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + M.taskProgress + ' (' + M.progPct + '%)</span></div>' +
+            '</div>' +
+            '<div class="plan-progress-track tasks-combined">' +
+              '<div class="plan-progress-segment segment-done" style="width:' + M.donePct + '%"></div>' +
+              (M.progPct > 0 ? '<div class="plan-progress-segment segment-progress" style="left:' + M.donePct + '%;width:' + M.progPct + '%"></div>' : '') +
+            '</div>' +
+          '</div>';
+      }
+    }
+
+    if (m.month === 0) { rubPlanned += M.totalPlanned; rubSpent += M.spent; rubInProgress += M.spentInProgress; }
+    if (m.month >= 1 && m.month <= 3) { eurPlanned013 += M.totalPlanned; eurSpent013 += M.spent; eurInProgress013 += M.spentInProgress; }
+    if (m.month === 4) { eurPlanned4 += M.totalPlanned; eurSpent4 += M.spent; }
+    if (m.month >= 0 && m.month <= 3) { globalTaskDone += M.taskDone; globalTaskProgress += M.taskProgress; globalTaskTotal += M.taskTotal; }
+  });
+
+  const summary = document.getElementById('plan-summary');
+  if (!summary) return;
+  const rubRemaining = rubPlanned - rubSpent;
+  const eurRemaining013 = eurPlanned013 - eurSpent013;
+  const rubSpentPct = rubPlanned > 0 ? Math.round((rubSpent / rubPlanned) * 100) : 0;
+  const rubProgPct = rubPlanned > 0 ? Math.round((rubInProgress / rubPlanned) * 100) : 0;
+  const eurSpentPct = eurPlanned013 > 0 ? Math.round((eurSpent013 / eurPlanned013) * 100) : 0;
+  const eurProgPct = eurPlanned013 > 0 ? Math.round((eurInProgress013 / eurPlanned013) * 100) : 0;
+  const globalDonePct = globalTaskTotal > 0 ? Math.round((globalTaskDone / globalTaskTotal) * 100) : 0;
+  const globalProgPct = globalTaskTotal > 0 ? Math.round((globalTaskProgress / globalTaskTotal) * 100) : 0;
+  summary.innerHTML =
+    '<div class="tl-summary-row" style="font-size:1.2em">💰 Стартовая подушка (Месяцы 0–3)</div>' +
+    '<div class="tl-summary-row" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">' +
+      '<div>🇷🇺 <b>Расходы в РФ (Месяц 0):</b></div>' +
+      '<div style="margin-top:4px;font-size:0.95em">Запланировано: <strong>' + rubPlanned.toLocaleString('ru-RU') + ' ₽</strong></div>' +
+      '<div style="font-size:0.9em;color:#81c784">✅ Потрачено: <strong>' + rubSpent.toLocaleString('ru-RU') + ' ₽</strong></div>' +
+      '<div style="font-size:0.9em;color:#64b5f6">📅 Осталось: <strong>' + rubRemaining.toLocaleString('ru-RU') + ' ₽</strong></div>' +
+    '</div>' +
+    '<div class="tl-summary-row" style="margin-top:10px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">' +
+      '<div style="font-weight:bold;margin-bottom:6px">📈 Готовность к переезду</div>' +
+      '<div class="plan-metric-details" style="margin-bottom:6px">' +
+        '<div class="metric-detail-item"><span>🎯 Всего задач</span><span class="metric-num">' + globalTaskTotal + '</span></div>' +
+        '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + globalTaskDone + ' (' + globalDonePct + '%)</span></div>' +
+        '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + globalTaskProgress + ' (' + globalProgPct + '%)</span></div>' +
+      '</div>' +
+      '<div class="plan-progress-track tasks-combined">' +
+        '<div class="plan-progress-segment segment-done" style="width:' + globalDonePct + '%"></div>' +
+        (globalProgPct > 0 ? '<div class="plan-progress-segment segment-progress" style="left:' + globalDonePct + '%;width:' + globalProgPct + '%"></div>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="tl-summary-row" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:6px">' +
+      '<div>🇷🇸 <b>Расходы в Сербии (Месяцы 1–3):</b></div>' +
+      '<div style="margin-top:4px;font-size:0.95em">Запланировано: <strong>' + eurPlanned013.toLocaleString('ru-RU') + ' €</strong></div>' +
+      '<div style="font-size:0.9em;color:#81c784">✅ Потрачено: <strong>' + eurSpent013.toLocaleString('ru-RU') + ' €</strong></div>' +
+      '<div style="font-size:0.9em;color:#64b5f6">📅 Осталось: <strong>' + eurRemaining013.toLocaleString('ru-RU') + ' €</strong></div>' +
+    '</div>' +
+    '<div class="tl-summary-row" style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.2)">🔄 Ежемесячный бюджет на рельсах (Месяц 4): <strong>' + eurPlanned4.toLocaleString('ru-RU') + ' €</strong>' +
+    (eurSpent4 > 0 ? ' <span style="font-size:0.85em;color:#81c784">(потрачено ' + eurSpent4.toLocaleString('ru-RU') + ' €)</span>' : '') +
+    '</div>';
+}
+
+function refreshTaskRow(taskId) {
+  const li = document.getElementById('plan-' + taskId);
+  if (!li) return;
+  const state = getPlanState() || { tasks: {} };
+  const s = state.tasks && state.tasks[taskId] ? state.tasks[taskId] : { checked: false, progress: false, customCost: null };
+  const checked = s.checked === true;
+  const prog = s.progress === true;
+
+  let statusClass = '', statusEmoji = '⚪';
+  if (checked) { statusClass = ' status-done'; statusEmoji = '🟢'; }
+  else if (prog) { statusClass = ' status-in-progress'; statusEmoji = '🟡'; }
+
+  li.className = 'tl-step' + statusClass;
+
+  const statusBtn = li.querySelector('.plan-status-btn');
+  if (statusBtn) {
+    statusBtn.textContent = statusEmoji;
+    statusBtn.className = 'plan-status-btn' + (checked ? ' done' : prog ? ' progress' : '');
+  }
+
+  const dateBlock = li.querySelector('.plan-date-inline');
+  if (dateBlock) {
+    dateBlock.style.display = (checked && s.date) ? '' : 'none';
+  }
+}
+
+if (!planListenerAdded) {
   document.getElementById('timeline-root')?.addEventListener('click', e => {
     const el = e.target;
 
@@ -1853,7 +2109,7 @@ if (!window.planListenerAdded) {
         cur.progress = false;
       }
       setPlanState(st);
-      try { renderPlan(); } catch (e) { console.error(e); }
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { console.error(e); }
       debouncedSave();
       return;
     }
@@ -1973,7 +2229,7 @@ if (!window.planListenerAdded) {
     }
   });
 
-  window.planListenerAdded = true;
+  planListenerAdded = true;
 }
 
 // === СБРОС ВСЕХ НАСТРОЕК И ДАННЫХ ===
@@ -2000,7 +2256,10 @@ window.factoryReset = async function() {
   location.reload();
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+let _appInitialized = false;
+function initApp() {
+  if (_appInitialized) return;
+  _appInitialized = true;
   if (window.migrateLegacyData) {
     try { window.migrateLegacyData(); } catch (e) { console.error('migrateLegacyData error:', e); }
   }
@@ -2010,6 +2269,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (versionEl && window.APP_CONFIG) {
     versionEl.textContent = `v${window.APP_CONFIG.VERSION} (${window.APP_CONFIG.BUILD})`;
   }
+  setTimeout(() => {
+    if (typeof map !== 'undefined' && map.invalidateSize) map.invalidateSize();
+  }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('auth-ready', () => {
+    initApp();
+  });
+  if (firebase.auth().currentUser) initApp();
 
   document.getElementById('btn-upload')?.addEventListener('click', async () => {
     const btn = document.getElementById('btn-upload');
@@ -2049,7 +2318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-delete-cloud')?.addEventListener('click', async () => {
     const btn = document.getElementById('btn-delete-cloud');
-    if (!confirm('Это физически удалит все данные из облака по вашему коду. Данные на этом устройстве останутся нетронутыми. Продолжить?')) return;
+    if (!await showConfirm('Удаление данных', 'Это физически удалит все данные из облака по вашему коду. Данные на этом устройстве останутся нетронутыми. Продолжить?')) return;
     btn.disabled = true;
     btn.innerHTML = '⏳ Удаляю...';
     try {
@@ -2064,8 +2333,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   });
 
-  document.getElementById('btn-new-code')?.addEventListener('click', () => {
-    if (confirm('Сгенерировать новый код синхронизации? Старый код перестанет быть доступен на этом устройстве.')) {
+  document.getElementById('btn-new-code')?.addEventListener('click', async () => {
+    if (await showConfirm('Новый код', 'Сгенерировать новый код синхронизации? Старый код перестанет быть доступен на этом устройстве.')) {
       window.generateNewSyncCode();
     }
   });
@@ -2074,7 +2343,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (confirm("Это сбросит все локальные данные: чек-лист, план переезда, настройки. Сам код синхронизации сохранится. Продолжить?")) {
+      if (await showConfirm('Сброс устройства', 'Это сбросит все локальные данные: чек-лист, план переезда, настройки. Сам код синхронизации сохранится. Продолжить?')) {
         try {
           await window.factoryReset();
         } catch (err) {
@@ -2083,6 +2352,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  document.getElementById('btn-logout')?.addEventListener('click', async () => {
+    if (await showConfirm('Выход из аккаунта', 'Выйти из аккаунта? Локальные данные сохранятся на устройстве.')) {
+      await window.logoutUser();
+    }
+  });
 });
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
   setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
@@ -2106,10 +2381,10 @@ function renderSchema() {
     {id:'nocrim_w',t:'Справка несудимости Ж', icon:'📃'},
     {id:'apost_marr',t:'Апостиль на брак', icon:'🔖'},
     {id:'apost_birth',t:'Апостиль на рождение', icon:'🔖'},
-    {id:'docs_done', t:'✅ Сделать дела', v:true, icon:'🏃'},
-    {id:'power', t:'📋 Собрать документы', v:true, icon:'📚'},
-    {id:'_ok',  t:'✅ Собрать чемоданы', v:true, icon:'🧳'},
-    {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩'},
+    {id:'docs_done', t:'✅ Сделать дела', v:true, icon:'🏃', gap:2},
+    {id:'power', t:'📋 Собрать документы', v:true, icon:'📚', gap:2},
+    {id:'_ok',  t:'✅ Собрать чемоданы', v:true, icon:'🧳', gap:2},
+    {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩', gap:3},
     {id:'m1_airbnb',t:'Заселение Airbnb', icon:'🏠'},
     {id:'reg',  t:'Белый картон', icon:'🪪'},
     {id:'m1_trans_base',t:'📝 Перевод документов', icon:'📝'},
@@ -2123,6 +2398,12 @@ function renderSchema() {
     {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
   ];
 
+  const VIRTUAL_CHILDREN = {
+    docs_done: ['dentist', 'med_vyps', 'power'],
+    power: ['child_consent', 'diplomas', 'driving_licenses'],
+    _ok: ['pharm'],
+  };
+
   const CH = Math.max((window.innerHeight - 100) * 2, 1600) * 1.4;
   const trailH = Math.max((window.innerHeight - 100) * 2, 1600);
   const PX = CW < 500 ? 2 : 3;
@@ -2134,8 +2415,53 @@ function renderSchema() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const state = getPlanState() || { tasks: {} };
-  const bY = 80 + 0.53 * (trailH - 160);
-  const bFY = 80 + (18/23) * (trailH - 160);
+
+  const n = items.length;
+  const STEPS = 8;
+  const baseStep = (trailH - 160) / (n - 1);
+
+  const gaps = items.map(it => it.gap || 1);
+
+  const itemOff = (i) => {
+    let o = 0;
+    for (let j = 1; j <= i; j++) {
+      o += (Math.max(gaps[j - 1], gaps[j]) - 1) * baseStep;
+    }
+    return o;
+  };
+
+  const nodes = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
+    const y = 80 + t * (trailH - 160) + itemOff(i);
+    nodes.push({ x, y });
+  }
+
+  const trail = [];
+  for (let i = 0; i < n; i++) {
+    for (let s = 0; s < (i < n - 1 ? STEPS : 1); s++) {
+      const t = (i + s / STEPS) / (n - 1);
+      const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
+      const frac = s / STEPS;
+      const off = itemOff(i) + (itemOff(i + 1) - itemOff(i)) * frac;
+      const y = 80 + t * (trailH - 160) + off;
+      trail.push({ x, y, isNode: s === 0 });
+    }
+  }
+
+  function isTaskDoneOrVirtual(id) {
+    const kids = VIRTUAL_CHILDREN[id];
+    if (kids) return kids.every(cid => (state.tasks?.[cid] || {}).checked);
+    return (state.tasks?.[id] || {}).checked;
+  }
+
+  let dinoIdx = 0;
+  for (let i = n - 1; i >= 0; i--) {
+    if (isTaskDoneOrVirtual(items[i].id)) { dinoIdx = Math.min(i + 1, n - 1); break; }
+  }
+
+  const bFY = (nodes[12].y + nodes[13].y) / 2;
 
   // Parchment background
   ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, CH);
@@ -2156,7 +2482,7 @@ function renderSchema() {
       const t = Math.max(0, Math.min(1, (y - 80) / (trailH - 160)));
     return CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
   };
-  if (!window._schemaDecor || window._schemaDecor._cw !== CW || window._schemaDecor._ch !== CH) {
+  if (!_schemaDecor || _schemaDecor._cw !== CW || _schemaDecor._ch !== CH) {
     let rngSeed = 1;
     const rnd = () => { rngSeed = (rngSeed * 16807) % 2147483647; return (rngSeed - 1) / 2147483646; };
     const rint = (a, b) => Math.floor(rnd() * (b - a + 1)) + a;
@@ -2249,8 +2575,6 @@ function renderSchema() {
     }
 
     // ── Boundary line (wavy state border at flight level) ──
-    const bFlightT = 18 / 23; // Midpoint between "Перелёт" (12) and "Заселение" (13)
-    const bFY = 80 + bFlightT * (trailH - 160);
     const bPts = [];
     const bSteps = 24;
     for (let i = 0; i <= bSteps; i++) {
@@ -2272,14 +2596,15 @@ function renderSchema() {
       }
     });
 
-    window._schemaDecor = dec;
-    window._schemaDecor._cw = CW;
-    window._schemaDecor._ch = CH;
+    _schemaDecor = dec;
+    _schemaDecor._cw = CW;
+    _schemaDecor._ch = CH;
+    _schemaClouds = dec.filter(d => d.t === 'cloud');
   }
 
   // ── Draw lakes (background) ──
   {
-    window._schemaDecor.forEach(d => {
+    _schemaDecor.forEach(d => {
       if (d.t !== 'lake') return;
       const r = (d.r || 4) * 5;
       ctx.fillStyle = '#42a5f5';
@@ -2313,52 +2638,6 @@ function renderSchema() {
   ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(cx, cy0 + 1, 16, 0, Math.PI*2); ctx.stroke();
 
-  // ── Trail ──
-  // Smooth winding trail — many points for curves
-  const trail = [];
-  const n = items.length;
-  const STEPS = 8;
-  const baseStep = (trailH - 160) / (n - 1);
-
-  const itemOff = (i) => {
-    let o = 0;
-    if (i >= 9) o += baseStep;
-    if (i >= 10) o += baseStep;
-    if (i >= 11) o += baseStep;
-    if (i >= 12) o += baseStep;
-    if (i >= 13) o += baseStep;
-    if (i >= 13) o += baseStep;
-    if (i >= 13) o += baseStep;
-    return o;
-  };
-
-  for (let i = 0; i < n; i++) {
-    for (let s = 0; s < (i < n - 1 ? STEPS : 1); s++) {
-      const t = (i + s / STEPS) / (n - 1);
-      const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
-      const frac = s / STEPS;
-      const off = itemOff(i) + (itemOff(i + 1) - itemOff(i)) * frac;
-      const y = 80 + t * (trailH - 160) + off;
-      trail.push({ x, y, isNode: s === 0 });
-    }
-  }
-  // Nodes at exact milestone positions (for signs and bird)
-  const nodes = [];
-  for (let i = 0; i < n; i++) {
-    const t = i / (n - 1);
-    const x = CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
-    const y = 80 + t * (trailH - 160) + itemOff(i);
-    nodes.push({ x, y });
-  }
-
-  // Find dino position: last done task
-  let dinoIdx = 0;
-  for (let i = n - 1; i >= 0; i--) {
-    if (items[i].v) continue;
-    const s = state.tasks?.[items[i].id] || {};
-    if (s.checked) { dinoIdx = Math.min(i + 1, n - 1); break; }
-  }
-
   // Done portion
   const tn = trail.length;
   ctx.strokeStyle = '#81c784'; ctx.lineWidth = 5;
@@ -2374,36 +2653,20 @@ function renderSchema() {
 
   const hitAreas = [];
 
-  // Standalone: Собрать аптечку (второстепенная)
-  {
-    const okNode = nodes[11];
-    const sx = okNode.x - 100, sy = okNode.y + 30;
-    const pState = state.tasks?.pharm || {};
-    const pDone = pState.checked, pProg = pState.progress;
-
-    // Wavy connector to ✅ Собрать чемоданы
-    ctx.strokeStyle = pDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = pDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!pDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + okNode.x) / 2, my = (sy + okNode.y) / 2;
-    ctx.bezierCurveTo(mx - 15, my - 15, mx + 15, my + 15, okNode.x, okNode.y);
-    ctx.stroke();
-    if (!pDone) ctx.setLineDash([]);
-
-    // Signboard
+  function drawSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
     let bg, border, tc;
-    if (pDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (pProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
+    if (isVirtual)  { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
+    else if (done)  { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
+    else if (prog)  { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
+    else            { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
+
     ctx.font = 'bold 9px sans-serif';
-    const txt = 'Собрать аптечку';
-    const txtW = ctx.measureText(txt).width;
+    const txtW = ctx.measureText(text).width;
     const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
     const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
+    const pox = x - (pw * PX) / 2;
+    const poy = y - ph * PX - 6 * PX;
+
     ctx.fillStyle = bg;
     ctx.fillRect(pox, poy, pw * PX, ph * PX);
     ctx.fillStyle = border;
@@ -2417,520 +2680,163 @@ function renderSchema() {
     ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
     ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
     ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('💊', sx, sy);
+    ctx.fillText(text, x, poy + (ph * PX) / 2);
 
-    // Click area
-    hitAreas.push({ id:'pharm', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
+    if (icon) {
+      ctx.font = '18px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(icon, x, y);
+    }
+
+    return { x: pox, y: poy, w: pw * PX, h: ph * PX };
   }
 
-  // Standalone: Медицинские выписки (второстепенная) → ✅ Сделать дела
-  {
-    const docNode = nodes[9];
-    const sx = docNode.x - 120, sy = docNode.y;
-    const mState = state.tasks?.med_vyps || {};
-    const mDone = mState.checked, mProg = mState.progress;
+  const SIDE_TASKS = [
+    { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку',       icon:'💊' },
+    { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки',   icon:'📋' },
+    { parentId:'docs_done',   id:'dentist',        text:'Стоматология',          icon:'🦷' },
+    { parentId:'docs_done',   id:'power',          text:'Доверенность',          icon:'📝' },
+    { parentId:'power',       id:'child_consent',   text:'Согласие на выезд',    icon:'✍️' },
+    { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке',      icon:'🎓' },
+    { parentId:'power',       id:'driving_licenses',text:'Водительские права',    icon:'🚗' },
+    { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'🔖' },
+    { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'🔖' },
+    { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты',        icon:'🎫' },
+    { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb', icon:'💻' },
+  ];
 
-    ctx.strokeStyle = mDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = mDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!mDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx + 25, my - 10, mx - 10, my + 10, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!mDone) ctx.setLineDash([]);
+  const parentGroups = {};
+  SIDE_TASKS.forEach(st => {
+    if (!parentGroups[st.parentId]) parentGroups[st.parentId] = [];
+    parentGroups[st.parentId].push(st);
+  });
 
-    let bg, border, tc;
-    if (mDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (mProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
+  const placedSigns = [];
+
+  Object.keys(parentGroups).forEach(pid => {
+    const children = parentGroups[pid];
+    const pIdx = items.findIndex(item => item.id === pid);
+    if (pIdx < 0) return;
+    const pNode = nodes[pIdx];
+
+    const nIdx = Math.min(pIdx + 1, nodes.length - 1);
+    const prIdx = Math.max(pIdx - 1, 0);
+    const tdx = nodes[nIdx].x - nodes[prIdx].x;
+    const tdy = nodes[nIdx].y - nodes[prIdx].y;
+    const tLen = Math.sqrt(tdx * tdx + tdy * tdy) || 1;
+    const perpX = -tdy / tLen;
+    const perpY = tdx / tLen;
+
+    const count = children.length;
+    const signFootprint = 12 * PX + 25;
+    const maxSpread = baseStep * ((items[pIdx].gap || 1) - 1) + 30;
+
+    // Parent signboard bounds (approximate)
+    const parentText = items[pIdx].t || '';
     ctx.font = 'bold 9px sans-serif';
-    const txt = 'Медицинские выписки';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('📋', sx, sy);
+    const parentTextW = ctx.measureText(parentText).width;
+    const ppw = Math.max(Math.ceil(parentTextW / PX) + 4, 14);
+    const parentSignX = pNode.x - (ppw * PX) / 2;
+    const parentSignY = pNode.y - 10 * PX - 6 * PX;
+    const parentSignW = ppw * PX;
+    const parentSignH = 10 * PX;
 
-    hitAreas.push({ id:'med_vyps', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
+    // Compute available space on each side
+    const spaceRight = CW - pNode.x - parentSignW / 2;
+    const spaceLeft = pNode.x - parentSignW / 2;
+    const rightRatio = spaceRight / (spaceLeft + spaceRight || 1);
+    const nRight = Math.round(count * rightRatio);
+    const nLeft = count - nRight;
 
-  // Standalone: Стоматология (второстепенная) → ✅ Сделать дела
-  {
-    const docNode = nodes[9];
-    const sx = docNode.x, sy = docNode.y - 100;
-    const dState = state.tasks?.dentist || {};
-    const dDone = dState.checked, dProg = dState.progress;
+    const sides = [];
+    for (let i = 0; i < nRight; i++) sides.push({ side: 1, col: i });
+    for (let i = 0; i < nLeft; i++) sides.push({ side: -1, col: i });
 
-    ctx.strokeStyle = dDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = dDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!dDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx + 15, my + 20, mx - 15, my - 10, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!dDone) ctx.setLineDash([]);
+    sides.forEach(({ side, col }) => {
+      const ci = sides.indexOf({ side, col }); // doesn't work - need real index
+    });
 
-    let bg, border, tc;
-    if (dDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (dProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Стоматология';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🦷', sx, sy);
+    // Actually, build children with their assigned positions
+    const placed = [];
+    children.forEach((child, ci) => {
+      const targetSide = ci < nRight ? -1 : 1;
+      const colIndex = ci < nRight ? ci : ci - nRight;
+      placed.push({ ...child, side: targetSide, col: colIndex });
+    });
 
-    hitAreas.push({ id:'dentist', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
+    placed.forEach((child, ci) => {
+      const availableOnSide = child.side === 1
+        ? pNode.x - parentSignW / 2 - 10
+        : CW - pNode.x - parentSignW / 2 - 10;
+      const distRatio = 0.25 + child.col * 0.25;
+      const dist = Math.max(CW * 0.10, Math.min(availableOnSide - 20, availableOnSide * distRatio));
+      const gapY = Math.max(signFootprint * 1.5, maxSpread / (count || 1));
+      const totalSpread = (child.col > 0 ? gapY * child.col : 0);
+      // Alternate spread direction for variety
+      const spreadDir = child.col % 2 === 0 ? 1 : -1;
+      const offset = totalSpread * spreadDir;
 
-  // Standalone: Апостиль (второстепенная) → Справка несудимости М
-  {
-    const ncNode = nodes[5];
-    const sx = ncNode.x + 130, sy = ncNode.y + 50;
-    const aState = state.tasks?.apost_nocrim_h || {};
-    const aDone = aState.checked, aProg = aState.progress;
+      let sx = pNode.x + child.side * perpX * dist + offset * (tdx / tLen);
+      let sy = pNode.y + child.side * perpY * dist + offset * (tdy / tLen);
 
-    ctx.strokeStyle = aDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = aDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!aDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + ncNode.x) / 2, my = (sy + ncNode.y) / 2;
-    ctx.bezierCurveTo(mx + 30, my - 20, mx - 20, my + 25, ncNode.x, ncNode.y);
-    ctx.stroke();
-    if (!aDone) ctx.setLineDash([]);
+      const approxW = 130;
+      sx = Math.max(approxW / 2 + 5, Math.min(CW - approxW / 2 - 5, sx));
 
-    let bg, border, tc;
-    if (aDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (aProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Апостиль НС (М)';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🔖', sx, sy);
+      let childSignTop = sy - signFootprint;
+      if (childSignTop < parentSignY + parentSignH && sy > parentSignY) {
+        sy = parentSignY + parentSignH + signFootprint;
+        childSignTop = sy - signFootprint;
+      }
+      sy = Math.max(signFootprint + 10, Math.min(CH - 20, sy));
 
-    hitAreas.push({ id:'apost_nocrim_h', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
+      // Resolve overlap with already-placed signs
+      let candidateBounds = { x: sx - approxW / 2, y: childSignTop, w: approxW, h: signFootprint };
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const hit = placedSigns.find(ps =>
+          candidateBounds.x < ps.x + ps.w &&
+          candidateBounds.x + candidateBounds.w > ps.x &&
+          candidateBounds.y < ps.y + ps.h &&
+          candidateBounds.y + candidateBounds.h > ps.y
+        );
+        if (!hit) break;
+        sx += child.side * perpX * 20;
+        sy += (tdy / tLen) * 20;
+        candidateBounds = { x: sx - approxW / 2, y: sy - signFootprint, w: approxW, h: signFootprint };
+      }
 
-  // Standalone: Апостиль НС (Ж) (второстепенная) → Справка несудимости Ж
-  {
-    const ncNode = nodes[6];
-    const sx = ncNode.x + 130, sy = ncNode.y + 50;
-    const aState = state.tasks?.apost_nocrim_w || {};
-    const aDone = aState.checked, aProg = aState.progress;
+      const done = (state.tasks?.[child.id] || {}).checked;
+      const prog = (state.tasks?.[child.id] || {}).progress;
 
-    ctx.strokeStyle = aDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = aDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!aDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + ncNode.x) / 2, my = (sy + ncNode.y) / 2;
-    ctx.bezierCurveTo(mx + 30, my + 20, mx - 20, my - 25, ncNode.x, ncNode.y);
-    ctx.stroke();
-    if (!aDone) ctx.setLineDash([]);
+      const sign = drawSign(ctx, { x: sx, y: sy, text: child.text, icon: child.icon, done, prog, PX });
 
-    let bg, border, tc;
-    if (aDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (aProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Апостиль НС (Ж)';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🔖', sx, sy);
+      const towardX = pNode.x - sx;
+      const towardY = pNode.y - sy;
+      const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
+      const curveStr = dist * 0.35;
+      const cp1x = sx + towardX * 0.35 + perpX * curveStr * child.side;
+      const cp1y = sy + towardY * 0.35 + perpY * curveStr * child.side;
+      const cp2x = pNode.x - towardX * 0.3 + perpX * curveStr * child.side;
+      const cp2y = pNode.y - towardY * 0.3 + perpY * curveStr * child.side;
 
-    hitAreas.push({ id:'apost_nocrim_w', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
+      ctx.strokeStyle = done ? '#81c784' : '#bbb';
+      ctx.lineWidth = done ? 3 : 2;
+      ctx.lineCap = 'round';
+      if (!done) ctx.setLineDash([6, 10]);
+      ctx.beginPath(); ctx.moveTo(sx, sy);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pNode.x, pNode.y);
+      ctx.stroke();
+      if (!done) ctx.setLineDash([]);
 
-  // Standalone: Доверенность (второстепенная) → ✅ Сделать дела
-  {
-    const docNode = nodes[9];
-    const sx = docNode.x + 120, sy = docNode.y;
-    const pState = state.tasks?.power || {};
-    const pDone = pState.checked, pProg = pState.progress;
-
-    ctx.strokeStyle = pDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = pDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!pDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx - 20, my + 10, mx + 15, my - 10, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!pDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (pDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (pProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Доверенность';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('📝', sx, sy);
-
-    hitAreas.push({ id:'power', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
-
-  // Standalone: Нотариальное согласие (второстепенная) → 📋 Собрать документы
-  {
-    const docNode = nodes[10];
-    const sx = docNode.x - 50, sy = docNode.y + 100;
-    const cState = state.tasks?.child_consent || {};
-    const cDone = cState.checked, cProg = cState.progress;
-
-    ctx.strokeStyle = cDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = cDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!cDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx + 20, my - 20, mx - 10, my + 15, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!cDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (cDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (cProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Согласие на выезд';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('✍️', sx, sy);
-
-    hitAreas.push({ id:'child_consent', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
-
-  // Standalone: Дипломы (второстепенная) → 📋 Собрать документы
-  {
-    const docNode = nodes[10];
-    const sx = docNode.x + 110, sy = docNode.y - 30;
-    const dState = state.tasks?.diplomas || {};
-    const dDone = dState.checked, dProg = dState.progress;
-
-    ctx.strokeStyle = dDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = dDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!dDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx + 20, my + 15, mx - 15, my - 10, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!dDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (dDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (dProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Дипломы о вышке';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🎓', sx, sy);
-
-    hitAreas.push({ id:'diplomas', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
-
-  // Standalone: Водительские удостоверения (второстепенная) → 📋 Собрать документы
-  {
-    const docNode = nodes[10];
-    const sx = docNode.x - 120, sy = docNode.y + 10;
-    const dState = state.tasks?.driving_licenses || {};
-    const dDone = dState.checked, dProg = dState.progress;
-
-    ctx.strokeStyle = dDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = dDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!dDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + docNode.x) / 2, my = (sy + docNode.y) / 2;
-    ctx.bezierCurveTo(mx - 15, my + 10, mx + 15, my - 15, docNode.x, docNode.y);
-    ctx.stroke();
-    if (!dDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (dDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (dProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Водительские права';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🚗', sx, sy);
-
-    hitAreas.push({ id:'driving_licenses', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
-
-  // Standalone: Покупка билетов (второстепенная) → Перелёт в Белград
-  {
-    const flNode = nodes[12];
-    const sx = flNode.x - 100, sy = flNode.y - 50;
-    const tState = state.tasks?.ticket_buy || {};
-    const tDone = tState.checked, tProg = tState.progress;
-
-    ctx.strokeStyle = tDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = tDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!tDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + flNode.x) / 2, my = (sy + flNode.y) / 2;
-    ctx.bezierCurveTo(mx - 15, my + 20, mx + 10, my - 15, flNode.x, flNode.y);
-    ctx.stroke();
-    if (!tDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (tDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (tProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Купить билеты';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('🎫', sx, sy);
-
-    hitAreas.push({ id:'ticket_buy', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
-
-  // Standalone: Бронь Airbnb (второстепенная) → Перелёт в Белград
-  {
-    const flNode = nodes[12];
-    const sx = flNode.x - 80, sy = flNode.y + 45;
-    const aState = state.tasks?.airbnb_book || {};
-    const aDone = aState.checked, aProg = aState.progress;
-
-    ctx.strokeStyle = aDone ? '#81c784' : '#bbb';
-    ctx.lineWidth = aDone ? 3 : 2;
-    ctx.lineCap = 'round';
-    if (!aDone) ctx.setLineDash([6, 10]);
-    ctx.beginPath(); ctx.moveTo(sx, sy);
-    const mx = (sx + flNode.x) / 2, my = (sy + flNode.y) / 2;
-    ctx.bezierCurveTo(mx - 20, my + 20, mx + 15, my - 20, flNode.x, flNode.y);
-    ctx.stroke();
-    if (!aDone) ctx.setLineDash([]);
-
-    let bg, border, tc;
-    if (aDone) { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (aProg) { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-    ctx.font = 'bold 9px sans-serif';
-    const txt = 'Забронировать Airbnb';
-    const txtW = ctx.measureText(txt).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = sx - (pw * PX) / 2;
-    const poy = sy - ph * PX - 6 * PX;
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.font = 'bold 9px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(txt, sx, poy + (ph * PX) / 2);
-    ctx.font = '18px serif';
-    ctx.fillText('💻', sx, sy);
-
-    hitAreas.push({ id:'airbnb_book', x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
-  }
+      hitAreas.push({ id: child.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8 });
+      placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
+    });
+  });
 
   // ── Decorative elements over trail (hills, trees, animals, boundary) ──
   {
     const S = PX;
-    window._schemaDecor.forEach(d => {
+    _schemaDecor.forEach(d => {
       if (d.t === 'lake') return;
       if (d.t === 'mt_ru') {
         ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -3030,13 +2936,22 @@ function renderSchema() {
     const sx = p.x, sy = p.y;
 
     const s = state.tasks?.[item.id] || {};
-    const done = s.checked, prog = s.progress;
+    let done = s.checked, prog = s.progress;
+
+    if (item.v) {
+      const kids = VIRTUAL_CHILDREN[item.id];
+      if (kids) {
+        const states = kids.map(cid => state.tasks?.[cid] || {});
+        done = states.every(s => s.checked);
+        prog = !done && states.some(s => s.checked || s.progress);
+      }
+    }
 
     let bg, border, tc;
-    if (item.v)        { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
-    else if (done)     { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (prog)     { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else               { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
+    if (item.v && !done && !prog) { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
+    else if (done)                { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
+    else if (prog)                { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
+    else                          { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
 
     ctx.font = 'bold 9px sans-serif';
     const txtW = ctx.measureText(item.t).width;
@@ -3082,14 +2997,16 @@ function renderSchema() {
     }
   });
 
-  window._schemaHitAreas = hitAreas;
+  _schemaHitAreas = hitAreas;
+
+  const now = Date.now();
 
   // Pixel-art Bird
   const prevN = dinoIdx > 0 ? nodes[dinoIdx - 1] : nodes[0];
   const nextN = nodes[dinoIdx];
   const goingLeft = nextN.x < prevN.x;
   const dp = { x: (prevN.x + nextN.x) / 2, y: (prevN.y + nextN.y) / 2 };
-  const frame = Math.floor(Date.now() / 250) % 4;
+  const frame = Math.floor(now / 250) % 4;
   const wingUp = [0, 1, 2, 1][frame];
   const bob = [0, -1, -2, -1][frame];
 
@@ -3134,32 +3051,37 @@ function renderSchema() {
   px(8, 9, 1, 2, '#ff8f00');
   ctx.restore();
 
-  // Boundary glow when bird crosses
-  if (dp.y >= bFY - 10) {
-    const pulse = Math.sin(Date.now() * 0.004) * 0.3 + 0.7;
+  // Boundary glow — visible from flight start to landing complete
+  const flightState = state.tasks?.m1_flight || {};
+  const airbnbState = state.tasks?.m1_airbnb || {};
+  if ((flightState.checked || flightState.progress) && !airbnbState.checked) {
+    const pulse = Math.sin(now * 0.004) * 0.3 + 0.7;
     ctx.save();
     ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 20 * pulse;
     ctx.strokeStyle = 'rgba(0,229,255,' + (0.2 * pulse) + ')'; ctx.lineWidth = 4;
     ctx.setLineDash([8, 6]);
-    ctx.beginPath(); ctx.moveTo(10, bFY); ctx.lineTo(CW-10, bFY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(10, bFY); ctx.lineTo(CW - 10, bFY); ctx.stroke(); ctx.setLineDash([]);
     ctx.restore();
   }
 
   // Start animation loop when tab is open
-  if (!window._schemaAnimating) {
-    window._schemaAnimating = true;
-    function animLoop() {
+  if (!_schemaAnimating) {
+    _schemaAnimating = true;
+    let lastFrame = 0;
+    function animLoop(ts) {
       if (!document.getElementById('tab-schema')?.classList.contains('active')) {
-        window._schemaAnimating = false; return;
+        _schemaAnimating = false; return;
       }
-      renderSchema();
-      requestAnimationFrame(() => setTimeout(animLoop, 200));
+      if (ts - lastFrame >= 200) {
+        lastFrame = ts;
+        renderSchema();
+      }
+      requestAnimationFrame(animLoop);
     }
-    animLoop();
+    requestAnimationFrame(animLoop);
   }
 
-  // Airplane crossing the border
-  const planeT = (Date.now() * 0.02 % (CW + 60));
+  const planeT = (now * 0.02 % (CW + 60));
   const planeX = planeT - 30;
   const planeY = bFY - 200 + (planeT / (CW + 60)) * 400;
   ctx.save();
@@ -3175,9 +3097,9 @@ function renderSchema() {
   ctx.fillText('✘', last.x, last.y);
 
   // Clouds on top of everything
-  const clouds = window._schemaDecor?.filter ? window._schemaDecor.filter(d => d.t === 'cloud') : [];
+  const clouds = _schemaClouds || [];
   clouds.forEach(d => {
-    const dx = ((d.x + Date.now() * 0.015) % (CW + 40)) - 20;
+    const dx = ((d.x + now * 0.015) % (CW + 40)) - 20;
     const r = 14 * PX;
     const shapes = [
       [
@@ -3301,7 +3223,7 @@ if (schemaCanvas && !schemaCanvas.dataset.clickBound) {
   schemaCanvas.addEventListener('click', e => {
     const rect = schemaCanvas.getBoundingClientRect();
     const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-    (window._schemaHitAreas || []).some(area => {
+    (_schemaHitAreas || []).some(area => {
       if (mx >= area.x && mx <= area.x + area.w && my >= area.y && my <= area.y + area.h) {
         scrollToChecklistItem(area.id);
         if (navigator.vibrate) navigator.vibrate(30);

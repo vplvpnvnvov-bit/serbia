@@ -18,9 +18,21 @@ db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 let userId = null;
 let syncCode = null;
 let syncPending = false;
-let syncLoading = false; // prevents write-back during loadFromCloud
+let syncLoading = false;
 
-firebase.auth().signInAnonymously().catch(() => {});
+window.registerUser = async function(email, password) {
+  const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
+  return cred.user;
+};
+
+window.loginUser = async function(email, password) {
+  const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+  return cred.user;
+};
+
+window.logoutUser = async function() {
+  await firebase.auth().signOut();
+};
 
 function generateSecureSyncCode() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -50,6 +62,10 @@ firebase.auth().onAuthStateChanged(async user => {
     }
     document.getElementById('display-sync-code').textContent = syncCode;
     updateCloudStatus();
+    window.dispatchEvent(new CustomEvent('auth-ready'));
+  } else {
+    userId = null;
+    window.dispatchEvent(new CustomEvent('auth-logout'));
   }
 });
 
@@ -57,10 +73,10 @@ function updateSyncStatusUI() {
   const syncTimeStatus = document.getElementById('sync-time-status');
   const displaySyncCode = document.getElementById('display-sync-code');
   const lastSync = localStorage.getItem('last-sync-time');
-  const syncCode = localStorage.getItem('sync-code');
+  const syncCodeVal = localStorage.getItem('sync-code');
 
   if (displaySyncCode) {
-    displaySyncCode.textContent = syncCode ? syncCode : 'Не установлен';
+    displaySyncCode.textContent = syncCodeVal ? syncCodeVal : 'Не установлен';
   }
 
   if (syncTimeStatus) {
@@ -79,7 +95,7 @@ async function updateCloudStatus() {
   if (!el) return;
   if (!syncCode) { el.textContent = 'Нет кода'; return; }
   try {
-    const doc = await db.collection('users').doc(syncCode).get({ source: 'server' });
+    const doc = await db.collection('users').doc(syncCode).get({ source: 'default' });
     if (!doc.exists) { el.textContent = '❌ Данные в облаке не найдены'; return; }
     const data = doc.data();
     if (data.updatedAt) {
@@ -102,7 +118,6 @@ window.loadFromCloud = async function() {
 async function fetchAndLoadDoc() {
   const ref = db.collection('users').doc(syncCode);
 
-  // Сначала читаем с сервера — чтобы не получить stale-данные из локального кеша
   let doc;
   try {
     doc = await ref.get({ source: 'server' });
@@ -119,28 +134,29 @@ async function fetchAndLoadDoc() {
   }
 
   syncLoading = true;
-
-  if (data.plan) {
-    const serverTs = data.lastUpdated || 0;
-    const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
-    if (serverTs > localTs) {
-      localStorage.setItem('plan-state', JSON.stringify(data.plan));
-      localStorage.setItem('plan-state-last-updated', String(serverTs));
+  try {
+    if (data.plan) {
+      const rawTs = data.lastUpdated || 0;
+      const serverTs = rawTs && rawTs.toMillis ? rawTs.toMillis() : rawTs;
+      const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
+      if (serverTs > localTs) {
+        localStorage.setItem('plan-state', JSON.stringify(data.plan));
+        localStorage.setItem('plan-state-last-updated', String(serverTs));
+      }
+    } else if (data.checklist || data.calc) {
+      localStorage.setItem('checklist', JSON.stringify(data.checklist || {}));
+      if (data.locked !== undefined) localStorage.setItem('checklist-locked', String(data.locked));
+      if (data.calc) localStorage.setItem('calc-state', JSON.stringify(data.calc));
+      migrateLegacyData();
     }
-  } else if (data.checklist || data.calc) {
-    localStorage.setItem('checklist', JSON.stringify(data.checklist || {}));
-    if (data.locked !== undefined) localStorage.setItem('checklist-locked', String(data.locked));
-    if (data.calc) localStorage.setItem('calc-state', JSON.stringify(data.calc));
-    migrateLegacyData();
+
+    window.dispatchEvent(new CustomEvent('sync-loaded'));
+    localStorage.setItem('last-sync-time', new Date().toLocaleString());
+    updateSyncStatusUI();
+    updateCloudStatus();
+  } finally {
+    syncLoading = false;
   }
-
-  migrateLegacyData();
-
-  window.dispatchEvent(new CustomEvent('sync-loaded'));
-  syncLoading = false;
-  localStorage.setItem('last-sync-time', new Date().toLocaleString());
-  updateSyncStatusUI();
-  updateCloudStatus();
 }
 
 window.saveToCloud = async function() {
@@ -148,15 +164,27 @@ window.saveToCloud = async function() {
   if (syncPending) throw new Error('Синхронизация уже выполняется');
   syncPending = true;
   try {
-    const now = Date.now();
     const data = {
       plan: getPlanValues(),
       version: CURRENT_DATA_VERSION,
-      lastUpdated: now,
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    localStorage.setItem('plan-state-last-updated', String(now));
-    await db.collection('users').doc(syncCode).set(data, { merge: true });
+
+    const ref = db.collection('users').doc(syncCode);
+    const existing = await ref.get({ source: 'cache' });
+    if (!existing.exists || !existing.data().owner) {
+      data.owner = userId;
+    }
+
+    await ref.set(data, { merge: true });
+
+    const written = await ref.get({ source: 'server' });
+    const serverTs = written.data()?.lastUpdated;
+    if (serverTs && serverTs.toMillis) {
+      localStorage.setItem('plan-state-last-updated', String(serverTs.toMillis()));
+    }
+
     localStorage.setItem('last-sync-time', new Date().toLocaleString());
     updateSyncStatusUI();
     updateCloudStatus();
@@ -178,7 +206,13 @@ window.deleteCloudData = async function() {
 };
 
 function getPlanValues() {
-  try { return JSON.parse(localStorage.getItem('plan-state') || 'null'); } catch { return {}; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('plan-state') || 'null');
+    if (raw && typeof raw === 'object' && !Array.isArray(raw) && raw.tasks && typeof raw.tasks === 'object') {
+      return raw;
+    }
+    return {};
+  } catch { return {}; }
 }
 
 function migrateLegacyData() {
@@ -230,13 +264,12 @@ function migrateLegacyData() {
 window.migrateLegacyData = migrateLegacyData;
 
 
-
 window.changeSyncCode = function() {
   const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
   if (raw && raw.trim()) {
-    const c = raw.trim().toUpperCase();
+    const c = raw.trim();
     if (c.length < 6 || c.length > 18) {
-      alert('Код должен быть от 6 до 18 символов.');
+      window.showConfirm('Ошибка', 'Код должен быть от 6 до 18 символов.');
       return;
     }
     localStorage.setItem('sync-code', c);
@@ -246,5 +279,3 @@ window.changeSyncCode = function() {
     window.loadFromCloud().catch(() => {});
   }
 };
-
-
