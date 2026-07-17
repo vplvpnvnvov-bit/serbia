@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.5.0",
-  BUILD: "85933cb",
-  CACHE_NAME: "relocation-v6.5.0-85933cb"
+  VERSION: "6.6.0",
+  BUILD: "7ccc121",
+  CACHE_NAME: "relocation-v6.6.0-7ccc121"
 };
 
 let arrowMarker = null;
@@ -3291,13 +3291,15 @@ function exportManualPositions() {
 document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
   _editMode = true;
   document.getElementById('schema-toolbar')?.classList.remove('hidden');
-  _schemaDecor = null; // force full redraw with drag handles
+  schemaCanvas.style.touchAction = 'none';
+  _schemaDecor = null;
   renderSchema();
 });
 
 document.getElementById('btn-schema-exit')?.addEventListener('click', () => {
   _editMode = false;
   document.getElementById('schema-toolbar')?.classList.add('hidden');
+  schemaCanvas.style.touchAction = '';
   _schemaDecor = null;
   renderSchema();
 });
@@ -3338,6 +3340,7 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
 
   schemaCanvas.addEventListener('pointermove', e => {
     if (!_editMode || !_dragTarget) return;
+    e.preventDefault();
     const pos = getCanvasPos(e);
     _manualPositions[_dragTarget].x = _dragOrigX + pos.x - _dragStartX;
     _manualPositions[_dragTarget].y = _dragOrigY + pos.y - _dragStartY;
