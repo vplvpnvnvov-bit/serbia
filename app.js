@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.7",
-  BUILD: "ec2cf4a",
-  CACHE_NAME: "relocation-v6.6.7-ec2cf4a"
+  VERSION: "6.6.8",
+  BUILD: "40e8a86",
+  CACHE_NAME: "relocation-v6.6.8-40e8a86"
 };
 
 let arrowMarker = null;
@@ -2697,19 +2697,7 @@ function renderSchema() {
     return { x: pox, y: poy, w: pw * PX, h: ph * PX };
   }
 
-  const SIDE_TASKS = [
-    { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку',       icon:'💊' },
-    { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки',   icon:'📋' },
-    { parentId:'docs_done',   id:'dentist',        text:'Стоматология',          icon:'🦷' },
-    { parentId:'docs_done',   id:'power',          text:'Доверенность',          icon:'📝' },
-    { parentId:'power',       id:'child_consent',   text:'Согласие на выезд',    icon:'✍️' },
-    { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке',      icon:'🎓' },
-    { parentId:'power',       id:'driving_licenses',text:'Водительские права',    icon:'🚗' },
-    { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'🔖' },
-    { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'🔖' },
-    { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты',        icon:'🎫' },
-    { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb', icon:'💻' },
-  ];
+  const SIDE_TASKS = SCHEMA_SIDE_TASKS;
 
   const parentGroups = {};
   SIDE_TASKS.forEach(st => {
@@ -3277,6 +3265,22 @@ window.addEventListener('sync-loaded', () => {
 });
 
 // === SCHEMA EDIT MODE ===
+const SCHEMA_SIDE_TASKS = [
+  { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку',       icon:'💊' },
+  { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки',   icon:'📋' },
+  { parentId:'docs_done',   id:'dentist',        text:'Стоматология',          icon:'🦷' },
+  { parentId:'docs_done',   id:'power',          text:'Доверенность',          icon:'📝' },
+  { parentId:'power',       id:'child_consent',   text:'Согласие на выезд',    icon:'✍️' },
+  { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке',      icon:'🎓' },
+  { parentId:'power',       id:'driving_licenses',text:'Водительские права',    icon:'🚗' },
+  { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'🔖' },
+  { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'🔖' },
+  { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты',        icon:'🎫' },
+  { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb', icon:'💻' },
+];
+const SCHEMA_PARENT_IDS = {};
+SCHEMA_SIDE_TASKS.forEach(st => { SCHEMA_PARENT_IDS[st.id] = st.parentId; });
+
 let _editMode = false;
 let _manualPositions = {};
 let _dragTarget = null;
@@ -3349,14 +3353,11 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
-  const PARENT_IDS = {};
-  SIDE_TASKS.forEach(st => { PARENT_IDS[st.id] = st.parentId; });
-
   function findChildAt(mx, my) {
     for (const id of Object.keys(_manualPositions)) {
       const off = _manualPositions[id];
       if (!off || off.dx === undefined) continue;
-      const pid = PARENT_IDS[id];
+      const pid = SCHEMA_PARENT_IDS[id];
       if (!pid) continue;
       const idx = _schemaItems.findIndex(item => item.id === pid);
       if (idx < 0) continue;
