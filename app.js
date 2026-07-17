@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.21.1",
-  BUILD: "549e6d9",
-  CACHE_NAME: "relocation-v6.21.1-549e6d9"
+  VERSION: "6.21.2",
+  BUILD: "db92d8f",
+  CACHE_NAME: "relocation-v6.21.2-db92d8f"
 };
 
 let arrowMarker = null;
@@ -283,7 +283,7 @@ MAP_POINTS.forEach(pt => {
     }
   });
   poiMarkers.push(marker);
-  poiLayer.addLayer(marker);
+  if (pt.linked) poiLayer.addLayer(marker);
 });
 
 // POI reest list
@@ -909,12 +909,21 @@ document.querySelectorAll('[data-poi-cat]').forEach(cb => {
   cb.addEventListener('change', () => {
     const cat = cb.dataset.poiCat;
     const visible = cb.checked;
-    poiMarkers.forEach(m => {
-      if (m._poiCat === cat) {
-        if (visible) poiLayer.addLayer(m);
-        else poiLayer.removeLayer(m);
-      }
-    });
+    if (cat === 'plan') {
+      poiMarkers.forEach(m => {
+        if (m._pt && m._pt.linked) {
+          if (visible) poiLayer.addLayer(m);
+          else poiLayer.removeLayer(m);
+        }
+      });
+    } else {
+      poiMarkers.forEach(m => {
+        if (m._poiCat === cat) {
+          if (visible) poiLayer.addLayer(m);
+          else poiLayer.removeLayer(m);
+        }
+      });
+    }
   });
 });
 
@@ -923,12 +932,21 @@ document.getElementById('poi-toggle-all')?.addEventListener('change', (e) => {
   document.querySelectorAll('[data-poi-cat]').forEach(cb => {
     cb.checked = on;
     const cat = cb.dataset.poiCat;
-    poiMarkers.forEach(m => {
-      if (m._poiCat === cat) {
-        if (on) poiLayer.addLayer(m);
-        else poiLayer.removeLayer(m);
-      }
-    });
+    if (cat === 'plan') {
+      poiMarkers.forEach(m => {
+        if (m._pt && m._pt.linked) {
+          if (on) poiLayer.addLayer(m);
+          else poiLayer.removeLayer(m);
+        }
+      });
+    } else {
+      poiMarkers.forEach(m => {
+        if (m._poiCat === cat) {
+          if (on) poiLayer.addLayer(m);
+          else poiLayer.removeLayer(m);
+        }
+      });
+    }
   });
 });
 

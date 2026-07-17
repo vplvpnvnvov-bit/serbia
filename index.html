@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.21.1-549e6d9" />
+<link rel="stylesheet" href="style.css?v=6.21.2-db92d8f" />
 </head>
 <body>
 
@@ -106,28 +106,30 @@
             </select>
           </div>
           <div class="lc-divider"></div>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="police" checked> 👮 Полиция / МУП</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="clinic" checked> 🏥 Клиники и больницы</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="tax" checked> 📋 Налоговые</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="rfzo" checked> 💊 Страхование (РФЗО)</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="post" checked> ✉️ Почта</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="apr" checked> 📄 APR</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="embassy" checked> 🇷🇺 Посольство</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="bank" checked> 🏦 Банк</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="school" checked> 🏫 Школы</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="kindergarten" checked> 👶 Детские сады</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="playground" checked> 🎮 Играоницы</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="zoo" checked> 🦁 Зоопарк</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="park" checked> 🌳 Парки</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="food" checked> 🍽️ Рестораны</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="shop" checked> 🛒 Рынки и ТЦ</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="museum" checked> 🏛️ Музеи</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="theater" checked> 🎭 Театры</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="monument" checked> 🗿 Памятники</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="secret" checked> 🔮 Секретные места</label>
-          <label class="lc-check"><input type="checkbox" data-poi-cat="sport" checked> 🏟️ Спорт</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="plan" checked> 📌 Связано с планом</label>
           <div class="lc-divider"></div>
-          <label class="lc-check lc-toggle-all"><input type="checkbox" id="poi-toggle-all" checked> ☑️ Все фильтры</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="police"> 👮 Полиция / МУП</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="clinic"> 🏥 Клиники и больницы</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="tax"> 📋 Налоговые</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="rfzo"> 💊 Страхование (РФЗО)</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="post"> ✉️ Почта</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="apr"> 📄 APR</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="embassy"> 🇷🇺 Посольство</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="bank"> 🏦 Банк</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="school"> 🏫 Школы</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="kindergarten"> 👶 Детские сады</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="playground"> 🎮 Играоницы</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="zoo"> 🦁 Зоопарк</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="park"> 🌳 Парки</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="food"> 🍽️ Рестораны</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="shop"> 🛒 Рынки и ТЦ</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="museum"> 🏛️ Музеи</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="theater"> 🎭 Театры</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="monument"> 🗿 Памятники</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="secret"> 🔮 Секретные места</label>
+          <label class="lc-check"><input type="checkbox" data-poi-cat="sport"> 🏟️ Спорт</label>
+          <div class="lc-divider"></div>
+          <label class="lc-check lc-toggle-all"><input type="checkbox" id="poi-toggle-all"> ☑️ Все фильтры</label>
         </div>
       </div>
       <div id="legend">
@@ -340,9 +342,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.21.1-549e6d9"></script>
-<script src="sync.js?v=6.21.1-549e6d9"></script>
-<script src="app.js?v=6.21.1-549e6d9"></script>
+<script src="data.js?v=6.21.2-db92d8f"></script>
+<script src="sync.js?v=6.21.2-db92d8f"></script>
+<script src="app.js?v=6.21.2-db92d8f"></script>
 
 </body>
 </html>
