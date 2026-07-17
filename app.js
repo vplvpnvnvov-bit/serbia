@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.8.0",
-  BUILD: "4b125ca",
-  CACHE_NAME: "relocation-v6.8.0-4b125ca"
+  VERSION: "6.9.0",
+  BUILD: "404b8af",
+  CACHE_NAME: "relocation-v6.9.0-404b8af"
 };
 
 let arrowMarker = null;
@@ -3205,7 +3205,7 @@ function renderSchema() {
     ctx.globalAlpha = 0.35;
     ctx.font = '16px serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('🌧️', d.x, d.y + fallY - 30);
+    ctx.fillText('💧', d.x, d.y + fallY - 30);
     ctx.restore();
   });
 
