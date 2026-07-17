@@ -1,11 +1,13 @@
 window.APP_CONFIG = {
-  VERSION: "6.7.0",
-  BUILD: "996a9cd",
-  CACHE_NAME: "relocation-v6.7.0-996a9cd"
+  VERSION: "6.7.1",
+  BUILD: "d085f93",
+  CACHE_NAME: "relocation-v6.7.1-d085f93"
 };
 
 let arrowMarker = null;
 let _schemaDecor = null;
+let _schemaClouds = null;
+let _schemaSnow = null;
 let _schemaHitAreas = null;
 let _schemaItems = null;
 let _schemaNodes = null;
@@ -2619,6 +2621,7 @@ function renderSchema() {
     _schemaDecor._cw = CW;
     _schemaDecor._ch = CH;
     _schemaClouds = dec.filter(d => d.t === 'cloud');
+    _schemaSnow = dec.filter(d => d.t === 'snow');
   }
 
   // ── Draw lakes (background) ──
@@ -2878,6 +2881,7 @@ function renderSchema() {
     const S = PX;
     _schemaDecor.forEach(d => {
       if (d.t === 'lake') return;
+      if (d.t === 'snow') return;
       if (d.t === 'mt_ru') {
         ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
@@ -3182,6 +3186,20 @@ function renderSchema() {
     ctx.translate(dx, d.y);
     ctx.scale(1, 0.45);
     pts.forEach(p => { ctx.beginPath(); ctx.arc(p.ox, p.oy, p.r, 0, Math.PI * 2); ctx.fill(); });
+    ctx.restore();
+  });
+
+  // Animated snowflakes (Russia north only)
+  const snowflakes = _schemaSnow || [];
+  snowflakes.forEach(d => {
+    const floatX = Math.sin(now * 0.001 + d.x * 0.05) * 8;
+    const floatY = (now * 0.015 + d.y * 0.01) % 40;
+    const alpha = 0.4 + Math.sin(now * 0.003 + d.x * 0.02) * 0.3;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = (d.r || 14) + 'px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('❄️', d.x + floatX, d.y + floatY - 20);
     ctx.restore();
   });
 
