@@ -2242,6 +2242,7 @@ body.dark-theme .carousel-caption {
   top: 0;
   z-index: 10;
 }
+.schema-toolbar.hidden { display: none; }
 .schema-tool-btn {
   padding: 4px 10px;
   border: 1px solid #e65100;
