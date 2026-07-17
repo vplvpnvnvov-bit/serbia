@@ -1723,11 +1723,11 @@ html, body {
 /* POI Reestr */
 .poi-reestr {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
+  bottom: 0;
+  right: 0;
   z-index: 1000;
   background: rgba(255,255,255,0.97);
-  border-radius: 10px;
+  border-radius: 8px 0 0 0;
   border: 1px solid rgba(0,0,0,0.1);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
   max-width: 300px;
