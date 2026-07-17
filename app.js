@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.9.1",
-  BUILD: "0913ad0",
-  CACHE_NAME: "relocation-v6.9.1-0913ad0"
+  VERSION: "6.9.2",
+  BUILD: "f90144f",
+  CACHE_NAME: "relocation-v6.9.2-f90144f"
 };
 
 let arrowMarker = null;
@@ -2680,6 +2680,88 @@ function renderSchema() {
   for (let i = doneIdx + 1; i < tn; i++) ctx.lineTo(trail[i].x, trail[i].y);
   ctx.stroke(); ctx.setLineDash([]);
 
+  // ── Decorative elements over trail (hills, trees, animals, boundary) ──
+  {
+    const S = PX;
+    _schemaDecor.forEach(d => {
+      if (d.t === 'lake') return;
+      if (d.t === 'snow') return;
+      if (d.t === 'rain') return;
+      if (d.t === 'mt_ru') {
+        ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
+      }
+      else if (d.t === 'spruce') {
+        ctx.font = '28px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🌲', d.x, d.y);
+      }
+      else if (d.t === 'birch') {
+        ctx.font = '28px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🌳', d.x, d.y);
+      }
+      else if (d.t === 'oak') {
+        ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🌳', d.x, d.y);
+      }
+      else if (d.t === 'linden') {
+        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🌿', d.x, d.y);
+      }
+      else if (d.t === 'hill_sr') {
+        const bw = d.w*S, bh = d.h*S, bx = d.x - bw/2, by = d.y;
+        ctx.lineJoin = 'round';
+        ctx.fillStyle='#33691e'; ctx.beginPath();
+        ctx.moveTo(bx-1, by+bh); ctx.lineTo(bx+bw/2, by); ctx.lineTo(bx+bw+1, by+bh); ctx.fill();
+        ctx.fillStyle='#689f38'; ctx.beginPath();
+        ctx.moveTo(bx+2, by+bh); ctx.lineTo(bx+bw/2, by+4); ctx.lineTo(bx+bw-2, by+bh); ctx.fill();
+        ctx.fillStyle='#aed581'; ctx.beginPath();
+        ctx.moveTo(bx+bw*0.25, by+bh); ctx.lineTo(bx+bw/2, by+bh*0.2); ctx.lineTo(bx+bw*0.75, by+bh); ctx.fill();
+        ctx.lineJoin = 'miter';
+      }
+      else if (d.t === 'bear_track') {
+        ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🐾', d.x, d.y);
+      }
+      else if (d.t === 'elk') {
+        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🦌', d.x, d.y);
+      }
+      else if (d.t === 'swan') {
+        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000'; ctx.fillText('🦢', d.x, d.y);
+      }
+      else if (d.t === 'eagle') {
+        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🦅', d.x, d.y);
+      }
+      else if (d.t === 'pigeon') {
+        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🕊', d.x, d.y);
+      }
+      else if (d.t === 'fortress') {
+        ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🏰', d.x, d.y);
+      }
+      else if (d.t === 'spire') {
+        ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🏛️', d.x, d.y);
+      }
+      else if (d.t === 'boundary') {
+        const pts = d.pts || [{x:10,y:d.y},{x:CW-10,y:d.y}];
+        ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
+        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.stroke(); ctx.setLineDash([]);
+        const bRight = pts[pts.length - 1];
+        const flagSize = Math.min(40, CW * 0.08);
+        ctx.fillStyle = '#5d4037';
+        ctx.font = flagSize + 'px serif';
+        ctx.textAlign = 'right';         ctx.fillText('🇷🇺', CW - 10, bRight.y - flagSize - 5);
+        ctx.fillText('🇷🇸', CW - 10, bRight.y + flagSize + 5);
+      }
+    });
+  }
+
   const hitAreas = [];
 
   function drawSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
@@ -2882,93 +2964,6 @@ function renderSchema() {
       }
     });
   });
-
-  // ── Decorative elements over trail (hills, trees, animals, boundary) ──
-  {
-    const S = PX;
-    _schemaDecor.forEach(d => {
-      if (d.t === 'lake') return;
-      if (d.t === 'snow') return;
-      if (d.t === 'rain') return;
-      if (d.t === 'mt_ru') {
-        ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
-      }
-      else if (d.t === 'snow') {
-        ctx.font = (d.r || 16) + 'px serif';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('❄️', d.x, d.y);
-      }
-      else if (d.t === 'spruce') {
-        ctx.font = '28px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🌲', d.x, d.y);
-      }
-      else if (d.t === 'birch') {
-        ctx.font = '28px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🌳', d.x, d.y);
-      }
-      else if (d.t === 'oak') {
-        ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🌳', d.x, d.y);
-      }
-      else if (d.t === 'linden') {
-        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🌿', d.x, d.y);
-      }
-      else if (d.t === 'hill_sr') {
-        const bw = d.w*S, bh = d.h*S, bx = d.x - bw/2, by = d.y;
-        ctx.lineJoin = 'round';
-        ctx.fillStyle='#33691e'; ctx.beginPath();
-        ctx.moveTo(bx-1, by+bh); ctx.lineTo(bx+bw/2, by); ctx.lineTo(bx+bw+1, by+bh); ctx.fill();
-        ctx.fillStyle='#689f38'; ctx.beginPath();
-        ctx.moveTo(bx+2, by+bh); ctx.lineTo(bx+bw/2, by+4); ctx.lineTo(bx+bw-2, by+bh); ctx.fill();
-        ctx.fillStyle='#aed581'; ctx.beginPath();
-        ctx.moveTo(bx+bw*0.25, by+bh); ctx.lineTo(bx+bw/2, by+bh*0.2); ctx.lineTo(bx+bw*0.75, by+bh); ctx.fill();
-        ctx.lineJoin = 'miter';
-      }
-      else if (d.t === 'bear_track') {
-        ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🐾', d.x, d.y);
-      }
-      else if (d.t === 'elk') {
-        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🦌', d.x, d.y);
-      }
-      else if (d.t === 'swan') {
-        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#000'; ctx.fillText('🦢', d.x, d.y);
-      }
-      else if (d.t === 'eagle') {
-        ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🦅', d.x, d.y);
-      }
-      else if (d.t === 'pigeon') {
-        ctx.font = '14px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🕊', d.x, d.y);
-      }
-      else if (d.t === 'fortress') {
-        ctx.font = '20px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🏰', d.x, d.y);
-      }
-      else if (d.t === 'spire') {
-        ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('🏛️', d.x, d.y);
-      }
-      else if (d.t === 'boundary') {
-        const pts = d.pts || [{x:10,y:d.y},{x:CW-10,y:d.y}];
-        ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]);
-        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.stroke(); ctx.setLineDash([]);
-        const bRight = pts[pts.length - 1];
-        const flagSize = Math.min(40, CW * 0.08);
-        ctx.fillStyle = '#5d4037';
-        ctx.font = flagSize + 'px serif';
-        ctx.textAlign = 'right';         ctx.fillText('🇷🇺', CW - 10, bRight.y - flagSize - 5);
-        ctx.fillText('🇷🇸', CW - 10, bRight.y + flagSize + 5);
-      }
-    });
-  }
 
   // Barriers at the border — closed until all pre-border tasks done
   const allBeforeBorderDone = items.slice(0, 13).every(item => {
