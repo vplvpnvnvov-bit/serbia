@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.12.7",
-  BUILD: "fb6f407",
-  CACHE_NAME: "relocation-v6.12.7-fb6f407"
+  VERSION: "6.13.0",
+  BUILD: "23b7819",
+  CACHE_NAME: "relocation-v6.13.0-23b7819"
 };
 
 let arrowMarker = null;
@@ -2753,9 +2753,11 @@ function renderSchema() {
           if (Math.abs(ex - tx) < margin) {
             const toLeft = ex;
             const toRight = CW - ex;
+            const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const drift = ((seed % 20) - 10);
             ex = toLeft < toRight
-              ? Math.max(10, tx - margin - Math.random() * (CW * 0.15))
-              : Math.min(CW - 10, tx + margin + Math.random() * (CW * 0.15));
+              ? Math.max(10, tx - margin - drift)
+              : Math.min(CW - 10, tx + margin + drift);
           }
         }
         ctx.font = (d.sz || szMap[d.t] || 20) + 'px serif';
@@ -2779,9 +2781,11 @@ function renderSchema() {
           const tx = trailXAt(hy);
           const margin = 40;
           if (Math.abs(hx - tx) < margin) {
+            const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const drift = ((seed % 20) - 10);
             hx = hx < CW / 2
-              ? Math.max(10, tx - margin - Math.random() * (CW * 0.15))
-              : Math.min(CW - 10, tx + margin + Math.random() * (CW * 0.15));
+              ? Math.max(10, tx - margin - drift)
+              : Math.min(CW - 10, tx + margin + drift);
           }
         }
         const bw = d.w*S, bh = d.h*S, bx = hx - bw/2, by = hy;
