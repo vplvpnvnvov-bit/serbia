@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.16.1",
-  BUILD: "4a78425",
-  CACHE_NAME: "relocation-v6.16.1-4a78425"
+  VERSION: "6.16.2",
+  BUILD: "d2aa7c9",
+  CACHE_NAME: "relocation-v6.16.2-d2aa7c9"
 };
 
 let arrowMarker = null;
@@ -2423,6 +2423,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Click on sync code to change it
   document.getElementById('display-sync-code')?.addEventListener('click', () => {
     window.changeSyncCode();
+  });
+
+  // Room buttons
+  document.getElementById('btn-room-create')?.addEventListener('click', () => {
+    window.generateNewSyncCode();
+    document.getElementById('room-screen').classList.add('hidden');
+    window.dispatchEvent(new CustomEvent('auth-ready'));
+  });
+
+  document.getElementById('btn-room-join')?.addEventListener('click', () => {
+    window.changeSyncCode();
+    // changeSyncCode already triggers loadFromCloud
+    document.getElementById('room-screen').classList.add('hidden');
+    window.dispatchEvent(new CustomEvent('auth-ready'));
   });
 });
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
