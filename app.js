@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.9.3",
-  BUILD: "f6b0c23",
-  CACHE_NAME: "relocation-v6.9.3-f6b0c23"
+  VERSION: "6.10.0",
+  BUILD: "532a2fa",
+  CACHE_NAME: "relocation-v6.10.0-532a2fa"
 };
 
 let arrowMarker = null;
@@ -2505,10 +2505,11 @@ function renderSchema() {
     const rint = (a, b) => Math.floor(rnd() * (b - a + 1)) + a;
     const dec = [];
 
-    const safeX = (y, margin, range) => {
+    const randX = () => 15 + rnd() * (CW - 30);
+    const farX = (y, margin) => {
       const tx = trailXAt(y);
       const side = rnd() > 0.5 ? -1 : 1;
-      const off = margin + rnd() * range;
+      const off = margin + rnd() * (CW * 0.35);
       return Math.max(10, Math.min(CW - 10, tx + side * off));
     };
 
@@ -2520,67 +2521,67 @@ function renderSchema() {
     // ══════ 🇷🇺 RUSSIA ══════
 
     // Far north (0-25%): taiga
-    for (let i = 0; i < 18; i++) dec.push({ t:'spruce', x:safeX(ruZ(0, 0.25), 20, CW*0.25), y:ruZ(0, 0.25) });
-    for (let i = 0; i < 8; i++)  dec.push({ t:'mt_ru', x:safeX(ruZ(0, 0.25), 35, CW*0.2), y:ruZ(0, 0.25) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'peak', x:safeX(ruZ(0, 0.2), 40, CW*0.15), y:ruZ(0, 0.2) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'snow', x:safeX(ruZ(0, 0.25), 10, CW*0.35), y:ruZ(0, 0.25), r:rint(8, 20) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'boulder', x:safeX(ruZ(0, 0.3), 25, CW*0.25), y:ruZ(0, 0.3) });
-    dec.push({ t:'bear_track', x:safeX(ruZ(0, 0.2), 30, CW*0.2), y:ruZ(0, 0.2) });
-    dec.push({ t:'bear_track', x:safeX(ruZ(0.05, 0.25), 30, CW*0.2), y:ruZ(0.05, 0.25) });
+    for (let i = 0; i < 18; i++) dec.push({ t:'spruce', x:farX(ruZ(0, 0.25), 50), y:ruZ(0, 0.25) });
+    for (let i = 0; i < 8; i++)  dec.push({ t:'mt_ru', x:farX(ruZ(0, 0.25), 60), y:ruZ(0, 0.25) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'peak', x:farX(ruZ(0, 0.2), 70), y:ruZ(0, 0.2) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'snow', x:farX(ruZ(0, 0.25), 40), y:ruZ(0, 0.25), r:rint(8, 20) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'boulder', x:farX(ruZ(0, 0.3), 55), y:ruZ(0, 0.3) });
+    dec.push({ t:'bear_track', x:farX(ruZ(0, 0.2), 50), y:ruZ(0, 0.2) });
+    dec.push({ t:'bear_track', x:farX(ruZ(0.05, 0.25), 50), y:ruZ(0.05, 0.25) });
 
     // Mid Russia (25-60%): mixed forest, rain, villages
-    for (let i = 0; i < 14; i++) dec.push({ t:'birch', x:safeX(ruZ(0.25, 0.6), 20, CW*0.28), y:ruZ(0.25, 0.6) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'rain', x:safeX(ruZ(0.25, 0.6), 30, CW*0.3), y:ruZ(0.25, 0.6) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'hut', x:safeX(ruZ(0.3, 0.55), 30, CW*0.25), y:ruZ(0.3, 0.55) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:safeX(ruZ(0.3, 0.55), 25, CW*0.3), y:ruZ(0.3, 0.55) });
-    dec.push({ t:'elk', x:safeX(ruZ(0.3, 0.5), 30, CW*0.2), y:ruZ(0.3, 0.5) });
+    for (let i = 0; i < 14; i++) dec.push({ t:'birch', x:farX(ruZ(0.25, 0.6), 50), y:ruZ(0.25, 0.6) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'rain', x:farX(ruZ(0.25, 0.6), 45), y:ruZ(0.25, 0.6) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'hut', x:farX(ruZ(0.3, 0.55), 55), y:ruZ(0.3, 0.55) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:farX(ruZ(0.3, 0.55), 45), y:ruZ(0.3, 0.55) });
+    dec.push({ t:'elk', x:farX(ruZ(0.3, 0.5), 55), y:ruZ(0.3, 0.5) });
     const lakes = [];
     for (let i = 0; i < 4; i++) {
-      const lx = safeX(ruZ(0.1, 0.55), 25, CW*0.3), ly = ruZ(0.1, 0.55);
+      const lx = farX(ruZ(0.1, 0.55), 50), ly = ruZ(0.1, 0.55);
       dec.push({ t:'lake', x:lx, y:ly, r:rint(3, 6) });
       lakes.push({ x:lx, y:ly });
     }
     lakes.sort((a, b) => b.y - a.y).slice(0, 2).forEach(l => dec.push({ t:'swan', x:l.x, y:l.y }));
 
     // South Russia (60-100%): fields, villages
-    for (let i = 0; i < 6; i++)  dec.push({ t:'sunflower', x:safeX(ruZ(0.6, 0.98), 25, CW*0.3), y:ruZ(0.6, 0.98) });
-    for (let i = 0; i < 5; i++)  dec.push({ t:'wheat', x:safeX(ruZ(0.6, 0.98), 22, CW*0.32), y:ruZ(0.6, 0.98) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'village', x:safeX(ruZ(0.65, 0.95), 35, CW*0.25), y:ruZ(0.65, 0.95) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:safeX(ruZ(0.6, 0.9), 30, CW*0.3), y:ruZ(0.6, 0.9) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'sunflower', x:farX(ruZ(0.6, 0.98), 50), y:ruZ(0.6, 0.98) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'wheat', x:farX(ruZ(0.6, 0.98), 45), y:ruZ(0.6, 0.98) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'village', x:farX(ruZ(0.65, 0.95), 60), y:ruZ(0.65, 0.95) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:farX(ruZ(0.6, 0.9), 55), y:ruZ(0.6, 0.9) });
 
     // ══════ 🇷🇸 SERBIA ══════
 
     // Vojvodina plain (0-30%): fields, farms
-    for (let i = 0; i < 5; i++)  dec.push({ t:'sunflower', x:safeX(srZ(0, 0.3), 25, CW*0.3), y:srZ(0, 0.3) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'wheat', x:safeX(srZ(0, 0.3), 22, CW*0.32), y:srZ(0, 0.3) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'house', x:safeX(srZ(0, 0.28), 30, CW*0.28), y:srZ(0, 0.28) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'hut', x:safeX(srZ(0.05, 0.28), 30, CW*0.3), y:srZ(0.05, 0.28) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'linden', x:safeX(srZ(0, 0.3), 20, CW*0.28), y:srZ(0, 0.3) });
-    dec.push({ t:'eagle', x:safeX(srZ(0.05, 0.25), 25, CW*0.25), y:srZ(0.05, 0.25) });
+    for (let i = 0; i < 5; i++)  dec.push({ t:'sunflower', x:farX(srZ(0, 0.3), 50), y:srZ(0, 0.3) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'wheat', x:farX(srZ(0, 0.3), 45), y:srZ(0, 0.3) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'house', x:farX(srZ(0, 0.28), 55), y:srZ(0, 0.28) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'hut', x:farX(srZ(0.05, 0.28), 55), y:srZ(0.05, 0.28) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'linden', x:farX(srZ(0, 0.3), 50), y:srZ(0, 0.3) });
+    dec.push({ t:'eagle', x:farX(srZ(0.05, 0.25), 50), y:srZ(0.05, 0.25) });
 
     // Belgrade + Sumadija (30-55%): city, fortress, parks
-    for (let i = 0; i < 6; i++)  dec.push({ t:'oak', x:safeX(srZ(0.3, 0.55), 22, CW*0.28), y:srZ(0.3, 0.55) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'spire', x:safeX(srZ(0.3, 0.55), 25, CW*0.3), y:srZ(0.3, 0.55), h:rint(6, 12) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'block', x:safeX(srZ(0.32, 0.55), 30, CW*0.3), y:srZ(0.32, 0.55) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'pigeon', x:safeX(srZ(0.3, 0.52), 22, CW*0.32), y:srZ(0.3, 0.52) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'clover', x:safeX(srZ(0.32, 0.55), 20, CW*0.35), y:srZ(0.32, 0.55) });
-    dec.push({ t:'fortress', x:safeX(srZ(0.3, 0.45), 35, CW*0.2), y:srZ(0.3, 0.45) });
-    dec.push({ t:'bridge', x:safeX(srZ(0.35, 0.5), 30, CW*0.2), y:srZ(0.35, 0.5) });
-    dec.push({ t:'ferris', x:safeX(srZ(0.4, 0.5), 40, CW*0.2), y:srZ(0.4, 0.5) });
-    dec.push({ t:'beach', x:safeX(srZ(0.38, 0.52), 35, CW*0.25), y:srZ(0.38, 0.52) });
-    dec.push({ t:'construction', x:safeX(srZ(0.35, 0.5), 35, CW*0.25), y:srZ(0.35, 0.5) });
-    dec.push({ t:'factory', x:safeX(srZ(0.45, 0.55), 35, CW*0.2), y:srZ(0.45, 0.55) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'oak', x:farX(srZ(0.3, 0.55), 50), y:srZ(0.3, 0.55) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'spire', x:farX(srZ(0.3, 0.55), 50), y:srZ(0.3, 0.55), h:rint(6, 12) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'block', x:farX(srZ(0.32, 0.55), 55), y:srZ(0.32, 0.55) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'pigeon', x:farX(srZ(0.3, 0.52), 50), y:srZ(0.3, 0.52) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'clover', x:randX(), y:srZ(0.32, 0.55) });
+    dec.push({ t:'fortress', x:farX(srZ(0.3, 0.45), 60), y:srZ(0.3, 0.45) });
+    dec.push({ t:'bridge', x:farX(srZ(0.35, 0.5), 60), y:srZ(0.35, 0.5) });
+    dec.push({ t:'ferris', x:farX(srZ(0.4, 0.5), 60), y:srZ(0.4, 0.5) });
+    dec.push({ t:'beach', x:farX(srZ(0.38, 0.52), 60), y:srZ(0.38, 0.52) });
+    dec.push({ t:'construction', x:farX(srZ(0.35, 0.5), 60), y:srZ(0.35, 0.5) });
+    dec.push({ t:'factory', x:farX(srZ(0.45, 0.55), 60), y:srZ(0.45, 0.55) });
 
     // South Serbia mountains (55-100%): hills, sheep, pine
-    for (let i = 0; i < 12; i++) dec.push({ t:'hill_sr', x:safeX(srZ(0.55, 0.98), 22, CW*0.3), y:srZ(0.55, 0.98), w:rint(12, 28), h:rint(8, 16) });
-    for (let i = 0; i < 6; i++)  dec.push({ t:'pine', x:safeX(srZ(0.55, 0.98), 22, CW*0.28), y:srZ(0.55, 0.98) });
-    for (let i = 0; i < 4; i++)  dec.push({ t:'sheep', x:safeX(srZ(0.55, 0.9), 30, CW*0.3), y:srZ(0.55, 0.9) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'rabbit', x:safeX(srZ(0.6, 0.95), 28, CW*0.3), y:srZ(0.6, 0.95) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:safeX(srZ(0.55, 0.9), 25, CW*0.35), y:srZ(0.55, 0.9) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:safeX(srZ(0.55, 0.95), 30, CW*0.3), y:srZ(0.55, 0.95) });
-    for (let i = 0; i < 3; i++)  dec.push({ t:'rock', x:safeX(srZ(0.6, 0.98), 30, CW*0.28), y:srZ(0.6, 0.98) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'spring', x:safeX(srZ(0.6, 0.95), 30, CW*0.28), y:srZ(0.6, 0.95) });
-    for (let i = 0; i < 2; i++)  dec.push({ t:'lake', x:safeX(srZ(0.55, 0.9), 25, CW*0.25), y:srZ(0.55, 0.9), r:rint(2, 5) });
+    for (let i = 0; i < 12; i++) dec.push({ t:'hill_sr', x:farX(srZ(0.55, 0.98), 50), y:srZ(0.55, 0.98), w:rint(12, 28), h:rint(8, 16) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'pine', x:farX(srZ(0.55, 0.98), 50), y:srZ(0.55, 0.98) });
+    for (let i = 0; i < 4; i++)  dec.push({ t:'sheep', x:farX(srZ(0.55, 0.9), 55), y:srZ(0.55, 0.9) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'rabbit', x:farX(srZ(0.6, 0.95), 55), y:srZ(0.6, 0.95) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:farX(srZ(0.55, 0.9), 45), y:srZ(0.55, 0.9) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'tent', x:farX(srZ(0.55, 0.95), 55), y:srZ(0.55, 0.95) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'rock', x:farX(srZ(0.6, 0.98), 55), y:srZ(0.6, 0.98) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'spring', x:farX(srZ(0.6, 0.95), 55), y:srZ(0.6, 0.95) });
+    for (let i = 0; i < 2; i++)  dec.push({ t:'lake', x:farX(srZ(0.55, 0.9), 50), y:srZ(0.55, 0.9), r:rint(2, 5) });
 
     // ── Clouds (all over, denser near boundary) ──
     for (let i = 0; i < 25; i++) {
@@ -2606,7 +2607,7 @@ function renderSchema() {
     // Push objects away from the trail
     dec.forEach(d => {
       if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow' || d.t === 'rain' || d.t === 'butterfly') return;
-      const margin = d.t === 'mt_ru' ? 35 : 22;
+      const margin = d.t === 'mt_ru' || d.t === 'peak' ? 60 : 40;
       const tx = trailXAt(d.y);
       const dist = d.x - tx;
       if (Math.abs(dist) < margin) {
