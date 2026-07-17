@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.15.0",
-  BUILD: "6fd9318",
-  CACHE_NAME: "relocation-v6.15.0-6fd9318"
+  VERSION: "6.15.1",
+  BUILD: "4fe36a3",
+  CACHE_NAME: "relocation-v6.15.1-4fe36a3"
 };
 
 let arrowMarker = null;
@@ -2273,14 +2273,29 @@ function showResetOverlay() {
 window.factoryReset = async function() {
   showResetOverlay();
 
-  const code = localStorage.getItem('sync-code');
+  try { await window.deleteCloudData(); } catch (e) {}
   localStorage.clear();
-  if (code) localStorage.setItem('sync-code', code);
+  const newCode = window.generateSecureSyncCode ? window.generateSecureSyncCode() : Math.random().toString(36).slice(2, 14);
+  localStorage.setItem('sync-code', newCode);
 
   try {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
   } catch (e) {}
+  location.reload();
+};
+
+window.deleteAccount = async function() {
+  showResetOverlay();
+  const user = firebase.auth().currentUser;
+  try { await window.deleteCloudData(); } catch (e) {}
+  localStorage.clear();
+  try {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k.startsWith('relocation-v')).map(k => caches.delete(k)));
+  } catch (e) {}
+  if (user) { try { await user.delete(); } catch (e) { await firebase.auth().signOut(); } }
+  else { await firebase.auth().signOut(); }
   location.reload();
 };
 
@@ -2371,7 +2386,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (resetBtn) {
     resetBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (await showConfirm('Сброс устройства', 'Это сбросит все локальные данные: чек-лист, план переезда, настройки. Сам код синхронизации сохранится. Продолжить?')) {
+      if (await showConfirm('Сброс устройства', 'Удалить все локальные данные, очистить облако и создать новый код синхронизации?')) {
         try {
           await window.factoryReset();
         } catch (err) {
@@ -2380,6 +2395,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  document.getElementById('btn-delete-account')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (await showConfirm('Удаление аккаунта', 'Аккаунт, все данные в облаке и на устройстве будут удалены безвозвратно. Продолжить?')) {
+      try { await window.deleteAccount(); } catch (err) { console.error('deleteAccount error:', err); }
+    }
+  });
 
   document.getElementById('btn-logout')?.addEventListener('click', async () => {
     if (await showConfirm('Выход из аккаунта', 'Выйти из аккаунта? Локальные данные сохранятся на устройстве.')) {

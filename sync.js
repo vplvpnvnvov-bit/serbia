@@ -44,6 +44,8 @@ function generateSecureSyncCode() {
   return code;
 }
 
+window.generateSecureSyncCode = generateSecureSyncCode;
+
 window.generateNewSyncCode = function() {
   const code = generateSecureSyncCode();
   localStorage.setItem('sync-code', code);

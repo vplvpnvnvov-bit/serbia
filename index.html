@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.15.0-6fd9318" />
+<link rel="stylesheet" href="style.css?v=6.15.1-4fe36a3" />
 </head>
 <body>
 
@@ -201,17 +201,9 @@
                 <h4>Синхронизация данных</h4>
               </div>
               <p class="card-desc">Все устройства с одним кодом синхронизируются автоматически ☁️</p>
-
               <div class="sync-status-info">
                 <p><strong>Код:</strong> <span id="display-sync-code" style="cursor:pointer;font-weight:700;letter-spacing:2px;font-family:monospace;color:#1a237e" title="Нажмите чтобы изменить">—</span></p>
                 <p><strong>Облако:</strong> <span id="cloud-status">Проверка...</span></p>
-              </div>
-
-              <div class="card-actions">
-                <button id="btn-new-code" class="action-btn secondary-btn" title="Создать новый случайный код синхронизации.">🔄 Новый код</button>
-              </div>
-              <div class="card-actions" style="margin-top:10px">
-                <button id="btn-delete-cloud" class="action-btn danger-btn" style="font-size:10px;padding:3px 8px;opacity:0.35;min-width:auto" title="Удалить данные из облака">🗑️</button>
               </div>
             </div>
 
@@ -251,12 +243,22 @@
               <span class="card-icon">⚠️</span>
               <h4>Сброс устройства</h4>
             </div>
-            <p class="card-desc">Очищает все локальные данные (чек-лист, калькулятор, настройки), но сохраняет код синхронизации. Облачные данные не затрагиваются.</p>
-
+            <p class="card-desc">Удаляет локальные данные и данные в облаке, генерирует новый код синхронизации. Аккаунт остаётся.</p>
             <div class="card-actions">
-              <button id="btn-hard-reset" class="action-btn danger-btn" title="Очищает все данные на этом устройстве: чек-лист, калькулятор, настройки. Код синхронизации сохраняется.">🔄 Сбросить все настройки</button>
+              <button id="btn-hard-reset" class="action-btn danger-btn" title="Очищает все локальные данные, удаляет облако, создаёт новый код.">🔄 Сбросить всё</button>
             </div>
-            <p class="action-help">После сброса вы можете загрузить свежие данные из облака (кнопка «Загрузить») или начать с чистого листа и выгрузить пустой чек-лист в облако.</p>
+            <p class="action-help">После сброса код меняется — скажите его тому, с кем синхронизируетесь.</p>
+          </div>
+
+          <div class="settings-card" style="border-color:#c62828">
+            <div class="card-header">
+              <span class="card-icon">🚫</span>
+              <h4>Удалить аккаунт</h4>
+            </div>
+            <p class="card-desc">Полностью удаляет аккаунт, облачные и локальные данные. Восстановление невозможно.</p>
+            <div class="card-actions">
+              <button id="btn-delete-account" class="action-btn danger-btn" style="background:#b71c1c;color:#fff">🗑️ Удалить аккаунт навсегда</button>
+            </div>
           </div>
         </div>
       </div>
@@ -287,9 +289,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.15.0-6fd9318"></script>
-<script src="sync.js?v=6.15.0-6fd9318"></script>
-<script src="app.js?v=6.15.0-6fd9318"></script>
+<script src="data.js?v=6.15.1-4fe36a3"></script>
+<script src="sync.js?v=6.15.1-4fe36a3"></script>
+<script src="app.js?v=6.15.1-4fe36a3"></script>
 
 </body>
 </html>
