@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.12.6",
-  BUILD: "1f876ad",
-  CACHE_NAME: "relocation-v6.12.6-1f876ad"
+  VERSION: "6.12.7",
+  BUILD: "fb6f407",
+  CACHE_NAME: "relocation-v6.12.7-fb6f407"
 };
 
 let arrowMarker = null;
@@ -16,8 +16,26 @@ let _schemaAnimating = false;
 let _landscapeMode = false;
 let _landscapeOverrides = {};
 let _landscapeElements = [];
+let _currentCW = 0, _currentCH = 0;
 
 const LANDSCAPE_DEFAULTS = {"spruce_1":{"x":27,"y":34},"mt_ru_5":{"x":179,"y":92},"spruce_14":{"x":251,"y":112},"mt_ru_1":{"x":147,"y":71},"boulder_4":{"x":99,"y":73},"boulder_6":{"x":60,"y":133},"spruce_7":{"x":208,"y":71},"spruce_16":{"x":149,"y":162},"spruce_3":{"x":88,"y":283},"mt_ru_6":{"x":77,"y":181},"spruce_17":{"x":151,"y":287},"peak_1":{"x":152,"y":242},"spruce_8":{"x":504,"y":186},"mt_ru_3":{"x":465,"y":207},"spruce_10":{"x":450,"y":90},"spruce_4":{"x":489,"y":136},"spruce_9":{"x":442,"y":175},"peak_2":{"x":246,"y":278},"birch_4":{"x":208,"y":261},"boulder_3":{"x":224,"y":250},"boulder_1":{"x":318,"y":206},"spruce_6":{"x":250,"y":202},"elk_1":{"x":175,"y":189},"spruce_2":{"x":221,"y":161},"spruce_13":{"x":301,"y":248},"spruce_11":{"x":486,"y":287},"spruce_18":{"x":434,"y":286},"spruce_15":{"x":422,"y":263},"birch_17":{"x":439,"y":231},"bear_track_2":{"x":470,"y":255},"mushroom_5":{"x":53,"y":479},"mushroom_2":{"x":124,"y":413},"hut_1":{"x":116,"y":327},"fox_1":{"x":184,"y":279},"mushroom_4":{"x":449,"y":629},"hut_3":{"x":469,"y":436},"mushroom_3":{"x":479,"y":514},"birch_11":{"x":494,"y":481},"boulder_9":{"x":464,"y":541},"birch_1":{"x":257,"y":656},"birch_18":{"x":373,"y":694},"wheat_1":{"x":370,"y":834},"wheat_4":{"x":491,"y":793},"boulder_7":{"x":306,"y":693},"birch_9":{"x":338,"y":632},"birch_2":{"x":237,"y":636},"hut_2":{"x":306,"y":657},"birch_7":{"x":81,"y":494},"birch_6":{"x":37,"y":661},"birch_15":{"x":203,"y":767},"horse_2":{"x":435,"y":742},"sunflower_3":{"x":47,"y":968},"sunflower_4":{"x":104,"y":1050},"sunflower_2":{"x":42,"y":1029},"tent_2":{"x":106,"y":998},"horse_1":{"x":354,"y":765},"birch_14":{"x":436,"y":633},"village_2":{"x":327,"y":1033},"wheat_3":{"x":471,"y":878},"wheat_2":{"x":388,"y":939},"wheat_5":{"x":464,"y":978},"sunflower_5":{"x":435,"y":1092},"sunflower_1":{"x":490,"y":1147},"tractor_2":{"x":503,"y":895},"village_1":{"x":277,"y":975},"tent_1":{"x":138,"y":1168},"birch_16":{"x":120,"y":942},"hut_5":{"x":165,"y":1294},"horse_4":{"x":138,"y":1497},"sunflower_9":{"x":212,"y":1176},"corn_1":{"x":188,"y":1347},"sunflower_8":{"x":413,"y":1165},"sunflower_6":{"x":52,"y":1135},"horse_3":{"x":46,"y":1456},"wheat_7":{"x":182,"y":1253},"linden_7":{"x":40,"y":1356},"corn_2":{"x":101,"y":1368},"house_3":{"x":336,"y":1315},"tractor_3":{"x":223,"y":1373},"eagle_1":{"x":492,"y":1463},"wheat_6":{"x":92,"y":1273},"oak_7":{"x":394,"y":1569},"ferris_1":{"x":434,"y":1636},"block_2":{"x":430,"y":1739},"beach_1":{"x":510,"y":1625},"block_1":{"x":468,"y":1587},"construction_1":{"x":322,"y":1707},"fortress_1":{"x":306,"y":1589},"linden_4":{"x":454,"y":1508},"spire_4":{"x":452,"y":1678},"oak_2":{"x":368,"y":1662},"linden_2":{"x":80,"y":1576},"block_4":{"x":348,"y":1611},"pine_7":{"x":337,"y":1766},"pigeon_1":{"x":472,"y":1635},"oak_10":{"x":394,"y":1617},"linden_3":{"x":491,"y":1677},"hill_sr_2":{"x":461,"y":1772},"sheep_2":{"x":399,"y":1779},"sheep_3":{"x":504,"y":1769},"oak_3":{"x":352,"y":1882},"sheep_1":{"x":291,"y":1819},"spring_1":{"x":50,"y":1775},"tent_3":{"x":408,"y":1902},"corn_3":{"x":164,"y":1409},"house_1":{"x":238,"y":1468},"hut_4":{"x":51,"y":1186},"house_2":{"x":303,"y":1396},"tractor_4":{"x":253,"y":1264},"wheat_8":{"x":222,"y":1307},"wheat_9":{"x":299,"y":1341},"sunflower_7":{"x":78,"y":1506},"spire_1":{"x":141,"y":1588},"linden_5":{"x":147,"y":1632},"spire_2":{"x":103,"y":1637},"linden_6":{"x":64,"y":1666},"clover_3":{"x":41,"y":1584},"oak_1":{"x":412,"y":1689},"pigeon_2":{"x":501,"y":1720},"pine_6":{"x":26,"y":1767},"hill_sr_8":{"x":83,"y":1868},"linden_1":{"x":252,"y":1866},"mushroom_8":{"x":21,"y":1781},"oak_6":{"x":75,"y":1789},"factory_1":{"x":271,"y":1714},"clover_2":{"x":273,"y":1810},"pine_5":{"x":93,"y":1858},"rabbit_1":{"x":444,"y":1951},"butterfly_6":{"x":63,"y":2023},"rock_1":{"x":83,"y":2011},"sheep_4":{"x":50,"y":1958},"rock_3":{"x":28,"y":1986},"spring_2":{"x":491,"y":2147},"hill_sr_12":{"x":413,"y":2067},"rabbit_2":{"x":360,"y":1892},"rabbit_3":{"x":489,"y":1910},"mushroom_7":{"x":85,"y":2186},"rock_2":{"x":242,"y":2162},"boulder_11":{"x":350,"y":2200},"boulder_12":{"x":302,"y":2111},"hill_sr_9":{"x":259,"y":2066},"hill_sr_14":{"x":344,"y":2021},"eagle_2":{"x":389,"y":2147},"pine_4":{"x":160,"y":2048},"pine_3":{"x":40,"y":2135},"hill_sr_13":{"x":171,"y":2199},"boulder_10":{"x":101,"y":2188},"tent_4":{"x":72,"y":1979},"oak_8":{"x":363,"y":1960},"mushroom_6":{"x":375,"y":1963},"oak_4":{"x":381,"y":1720},"hill_sr_3":{"x":228,"y":1778},"block_3":{"x":101,"y":1696},"spire_3":{"x":39,"y":1625}};
+const REF_CW = 540, REF_CH = 2260;
+
+function convertToLandscapeOverrides(abs) {
+  const out = {};
+  Object.entries(abs || {}).forEach(([id, pos]) => {
+    out[id] = { xr: pos.x / REF_CW, yr: pos.y / REF_CH };
+  });
+  return out;
+}
+
+function landscapePos(id, overrides) {
+  const ovr = overrides[id];
+  if (!ovr) return null;
+  if (ovr.xr !== undefined) return ovr;
+  // old absolute format — convert on the fly
+  return { xr: ovr.x / REF_CW, yr: ovr.y / REF_CH };
+}
 let planListenerAdded = false;
 
 // === AUTH SCREEN ===
@@ -2417,6 +2435,7 @@ function renderSchema() {
   const CH = Math.max((window.innerHeight - 100) * 2, 1600) * 1.4;
   const trailH = Math.max((window.innerHeight - 100) * 2, 1600);
   const PX = CW < 500 ? 2 : 3;
+  _currentCW = CW; _currentCH = CH;
   canvas.style.width = CW + 'px';
   canvas.style.height = CH + 'px';
   canvas.width = CW * dpr;
@@ -2724,9 +2743,20 @@ function renderSchema() {
       const szMap = {mt_ru:70,spruce:28,birch:28,oak:32,linden:16,peak:60,boulder:24,hut:22,wheat:18,sunflower:22,village:28,tent:20,house:26,construction:24,clover:16,beach:26,sheep:20,rabbit:18,rock:22,spring:20,ferris:32,factory:26,pine:28,block:26,bear_track:20,elk:16,swan:14,eagle:16,pigeon:14,fortress:20,spire:32,fox:22,horse:26,mushroom:16,corn:20,tractor:24};
       if (emojiMap[d.t]) {
         let ex = d.x, ey = d.y;
-        if (_landscapeOverrides[d._id]) {
-          ex = _landscapeOverrides[d._id].x;
-          ey = _landscapeOverrides[d._id].y;
+        const lpos = _landscapeOverrides[d._id];
+        if (lpos) {
+          ex = lpos.xr * CW;
+          ey = lpos.yr * CH;
+          // Push away from trail
+          const tx = trailXAt(ey);
+          const margin = 35;
+          if (Math.abs(ex - tx) < margin) {
+            const toLeft = ex;
+            const toRight = CW - ex;
+            ex = toLeft < toRight
+              ? Math.max(10, tx - margin - Math.random() * (CW * 0.15))
+              : Math.min(CW - 10, tx + margin + Math.random() * (CW * 0.15));
+          }
         }
         ctx.font = (d.sz || szMap[d.t] || 20) + 'px serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -2742,9 +2772,17 @@ function renderSchema() {
       }
       if (d.t === 'hill_sr') {
         let hx = d.x, hy = d.y;
-        if (_landscapeOverrides[d._id]) {
-          hx = _landscapeOverrides[d._id].x;
-          hy = _landscapeOverrides[d._id].y;
+        const lpos = _landscapeOverrides[d._id];
+        if (lpos) {
+          hx = lpos.xr * CW;
+          hy = lpos.yr * CH;
+          const tx = trailXAt(hy);
+          const margin = 40;
+          if (Math.abs(hx - tx) < margin) {
+            hx = hx < CW / 2
+              ? Math.max(10, tx - margin - Math.random() * (CW * 0.15))
+              : Math.min(CW - 10, tx + margin + Math.random() * (CW * 0.15));
+          }
         }
         const bw = d.w*S, bh = d.h*S, bx = hx - bw/2, by = hy;
         ctx.lineJoin = 'round';
@@ -3377,17 +3415,18 @@ try {
 } catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
 
 try {
-  _landscapeOverrides = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null') || LANDSCAPE_DEFAULTS;
-} catch { _landscapeOverrides = LANDSCAPE_DEFAULTS; }
+  const saved = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null');
+  _landscapeOverrides = saved ? (saved.xr !== undefined ? saved : convertToLandscapeOverrides(saved)) : convertToLandscapeOverrides(LANDSCAPE_DEFAULTS);
+} catch { _landscapeOverrides = convertToLandscapeOverrides(LANDSCAPE_DEFAULTS); }
 
 function exportManualPositions() {
   const lines = [];
   if (_landscapeMode) {
-    lines.push('// Landscape overrides:');
+    lines.push('// Landscape overrides (scales with screen):');
     lines.push('const LANDSCAPE_OVERRIDES = {');
     Object.keys(_landscapeOverrides).forEach(id => {
       const p = _landscapeOverrides[id];
-      lines.push(`  ${id}: { x: ${Math.round(p.x)}, y: ${Math.round(p.y)} },`);
+      lines.push(`  ${id}: { x: ${Math.round(p.xr * REF_CW)}, y: ${Math.round(p.yr * REF_CH)} },`);
     });
     lines.push('};');
   } else {
@@ -3459,8 +3498,8 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     for (const el of _landscapeElements) {
       if (!el._id) continue;
       const ovr = _landscapeOverrides[el._id];
-      const ex = ovr ? ovr.x : el.x;
-      const ey = ovr ? ovr.y : el.y;
+      const ex = ovr ? ovr.xr * _currentCW : el.x;
+      const ey = ovr ? ovr.yr * _currentCH : el.y;
       if (mx >= ex - 20 && mx <= ex + 20 && my >= ey - 20 && my <= ey + 20) return el._id;
     }
     return null;
@@ -3490,10 +3529,17 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
       if (id) {
         e.preventDefault();
         _dragTarget = id;
-        _dragStartX = pos.x; _dragStartY = pos.y;
+        const el = _landscapeElements.find(e => e._id === id);
         const ovr = _landscapeOverrides[id];
-        _dragOrigX = ovr ? ovr.x : _landscapeElements.find(el => el._id === id)?.x || 0;
-        _dragOrigY = ovr ? ovr.y : _landscapeElements.find(el => el._id === id)?.y || 0;
+        if (ovr) {
+          _dragStartX = pos.x; _dragStartY = pos.y;
+          _dragOrigX = ovr.xr * CW;
+          _dragOrigY = ovr.yr * CH;
+        } else if (el) {
+          _dragStartX = pos.x; _dragStartY = pos.y;
+          _dragOrigX = el.x;
+          _dragOrigY = el.y;
+        }
         schemaCanvas.setPointerCapture(e.pointerId);
         return;
       }
@@ -3519,9 +3565,11 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     const pos = getCanvasPos(e);
 
     if (_landscapeMode) {
+      const absX = Math.round(_dragOrigX + pos.x - _dragStartX);
+      const absY = Math.round(_dragOrigY + pos.y - _dragStartY);
       _landscapeOverrides[_dragTarget] = {
-        x: Math.round(_dragOrigX + pos.x - _dragStartX),
-        y: Math.round(_dragOrigY + pos.y - _dragStartY),
+        xr: absX / CW,
+        yr: absY / CH,
       };
       renderSchema();
       return;
