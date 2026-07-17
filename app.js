@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.15.2",
-  BUILD: "c028a3a",
-  CACHE_NAME: "relocation-v6.15.2-c028a3a"
+  VERSION: "6.15.3",
+  BUILD: "c0b1423",
+  CACHE_NAME: "relocation-v6.15.3-c0b1423"
 };
 
 let arrowMarker = null;
@@ -1433,18 +1433,25 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').then(reg => {
 
-      // Сценарий А: Новая версия уже скачана браузером в фоне и ждет активации
+      // Проверять обновления при возвращении на вкладку
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          reg.update().catch(() => {});
+        }
+      });
+
+      // Новая версия уже ждёт активации
       if (reg.waiting && navigator.serviceWorker.controller) {
-        showUpdateNotification(reg.waiting);
+        autoUpdate(reg.waiting);
       }
 
-      // Сценарий Б: Обновление обнаружилось и скачивается в процессе текущей сессии
+      // Новая версия скачивается прямо сейчас
       reg.onupdatefound = () => {
         const installingWorker = reg.installing;
         if (installingWorker) {
           installingWorker.onstatechange = () => {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              showUpdateNotification(installingWorker);
+              autoUpdate(installingWorker);
             }
           };
         }
@@ -1455,26 +1462,18 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Функция мягкого уведомления пользователя об обновлении
-function showUpdateNotification(worker) {
-  setTimeout(async () => {
-    const userAccepted = await showConfirm('Обновление', 'Доступна новая версия приложения с улучшениями! Обновить сейчас?');
-    if (userAccepted) {
-      if (worker) {
-        // Сначала слушатель, потом skipWaiting — иначе race condition
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          window.location.reload();
-        });
-        worker.postMessage({ action: 'skipWaiting' });
-        setTimeout(() => window.location.reload(), 2000);
-      } else {
-        window.location.reload();
-      }
-    }
-  }, 800);
+// Автоматическое обновление через 2 секунды после обнаружения
+function autoUpdate(worker) {
+  setTimeout(() => {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
+    worker.postMessage({ action: 'skipWaiting' });
+    setTimeout(() => window.location.reload(), 2000);
+  }, 2000);
 }
 
-// 2. Обработчик кнопки ручной проверки обновлений
+// Кнопка ручной проверки обновлений
 const updateBtn = document.getElementById('btn-check-app-update');
 if (updateBtn) {
   updateBtn.addEventListener('click', async (e) => {
@@ -1489,7 +1488,7 @@ if (updateBtn) {
       await new Promise(resolve => setTimeout(resolve, 800));
 
       if (!reg.installing && !reg.waiting) {
-        updateBtn.innerHTML = '✨ Установлена актуальная версия';
+        updateBtn.innerHTML = '✨ Актуальная версия';
       } else {
         updateBtn.innerHTML = '🚀 Найдено обновление';
       }
