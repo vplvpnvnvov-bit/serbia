@@ -417,7 +417,7 @@ html, body {
   transition: transform 0.2s;
 }
 .urban-label input:checked + .urban-slider {
-  background: #1a237e;
+  background: #c9a84b;
 }
 .urban-label input:checked + .urban-slider::after {
   transform: translateX(12px);
@@ -2092,7 +2092,7 @@ body.dark-theme .urban-slider::after {
   background: #b0bec5;
 }
 body.dark-theme .urban-label input:checked + .urban-slider {
-  background: #81d4fa;
+  background: #c9a84b;
 }
 body.dark-theme .urban-label input:checked + .urban-slider::after {
   background: #fff;
@@ -2434,7 +2434,7 @@ body.dark-theme #sm-desc { color: #999; }
   transition: transform 0.2s;
 }
 .settings-toggle input:checked + .toggle-slider {
-  background: #1a237e;
+  background: #c9a84b;
 }
 .settings-toggle input:checked + .toggle-slider::after {
   transform: translateX(18px);
