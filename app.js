@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.24.4",
-  BUILD: "c2ed156",
-  CACHE_NAME: "relocation-v6.24.4-c2ed156"
+  VERSION: "6.24.5",
+  BUILD: "0de0600",
+  CACHE_NAME: "relocation-v6.24.5-0de0600"
 };
 
 let arrowMarker = null;
@@ -1506,11 +1506,10 @@ function autoUpdate(worker) {
       <div style="font-size:48px;margin-bottom:8px">🚀</div>
       <h3 style="font-size:18px;color:#4e342e;margin-bottom:6px">Доступно обновление</h3>
       <p style="font-size:13px;color:#6d4c41;margin-bottom:16px">Установить новую версию приложения</p>
-      <div style="width:100%;height:6px;background:#d7ccc8;border-radius:3px;overflow:hidden;margin-bottom:16px">
+      <div style="width:100%;height:6px;background:#d7ccc8;border-radius:3px;overflow:hidden;margin-bottom:12px">
         <div id="update-progress" style="width:0%;height:100%;background:linear-gradient(90deg,#8d6e3f,#c9a84b);border-radius:3px;transition:width 0.1s linear"></div>
       </div>
-      <button id="update-now-btn" style="padding:10px 24px;border:none;border-radius:8px;background:#43a047;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Обновить сейчас</button>
-      <p style="font-size:11px;color:#8d6e3f;margin-top:10px;opacity:0.6">Авто-обновление через <span id="update-countdown">2</span> сек</p>
+      <p style="font-size:12px;color:#4e342e;margin-bottom:4px">Авто-обновление через <span id="update-countdown">2</span> сек</p>
     </div>`;
   document.body.appendChild(overlay);
 
@@ -1528,11 +1527,6 @@ function autoUpdate(worker) {
     }
   }, 100);
 
-  document.getElementById('update-now-btn')?.addEventListener('click', () => {
-    clearInterval(timer);
-    doUpdate();
-  });
-
   function doUpdate() {
     overlay.remove();
     navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -1541,37 +1535,6 @@ function autoUpdate(worker) {
     worker.postMessage({ action: 'skipWaiting' });
     setTimeout(() => window.location.reload(), 1000);
   }
-}
-
-// Кнопка ручной проверки обновлений
-const updateBtn = document.getElementById('btn-check-app-update');
-if (updateBtn) {
-  updateBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    updateBtn.disabled = true;
-    updateBtn.innerHTML = '🔍 Проверяю сервер...';
-
-    try {
-      const reg = await navigator.serviceWorker.ready;
-      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 15000));
-      await Promise.race([reg.update(), timeout]);
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      if (!reg.installing && !reg.waiting) {
-        updateBtn.innerHTML = '✨ Актуальная версия';
-      } else {
-        updateBtn.innerHTML = '🚀 Найдено обновление';
-      }
-    } catch (err) {
-      console.error(err);
-      updateBtn.innerHTML = '❌ Нет соединения';
-    } finally {
-      setTimeout(() => {
-        updateBtn.disabled = false;
-        updateBtn.innerHTML = '🔄 Проверить обновления';
-      }, 3000);
-    }
-  });
 }
 
 function scrollToChecklistItem(id) {
