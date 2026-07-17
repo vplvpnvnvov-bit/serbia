@@ -1792,33 +1792,62 @@ html, body {
 .map-price-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
+  gap: 3px;
+  padding: 2px 5px;
+  padding-left: 7px;
   background: #ffffff;
   border: 1.5px solid #1a237e;
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: #1a237e;
   pointer-events: none;
   transition: transform 0.2s ease, background-color 0.2s;
+  position: relative;
+}
+.map-price-badge::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 8px 8px 0 0;
+  border-color: #1a237e transparent transparent transparent;
+}
+.map-price-badge::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 6px 6px 0 0;
+  border-color: #fff transparent transparent transparent;
 }
 .badge-status-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 .badge-price {
-  letter-spacing: -0.2px;
+  letter-spacing: -0.5px;
 }
 body.dark-theme .map-price-badge {
   background: #1e1e1e;
   border-color: #fbc02d;
   color: #fbc02d;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+body.dark-theme .map-price-badge::before {
+  border-color: #fbc02d transparent transparent transparent;
+}
+body.dark-theme .map-price-badge::after {
+  border-color: #1e1e1e transparent transparent transparent;
 }
 .map-price-badge.active {
   transform: scale(1.1);
