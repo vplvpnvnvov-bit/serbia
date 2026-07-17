@@ -1,4 +1,4 @@
-const CACHE_NAME = 'relocation-v6.6.13-29e1159';
+const CACHE_NAME = 'relocation-v6.6.14-a6d6834';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js', './sync.js',
   './manifest.json', './icon.svg',

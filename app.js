@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.13",
-  BUILD: "29e1159",
-  CACHE_NAME: "relocation-v6.6.13-29e1159"
+  VERSION: "6.6.14",
+  BUILD: "a6d6834",
+  CACHE_NAME: "relocation-v6.6.14-a6d6834"
 };
 
 let arrowMarker = null;
@@ -2468,12 +2468,25 @@ function renderSchema() {
   _schemaItems = items;
   _schemaNodes = nodes;
 
-  // Parchment background
-  ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, CH);
-  // Aged edges
+  // Zonal terrain background
+  const ruGrad = ctx.createLinearGradient(0, 0, 0, bFY);
+  ruGrad.addColorStop(0, '#dce5ed');
+  ruGrad.addColorStop(0.7, '#e8ecdf');
+  ruGrad.addColorStop(1, '#f0eddc');
+  ctx.fillStyle = ruGrad;
+  ctx.fillRect(0, 0, CW, bFY);
+
+  const srGrad = ctx.createLinearGradient(0, bFY, 0, CH);
+  srGrad.addColorStop(0, '#f2efda');
+  srGrad.addColorStop(0.3, '#e8e4c8');
+  srGrad.addColorStop(1, '#d9d0a8');
+  ctx.fillStyle = srGrad;
+  ctx.fillRect(0, bFY, CW, CH - bFY);
+
+  // Parchment overlay (aged edges)
   for (let i = 0; i < 200; i++) {
     const rx = Math.random() * CW, ry = Math.random() * CH;
-    ctx.fillStyle = 'rgba(180,140,80,' + (0.03 + Math.random() * 0.05) + ')';
+    ctx.fillStyle = 'rgba(180,140,80,' + (0.02 + Math.random() * 0.04) + ')';
     ctx.fillRect(rx, ry, 2 + Math.random() * 4, 2 + Math.random() * 4);
   }
   // Burnt border
@@ -2492,91 +2505,96 @@ function renderSchema() {
     const rnd = () => { rngSeed = (rngSeed * 16807) % 2147483647; return (rngSeed - 1) / 2147483646; };
     const rint = (a, b) => Math.floor(rnd() * (b - a + 1)) + a;
     const dec = [];
-    const bY = 80 + 0.53 * (trailH - 160); // boundary Y
 
-    // ── Russia zone helpers ──
-    const ruY = (t) => t * bY;
     const safeX = (y, margin, range) => {
       const tx = trailXAt(y);
       const side = rnd() > 0.5 ? -1 : 1;
       const off = margin + rnd() * range;
       return Math.max(10, Math.min(CW - 10, tx + side * off));
     };
-    const ruX = () => 50 + rnd() * (CW - 100);
 
-    // Russian mountains — more in north, fewer south
+    // Zone helpers: Russia (0 .. bFY), Serbia (bFY .. CH)
+    const ruTop = 20, ruBot = bFY;
+    const srTop = bFY, srBot = CH - 20;
+
+    // ── RUSSIA: Far north (taiga, snow, spruce) ──
+    for (let i = 0; i < 16; i++) {
+      dec.push({ t:'spruce', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.35, 15, CW * 0.3), y:ruTop + rnd() * (ruBot - ruTop) * 0.35 });
+    }
+    // Spruce — spread across Russia
     for (let i = 0; i < 8; i++) {
-      dec.push({ t:'mt_ru', x:ruX(), y:ruY(0.03+rnd()*0.85) });
+      dec.push({ t:'spruce', x:safeX(ruTop + rnd() * (ruBot - ruTop), 20, CW * 0.25), y:ruTop + rnd() * (ruBot - ruTop) * 0.8 });
     }
 
-    // Spruce (north 10-55% of Russia zone)
+    // Mountains (Russia only, denser in north)
+    for (let i = 0; i < 10; i++) {
+      dec.push({ t:'mt_ru', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.7, 30, CW * 0.25), y:ruTop + rnd() * (ruBot - ruTop) * 0.7 });
+    }
+
+    // Birch (southern Russia)
     for (let i = 0; i < 14; i++) {
-      dec.push({ t:'spruce', x:ruX(), y:ruY(0.05+rnd()*0.5) });
-    }
-    // Birch (south 50-100% of Russia zone)
-    for (let i = 0; i < 12; i++) {
-      dec.push({ t:'birch', x:ruX(), y:ruY(0.5+rnd()*0.49) });
+      dec.push({ t:'birch', x:safeX(ruTop + (ruBot - ruTop) * 0.4 + rnd() * (ruBot - ruTop) * 0.59, 20, CW * 0.3), y:ruTop + (ruBot - ruTop) * 0.4 + rnd() * (ruBot - ruTop) * 0.59 });
     }
 
+    // Snow patches (far north Russia)
+    for (let i = 0; i < 5; i++) {
+      dec.push({ t:'snow', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.25, 10, CW * 0.35), y:ruTop + rnd() * (ruBot - ruTop) * 0.25, r:rint(8, 20) });
+    }
 
-    // Lakes Russia
+    // Lakes Russia (spread across)
     const lakes = [];
-    for (let i = 0; i < 3; i++) {
-      const lx = ruX(), ly = ruY(0.1+rnd()*0.8);
-      dec.push({ t:'lake', x:lx, y:ly, r:rint(3,6) });
+    for (let i = 0; i < 4; i++) {
+      const lx = safeX(ruTop + rnd() * (ruBot - ruTop), 25, CW * 0.3), ly = ruTop + rnd() * (ruBot - ruTop);
+      dec.push({ t:'lake', x:lx, y:ly, r:rint(3, 6) });
       lakes.push({ x:lx, y:ly });
     }
 
     // Russian fauna
-    dec.push({ t:'bear_track', x:ruX(), y:ruY(0.05+rnd()*0.3) });
-    dec.push({ t:'bear_track', x:ruX(), y:ruY(0.1+rnd()*0.4) });
-    dec.push({ t:'elk', x:ruX(), y:ruY(0.3+rnd()*0.4) });
+    dec.push({ t:'bear_track', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.3, 30, CW * 0.2), y:ruTop + rnd() * (ruBot - ruTop) * 0.3 });
+    dec.push({ t:'bear_track', x:safeX(ruTop + rnd() * (ruBot - ruTop) * 0.5, 25, CW * 0.25), y:ruTop + rnd() * (ruBot - ruTop) * 0.5 });
+    dec.push({ t:'elk', x:safeX(ruTop + (ruBot - ruTop) * 0.4 + rnd() * (ruBot - ruTop) * 0.3, 30, CW * 0.2), y:ruTop + (ruBot - ruTop) * 0.4 + rnd() * (ruBot - ruTop) * 0.3 });
     lakes.sort((a, b) => b.y - a.y).slice(0, 2).forEach(l => dec.push({ t:'swan', x:l.x, y:l.y }));
 
-    // ── Serbia zone helpers ──
-    const srY = (t) => bY + 20 + t * (CH - bY - 40);
-    const srX = () => 50 + rnd() * (CW - 100);
-
-    // Serbian hills (green)
-    for (let i = 0; i < 6; i++) {
-      dec.push({ t:'hill_sr', x:srX(), y:srY(0.02+rnd()*0.5), w:rint(12,28), h:rint(8,16) });
+    // ── SERBIA: Hills, forests, city ──
+    // Hills (north and central Serbia)
+    for (let i = 0; i < 10; i++) {
+      dec.push({ t:'hill_sr', x:safeX(srTop + rnd() * (srBot - srTop) * 0.7, 20, CW * 0.3), y:srTop + rnd() * (srBot - srTop) * 0.7, w:rint(12, 28), h:rint(8, 16) });
     }
 
-    // Oak (north Serbia, 0-35%)
+    // Oak (north Serbia)
     for (let i = 0; i < 8; i++) {
-      dec.push({ t:'oak', x:srX(), y:srY(0.02+rnd()*0.33) });
+      dec.push({ t:'oak', x:safeX(srTop + rnd() * (srBot - srTop) * 0.35, 20, CW * 0.3), y:srTop + rnd() * (srBot - srTop) * 0.35 });
     }
-    // Linden (mid Serbia, 20-60%)
-    for (let i = 0; i < 6; i++) {
-      dec.push({ t:'linden', x:srX(), y:srY(0.2+rnd()*0.4) });
+    // Linden (mid Serbia)
+    for (let i = 0; i < 8; i++) {
+      dec.push({ t:'linden', x:safeX(srTop + (srBot - srTop) * 0.2 + rnd() * (srBot - srTop) * 0.5, 18, CW * 0.3), y:srTop + (srBot - srTop) * 0.2 + rnd() * (srBot - srTop) * 0.5 });
     }
-
 
     // Lakes Serbia
     for (let i = 0; i < 2; i++) {
-      dec.push({ t:'lake', x:srX(), y:srY(0.05+rnd()*0.8), r:rint(2,5) });
+      dec.push({ t:'lake', x:safeX(srTop + rnd() * (srBot - srTop) * 0.6, 25, CW * 0.25), y:srTop + rnd() * (srBot - srTop) * 0.6, r:rint(2, 5) });
     }
 
     // Serbian fauna
-    dec.push({ t:'eagle', x:srX(), y:srY(0.3+rnd()*0.3) });
-    dec.push({ t:'pigeon', x:srX(), y:srY(0.5+rnd()*0.35) });
-    dec.push({ t:'pigeon', x:srX(), y:srY(0.6+rnd()*0.3) });
+    dec.push({ t:'eagle', x:safeX(srTop + (srBot - srTop) * 0.3 + rnd() * (srBot - srTop) * 0.3, 25, CW * 0.25), y:srTop + (srBot - srTop) * 0.3 + rnd() * (srBot - srTop) * 0.3 });
+    dec.push({ t:'pigeon', x:safeX(srTop + (srBot - srTop) * 0.5 + rnd() * (srBot - srTop) * 0.35, 20, CW * 0.3), y:srTop + (srBot - srTop) * 0.5 + rnd() * (srBot - srTop) * 0.35 });
+    dec.push({ t:'pigeon', x:safeX(srTop + (srBot - srTop) * 0.6 + rnd() * (srBot - srTop) * 0.3, 20, CW * 0.3), y:srTop + (srBot - srTop) * 0.6 + rnd() * (srBot - srTop) * 0.3 });
 
     // Serbian buildings
-    dec.push({ t:'fortress', x:srX(), y:srY(0.15+rnd()*0.3) });
-    // City spires near the end (south)
-    for (let i = 0; i < 3; i++) {
-      dec.push({ t:'spire', x:srX(), y:srY(0.65+rnd()*0.3), h:rint(6,10) });
+    dec.push({ t:'fortress', x:safeX(srTop + (srBot - srTop) * 0.1 + rnd() * (srBot - srTop) * 0.3, 30, CW * 0.2), y:srTop + (srBot - srTop) * 0.1 + rnd() * (srBot - srTop) * 0.3 });
+    // City spires (south Serbia — urban)
+    for (let i = 0; i < 5; i++) {
+      dec.push({ t:'spire', x:safeX(srTop + (srBot - srTop) * 0.6 + rnd() * (srBot - srTop) * 0.38, 18, CW * 0.35), y:srTop + (srBot - srTop) * 0.6 + rnd() * (srBot - srTop) * 0.38, h:rint(6, 12) });
     }
 
-    // ── Clouds (all over, denser in transition) ──
+    // ── Clouds (all over, denser in transition near boundary) ──
     for (let i = 0; i < 25; i++) {
       const zoneR = rnd();
       let cy;
-      if (zoneR < 0.15) cy = bY - 40 + rnd() * 80; // dense transition
-      else if (zoneR < 0.55) cy = 20 + rnd() * (bY - 60); // Russia
-      else cy = bY + 20 + rnd() * (CH - bY - 60); // Serbia
-      dec.push({ t:'cloud', x:15+rnd()*(CW-30), y:cy, isRu: cy < bY, shape: rint(0,2) });
+      if (zoneR < 0.15) cy = bFY - 60 + rnd() * 120; // dense transition
+      else if (zoneR < 0.5) cy = ruTop + rnd() * (bFY - ruTop - 40); // Russia
+      else cy = bFY + 40 + rnd() * (srBot - bFY - 40); // Serbia
+      dec.push({ t:'cloud', x:15 + rnd() * (CW - 30), y:cy, isRu: cy < bFY, shape:rint(0, 2) });
     }
 
     // ── Boundary line (wavy state border at flight level) ──
@@ -2592,7 +2610,7 @@ function renderSchema() {
 
     // Push objects away from the trail
     dec.forEach(d => {
-      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake') return;
+      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow') return;
       const margin = d.t === 'mt_ru' ? 35 : 22;
       const tx = trailXAt(d.y);
       const dist = d.x - tx;
@@ -2867,6 +2885,11 @@ function renderSchema() {
       if (d.t === 'mt_ru') {
         ctx.font = '70px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillStyle = '#000'; ctx.fillText('🏔', d.x, d.y);
+      }
+      else if (d.t === 'snow') {
+        ctx.font = (d.r || 16) + 'px serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('❄️', d.x, d.y);
       }
       else if (d.t === 'spruce') {
         ctx.font = '28px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
