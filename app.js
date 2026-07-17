@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.10.1",
-  BUILD: "3b959b0",
-  CACHE_NAME: "relocation-v6.10.1-3b959b0"
+  VERSION: "6.10.2",
+  BUILD: "0522d40",
+  CACHE_NAME: "relocation-v6.10.2-0522d40"
 };
 
 let arrowMarker = null;
@@ -2597,6 +2597,23 @@ function renderSchema() {
       bPts.push({x:bx, y:by});
     }
     dec.push({ t:'boundary', pts:bPts, flagY:bFY });
+
+    // Push away from trail — shift toward nearest edge
+    dec.forEach(d => {
+      if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'lake' || d.t === 'snow' || d.t === 'rain' || d.t === 'butterfly') return;
+      const tx = trailXAt(d.y);
+      const margin = d.t === 'mt_ru' || d.t === 'peak' ? 50 : 35;
+      const dist = d.x - tx;
+      const absDist = Math.abs(dist);
+      if (absDist < margin) {
+        const toLeft = d.x;
+        const toRight = CW - d.x;
+        // Push toward the nearer edge, but at least to margin distance
+        d.x = toLeft < toRight
+          ? Math.max(10, tx - margin - rnd() * (CW * 0.2))
+          : Math.min(CW - 10, tx + margin + rnd() * (CW * 0.2));
+      }
+    });
 
     _schemaDecor = dec;
     _schemaDecor._cw = CW;
