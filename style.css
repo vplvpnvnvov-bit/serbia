@@ -150,11 +150,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: var(--panel-bg, #fff);
   border-radius: 10px;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color, #1d1d1f);
   border: 1px solid var(--border-color, #d2d2d7);
 }
 
