@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.12.3",
-  BUILD: "2dbb444",
-  CACHE_NAME: "relocation-v6.12.3-2dbb444"
+  VERSION: "6.12.4",
+  BUILD: "07597de",
+  CACHE_NAME: "relocation-v6.12.4-07597de"
 };
 
 let arrowMarker = null;
@@ -2525,7 +2525,10 @@ function renderSchema() {
     for (let i = 0; i < 3; i++)  dec.push({ t:'spruce', x:randX(), y:ruZ(0.08, 0.35) });
     for (let i = 0; i < 6; i++)  dec.push({ t:'mt_ru', x:randX(), y:ruZ(0, 0.28), sz:rsz(70, 15) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'peak', x:randX(), y:ruZ(0, 0.2), sz:rsz(60, 10) });
-    for (let i = 0; i < 5; i++)  dec.push({ t:'snow', x:randX(), y:ruZ(0, 0.25), r:rint(8, 20) });
+    for (let i = 0; i < 6; i++)  dec.push({ t:'snow', x:randX(), y:ruZ(0, 0.25), r:rint(8, 20) });
+    // Snow→rain transition 25-35%
+    for (let i = 0; i < 3; i++)  dec.push({ t:'snow', x:randX(), y:ruZ(0.25, 0.35), r:rint(6, 14) });
+    for (let i = 0; i < 3; i++)  dec.push({ t:'rain', x:randX(), y:ruZ(0.25, 0.35) });
     for (let i = 0; i < 5; i++)  dec.push({ t:'boulder', x:randX(), y:ruZ(0, 0.32), sz:rsz(24, 6) });
     for (let i = 0; i < 2; i++)  dec.push({ t:'bear_track', x:randX(), y:ruZ(0, 0.25) });
     dec.push({ t:'elk', x:randX(), y:ruZ(0.02, 0.22) });
@@ -2533,7 +2536,8 @@ function renderSchema() {
     // Mixed forest centre (18–60%): birch, lakes, huts, fox, mushrooms
     for (let i = 0; i < 12; i++) dec.push({ t:'birch', x:randX(), y:ruZ(0.18, 0.60), sz:rsz(28, 6) });
     for (let i = 0; i < 5; i++)  dec.push({ t:'mushroom', x:randX(), y:ruZ(0.20, 0.55), sz:rsz(16, 4) });
-    for (let i = 0; i < 5; i++)  dec.push({ t:'rain', x:randX(), y:ruZ(0.18, 0.60) });
+    // Rain: mid Russia 35-55%
+    for (let i = 0; i < 6; i++)  dec.push({ t:'rain', x:randX(), y:ruZ(0.35, 0.55) });
     for (let i = 0; i < 3; i++)  dec.push({ t:'hut', x:randX(), y:ruZ(0.22, 0.58) });
     for (let i = 0; i < 3; i++)  dec.push({ t:'butterfly', x:randX(), y:ruZ(0.18, 0.60) });
     dec.push({ t:'fox', x:randX(), y:ruZ(0.22, 0.55) });
