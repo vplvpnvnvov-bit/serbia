@@ -926,6 +926,16 @@ html, body {
   padding: 12px 0;
   border-bottom: 1px solid #eee;
 }
+.links li.links-cat {
+  padding: 16px 0 6px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a237e;
+}
+.links li.links-cat:first-child {
+  padding-top: 0;
+}
 .links a {
   color: #1565c0;
   text-decoration: none;

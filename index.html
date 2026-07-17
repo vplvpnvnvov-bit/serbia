@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.20.5-2036f56" />
+<link rel="stylesheet" href="style.css?v=6.20.6-14f03cd" />
 </head>
 <body>
 
@@ -177,11 +177,49 @@
       <div class="tab-content">
         <h2>🔗 Полезные ссылки</h2>
         <ul class="links">
-          <li><a href="https://cityexpert.rs" target="_blank">CityExpert — аренда жилья</a></li>
-          <li><a href="https://www.halooglasi.com" target="_blank">HaloOglasi — объявления</a></li>
-          <li><a href="https://metar.rs/kirije-u-beogradu/" target="_blank">Metar.rs — цены по районам</a></li>
-          <li><a href="https://v-serbii.com" target="_blank">Сербия для своих — гид</a></li>
+          <li class="links-cat">🇷🇺 Россия — госуслуги</li>
+          <li><a href="https://www.gosuslugi.ru/600101/1/form" target="_blank">Госуслуги — загранпаспорт</a></li>
+          <li><a href="https://www.gosuslugi.ru/600103/1/form" target="_blank">Госуслуги — справка о несудимости</a></li>
+          <li><a href="https://мвд.рф/mvd/structure1/Glavnie_upravlenija/guvm" target="_blank">ГУВМ МВД — штамп гражданства</a></li>
+          <li><a href="https://www.mid.ru/ru/foreign_policy/international_contracts/international_contracts/2_contract/53462/" target="_blank">МИД РФ — договор с Сербией (1962)</a></li>
+          <li><a href="https://www.nalog.gov.ru" target="_blank">ФНС РФ — тарифы госпошлин</a></li>
+          <li><a href="https://notariat.ru" target="_blank">Федеральная нотариальная палата РФ</a></li>
+          <li><a href="https://ps.fsb.ru" target="_blank">Погранслужба ФСБ — выезд детей</a></li>
+
+          <li class="links-cat">🇷🇸 Сербия — госорганы</li>
           <li><a href="https://euprava.gov.rs" target="_blank">eUprava — госуслуги Сербии</a></li>
+          <li><a href="https://mup.gov.rs" target="_blank">МВД Сербии (МУП) — ВНЖ, права</a></li>
+          <li><a href="https://etourist.gov.rs" target="_blank">eTurista — регистрация (белый картон)</a></li>
+          <li><a href="https://azk.gov.rs/" target="_blank">AZK — нострификация дипломов</a></li>
+          <li><a href="https://www.apr.gov.rs" target="_blank">APR — регистрация ИП</a></li>
+          <li><a href="https://www.purs.gov.rs" target="_blank">Poreska uprava — налоги ИП</a></li>
+          <li><a href="https://www.rfzo.rs" target="_blank">RFZO — госмедстраховка</a></li>
+          <li><a href="https://www.nbs.rs" target="_blank">Народный банк Сербии</a></li>
+          <li><a href="https://www.mpravde.gov.rs" target="_blank">Минюст Сербии — судебные переводчики</a></li>
+          <li><a href="https://aks.org.rs" target="_blank">Адвокатская палата Сербии</a></li>
+
+          <li class="links-cat">🏦 Банки и страховые</li>
+          <li><a href="https://www.altabank.rs" target="_blank">Alta Bank — открытие счёта</a></li>
+          <li><a href="https://www.dunav.com" target="_blank">Dunav Osiguranje — страховка для ВНЖ</a></li>
+
+          <li class="links-cat">🏠 Жильё</li>
+          <li><a href="https://cityexpert.rs" target="_blank">CityExpert — аренда от собственников</a></li>
+          <li><a href="https://www.halooglasi.com/nekretnine/izdavanje-stanova/beograd" target="_blank">HaloOglasi — аренда квартир</a></li>
+          <li><a href="https://www.infostan.rs" target="_blank">Infostan — коммунальные счета</a></li>
+
+          <li class="links-cat">✈️ Переезд</li>
+          <li><a href="https://www.airserbia.com" target="_blank">Air Serbia — билеты Москва—Белград</a></li>
+          <li><a href="https://www.airbnb.com" target="_blank">Airbnb — жильё на 28+ дней</a></li>
+          <li><a href="https://www.carina.rs" target="_blank">Таможня Сербии — ввоз лекарств</a></li>
+
+          <li class="links-cat">🏥 Медицина</li>
+          <li><a href="https://www.medigroup.rs" target="_blank">MediGroup — частные клиники</a></li>
+
+          <li class="links-cat">📱 Связь</li>
+          <li><a href="https://www.yettel.rs" target="_blank">Yettel — мобильный оператор</a></li>
+
+          <li class="links-cat">📚 Образование</li>
+          <li><a href="https://www.beograd.rs" target="_blank">Секретариат образования Белграда</a></li>
         </ul>
       </div>
     </section>
@@ -302,9 +340,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.20.5-2036f56"></script>
-<script src="sync.js?v=6.20.5-2036f56"></script>
-<script src="app.js?v=6.20.5-2036f56"></script>
+<script src="data.js?v=6.20.6-14f03cd"></script>
+<script src="sync.js?v=6.20.6-14f03cd"></script>
+<script src="app.js?v=6.20.6-14f03cd"></script>
 
 </body>
 </html>
