@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.6.0-7ccc121" />
+<link rel="stylesheet" href="style.css?v=6.6.1-39697a5" />
 </head>
 <body>
 
@@ -60,11 +60,11 @@
 
     <section id="tab-schema" class="tab">
       <div class="tab-content" style="overflow:auto">
-        <h2>🗺️ Карта релокации: путь к ВНЖ <button id="btn-schema-edit" class="schema-edit-btn" title="Редактировать позиции второстепенных заданий">✏️</button></h2>
-        <div id="schema-toolbar" class="schema-toolbar hidden">
-          <span class="schema-toolbar-label">✏️ Режим редактирования</span>
-          <button id="btn-schema-export" class="schema-tool-btn">📋 Экспорт</button>
-          <button id="btn-schema-exit" class="schema-tool-btn schema-tool-exit">✖️ Выйти</button>
+        <h2>🗺️ Карта релокации: путь к ВНЖ</h2>
+        <div id="schema-toolbar" class="schema-toolbar">
+          <button id="btn-schema-edit" class="schema-tool-btn" title="Редактировать позиции второстепенных заданий">✏️ Редактировать</button>
+          <button id="btn-schema-export" class="schema-tool-btn hidden" title="Экспорт координат">📋 Экспорт</button>
+          <button id="btn-schema-exit" class="schema-tool-btn schema-tool-exit hidden" title="Выйти из редактирования">✖️ Выйти</button>
         </div>
         <canvas id="schema-canvas"></canvas>
         <div id="legend-title">🖼️ Легенда</div>
@@ -276,9 +276,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.6.0-7ccc121"></script>
-<script src="sync.js?v=6.6.0-7ccc121"></script>
-<script src="app.js?v=6.6.0-7ccc121"></script>
+<script src="data.js?v=6.6.1-39697a5"></script>
+<script src="sync.js?v=6.6.1-39697a5"></script>
+<script src="app.js?v=6.6.1-39697a5"></script>
 
 </body>
 </html>

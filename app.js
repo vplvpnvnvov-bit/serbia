@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.0",
-  BUILD: "7ccc121",
-  CACHE_NAME: "relocation-v6.6.0-7ccc121"
+  VERSION: "6.6.1",
+  BUILD: "39697a5",
+  CACHE_NAME: "relocation-v6.6.1-39697a5"
 };
 
 let arrowMarker = null;
@@ -3290,7 +3290,9 @@ function exportManualPositions() {
 
 document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
   _editMode = true;
-  document.getElementById('schema-toolbar')?.classList.remove('hidden');
+  document.getElementById('btn-schema-edit').classList.add('hidden');
+  document.getElementById('btn-schema-export').classList.remove('hidden');
+  document.getElementById('btn-schema-exit').classList.remove('hidden');
   schemaCanvas.style.touchAction = 'none';
   _schemaDecor = null;
   renderSchema();
@@ -3298,7 +3300,9 @@ document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
 
 document.getElementById('btn-schema-exit')?.addEventListener('click', () => {
   _editMode = false;
-  document.getElementById('schema-toolbar')?.classList.add('hidden');
+  document.getElementById('btn-schema-edit').classList.remove('hidden');
+  document.getElementById('btn-schema-export').classList.add('hidden');
+  document.getElementById('btn-schema-exit').classList.add('hidden');
   schemaCanvas.style.touchAction = '';
   _schemaDecor = null;
   renderSchema();
