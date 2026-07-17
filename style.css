@@ -1723,21 +1723,21 @@ html, body {
 /* POI Reestr */
 .poi-reestr {
   position: absolute;
-  top: 52px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 12px;
+  right: 12px;
   z-index: 1000;
   background: rgba(255,255,255,0.97);
   border-radius: 10px;
   border: 1px solid rgba(0,0,0,0.1);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  max-width: 340px;
-  width: calc(100% - 16px);
+  max-width: 300px;
+  width: auto;
+  min-width: 200px;
   overflow: hidden;
 }
 .poi-reestr-toggle {
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 6px 10px;
+  font-size: 11px;
   font-weight: 600;
   color: #1a237e;
   cursor: pointer;
@@ -1751,13 +1751,13 @@ html, body {
 }
 .poi-reestr-toggle:hover { background: #eee; }
 .poi-reestr-list {
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .poi-reestr-list.hidden { display: none; }
 .poi-reestr-item {
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 5px 10px;
+  font-size: 11px;
   color: #333;
   cursor: pointer;
   border-bottom: 1px solid #f0f0f0;
