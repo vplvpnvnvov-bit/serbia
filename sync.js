@@ -19,6 +19,7 @@ let userId = null;
 let syncCode = null;
 let syncPending = false;
 let syncLoading = false;
+let _unsubSnapshot = null; // real-time listener
 
 window.registerUser = async function(email, password) {
   const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -48,6 +49,7 @@ window.generateNewSyncCode = function() {
   localStorage.setItem('sync-code', code);
   syncCode = code;
   document.getElementById('display-sync-code').textContent = code;
+  setupSnapshotListener();
   return code;
 };
 
@@ -62,9 +64,11 @@ firebase.auth().onAuthStateChanged(async user => {
     }
     document.getElementById('display-sync-code').textContent = syncCode;
     updateCloudStatus();
+    setupSnapshotListener();
     window.dispatchEvent(new CustomEvent('auth-ready'));
   } else {
     userId = null;
+    if (_unsubSnapshot) { _unsubSnapshot(); _unsubSnapshot = null; }
     window.dispatchEvent(new CustomEvent('auth-logout'));
   }
 });
@@ -88,6 +92,33 @@ function updateSyncStatusUI() {
       syncTimeStatus.className = 'status-none';
     }
   }
+}
+
+function setupSnapshotListener() {
+  if (_unsubSnapshot) { _unsubSnapshot(); _unsubSnapshot = null; }
+  if (!syncCode || !userId) return;
+
+  _unsubSnapshot = db.collection('users').doc(syncCode).onSnapshot(snapshot => {
+    if (!snapshot.exists) return;
+    if (snapshot.metadata.hasPendingWrites) return; // our own write, ignore
+
+    const data = snapshot.data();
+    if (!data || !data.lastUpdated) return;
+
+    const serverTs = data.lastUpdated.toMillis ? data.lastUpdated.toMillis() : data.lastUpdated;
+    const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
+
+    if (serverTs > localTs && data.plan) {
+      localStorage.setItem('plan-state', JSON.stringify(data.plan));
+      localStorage.setItem('plan-state-last-updated', String(serverTs));
+      localStorage.setItem('last-sync-time', new Date().toLocaleString());
+      updateSyncStatusUI();
+      updateCloudStatus();
+      window.dispatchEvent(new CustomEvent('sync-loaded'));
+    }
+  }, err => {
+    if (err.code !== 'permission-denied') console.warn('Snapshot error:', err.message);
+  });
 }
 
 async function updateCloudStatus() {
@@ -276,6 +307,7 @@ window.changeSyncCode = function() {
     syncCode = c;
     document.getElementById('display-sync-code').textContent = c;
     updateCloudStatus();
+    setupSnapshotListener();
     window.loadFromCloud().catch(() => {});
   }
 };
