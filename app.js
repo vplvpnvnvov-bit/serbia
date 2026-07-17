@@ -1,12 +1,14 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.5",
-  BUILD: "2211f9d",
-  CACHE_NAME: "relocation-v6.6.5-2211f9d"
+  VERSION: "6.6.6",
+  BUILD: "f729e3a",
+  CACHE_NAME: "relocation-v6.6.6-f729e3a"
 };
 
 let arrowMarker = null;
 let _schemaDecor = null;
 let _schemaHitAreas = null;
+let _schemaItems = null;
+let _schemaNodes = null;
 let _schemaAnimating = false;
 let planListenerAdded = false;
 
@@ -2463,6 +2465,9 @@ function renderSchema() {
 
   const bFY = (nodes[12].y + nodes[13].y) / 2;
 
+  _schemaItems = items;
+  _schemaNodes = nodes;
+
   // Parchment background
   ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, CH);
   // Aged edges
@@ -2804,10 +2809,10 @@ function renderSchema() {
 
       // Use manual position override if set
       if (_manualPositions[child.id]) {
-        sx = _manualPositions[child.id].x;
-        sy = _manualPositions[child.id].y;
+        sx = pNode.x + _manualPositions[child.id].dx;
+        sy = pNode.y + _manualPositions[child.id].dy;
       } else if (_editMode) {
-        _manualPositions[child.id] = { x: sx, y: sy };
+        _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y };
       }
 
       const done = (state.tasks?.[child.id] || {}).checked;
@@ -3277,31 +3282,31 @@ let _manualPositions = {};
 let _dragTarget = null;
 let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
-const DEFAULT_MANUAL_POSITIONS = {
-  pharm: { x: 271, y: 963 },
-  med_vyps: { x: 228, y: 629 },
-  dentist: { x: 53, y: 626 },
-  power: { x: 178, y: 725 },
-  child_consent: { x: 60, y: 906 },
-  diplomas: { x: 300, y: 775 },
-  driving_licenses: { x: 246, y: 877 },
-  apost_nocrim_h: { x: 328, y: 439 },
-  apost_nocrim_w: { x: 290, y: 526 },
-  ticket_buy: { x: 335, y: 1089 },
-  airbnb_book: { x: 153, y: 1105 },
+const DEFAULT_MANUAL_OFFSETS = {
+  pharm:             { dx: 85,  dy: -33 },
+  med_vyps:          { dx: 165, dy: -106 },
+  dentist:           { dx: -10, dy: -109 },
+  power:             { dx: 115, dy: -10 },
+  child_consent:     { dx: -44, dy: 41 },
+  diplomas:          { dx: 196, dy: -90 },
+  driving_licenses:  { dx: 142, dy: 12 },
+  apost_nocrim_h:    { dx: 104, dy: 32 },
+  apost_nocrim_w:    { dx: 105, dy: 53 },
+  ticket_buy:        { dx: 66,  dy: -104 },
+  airbnb_book:       { dx: -116,dy: -88 },
 };
 
 try {
-  const saved = JSON.parse(localStorage.getItem('schema-manual-positions') || 'null');
-  _manualPositions = saved || DEFAULT_MANUAL_POSITIONS;
-} catch { _manualPositions = DEFAULT_MANUAL_POSITIONS; }
+  const saved = JSON.parse(localStorage.getItem('schema-manual-offsets') || 'null');
+  _manualPositions = saved || DEFAULT_MANUAL_OFFSETS;
+} catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
 
 function exportManualPositions() {
-  const lines = ['// Manual positions — paste into SIDE_TASKS as overrides:',
-    'const MANUAL_POSITIONS = {'];
+  const lines = ['// Offsets from parent node (dx, dy):',
+    'const MANUAL_OFFSETS = {'];
   Object.keys(_manualPositions).forEach(id => {
     const p = _manualPositions[id];
-    lines.push(`  ${id}: { x: ${Math.round(p.x)}, y: ${Math.round(p.y)} },`);
+    lines.push(`  ${id}: { dx: ${Math.round(p.dx)}, dy: ${Math.round(p.dy)} },`);
   });
   lines.push('};');
   const text = lines.join('\n');
@@ -3344,10 +3349,20 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  const PARENT_IDS = {};
+  SIDE_TASKS.forEach(st => { PARENT_IDS[st.id] = st.parentId; });
+
   function findChildAt(mx, my) {
     for (const id of Object.keys(_manualPositions)) {
-      const p = _manualPositions[id];
-      if (mx >= p.x - 40 && mx <= p.x + 40 && my >= p.y - 30 && my <= p.y + 20) return id;
+      const off = _manualPositions[id];
+      if (!off || off.dx === undefined) continue;
+      const pid = PARENT_IDS[id];
+      if (!pid) continue;
+      const idx = _schemaItems.findIndex(item => item.id === pid);
+      if (idx < 0) continue;
+      const nd = _schemaNodes[idx];
+      const sx = nd.x + off.dx, sy = nd.y + off.dy;
+      if (mx >= sx - 40 && mx <= sx + 40 && my >= sy - 30 && my <= sy + 20) return id;
     }
     return null;
   }
@@ -3360,8 +3375,8 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
       e.preventDefault();
       _dragTarget = id;
       _dragStartX = pos.x; _dragStartY = pos.y;
-      _dragOrigX = _manualPositions[id].x;
-      _dragOrigY = _manualPositions[id].y;
+      _dragOrigX = _manualPositions[id].dx;
+      _dragOrigY = _manualPositions[id].dy;
       schemaCanvas.setPointerCapture(e.pointerId);
     }
   });
@@ -3370,15 +3385,21 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     if (!_editMode || !_dragTarget) return;
     e.preventDefault();
     const pos = getCanvasPos(e);
-    _manualPositions[_dragTarget].x = _dragOrigX + pos.x - _dragStartX;
-    _manualPositions[_dragTarget].y = _dragOrigY + pos.y - _dragStartY;
+    const pid = PARENT_IDS[_dragTarget];
+    const idx = _schemaItems?.findIndex(item => item.id === pid) ?? -1;
+    if (idx < 0) return;
+    const nd = _schemaNodes[idx];
+    _manualPositions[_dragTarget] = {
+      dx: Math.round(_dragOrigX + pos.x - _dragStartX),
+      dy: Math.round(_dragOrigY + pos.y - _dragStartY),
+    };
     renderSchema();
   });
 
   schemaCanvas.addEventListener('pointerup', e => {
     if (!_editMode) return;
     if (_dragTarget) {
-      localStorage.setItem('schema-manual-positions', JSON.stringify(_manualPositions));
+      localStorage.setItem('schema-manual-offsets', JSON.stringify(_manualPositions));
       _dragTarget = null;
     }
     const pos = getCanvasPos(e);
