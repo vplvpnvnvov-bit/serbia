@@ -1734,6 +1734,8 @@ html, body {
   width: auto;
   min-width: 200px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column-reverse;
 }
 .poi-reestr-toggle {
   padding: 6px 10px;
@@ -1747,7 +1749,7 @@ html, body {
   align-items: center;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  border-radius: 10px 10px 0 0;
+  border-radius: 0;
 }
 .poi-reestr-toggle:hover { background: #eee; }
 .poi-reestr-list {
