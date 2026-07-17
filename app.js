@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.23.7",
-  BUILD: "4186602",
-  CACHE_NAME: "relocation-v6.23.7-4186602"
+  VERSION: "6.23.8",
+  BUILD: "06289fa",
+  CACHE_NAME: "relocation-v6.23.8-06289fa"
 };
 
 let arrowMarker = null;
@@ -471,6 +471,10 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
 // Urban toggle
 document.getElementById('urban-toggle')?.addEventListener('change', e => {
   updateUrbanFilter(e.target.checked);
+});
+
+document.getElementById('price-toggle')?.addEventListener('change', e => {
+  document.getElementById('legend').classList.toggle('hide-prices', e.target.checked);
 });
 
 let activeSubDistrictLayers = L.layerGroup().addTo(map);

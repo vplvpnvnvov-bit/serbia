@@ -2311,6 +2311,9 @@ body.dark-theme .carousel-caption {
   outline: none;
 }
 
+/* Price visibility toggle */
+.hide-prices .map-price-badge { display: none; }
+
 /* Schema edit mode */
 .schema-toolbar {
   display: flex;
