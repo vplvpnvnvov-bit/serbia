@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.13.2",
-  BUILD: "5767c0e",
-  CACHE_NAME: "relocation-v6.13.2-5767c0e"
+  VERSION: "6.13.3",
+  BUILD: "5fd41ee",
+  CACHE_NAME: "relocation-v6.13.3-5fd41ee"
 };
 
 let arrowMarker = null;
@@ -3420,7 +3420,12 @@ try {
 
 try {
   const saved = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null');
-  _landscapeOverrides = saved ? (saved.xr !== undefined ? saved : convertToLandscapeOverrides(saved)) : convertToLandscapeOverrides(LANDSCAPE_DEFAULTS);
+  if (saved && Object.keys(saved).length) {
+    const first = saved[Object.keys(saved)[0]];
+    _landscapeOverrides = first && first.xr !== undefined ? saved : convertToLandscapeOverrides(saved);
+  } else {
+    _landscapeOverrides = convertToLandscapeOverrides(LANDSCAPE_DEFAULTS);
+  }
 } catch { _landscapeOverrides = convertToLandscapeOverrides(LANDSCAPE_DEFAULTS); }
 
 function exportManualPositions() {
