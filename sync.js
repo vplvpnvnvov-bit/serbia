@@ -286,7 +286,7 @@ window.migrateLegacyData = migrateLegacyData;
 
 
 window.changeSyncCode = function() {
-  const raw = prompt('Введите код синхронизации с другого устройства:', syncCode || '');
+  const raw = prompt('Введите ключ компании:', syncCode || '');
   if (raw && raw.trim()) {
     const c = raw.trim();
     if (c.length < 6 || c.length > 18) {

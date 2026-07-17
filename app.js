@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.18.0",
-  BUILD: "eacf343",
-  CACHE_NAME: "relocation-v6.18.0-eacf343"
+  VERSION: "6.19.0",
+  BUILD: "1af2eea",
+  CACHE_NAME: "relocation-v6.19.0-1af2eea"
 };
 
 let arrowMarker = null;
@@ -2471,9 +2471,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-share-company')?.addEventListener('click', () => {
     const code = localStorage.getItem('sync-code') || '—';
     if (navigator.share) {
-      navigator.share({ title: 'Моя компания', text: 'Код моей компании: ' + code }).catch(() => {});
+      navigator.share({ title: 'Моя компания', text: 'Ключ моей компании: ' + code }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(code).then(() => alert('Код скопирован: ' + code)).catch(() => {});
+      navigator.clipboard.writeText(code).then(() => alert('Ключ скопирован: ' + code)).catch(() => {});
     }
   });
 });
