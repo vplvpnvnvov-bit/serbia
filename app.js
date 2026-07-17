@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.6.6",
-  BUILD: "f729e3a",
-  CACHE_NAME: "relocation-v6.6.6-f729e3a"
+  VERSION: "6.6.7",
+  BUILD: "ec2cf4a",
+  CACHE_NAME: "relocation-v6.6.7-ec2cf4a"
 };
 
 let arrowMarker = null;
@@ -3385,10 +3385,6 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     if (!_editMode || !_dragTarget) return;
     e.preventDefault();
     const pos = getCanvasPos(e);
-    const pid = PARENT_IDS[_dragTarget];
-    const idx = _schemaItems?.findIndex(item => item.id === pid) ?? -1;
-    if (idx < 0) return;
-    const nd = _schemaNodes[idx];
     _manualPositions[_dragTarget] = {
       dx: Math.round(_dragOrigX + pos.x - _dragStartX),
       dy: Math.round(_dragOrigY + pos.y - _dragStartY),
@@ -3396,17 +3392,11 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
     renderSchema();
   });
 
-  schemaCanvas.addEventListener('pointerup', e => {
+  schemaCanvas.addEventListener('pointerup', () => {
     if (!_editMode) return;
     if (_dragTarget) {
       localStorage.setItem('schema-manual-offsets', JSON.stringify(_manualPositions));
       _dragTarget = null;
-    }
-    const pos = getCanvasPos(e);
-    const id = findChildAt(pos.x, pos.y);
-    if (id) {
-      // Click on child in edit mode — show task info instead of navigating
-      schemaCanvas.style.cursor = 'grab';
     }
   });
 }
