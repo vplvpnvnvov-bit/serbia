@@ -2228,6 +2228,39 @@ body.dark-theme .carousel-caption {
   outline: none;
 }
 
+/* Schema edit mode */
+.schema-edit-btn {
+  font-size: 14px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 2px 8px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.schema-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #fff3e0;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.schema-toolbar.hidden { display: none; }
+.schema-toolbar-label { color: #e65100; font-weight: 600; }
+.schema-tool-btn {
+  padding: 4px 10px;
+  border: 1px solid #e65100;
+  border-radius: 5px;
+  background: #fff;
+  color: #e65100;
+  font-size: 11px;
+  cursor: pointer;
+}
+.schema-tool-exit { color: #999; border-color: #ccc; }
+
 /* Schema canvas */
 #schema-canvas {
   display: block;

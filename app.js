@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.4.0",
-  BUILD: "5eb6ac1",
-  CACHE_NAME: "relocation-v6.4.0-5eb6ac1"
+  VERSION: "6.5.0",
+  BUILD: "85933cb",
+  CACHE_NAME: "relocation-v6.5.0-85933cb"
 };
 
 let arrowMarker = null;
@@ -2805,6 +2805,14 @@ function renderSchema() {
         candidateBounds = { x: sx - approxW / 2, y: sy - signFootprint, w: approxW, h: signFootprint };
       }
 
+      // Use manual position override if set
+      if (_manualPositions[child.id]) {
+        sx = _manualPositions[child.id].x;
+        sy = _manualPositions[child.id].y;
+      } else if (_editMode) {
+        _manualPositions[child.id] = { x: sx, y: sy };
+      }
+
       const done = (state.tasks?.[child.id] || {}).checked;
       const prog = (state.tasks?.[child.id] || {}).progress;
 
@@ -2813,11 +2821,13 @@ function renderSchema() {
       const towardX = pNode.x - sx;
       const towardY = pNode.y - sy;
       const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
+      const cpx = -towardY / tpLen;
+      const cpy = towardX / tpLen;
       const curveStr = dist * 0.35;
-      const cp1x = sx + towardX * 0.35 + perpX * curveStr * child.side;
-      const cp1y = sy + towardY * 0.35 + perpY * curveStr * child.side;
-      const cp2x = pNode.x - towardX * 0.3 + perpX * curveStr * child.side;
-      const cp2y = pNode.y - towardY * 0.3 + perpY * curveStr * child.side;
+      const cp1x = sx + towardX * 0.35 + cpx * curveStr;
+      const cp1y = sy + towardY * 0.35 + cpy * curveStr;
+      const cp2x = pNode.x - towardX * 0.3 + cpx * curveStr;
+      const cp2y = pNode.y - towardY * 0.3 + cpy * curveStr;
 
       ctx.strokeStyle = done ? '#81c784' : '#bbb';
       ctx.lineWidth = done ? 3 : 2;
@@ -2830,6 +2840,20 @@ function renderSchema() {
 
       hitAreas.push({ id: child.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8 });
       placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
+
+      if (_editMode) {
+        _manualPositions[child.id] = { x: sx, y: sy };
+        // Drag handle
+        ctx.strokeStyle = '#ff6d00';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(sx, sy + 12, 10, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,109,0,0.3)';
+        ctx.beginPath(); ctx.arc(sx, sy + 12, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff6d00';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('↕', sx, sy + 12);
+      }
     });
   });
 
@@ -3072,7 +3096,7 @@ function renderSchema() {
       if (!document.getElementById('tab-schema')?.classList.contains('active')) {
         _schemaAnimating = false; return;
       }
-      if (ts - lastFrame >= 200) {
+      if (!_editMode && (ts - lastFrame >= 200)) {
         lastFrame = ts;
         renderSchema();
       }
@@ -3237,6 +3261,103 @@ if (schemaCanvas && !schemaCanvas.dataset.clickBound) {
 window.addEventListener('sync-loaded', () => {
   try { renderPlan(); } catch (e) { console.error(e); }
 });
+
+// === SCHEMA EDIT MODE ===
+let _editMode = false;
+let _manualPositions = {};
+let _dragTarget = null;
+let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
+
+try {
+  _manualPositions = JSON.parse(localStorage.getItem('schema-manual-positions') || '{}');
+} catch { _manualPositions = {}; }
+
+function exportManualPositions() {
+  const lines = ['// Manual positions — paste into SIDE_TASKS as overrides:',
+    'const MANUAL_POSITIONS = {'];
+  Object.keys(_manualPositions).forEach(id => {
+    const p = _manualPositions[id];
+    lines.push(`  ${id}: { x: ${Math.round(p.x)}, y: ${Math.round(p.y)} },`);
+  });
+  lines.push('};');
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Скопировано в буфер обмена!');
+  }).catch(() => {
+    prompt('Скопируйте вручную:', text);
+  });
+}
+
+document.getElementById('btn-schema-edit')?.addEventListener('click', () => {
+  _editMode = true;
+  document.getElementById('schema-toolbar')?.classList.remove('hidden');
+  _schemaDecor = null; // force full redraw with drag handles
+  renderSchema();
+});
+
+document.getElementById('btn-schema-exit')?.addEventListener('click', () => {
+  _editMode = false;
+  document.getElementById('schema-toolbar')?.classList.add('hidden');
+  _schemaDecor = null;
+  renderSchema();
+});
+
+document.getElementById('btn-schema-export')?.addEventListener('click', () => {
+  exportManualPositions();
+});
+
+if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
+  schemaCanvas.dataset.dragBound = '1';
+
+  function getCanvasPos(e) {
+    const rect = schemaCanvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function findChildAt(mx, my) {
+    for (const id of Object.keys(_manualPositions)) {
+      const p = _manualPositions[id];
+      if (mx >= p.x - 40 && mx <= p.x + 40 && my >= p.y - 30 && my <= p.y + 20) return id;
+    }
+    return null;
+  }
+
+  schemaCanvas.addEventListener('pointerdown', e => {
+    if (!_editMode) return;
+    const pos = getCanvasPos(e);
+    const id = findChildAt(pos.x, pos.y);
+    if (id) {
+      e.preventDefault();
+      _dragTarget = id;
+      _dragStartX = pos.x; _dragStartY = pos.y;
+      _dragOrigX = _manualPositions[id].x;
+      _dragOrigY = _manualPositions[id].y;
+      schemaCanvas.setPointerCapture(e.pointerId);
+    }
+  });
+
+  schemaCanvas.addEventListener('pointermove', e => {
+    if (!_editMode || !_dragTarget) return;
+    const pos = getCanvasPos(e);
+    _manualPositions[_dragTarget].x = _dragOrigX + pos.x - _dragStartX;
+    _manualPositions[_dragTarget].y = _dragOrigY + pos.y - _dragStartY;
+    renderSchema();
+  });
+
+  schemaCanvas.addEventListener('pointerup', e => {
+    if (!_editMode) return;
+    if (_dragTarget) {
+      localStorage.setItem('schema-manual-positions', JSON.stringify(_manualPositions));
+      _dragTarget = null;
+    }
+    const pos = getCanvasPos(e);
+    const id = findChildAt(pos.x, pos.y);
+    if (id) {
+      // Click on child in edit mode — show task info instead of navigating
+      schemaCanvas.style.cursor = 'grab';
+    }
+  });
+}
 
 // === Theme toggle ===
 const themeToggleBtn = document.getElementById('theme-toggle');
