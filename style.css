@@ -1885,7 +1885,7 @@ body.dark-theme .tl-month {
   color: #eceff1;
 }
 body.dark-theme .tl-focus {
-  color: #b0bec5;
+  color: #cfd8dc;
 }
 body.dark-theme .tl-desc {
   color: #90a4ae;
@@ -1931,6 +1931,7 @@ body.dark-theme .plan-progress-track {
 }
 body.dark-theme .plan-tip-body {
   color: #b0bec5;
+  background: rgba(255,255,255,0.03);
 }
 body.dark-theme .plan-tip-text b,
 body.dark-theme .plan-tip-text strong {
