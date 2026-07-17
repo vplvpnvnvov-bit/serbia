@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.22.0",
-  BUILD: "4258975",
-  CACHE_NAME: "relocation-v6.22.0-4258975"
+  VERSION: "6.23.0",
+  BUILD: "20817cd",
+  CACHE_NAME: "relocation-v6.23.0-20817cd"
 };
 
 let arrowMarker = null;
@@ -909,6 +909,7 @@ document.querySelectorAll('[data-poi-cat]').forEach(cb => {
   cb.addEventListener('change', () => {
     const cat = cb.dataset.poiCat;
     const visible = cb.checked;
+    const planOn = document.querySelector('[data-poi-cat="plan"]')?.checked;
     if (cat === 'plan') {
       poiMarkers.forEach(m => {
         if (m._pt && m._pt.linked) {
@@ -920,7 +921,7 @@ document.querySelectorAll('[data-poi-cat]').forEach(cb => {
       poiMarkers.forEach(m => {
         if (m._poiCat === cat) {
           if (visible) poiLayer.addLayer(m);
-          else poiLayer.removeLayer(m);
+          else if (!planOn || !m._pt?.linked) poiLayer.removeLayer(m);
         }
       });
     }
@@ -932,6 +933,7 @@ document.getElementById('poi-toggle-all')?.addEventListener('change', (e) => {
   document.querySelectorAll('[data-poi-cat]').forEach(cb => {
     cb.checked = on;
     const cat = cb.dataset.poiCat;
+    const planOn = document.querySelector('[data-poi-cat="plan"]')?.checked;
     if (cat === 'plan') {
       poiMarkers.forEach(m => {
         if (m._pt && m._pt.linked) {
@@ -943,7 +945,7 @@ document.getElementById('poi-toggle-all')?.addEventListener('change', (e) => {
       poiMarkers.forEach(m => {
         if (m._poiCat === cat) {
           if (on) poiLayer.addLayer(m);
-          else poiLayer.removeLayer(m);
+          else if (!planOn || !m._pt?.linked) poiLayer.removeLayer(m);
         }
       });
     }
