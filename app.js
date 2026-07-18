@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.24.21",
-  BUILD: "c45fab2",
-  CACHE_NAME: "relocation-v6.24.21-c45fab2"
+  VERSION: "6.24.22",
+  BUILD: "32ed8fa",
+  CACHE_NAME: "relocation-v6.24.22-32ed8fa"
 };
 
 let arrowMarker = null;
@@ -765,7 +765,8 @@ function popupHTML(d) {
     <b style="font-size:15px">${d.name}</b><br>
     <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
     <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
-    <span style="color:#555;font-size:11px">${d.desc}</span>
+    <span style="color:#555;font-size:11px">${d.desc}</span><br>
+    <button onclick="showDistrictPanelByName('${d.name}')" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>
   </div>`;
 }
 
@@ -786,7 +787,7 @@ DISTRICTS.forEach(d => {
   polygon.bindPopup(popupHTML(d), { maxWidth: 220 });
   polygon.bindTooltip(d.name, { sticky: true });
 
-  polygon.on('click', () => showDistrictPanel(d));
+  polygon.on('click', function() { this.openPopup(); });
 
   polygon.on('mouseover', () => {
     const marker = labelMarkers[d.name];
@@ -862,6 +863,12 @@ function closeDistrictPanel() {
   if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
   updateMapColors(activePreset);
   map.setView([44.76, 20.48], 11);
+  map.closePopup();
+}
+
+function showDistrictPanelByName(name) {
+  const d = DISTRICTS.find(x => x.name === name);
+  if (d) showDistrictPanel(d);
 }
 
 document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
