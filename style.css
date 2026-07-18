@@ -1948,12 +1948,27 @@ body.dark-theme #close-info {
 body.dark-theme #d-desc,
 body.dark-theme .desc {
   color: #ccc;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 body.dark-theme .family-desc {
   color: #ccc;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 body.dark-theme .extra-section {
   color: #ccc;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 body.dark-theme .extra-section strong {
   color: #c9a84b;
