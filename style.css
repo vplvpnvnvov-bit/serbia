@@ -1843,6 +1843,7 @@ body.dark-theme .tl-month {
 body.dark-theme .tl-focus {
   color: #cfd8dc;
   background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 body.dark-theme .tl-desc {
   color: #90a4ae;
