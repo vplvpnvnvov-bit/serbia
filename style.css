@@ -1875,6 +1875,7 @@ body.dark-theme .plan-metric-details {
   background: rgba(255,255,255,0.04);
   border-color: rgba(255,255,255,0.06);
   color: #90a4ae;
+  box-shadow: var(--card-shadow);
 }
 body.dark-theme .plan-metric-header {
   color: #b0bec5;
@@ -1939,11 +1940,17 @@ body.dark-theme .plan-date-y {
   color: #cfd8dc;
 }
 body.dark-theme #legend,
-body.dark-theme #district-info,
 body.dark-theme .lc-panel {
   background: var(--panel-bg);
   color: var(--text-color);
   border-color: var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+body.dark-theme #district-info {
+  background: var(--panel-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+  box-shadow: 0 -2px 12px rgba(255,255,255,0.15);
 }
 body.dark-theme #d-name {
   color: #c9a84b;
@@ -1982,6 +1989,7 @@ body.dark-theme .extra-section strong {
 body.dark-theme .poi-reestr {
   background: rgba(30,30,30,0.97);
   border-color: var(--border-color);
+  box-shadow: var(--card-shadow);
 }
 body.dark-theme .poi-reestr-toggle {
   background: #263238;
@@ -2382,7 +2390,7 @@ body.dark-theme #legend-title { color: #d7ccc8; }
   max-width: 320px; width: 90%;
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
-body.dark-theme .schema-modal-body { background: #1e1e1e; color: #e3e3e7; }
+body.dark-theme .schema-modal-body { background: #1e1e1e; color: #e3e3e7; box-shadow: var(--card-shadow); }
 #sm-title { font-size: 15px; margin-bottom: 8px; }
 #sm-desc { font-size: 12px; color: #666; margin-bottom: 14px; }
 body.dark-theme #sm-desc { color: #999; }
@@ -2464,6 +2472,9 @@ body.dark-theme #sm-desc { color: #999; }
   width: 90%;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
   animation: modalSlideUp 0.25s ease;
+}
+body.dark-theme .modal-card {
+  box-shadow: var(--card-shadow);
 }
 
 @keyframes modalSlideUp {
