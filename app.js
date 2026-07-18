@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.7",
-  BUILD: "71598b9",
-  CACHE_NAME: "relocation-v6.25.7-71598b9"
+  VERSION: "6.26.0",
+  BUILD: "f3620c2",
+  CACHE_NAME: "relocation-v6.26.0-f3620c2"
 };
 
 let arrowMarker = null;
@@ -599,7 +599,7 @@ map.on('zoomend', () => {
 // Подсветка границ района при открытии popup
 map.on('popupopen', (e) => {
   const source = e.popup._source;
-  if (source && source._path) {
+  if (source && source instanceof L.Polygon && source._path) {
     source._path.classList.add('polygon-highlight');
   }
 });
