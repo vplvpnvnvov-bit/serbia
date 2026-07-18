@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.4",
-  BUILD: "5b7a9b8",
-  CACHE_NAME: "relocation-v6.25.4-5b7a9b8"
+  VERSION: "6.25.5",
+  BUILD: "4e7e1d3",
+  CACHE_NAME: "relocation-v6.25.5-4e7e1d3"
 };
 
 let arrowMarker = null;
@@ -559,7 +559,6 @@ map.on('dragstart', () => {
     arrowMarker = null;
   }
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
-  updateMapColors(activePreset);
 });
 
 map.on('zoomend', () => {
