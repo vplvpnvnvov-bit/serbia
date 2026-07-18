@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.3",
-  BUILD: "bf6428c",
-  CACHE_NAME: "relocation-v6.26.3-bf6428c"
+  VERSION: "6.26.4",
+  BUILD: "bee7c29",
+  CACHE_NAME: "relocation-v6.26.4-bee7c29"
 };
 
 let arrowMarker = null;
@@ -378,6 +378,7 @@ function updateMapColors(preset) {
   DISTRICTS.forEach(d => {
     const p = polygons[d.name];
     if (!p) return;
+    if (urbanHide && !d.isUrban) return;
     const sc = getNormalizedScore(d, preset, visible);
     const fill = scoreColor(sc);
     const edge = darkenHex(fill, 30);
