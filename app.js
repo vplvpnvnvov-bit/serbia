@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.24.19",
-  BUILD: "0d75377",
-  CACHE_NAME: "relocation-v6.24.19-0d75377"
+  VERSION: "6.24.20",
+  BUILD: "ab59850",
+  CACHE_NAME: "relocation-v6.24.20-ab59850"
 };
 
 let arrowMarker = null;
@@ -578,9 +578,10 @@ map.on('zoomend', () => {
 function showDistrictPanel(d, noFit) {
   if (!document.getElementById('d-name')) return;
   document.getElementById('d-name').textContent = d.name;
-  // Carousel gallery & Lightbox
+  // Carousel gallery & Lightbox — спрятана до наполнения, см. index.html
   const gallery = document.getElementById('d-gallery');
-  gallery.innerHTML = '';
+  if (gallery) {
+    gallery.innerHTML = '';
 
   let captionContainer = document.getElementById('d-gallery-caption');
   if (!captionContainer) {
@@ -673,6 +674,7 @@ function showDistrictPanel(d, noFit) {
       gallery.scrollBy({ left: dx > 0 ? -gallery.clientWidth : gallery.clientWidth, behavior: 'smooth' });
     }
   };
+  }
   document.getElementById('d-price').textContent = d.price;
   const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
   const fs = getNormalizedScore(d, 'family', visible);

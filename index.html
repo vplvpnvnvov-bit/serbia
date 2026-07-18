@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.24.19-0d75377" />
+<link rel="stylesheet" href="style.css?v=6.24.20-ab59850" />
 </head>
 <body>
 
@@ -157,11 +157,12 @@
       <div id="district-info" class="info-panel hidden">
         <button id="close-info">&times;</button>
         <h3 id="d-name"></h3>
-        <div id="d-gallery-wrap">
+        <!-- КАРУСЕЛЬ СПРЯТАНА ДО НАПОЛНЕНИЯ -->
+        <!-- <div id="d-gallery-wrap">
           <button class="carousel-btn carousel-prev" id="car-prev">‹</button>
           <div id="d-gallery" class="gallery"></div>
           <button class="carousel-btn carousel-next" id="car-next">›</button>
-        </div>
+        </div> -->
         <p id="d-price" class="price"></p>
         <p id="d-score" class="score"></p>
         <div id="d-family-desc" class="family-desc"></div>
@@ -347,9 +348,9 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5yY7oR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous"></script>
-<script src="data.js?v=6.24.19-0d75377"></script>
-<script src="sync.js?v=6.24.19-0d75377"></script>
-<script src="app.js?v=6.24.19-0d75377"></script>
+<script src="data.js?v=6.24.20-ab59850"></script>
+<script src="sync.js?v=6.24.20-ab59850"></script>
+<script src="app.js?v=6.24.20-ab59850"></script>
 
 </body>
 </html>
