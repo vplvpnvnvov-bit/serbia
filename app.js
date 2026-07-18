@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.6",
-  BUILD: "dae5c82",
-  CACHE_NAME: "relocation-v6.25.6-dae5c82"
+  VERSION: "6.25.7",
+  BUILD: "71598b9",
+  CACHE_NAME: "relocation-v6.25.7-71598b9"
 };
 
 let arrowMarker = null;
@@ -594,6 +594,20 @@ map.on('zoomend', () => {
       map.addLayer(marker);
     }
   });
+});
+
+// Подсветка границ района при открытии popup
+map.on('popupopen', (e) => {
+  const source = e.popup._source;
+  if (source && source._path) {
+    source._path.classList.add('polygon-highlight');
+  }
+});
+map.on('popupclose', (e) => {
+  const source = e.popup._source;
+  if (source && source._path) {
+    source._path.classList.remove('polygon-highlight');
+  }
 });
 
 function showDistrictPanel(d, noFit) {
