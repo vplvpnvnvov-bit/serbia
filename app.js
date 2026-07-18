@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.2",
-  BUILD: "ccaf4fd",
-  CACHE_NAME: "relocation-v6.26.2-ccaf4fd"
+  VERSION: "6.26.3",
+  BUILD: "bf6428c",
+  CACHE_NAME: "relocation-v6.26.3-bf6428c"
 };
 
 let arrowMarker = null;
@@ -876,13 +876,13 @@ L.polyline(
 ).addTo(map).bindPopup('Сава');
 
 // === CLOSE INFO PANEL ===
-function closeDistrictPanel(keepView) {
+function closeDistrictPanel(keepZoom) {
   document.getElementById('district-info').classList.add('hidden');
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
   if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
   map.closePopup();
-  if (!keepView) {
-    updateMapColors(activePreset);
+  updateMapColors(activePreset);
+  if (!keepZoom) {
     map.setView([44.76, 20.48], 11);
   }
 }
