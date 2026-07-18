@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.1",
-  BUILD: "88fc74e",
-  CACHE_NAME: "relocation-v6.25.1-88fc74e"
+  VERSION: "6.25.2",
+  BUILD: "9076cef",
+  CACHE_NAME: "relocation-v6.25.2-9076cef"
 };
 
 let arrowMarker = null;
@@ -755,21 +755,6 @@ function districtLabel(name, price, score) {
   return `<div class="map-price-badge" style="color:${textColor}">${short}</div>`;
 }
 
-function popupHTML(d) {
-  const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
-  const sc = getNormalizedScore(d, activePreset, visible);
-  const color = scoreColor(sc);
-  const emoji = presetEmoji(activePreset);
-  const label = presetName(activePreset);
-  return `<div style="font-family:sans-serif;width:200px">
-    <b style="font-size:15px">${d.name}</b><br>
-    <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
-    <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
-    <span style="color:#555;font-size:11px">${d.desc}</span><br>
-    <button data-district="${d.name}" class="detail-btn" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>
-  </div>`;
-}
-
 DISTRICTS.forEach(d => {
   if (!d.coords || d.coords.length < 3) return;
 
@@ -784,7 +769,24 @@ DISTRICTS.forEach(d => {
   }).addTo(map);
   polygons[d.name] = polygon;
 
-  polygon.bindPopup(popupHTML(d), { maxWidth: 220 });
+  polygon.bindPopup(() => {
+    const div = document.createElement('div');
+    div.style.cssText = 'font-family:sans-serif;width:200px';
+    const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
+    const sc = getNormalizedScore(d, activePreset, visible);
+    const color = scoreColor(sc);
+    const emoji = presetEmoji(activePreset);
+    const label = presetName(activePreset);
+    div.innerHTML = `
+      <b style="font-size:15px">${d.name}</b><br>
+      <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
+      <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
+      <span style="color:#555;font-size:11px">${d.desc}</span><br>
+      <button class="detail-btn" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>`;
+    const btn = div.querySelector('.detail-btn');
+    if (btn) btn.onclick = () => showDistrictPanel(d);
+    return div;
+  }, { maxWidth: 220 });
   polygon.bindTooltip(d.name, { sticky: true });
 
   polygon.on('mouseover', () => {
@@ -863,17 +865,6 @@ function closeDistrictPanel() {
   map.setView([44.76, 20.48], 11);
   map.closePopup();
 }
-
-// Открытие полной карточки района по кнопке в popup
-document.getElementById('map').addEventListener('click', (e) => {
-  const btn = e.target.closest('.detail-btn');
-  if (!btn) return;
-  const name = btn.dataset.district;
-  const d = DISTRICTS.find(x => x.name === name);
-  if (d) showDistrictPanel(d);
-});
-
-document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
 
 // Click on empty map → deselect
 map.on('click', (e) => {
