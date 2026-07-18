@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.24.22",
-  BUILD: "32ed8fa",
-  CACHE_NAME: "relocation-v6.24.22-32ed8fa"
+  VERSION: "6.25.0",
+  BUILD: "96c444c",
+  CACHE_NAME: "relocation-v6.25.0-96c444c"
 };
 
 let arrowMarker = null;
@@ -766,7 +766,7 @@ function popupHTML(d) {
     <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
     <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
     <span style="color:#555;font-size:11px">${d.desc}</span><br>
-    <button onclick="showDistrictPanelByName('${d.name}')" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>
+    <button data-district="${d.name}" class="detail-btn" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>
   </div>`;
 }
 
@@ -866,10 +866,17 @@ function closeDistrictPanel() {
   map.closePopup();
 }
 
-function showDistrictPanelByName(name) {
-  const d = DISTRICTS.find(x => x.name === name);
-  if (d) showDistrictPanel(d);
-}
+// Открытие полной карточки района по кнопке в popup
+map.on('popupopen', () => {
+  const btn = document.querySelector('.leaflet-popup .detail-btn');
+  if (btn) {
+    btn.onclick = () => {
+      const name = btn.dataset.district;
+      const d = DISTRICTS.find(x => x.name === name);
+      if (d) showDistrictPanel(d);
+    };
+  }
+});
 
 document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
 
