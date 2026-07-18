@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.0",
-  BUILD: "f3620c2",
-  CACHE_NAME: "relocation-v6.26.0-f3620c2"
+  VERSION: "6.26.1",
+  BUILD: "0550464",
+  CACHE_NAME: "relocation-v6.26.1-0550464"
 };
 
 let arrowMarker = null;
@@ -601,6 +601,7 @@ map.on('popupopen', (e) => {
   const source = e.popup._source;
   if (source && source instanceof L.Polygon && source._path) {
     source._path.classList.add('polygon-highlight');
+    source.bringToFront();
   }
 });
 map.on('popupclose', (e) => {
