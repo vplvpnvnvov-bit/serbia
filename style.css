@@ -1842,12 +1842,17 @@ body.dark-theme .tl-month {
 }
 body.dark-theme .tl-focus {
   color: #cfd8dc;
+  background: transparent;
 }
 body.dark-theme .tl-desc {
   color: #90a4ae;
 }
 body.dark-theme .tl-step {
   border-bottom-color: rgba(255,255,255,0.06);
+}
+body.dark-theme .tl-cost {
+  color: #81c784;
+  background: rgba(0,0,0,0.2);
 }
 body.dark-theme .tl-step:hover {
   background-color: rgba(255,255,255,0.03);
