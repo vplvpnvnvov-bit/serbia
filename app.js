@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.0",
-  BUILD: "96c444c",
-  CACHE_NAME: "relocation-v6.25.0-96c444c"
+  VERSION: "6.25.1",
+  BUILD: "88fc74e",
+  CACHE_NAME: "relocation-v6.25.1-88fc74e"
 };
 
 let arrowMarker = null;
@@ -787,8 +787,6 @@ DISTRICTS.forEach(d => {
   polygon.bindPopup(popupHTML(d), { maxWidth: 220 });
   polygon.bindTooltip(d.name, { sticky: true });
 
-  polygon.on('click', function() { this.openPopup(); });
-
   polygon.on('mouseover', () => {
     const marker = labelMarkers[d.name];
     if (marker) {
@@ -867,15 +865,12 @@ function closeDistrictPanel() {
 }
 
 // Открытие полной карточки района по кнопке в popup
-map.on('popupopen', () => {
-  const btn = document.querySelector('.leaflet-popup .detail-btn');
-  if (btn) {
-    btn.onclick = () => {
-      const name = btn.dataset.district;
-      const d = DISTRICTS.find(x => x.name === name);
-      if (d) showDistrictPanel(d);
-    };
-  }
+document.getElementById('map').addEventListener('click', (e) => {
+  const btn = e.target.closest('.detail-btn');
+  if (!btn) return;
+  const name = btn.dataset.district;
+  const d = DISTRICTS.find(x => x.name === name);
+  if (d) showDistrictPanel(d);
 });
 
 document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
