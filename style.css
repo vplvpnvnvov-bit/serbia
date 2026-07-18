@@ -385,8 +385,9 @@ html, body {
   margin-bottom: 6px;
   font-size: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .urban-label {
   display: inline-flex;
