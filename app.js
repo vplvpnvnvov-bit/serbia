@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.5",
-  BUILD: "a45c347",
-  CACHE_NAME: "relocation-v6.26.5-a45c347"
+  VERSION: "6.26.7",
+  BUILD: "56a4a55",
+  CACHE_NAME: "relocation-v6.26.7-56a4a55"
 };
 
 let arrowMarker = null;
@@ -854,6 +854,7 @@ DISTRICTS.forEach(d => {
     interactive: false,
   }).addTo(map);
 });
+
 
 // === MICRO-DISTRICTS ===
 const SUB_DISTRICTS = [
