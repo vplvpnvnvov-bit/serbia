@@ -535,10 +535,10 @@ html, body {
   color: #999;
 }
 #d-name {
-  font-size: 18px;
+  font-size: 20px;
   color: #1a237e;
-  margin-bottom: 6px;
-  padding-right: 36px;
+  margin-bottom: 8px;
+  text-align: center;
 }
 .district-img {
   width: 100%;
