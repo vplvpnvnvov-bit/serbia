@@ -205,7 +205,7 @@ body.dark-theme {
   --border-color: #333336;
   --accent-color: #fbc02d;
   --accent-hover: #ffd54f;
-  --card-shadow: 0 4px 20px rgba(255,255,255,0.05);
+  --card-shadow: 0 2px 12px rgba(255,255,255,0.15);
   --header-bg: #1e1e1e;
   --header-text: #e3e3e7;
   --btn-bg: #2a2a2a;
