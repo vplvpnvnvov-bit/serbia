@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.4",
-  BUILD: "bee7c29",
-  CACHE_NAME: "relocation-v6.26.4-bee7c29"
+  VERSION: "6.26.5",
+  BUILD: "a45c347",
+  CACHE_NAME: "relocation-v6.26.5-a45c347"
 };
 
 let arrowMarker = null;
@@ -356,6 +356,14 @@ function darkenHex(hex, amt) {
   const b = Math.max(0, (n & 0xff) - amt);
   return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
+function lightenHex(hex, amt) {
+  if (!hex || hex[0] !== '#') return '#aaa';
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n >> 16) + amt);
+  const g = Math.min(255, ((n >> 8) & 0xff) + amt);
+  const b = Math.min(255, (n & 0xff) + amt);
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
 
 function scoreMax() { return 10; }
 function safeUrl(url) {
@@ -381,7 +389,8 @@ function updateMapColors(preset) {
     if (urbanHide && !d.isUrban) return;
     const sc = getNormalizedScore(d, preset, visible);
     const fill = scoreColor(sc);
-    const edge = darkenHex(fill, 30);
+    const isDark = document.body.classList.contains('dark-theme');
+    const edge = isDark ? lightenHex(fill, 40) : darkenHex(fill, 30);
     p.setStyle({ fillColor: fill, color: edge, fillOpacity: 0.35, weight: 3 });
     if (labelMarkers[d.name]) {
       const el = labelMarkers[d.name].getElement();
@@ -798,8 +807,9 @@ DISTRICTS.forEach(d => {
   const initVisible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
   const initScore = getNormalizedScore(d, activePreset, initVisible);
   const initFill = scoreColor(initScore);
+  const initDark = document.body.classList.contains('dark-theme');
   const polygon = L.polygon(d.coords, {
-    color: darkenHex(initFill, 30),
+    color: initDark ? lightenHex(initFill, 40) : darkenHex(initFill, 30),
     fillColor: initFill,
     fillOpacity: 0.35,
     weight: 3,
