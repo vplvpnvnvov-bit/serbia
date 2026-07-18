@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.5",
-  BUILD: "4e7e1d3",
-  CACHE_NAME: "relocation-v6.25.5-4e7e1d3"
+  VERSION: "6.25.6",
+  BUILD: "dae5c82",
+  CACHE_NAME: "relocation-v6.25.6-dae5c82"
 };
 
 let arrowMarker = null;
@@ -434,6 +434,25 @@ function updateLegend(preset) {
     `🏆 Рейтинг <span id="legend-arrow">▶</span>`;
 }
 
+function createPopupContent(d) {
+  const div = document.createElement('div');
+  div.style.cssText = 'font-family:sans-serif;width:200px';
+  const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
+  const sc = getNormalizedScore(d, activePreset, visible);
+  const color = scoreColor(sc);
+  const emoji = presetEmoji(activePreset);
+  const label = presetName(activePreset);
+  div.innerHTML = `
+    <b style="font-size:15px">${d.name}</b><br>
+    <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
+    <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
+    <span style="color:#555;font-size:11px">${d.desc}</span><br>
+    <button class="detail-btn" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>`;
+  const btn = div.querySelector('.detail-btn');
+  if (btn) btn.onclick = () => showDistrictPanel(d);
+  return div;
+}
+
 function updateUrbanFilter(hide) {
   urbanHide = hide;
   DISTRICTS.forEach(d => {
@@ -443,8 +462,11 @@ function updateUrbanFilter(hide) {
     const visible = !hide || d.isUrban;
     if (visible) {
       p.setStyle({ fillOpacity: 0.35, weight: 3, interactive: true });
+      if (!p.isPopupOpen()) p.bindPopup(() => createPopupContent(d), { maxWidth: 220 });
       if (m) map.addLayer(m);
     } else {
+      if (p.isPopupOpen()) p.closePopup();
+      p.unbindPopup();
       p.setStyle({ fillOpacity: 0, weight: 0, interactive: false, opacity: 0 });
       if (m) map.removeLayer(m);
     }
@@ -768,24 +790,7 @@ DISTRICTS.forEach(d => {
   }).addTo(map);
   polygons[d.name] = polygon;
 
-  polygon.bindPopup(() => {
-    const div = document.createElement('div');
-    div.style.cssText = 'font-family:sans-serif;width:200px';
-    const visible = urbanHide ? DISTRICTS.filter(x => x.isUrban) : [...DISTRICTS];
-    const sc = getNormalizedScore(d, activePreset, visible);
-    const color = scoreColor(sc);
-    const emoji = presetEmoji(activePreset);
-    const label = presetName(activePreset);
-    div.innerHTML = `
-      <b style="font-size:15px">${d.name}</b><br>
-      <span style="color:#d32f2f;font-size:14px;font-weight:bold">${d.price}</span><br>
-      <span style="font-size:11px;color:${color}">${emoji} ${sc}/10 — ${label}</span><br>
-      <span style="color:#555;font-size:11px">${d.desc}</span><br>
-      <button class="detail-btn" style="margin-top:6px;padding:4px 12px;border:none;border-radius:6px;background:#1a237e;color:#fff;font-size:12px;cursor:pointer">Подробнее →</button>`;
-    const btn = div.querySelector('.detail-btn');
-    if (btn) btn.onclick = () => showDistrictPanel(d);
-    return div;
-  }, { maxWidth: 220 });
+  polygon.bindPopup(() => createPopupContent(d), { maxWidth: 220 });
   polygon.bindTooltip(d.name, { sticky: true });
 
   polygon.on('mouseover', () => {
