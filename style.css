@@ -1939,6 +1939,25 @@ body.dark-theme .lc-panel {
   color: var(--text-color);
   border-color: var(--border-color);
 }
+body.dark-theme #d-name {
+  color: #c9a84b;
+}
+body.dark-theme #close-info {
+  color: #999;
+}
+body.dark-theme #d-desc,
+body.dark-theme .desc {
+  color: #ccc;
+}
+body.dark-theme .family-desc {
+  color: #ccc;
+}
+body.dark-theme .extra-section {
+  color: #ccc;
+}
+body.dark-theme .extra-section strong {
+  color: #c9a84b;
+}
 body.dark-theme .poi-reestr {
   background: rgba(30,30,30,0.97);
   border-color: var(--border-color);
