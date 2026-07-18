@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.25.2",
-  BUILD: "9076cef",
-  CACHE_NAME: "relocation-v6.25.2-9076cef"
+  VERSION: "6.25.3",
+  BUILD: "987d444",
+  CACHE_NAME: "relocation-v6.25.3-987d444"
 };
 
 let arrowMarker = null;
@@ -865,6 +865,8 @@ function closeDistrictPanel() {
   map.setView([44.76, 20.48], 11);
   map.closePopup();
 }
+
+document.getElementById('close-info').addEventListener('click', closeDistrictPanel);
 
 // Click on empty map → deselect
 map.on('click', (e) => {
