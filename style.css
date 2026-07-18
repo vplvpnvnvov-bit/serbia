@@ -926,8 +926,7 @@ html, body {
   list-style: none;
 }
 .links li {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
+  padding: 10px 0;
 }
 .links li.links-cat {
   padding: 16px 0 6px;
