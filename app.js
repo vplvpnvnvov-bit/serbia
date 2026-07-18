@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.26.1",
-  BUILD: "0550464",
-  CACHE_NAME: "relocation-v6.26.1-0550464"
+  VERSION: "6.26.2",
+  BUILD: "ccaf4fd",
+  CACHE_NAME: "relocation-v6.26.2-ccaf4fd"
 };
 
 let arrowMarker = null;
@@ -880,10 +880,10 @@ function closeDistrictPanel(keepView) {
   document.getElementById('district-info').classList.add('hidden');
   if (activeSubDistrictLayers) activeSubDistrictLayers.clearLayers();
   if (arrowMarker) { map.removeLayer(arrowMarker); arrowMarker = null; }
+  map.closePopup();
   if (!keepView) {
     updateMapColors(activePreset);
     map.setView([44.76, 20.48], 11);
-    map.closePopup();
   }
 }
 
