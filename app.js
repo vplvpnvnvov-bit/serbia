@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.31.2",
-  BUILD: "e330e4d",
-  CACHE_NAME: "relocation-v6.31.2-e330e4d",
+  VERSION: "6.32.0",
+  BUILD: "58b4cbe",
+  CACHE_NAME: "relocation-v6.32.0-58b4cbe",
   MIN_SPLASH_MS: 5000
 };
 
@@ -3567,18 +3567,18 @@ let _dragTarget = null;
 let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
 const DEFAULT_MANUAL_OFFSETS = {
-  pharm:             { dx: 114, dy: -32 },
-  med_vyps:          { dx: 165, dy: -100 },
-  dentist:           { dx: -32, dy: -94 },
-  power:             { dx: 102, dy: 31 },
-  loans:             { dx: 130, dy: -95 },
-  child_consent:     { dx: -53, dy: 72 },
-  diplomas:          { dx: 158, dy: -78 },
-  driving_licenses:  { dx: 135, dy: 62 },
-  apost_nocrim_h:    { dx: 64,  dy: 30 },
-  apost_nocrim_w:    { dx: 93,  dy: 53 },
-  ticket_buy:        { dx: 66,  dy: -104 },
-  airbnb_book:       { dx: -125,dy: -71 },
+  pharm: { dx: 114, dy: -22 },
+  med_vyps: { dx: 165, dy: -100 },
+  dentist: { dx: -32, dy: -94 },
+  power: { dx: 102, dy: 31 },
+  child_consent: { dx: -35, dy: 80 },
+  diplomas: { dx: 153, dy: -50 },
+  driving_licenses: { dx: 127, dy: 33 },
+  apost_nocrim_h: { dx: 64, dy: 30 },
+  apost_nocrim_w: { dx: 93, dy: 53 },
+  ticket_buy: { dx: 67, dy: -137 },
+  airbnb_book: { dx: -123, dy: -46 },
+  loans: { dx: 275, dy: -25 },
 };
 
 try {
