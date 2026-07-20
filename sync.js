@@ -17,9 +17,10 @@ db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
 let userId = null;
 let syncCode = null;
-let syncPending = false;
+window.syncPending = false;
 let syncLoading = false;
-let _unsubSnapshot = null; // real-time listener
+let _unsubSnapshot = null;
+let _localWritePending = false;
 
 window.registerUser = async function(email, password) {
   const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -93,7 +94,8 @@ function setupSnapshotListener() {
 
   _unsubSnapshot = db.collection('users').doc(syncCode).onSnapshot(snapshot => {
     if (!snapshot.exists) return;
-    if (snapshot.metadata.hasPendingWrites) return; // our own write, ignore
+    if (snapshot.metadata.hasPendingWrites) return;
+    if (_localWritePending) return;
 
     const data = snapshot.data();
     if (!data || !data.lastUpdated) return;
@@ -185,8 +187,9 @@ async function fetchAndLoadDoc() {
 
 window.saveToCloud = async function() {
   if (!syncCode) return;
-  if (syncPending) throw new Error('Синхронизация уже выполняется');
-  syncPending = true;
+  if (window.syncPending) throw new Error('Синхронизация уже выполняется');
+  window.syncPending = true;
+  _localWritePending = true;
   try {
     const data = {
       plan: getPlanValues(),
@@ -213,7 +216,8 @@ window.saveToCloud = async function() {
     updateSyncStatusUI();
     updateCloudStatus();
   } finally {
-    syncPending = false;
+    _localWritePending = false;
+    window.syncPending = false;
   }
 };
 
