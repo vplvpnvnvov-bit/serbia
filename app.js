@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.32.1",
-  BUILD: "1b4ad38",
-  CACHE_NAME: "relocation-v6.32.1-1b4ad38",
+  VERSION: "6.32.2",
+  BUILD: "370ce65",
+  CACHE_NAME: "relocation-v6.32.2-370ce65",
   MIN_SPLASH_MS: 5000
 };
 
@@ -16,10 +16,12 @@ let _schemaHitAreas = null;
 let _schemaItems = null;
 let _schemaNodes = null;
 let _schemaAnimating = false;
+let _schemaAnimFrame = null;
 let _landscapeMode = false;
 let _landscapeOverrides = {};
 let _landscapeElements = [];
 let _currentCW = 0, _currentCH = 0;
+window._localPlanDirty = false;
 
 const LANDSCAPE_DEFAULTS = {"spruce_1":{"x":27,"y":34},"mt_ru_5":{"x":179,"y":92},"spruce_14":{"x":251,"y":112},"mt_ru_1":{"x":147,"y":71},"boulder_4":{"x":92,"y":111},"boulder_6":{"x":60,"y":133},"spruce_7":{"x":208,"y":71},"spruce_16":{"x":149,"y":162},"spruce_3":{"x":88,"y":283},"mt_ru_6":{"x":77,"y":181},"spruce_17":{"x":149,"y":308},"peak_1":{"x":160,"y":251},"spruce_8":{"x":504,"y":186},"mt_ru_3":{"x":465,"y":207},"spruce_10":{"x":450,"y":90},"spruce_4":{"x":489,"y":136},"spruce_9":{"x":442,"y":175},"peak_2":{"x":246,"y":278},"birch_4":{"x":208,"y":261},"boulder_3":{"x":224,"y":250},"boulder_1":{"x":318,"y":206},"spruce_6":{"x":250,"y":202},"elk_1":{"x":175,"y":189},"spruce_2":{"x":221,"y":161},"spruce_13":{"x":301,"y":248},"spruce_11":{"x":486,"y":287},"spruce_18":{"x":448,"y":289},"spruce_15":{"x":413,"y":273},"birch_17":{"x":503,"y":241},"bear_track_2":{"x":470,"y":255},"mushroom_5":{"x":53,"y":479},"mushroom_2":{"x":124,"y":413},"hut_1":{"x":116,"y":327},"fox_1":{"x":184,"y":279},"mushroom_4":{"x":449,"y":629},"hut_3":{"x":447,"y":466},"mushroom_3":{"x":488,"y":511},"birch_11":{"x":494,"y":481},"boulder_9":{"x":466,"y":537},"birch_1":{"x":213,"y":681},"birch_18":{"x":394,"y":693},"wheat_1":{"x":370,"y":834},"wheat_4":{"x":491,"y":793},"boulder_7":{"x":306,"y":693},"birch_9":{"x":338,"y":632},"birch_2":{"x":214,"y":635},"hut_2":{"x":295,"y":653},"birch_7":{"x":81,"y":494},"birch_6":{"x":37,"y":661},"birch_15":{"x":203,"y":767},"horse_2":{"x":435,"y":742},"sunflower_3":{"x":47,"y":968},"sunflower_4":{"x":104,"y":1050},"sunflower_2":{"x":42,"y":1029},"tent_2":{"x":106,"y":998},"horse_1":{"x":354,"y":765},"birch_14":{"x":436,"y":633},"village_2":{"x":327,"y":1033},"wheat_3":{"x":471,"y":878},"wheat_2":{"x":388,"y":939},"wheat_5":{"x":464,"y":978},"sunflower_5":{"x":435,"y":1092},"sunflower_1":{"x":490,"y":1147},"tractor_2":{"x":503,"y":895},"village_1":{"x":277,"y":975},"tent_1":{"x":138,"y":1168},"birch_16":{"x":120,"y":942},"hut_5":{"x":165,"y":1294},"horse_4":{"x":138,"y":1497},"sunflower_9":{"x":212,"y":1176},"corn_1":{"x":188,"y":1347},"sunflower_8":{"x":413,"y":1165},"sunflower_6":{"x":52,"y":1135},"horse_3":{"x":46,"y":1456},"wheat_7":{"x":182,"y":1253},"linden_7":{"x":40,"y":1356},"corn_2":{"x":101,"y":1368},"house_3":{"x":336,"y":1315},"tractor_3":{"x":223,"y":1373},"eagle_1":{"x":492,"y":1463},"wheat_6":{"x":92,"y":1273},"oak_7":{"x":394,"y":1569},"ferris_1":{"x":434,"y":1636},"block_2":{"x":430,"y":1739},"beach_1":{"x":510,"y":1625},"block_1":{"x":468,"y":1587},"construction_1":{"x":322,"y":1707},"fortress_1":{"x":306,"y":1589},"linden_4":{"x":454,"y":1508},"spire_4":{"x":452,"y":1678},"oak_2":{"x":368,"y":1662},"linden_2":{"x":80,"y":1576},"block_4":{"x":348,"y":1611},"pine_7":{"x":337,"y":1766},"pigeon_1":{"x":472,"y":1635},"oak_10":{"x":394,"y":1617},"linden_3":{"x":491,"y":1677},"hill_sr_2":{"x":461,"y":1772},"sheep_2":{"x":399,"y":1779},"sheep_3":{"x":504,"y":1769},"oak_3":{"x":352,"y":1882},"sheep_1":{"x":291,"y":1819},"spring_1":{"x":50,"y":1775},"tent_3":{"x":408,"y":1902},"corn_3":{"x":164,"y":1409},"house_1":{"x":238,"y":1468},"hut_4":{"x":51,"y":1186},"house_2":{"x":303,"y":1396},"tractor_4":{"x":253,"y":1264},"wheat_8":{"x":222,"y":1307},"wheat_9":{"x":299,"y":1341},"sunflower_7":{"x":78,"y":1506},"spire_1":{"x":141,"y":1588},"linden_5":{"x":147,"y":1632},"spire_2":{"x":103,"y":1637},"linden_6":{"x":64,"y":1666},"clover_3":{"x":41,"y":1584},"oak_1":{"x":412,"y":1689},"pigeon_2":{"x":501,"y":1720},"pine_6":{"x":26,"y":1767},"hill_sr_8":{"x":83,"y":1868},"linden_1":{"x":252,"y":1866},"mushroom_8":{"x":21,"y":1781},"oak_6":{"x":75,"y":1789},"factory_1":{"x":271,"y":1714},"clover_2":{"x":273,"y":1810},"pine_5":{"x":93,"y":1858},"rabbit_1":{"x":444,"y":1951},"butterfly_6":{"x":63,"y":2023},"rock_1":{"x":83,"y":2011},"sheep_4":{"x":50,"y":1958},"rock_3":{"x":28,"y":1986},"spring_2":{"x":491,"y":2147},"hill_sr_12":{"x":413,"y":2067},"rabbit_2":{"x":360,"y":1892},"rabbit_3":{"x":489,"y":1910},"mushroom_7":{"x":85,"y":2186},"rock_2":{"x":242,"y":2162},"boulder_11":{"x":350,"y":2200},"boulder_12":{"x":302,"y":2111},"hill_sr_9":{"x":259,"y":2066},"hill_sr_14":{"x":344,"y":2021},"eagle_2":{"x":389,"y":2147},"pine_4":{"x":160,"y":2048},"pine_3":{"x":40,"y":2135},"hill_sr_13":{"x":171,"y":2199},"boulder_10":{"x":101,"y":2188},"tent_4":{"x":72,"y":1979},"oak_8":{"x":363,"y":1960},"mushroom_6":{"x":375,"y":1963},"oak_4":{"x":381,"y":1720},"hill_sr_3":{"x":228,"y":1778},"block_3":{"x":101,"y":1696},"spire_3":{"x":39,"y":1625},"spruce_19":{"x":135,"y":217},"boulder_8":{"x":120,"y":249},"swan_2":{"x":442,"y":555},"birch_3":{"x":331,"y":674},"birch_12":{"x":411,"y":458},"birch_10":{"x":490,"y":385},"swan_1":{"x":372,"y":568}};
 const REF_CW = 540, REF_CH = 2260;
@@ -55,7 +57,7 @@ function showApp() {
       updateSchemaToolbar();
       renderSchema();
       renderLegend();
-    } catch (e) { console.error(e); }
+    } catch (e) { showUserError(e); }
   }, 150);
 }
 
@@ -188,6 +190,25 @@ function setSection(id, title, text) {
   el.style.display = 'block';
 }
 
+// Глобальный обработчик ошибок — показывает баннер пользователю
+let _errorToastTimer = null;
+function showUserError(err) {
+  console.error(err);
+  const el = document.getElementById('error-toast') || (() => {
+    const div = document.createElement('div');
+    div.id = 'error-toast';
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:#d32f2f;color:#fff;padding:12px 20px;text-align:center;font-size:14px;font-weight:500;transform:translateY(-100%);transition:transform 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3)';
+    document.body.appendChild(div);
+    return div;
+  })();
+  el.textContent = '⚠️ ' + (err?.message || err || 'Произошла ошибка. Перезагрузите страницу.');
+  el.style.transform = 'translateY(0)';
+  clearTimeout(_errorToastTimer);
+  _errorToastTimer = setTimeout(() => { el.style.transform = 'translateY(-100%)'; }, 8000);
+}
+window.addEventListener('error', e => showUserError(e.error || e.message));
+window.addEventListener('unhandledrejection', e => showUserError(e.reason));
+
 function formatPrice(value, currency) {
   if (!value) return '0 ' + currency;
   return value.toLocaleString('ru-RU') + ' ' + currency;
@@ -202,7 +223,9 @@ function debouncedSave() {
       _debounceTimer = setTimeout(attempt, 500);
       return;
     }
-    window.saveToCloud().catch(err => console.error('Фоновое сохранение не удалось:', err));
+    window.saveToCloud()
+      .then(() => { window._localPlanDirty = false; })
+      .catch(err => { showUserError(err); window._localPlanDirty = false; });
   };
   _debounceTimer = setTimeout(attempt, 1500);
 }
@@ -781,7 +804,7 @@ function showDistrictPanel(d, noFit) {
   const linksEl = document.getElementById('d-links');
   if (d.links && d.links.length) {
     linksEl.innerHTML = '<strong>🔗 Ссылки по району</strong><br>' +
-      d.links.map(l => `<a href="${safeUrl(l.url)}" target="_blank">${l.title}</a>`).join('<br>');
+      d.links.map(l => `<a href="${safeUrl(l.url)}" target="_blank" rel="noopener noreferrer">${l.title}</a>`).join('<br>');
     linksEl.style.display = 'block';
   } else {
     linksEl.style.display = 'none';
@@ -1257,7 +1280,7 @@ const masterTimeline = [
         cost: 80, 
         currency: "EUR", 
         desc: "Отдельный перевод диплома с оценками для Агентства по квалификациям (AZK).", 
-        tip: "<p><b>Физический шаг:</b> Перевод диплома оплачивается и делается отдельно, так как вкладыш содержит большой объём текста. Перевод понадобится на следующем шаге для нострификации. Список переводчиков: <a href='https://www.mpravde.gov.rs' target='_blank'>Министерство юстиции Сербии</a>.</p>" 
+        tip: "<p><b>Физический шаг:</b> Перевод диплома оплачивается и делается отдельно, так как вкладыш содержит большой объём текста. Перевод понадобится на следующем шаге для нострификации. Список переводчиков: <a href='https://www.mpravde.gov.rs' target='_blank' rel='noopener noreferrer'>Министерство юстиции Сербии</a>.</p>" 
       },
       { 
         id: "m1_trans_vax", 
@@ -1426,7 +1449,7 @@ const masterTimeline = [
         cost: 0, 
         currency: "EUR", 
         desc: "Подача документов на личный счёт физлица в Alta Bank или аналогичном.", 
-        tip: "<p><b>Физический шаг:</b> Требуется загранпаспорт и действующий белый картон. Счёт нужен для личных трат, оплат внутри Сербии и связи с облачными сервисами. Наиболее лояльный банк — <a href='https://www.altabank.rs' target='_blank'>Alta Bank</a>.</p>" 
+        tip: "<p><b>Физический шаг:</b> Требуется загранпаспорт и действующий белый картон. Счёт нужен для личных трат, оплат внутри Сербии и связи с облачными сервисами. Наиболее лояльный банк — <a href='https://www.altabank.rs' target='_blank' rel='noopener noreferrer'>Alta Bank</a>.</p>" 
       },
       { 
         id: "m3_bank_business", 
@@ -1521,7 +1544,7 @@ const masterTimeline = [
         cost: 0, 
         currency: "EUR", 
         desc: "Личный визит в Saobraćajna policija для сдачи документов.", 
-        tip: "<p><b>Физический шаг:</b> Возьмите с собой: оригинал ВУ РФ, перевод прав, медицинскую справку, ID-карту ВНЖ и оплаченные на почте таксы МУП. Внимание: российское ВУ у вас заберут и отправят в архив, взамен выдадут сербский биометрический пластик. <a href='https://mup.gov.rs' target='_blank'>Сайт МВД Сербии</a>.<p><b>⚠️ Важнейший нюанс:</b> При выдаче сербских прав дорожная полиция (Saobraćajna policija) физически забирает ваше российское пластиковое ВУ и отправляет его в архив. Если планируете ездить в РФ и водить там, лучше перед отъездом заявить в РФ об утере прав и получить официальный дубликат, оставив один пластик дома.</p></p>" 
+        tip: "<p><b>Физический шаг:</b> Возьмите с собой: оригинал ВУ РФ, перевод прав, медицинскую справку, ID-карту ВНЖ и оплаченные на почте таксы МУП. Внимание: российское ВУ у вас заберут и отправят в архив, взамен выдадут сербский биометрический пластик. <a href='https://mup.gov.rs' target='_blank' rel='noopener noreferrer'>Сайт МВД Сербии</a>.<p><b>⚠️ Важнейший нюанс:</b> При выдаче сербских прав дорожная полиция (Saobraćajna policija) физически забирает ваше российское пластиковое ВУ и отправляет его в архив. Если планируете ездить в РФ и водить там, лучше перед отъездом заявить в РФ об утере прав и получить официальный дубликат, оставив один пластик дома.</p></p>" 
       }
     ]
   }
@@ -1558,7 +1581,7 @@ if ('serviceWorker' in navigator) {
         }
       };
     }).catch(err => {
-      console.error('Ошибка регистрации Service Worker:', err);
+      showUserError('Ошибка регистрации Service Worker: ' + err?.message);
     });
   });
 }
@@ -2212,7 +2235,7 @@ if (!planListenerAdded) {
       const btn = el.classList.contains('plan-lock-btn') ? el : el.closest('.plan-lock-btn');
       const isLocked = localStorage.getItem('plan-locked') === 'true';
       localStorage.setItem('plan-locked', isLocked ? 'false' : 'true');
-      try { renderPlan(); } catch (e) { console.error(e); }
+      try { renderPlan(); } catch (e) { showUserError(e); }
       return;
     }
 
@@ -2234,7 +2257,8 @@ if (!planListenerAdded) {
         cur.progress = false;
       }
       setPlanState(st);
-      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { console.error(e); }
+      window._localPlanDirty = true;
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       debouncedSave();
       return;
     }
@@ -2291,9 +2315,10 @@ if (!planListenerAdded) {
         if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
         setPlanState(st);
+        window._localPlanDirty = true;
         debouncedSave();
       }
-      try { renderPlan(); } catch (e) { console.error(e); }
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
 
@@ -2319,8 +2344,9 @@ if (!planListenerAdded) {
       if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       st.tasks[id].note = val || undefined;
       setPlanState(st);
+      window._localPlanDirty = true;
       debouncedSave();
-      try { renderPlan(); } catch (e) { console.error(e); }
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
 
@@ -2332,8 +2358,9 @@ if (!planListenerAdded) {
       if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
       delete st.tasks[id].note;
       setPlanState(st);
+      window._localPlanDirty = true;
       debouncedSave();
-      try { renderPlan(); } catch (e) { console.error(e); }
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
 
@@ -2404,9 +2431,9 @@ function initApp() {
   if (_appInitialized) return;
   _appInitialized = true;
   if (window.migrateLegacyData) {
-    try { window.migrateLegacyData(); } catch (e) { console.error('migrateLegacyData error:', e); }
+    try { window.migrateLegacyData(); } catch (e) { showUserError(e); }
   }
-  try { renderPlan(); } catch (e) { console.error('renderPlan error:', e); }
+  try { renderPlan(); } catch (e) { showUserError(e); }
   updateSyncStatusUI();
   const versionEl = document.getElementById('app-version-display');
   if (versionEl && window.APP_CONFIG) {
@@ -2423,63 +2450,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   if (firebase.auth().currentUser) initApp();
 
-  document.getElementById('btn-upload')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-upload');
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Выгружаю...';
-    try {
-      await window.saveToCloud();
-      btn.innerHTML = '✅ Выгружено';
-    } catch (e) {
-      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
-    }
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '📤 Выгрузить в облако';
-    }, 2500);
-  });
-
-  document.getElementById('btn-download')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-download');
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Загружаю...';
-    try {
-      await window.loadFromCloud();
-      btn.innerHTML = '✅ Загружено';
-    } catch (e) {
-      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
-    }
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '📥 Загрузить из облака';
-    }, 2500);
-  });
-
   document.getElementById('btn-change-code')?.addEventListener('click', () => {
     window.changeSyncCode();
-  });
-
-  document.getElementById('btn-delete-cloud')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-delete-cloud');
-    if (!await showConfirm('Удаление данных', 'Это физически удалит все данные из облака по вашему коду. Данные на этом устройстве останутся нетронутыми. Продолжить?')) return;
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Удаляю...';
-    try {
-      await window.deleteCloudData();
-      btn.innerHTML = '✅ Данные удалены из облака';
-    } catch (e) {
-      btn.innerHTML = '❌ ' + (e.message || 'Ошибка');
-    }
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '🗑️ Удалить данные из облака';
-    }, 3000);
-  });
-
-  document.getElementById('btn-new-code')?.addEventListener('click', async () => {
-    if (await showConfirm('Новый код', 'Сгенерировать новый код синхронизации? Старый код перестанет быть доступен на этом устройстве.')) {
-      window.generateNewSyncCode();
-    }
   });
 
   const resetBtn = document.getElementById('btn-hard-reset');
@@ -2490,7 +2462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           await window.factoryReset();
         } catch (err) {
-          console.error("Ошибка при сбросе:", err);
+          showUserError(err);
         }
       }
     });
@@ -2499,7 +2471,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-delete-account')?.addEventListener('click', async (e) => {
     e.preventDefault();
     if (await showConfirm('Удаление аккаунта', 'Аккаунт, все данные в облаке и на устройстве будут удалены безвозвратно. Продолжить?')) {
-      try { await window.deleteAccount(); } catch (err) { console.error('deleteAccount error:', err); }
+      try { await window.deleteAccount(); } catch (err) { showUserError(err); }
     }
   });
 
@@ -2557,49 +2529,90 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
-  setTimeout(() => { try { renderPlan(); } catch (e) { console.error(e); } }, 50);
+  setTimeout(() => { try { renderPlan(); } catch (e) { showUserError(e); } }, 50);
 });
 
 // === SCHEMA TAB ===
+const SCHEMA_ITEMS = [
+  {id:'_rf',  t:'Подготовка', v:true, icon:'📍'},
+  {id:'p10',  t:'Загранпаспорт мужа', icon:'🛂'},
+  {id:'p5w',  t:'Загранпаспорт жены', icon:'🛂'},
+  {id:'stamp',t:'Штамп гражданства', icon:'👶'},
+  {id:'p5d',  t:'Загранпаспорт ребёнка', icon:'🛂'},
+  {id:'nocrim_h',t:'Справка несудимости М', icon:'📃'},
+  {id:'nocrim_w',t:'Справка несудимости Ж', icon:'📃'},
+  {id:'apost_marr',t:'Апостиль на брак', icon:'🔖'},
+  {id:'apost_birth',t:'Апостиль на рождение', icon:'🔖'},
+  {id:'docs_done', t:'Сделать дела', v:true, icon:'⭐', gap:2},
+  {id:'power', t:'Собрать документы', v:true, icon:'📚', gap:2},
+  {id:'_ok',  t:'Собрать чемоданы', v:true, icon:'🧳', gap:2},
+  {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩', gap:3},
+  {id:'m1_airbnb',t:'Заселение Airbnb', icon:'🏠'},
+  {id:'reg',  t:'Белый картон', icon:'🪪'},
+  {id:'m1_trans_base',t:'Перевод документов', icon:'📝'},
+  {id:'m1_trans_diploma',t:'Перевод диплома', icon:'🎓'},
+  {id:'m1_trans_vax',t:'Прививки перевод', icon:'💉'},
+  {id:'m1_insurance',t:'Медстраховка', icon:'🏥'},
+  {id:'m1_azk_submit',t:'Подача в AZK', icon:'📋'},
+  {id:'m1_vnz_tax',t:'Оплата пошлин', icon:'💰'},
+  {id:'m1_vnz_submit',t:'Подача на ВНЖ', icon:'📩'},
+  {id:'_ok2', t:'Пакет готов', v:true, icon:'📚'},
+  {id:'m1_vnz',t:'ВНЖ по Таланту', goal:true},
+];
+
+const SCHEMA_VIRTUAL_CHILDREN = {
+  docs_done: ['dentist', 'med_vyps', 'power', 'loans'],
+  power: ['child_consent', 'diplomas', 'driving_licenses'],
+  _ok: ['pharm'],
+};
+
+function drawSchemaSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
+  let bg, border, tc;
+  if (isVirtual)  { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
+  else if (done)  { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
+  else if (prog)  { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
+  else            { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
+
+  ctx.font = 'bold 9px sans-serif';
+  const txtW = ctx.measureText(text).width;
+  const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
+  const ph = 10;
+  const pox = x - (pw * PX) / 2;
+  const poy = y - ph * PX - 6 * PX;
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(pox, poy, pw * PX, ph * PX);
+  ctx.fillStyle = border;
+  ctx.fillRect(pox, poy, pw * PX, PX);
+  ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
+  ctx.fillRect(pox, poy, PX, ph * PX);
+  ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
+  ctx.fillStyle = '#3e2723';
+  ctx.fillRect(pox + PX, poy + PX, 2, 2);
+  ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
+  ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
+  ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
+  ctx.fillStyle = tc;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, poy + (ph * PX) / 2);
+
+  if (icon) {
+    ctx.font = '18px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(icon, x, y);
+  }
+
+  return { x: pox, y: poy, w: pw * PX, h: ph * PX };
+}
+
 function renderSchema() {
   const canvas = document.getElementById('schema-canvas');
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
   const container = canvas.parentElement;
   const CW = container ? container.clientWidth - 2 : window.innerWidth - 20;
-
-  const items = [
-    {id:'_rf',  t:'Подготовка', v:true, icon:'📍'},
-    {id:'p10',  t:'Загранпаспорт мужа', icon:'🛂'},
-    {id:'p5w',  t:'Загранпаспорт жены', icon:'🛂'},
-    {id:'stamp',t:'Штамп гражданства', icon:'👶'},
-    {id:'p5d',  t:'Загранпаспорт ребёнка', icon:'🛂'},
-    {id:'nocrim_h',t:'Справка несудимости М', icon:'📃'},
-    {id:'nocrim_w',t:'Справка несудимости Ж', icon:'📃'},
-    {id:'apost_marr',t:'Апостиль на брак', icon:'🔖'},
-    {id:'apost_birth',t:'Апостиль на рождение', icon:'🔖'},
-    {id:'docs_done', t:'Сделать дела', v:true, icon:'⭐', gap:2},
-    {id:'power', t:'Собрать документы', v:true, icon:'📚', gap:2},
-    {id:'_ok',  t:'Собрать чемоданы', v:true, icon:'🧳', gap:2},
-    {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩', gap:3},
-    {id:'m1_airbnb',t:'Заселение Airbnb', icon:'🏠'},
-    {id:'reg',  t:'Белый картон', icon:'🪪'},
-    {id:'m1_trans_base',t:'Перевод документов', icon:'📝'},
-    {id:'m1_trans_diploma',t:'Перевод диплома', icon:'🎓'},
-    {id:'m1_trans_vax',t:'Прививки перевод', icon:'💉'},
-    {id:'m1_insurance',t:'Медстраховка', icon:'🏥'},
-    {id:'m1_azk_submit',t:'Подача в AZK', icon:'📋'},
-    {id:'m1_vnz_tax',t:'Оплата пошлин', icon:'💰'},
-    {id:'m1_vnz_submit',t:'Подача на ВНЖ', icon:'📩'},
-    {id:'_ok2', t:'Пакет готов', v:true, icon:'📚'},
-    {id:'m1_vnz',t:'ВНЖ по Таланту', goal:true},
-  ];
-
-  const VIRTUAL_CHILDREN = {
-    docs_done: ['dentist', 'med_vyps', 'power', 'loans'],
-    power: ['child_consent', 'diplomas', 'driving_licenses'],
-    _ok: ['pharm'],
-  };
+  const items = SCHEMA_ITEMS;
+  const VIRTUAL_CHILDREN = SCHEMA_VIRTUAL_CHILDREN;
 
   const CH = Math.max((window.innerHeight - 100) * 2, 1600) * 1.4;
   const trailH = Math.max((window.innerHeight - 100) * 2, 1600);
@@ -2992,45 +3005,6 @@ function renderSchema() {
 
   const hitAreas = [];
 
-  function drawSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
-    let bg, border, tc;
-    if (isVirtual)  { bg='#ede7f6'; border='#7e57c2'; tc='#4a148c'; }
-    else if (done)  { bg='#81c784'; border='#388e3c'; tc='#1b5e20'; }
-    else if (prog)  { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
-    else            { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
-
-    ctx.font = 'bold 9px sans-serif';
-    const txtW = ctx.measureText(text).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = x - (pw * PX) / 2;
-    const poy = y - ph * PX - 6 * PX;
-
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillStyle = tc;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(text, x, poy + (ph * PX) / 2);
-
-    if (icon) {
-      ctx.font = '18px serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(icon, x, y);
-    }
-
-    return { x: pox, y: poy, w: pw * PX, h: ph * PX };
-  }
-
   const SIDE_TASKS = SCHEMA_SIDE_TASKS;
 
   const parentGroups = {};
@@ -3140,7 +3114,7 @@ function renderSchema() {
       const done = (state.tasks?.[child.id] || {}).checked;
       const prog = (state.tasks?.[child.id] || {}).progress;
 
-      const sign = drawSign(ctx, { x: sx, y: sy, text: child.text, icon: child.icon, done, prog, PX });
+      const sign = drawSchemaSign(ctx, { x: sx, y: sy, text: child.text, icon: child.icon, done, prog, PX });
 
       const towardX = pNode.x - sx;
       const towardY = pNode.y - sy;
@@ -3350,15 +3324,17 @@ function renderSchema() {
     let lastFrame = 0;
     function animLoop(ts) {
       if (!document.getElementById('tab-schema')?.classList.contains('active')) {
-        _schemaAnimating = false; return;
+        _schemaAnimating = false;
+        _schemaAnimFrame = null;
+        return;
       }
       if (!_editMode && !_landscapeMode && (ts - lastFrame >= 200)) {
         lastFrame = ts;
         renderSchema();
       }
-      requestAnimationFrame(animLoop);
+      _schemaAnimFrame = requestAnimationFrame(animLoop);
     }
-    requestAnimationFrame(animLoop);
+    _schemaAnimFrame = requestAnimationFrame(animLoop);
   }
 
   const planeT = (now * 0.02 % (CW + 60));
@@ -3527,7 +3503,7 @@ document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
     if (toggle) { toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true'; }
     updateSchemaToolbar();
     renderSchema(); renderLegend();
-  } catch(e) { console.error(e); } }, 100);
+  } catch(e) { showUserError(e); } }, 100);
 });
 
 const schemaCanvas = document.getElementById('schema-canvas');
@@ -3551,7 +3527,7 @@ window.addEventListener('sync-loaded', () => {
   const active = document.activeElement;
   const isEditing = active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT');
   if (isEditing) return; // не разрушаем UI во время редактирования
-  try { renderPlan(); } catch (e) { console.error(e); }
+  try { renderPlan(); } catch (e) { showUserError(e); }
 });
 
 // === SCHEMA EDIT MODE ===

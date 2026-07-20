@@ -96,6 +96,7 @@ function setupSnapshotListener() {
     if (!snapshot.exists) return;
     if (snapshot.metadata.hasPendingWrites) return;
     if (_localWritePending) return;
+    if (window._localPlanDirty) return;
 
     const data = snapshot.data();
     if (!data || !data.lastUpdated) return;

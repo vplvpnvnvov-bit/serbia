@@ -1,4 +1,4 @@
-const CACHE_NAME = 'relocation-v6.32.1-1b4ad38';
+const CACHE_NAME = 'relocation-v6.32.2-370ce65';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js', './sync.js',
   './manifest.json', './icon.svg',
@@ -31,13 +31,28 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
+  const url = new URL(e.request.url);
+  const isStatic = url.origin === location.origin &&
+    (url.pathname === '/' || url.pathname.match(/\.(js|css|html|svg|json|png)$/));
+
+  if (isStatic) {
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        const fetchPromise = fetch(e.request).then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+          return res;
+        }).catch(() => cached);
+        return cached || fetchPromise;
+      })
+    );
+  } else {
+    e.respondWith(
+      fetch(e.request).then(res => {
         const clone = res.clone();
         caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
+      }).catch(() => caches.match(e.request))
+    );
+  }
 });

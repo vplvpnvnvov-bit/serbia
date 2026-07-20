@@ -88,7 +88,6 @@
   border: 1px solid #d2d2d7;
   border-radius: 8px;
   font-size: 15px;
-  outline: none;
   transition: border-color 0.15s;
 }
 
@@ -473,7 +472,7 @@ html, body {
   padding: 3px 4px;
 }
 .legend-list .ll-rank {
-  color: #888;
+  color: #666;
   font-size: 10px;
   margin-right: 6px;
 }
@@ -663,7 +662,7 @@ html, body {
 .lc-label {
   display: block;
   font-size: 10px;
-  color: #888;
+  color: #666;
   margin-bottom: 2px;
 }
 .lc-select {
@@ -681,7 +680,10 @@ html, body {
   appearance: none;
   background: #ddd;
   border-radius: 2px;
-  outline: none;
+}
+#opacity-slider:focus-visible {
+  outline: 2px solid #1a237e;
+  outline-offset: 2px;
 }
 #opacity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -693,7 +695,7 @@ html, body {
 }
 .lc-hint {
   font-size: 9px;
-  color: #aaa;
+  color: #777;
   display: block;
   text-align: right;
 }
@@ -768,7 +770,7 @@ html, body {
 .panel-note {
   margin-top: 12px;
   font-size: 11px;
-  color: #aaa;
+  color: #777;
   text-align: center;
 }
 
@@ -1120,7 +1122,7 @@ html, body {
 }
 .plan-task-desc {
   font-size: 11px;
-  color: #999;
+  color: #666;
   flex-basis: 100%;
   padding-left: 42px;
   margin-top: -2px;
@@ -1361,9 +1363,9 @@ html, body {
 .plan-tip-text ul, .plan-tip-text ol { margin: 4px 0 6px; padding-left: 20px; }
 .plan-tip-text li { margin-bottom: 3px; font-size: 13px; }
 .plan-tip-text a, .plan-tip-link {
-  color: #fbc02d !important;
+  color: #1565c0 !important;
   text-decoration: none;
-  border-bottom: 1px dashed rgba(251,192,45,0.4);
+  border-bottom: 1px dashed rgba(21,101,192,0.4);
   transition: border-color 0.2s, color 0.2s;
   background: none;
   padding: 0;
@@ -1372,8 +1374,12 @@ html, body {
 }
 .plan-tip-text a:hover, .plan-tip-link:hover {
   border-bottom-style: solid;
-  color: #fffde7 !important;
+  color: #0d47a1 !important;
   background: none;
+}
+body.dark-theme .plan-tip-text a, body.dark-theme .plan-tip-link {
+  color: #90caf9 !important;
+  border-bottom-color: rgba(144,202,249,0.4);
 }
 .plan-tip-text a::after {
   content: " ↗";
@@ -1414,7 +1420,7 @@ html, body {
   color: #333;
   background: #fffde7;
 }
-.plan-note-ta:focus { outline: none; border-color: #fbc02d; background: #fff9c4; }
+.plan-note-ta:focus { outline: 2px solid #1a237e; outline-offset: 2px; border-color: #fbc02d; background: #fff9c4; }
 
 /* Shared date remaining indicator */
 .plan-date-remaining { font-size: 12px; font-weight: 500; white-space: nowrap; }
@@ -2324,8 +2330,9 @@ body.dark-theme .carousel-caption {
   transform: translateY(-1px);
 }
 
-.leaflet-interactive:focus {
-  outline: none;
+.leaflet-interactive:focus-visible {
+  stroke: #1a237e !important;
+  stroke-width: 3 !important;
 }
 
 /* Price visibility toggle */
