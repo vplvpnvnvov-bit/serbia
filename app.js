@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.31.0",
-  BUILD: "879d7a5",
-  CACHE_NAME: "relocation-v6.31.0-879d7a5",
+  VERSION: "6.31.1",
+  BUILD: "ebfe549",
+  CACHE_NAME: "relocation-v6.31.1-ebfe549",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2576,7 +2576,7 @@ function renderSchema() {
     {id:'m1_vnz_tax',t:'Оплата пошлин', icon:'💰'},
     {id:'m1_vnz_submit',t:'Подача на ВНЖ', icon:'📩'},
     {id:'_ok2', t:'Пакет готов', v:true, icon:'📚'},
-    {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
+    {id:'m1_vnz',t:'ВНЖ по Таланту', goal:true},
   ];
 
   const VIRTUAL_CHILDREN = {
