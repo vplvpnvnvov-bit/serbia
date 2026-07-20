@@ -17,9 +17,11 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.32.2-370ce65" />
+<link rel="stylesheet" href="style.css?v=6.32.3-034ba57" />
 </head>
 <body>
+
+<a href="#content" class="skip-link">Перейти к содержимому</a>
 
 <div id="splash-screen">
   <div class="splash-cloud" style="top:4%;left:5%;width:260px;height:90px;animation-duration:13s;opacity:0.40;animation-delay:0s"></div>
@@ -338,12 +340,12 @@
     </section>
   </main>
 
-  <nav id="tabs">
-    <button class="tab-btn active" data-tab="schema">🎮 Игра</button>
-    <button class="tab-btn" data-tab="plan">📅 План</button>
-    <button class="tab-btn" data-tab="map">🗺️ Карта</button>
-    <button class="tab-btn" data-tab="info">🔗 Полезно</button>
-    <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
+  <nav id="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="schema" role="tab" aria-selected="true">🎮 Игра</button>
+    <button class="tab-btn" data-tab="plan" role="tab" aria-selected="false">📅 План</button>
+    <button class="tab-btn" data-tab="map" role="tab" aria-selected="false">🗺️ Карта</button>
+    <button class="tab-btn" data-tab="info" role="tab" aria-selected="false">🔗 Полезно</button>
+    <button class="tab-btn" data-tab="settings" role="tab" aria-selected="false">⚙️ Настройки</button>
   </nav>
 </div>
 
@@ -397,9 +399,9 @@ window.hideSplash = function() {
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5y7YoR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" integrity="sha384-qPmeVjQDHzUDQlO1KgrSi2azIff7RQim//zsE3kkA2HKGuZhlhpap6Cab0xfKSXi" crossorigin="anonymous" defer></script>
-<script src="data.js?v=6.32.2-370ce65" defer></script>
-<script src="sync.js?v=6.32.2-370ce65" defer></script>
-<script src="app.js?v=6.32.2-370ce65" defer></script>
+<script src="data.js?v=6.32.3-034ba57" defer></script>
+<script src="sync.js?v=6.32.3-034ba57" defer></script>
+<script src="app.js?v=6.32.3-034ba57" defer></script>
 
 </body>
 </html>

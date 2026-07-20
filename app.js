@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.32.2",
-  BUILD: "370ce65",
-  CACHE_NAME: "relocation-v6.32.2-370ce65",
+  VERSION: "6.32.3",
+  BUILD: "034ba57",
+  CACHE_NAME: "relocation-v6.32.3-034ba57",
   MIN_SPLASH_MS: 5000
 };
 
@@ -144,13 +144,36 @@ window.addEventListener('auth-logout', () => {
 function showConfirm(title, message) {
   return new Promise(resolve => {
     const overlay = document.getElementById('confirm-modal');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const confirmBtn = document.getElementById('modal-confirm');
     document.getElementById('modal-title').textContent = title;
     document.getElementById('modal-message').textContent = message;
     overlay.classList.remove('hidden');
 
+    function onKeyDown(e) {
+      if (e.key === 'Escape') { cleanup(); resolve(false); return; }
+      if (e.key === 'Tab') {
+        const focused = document.activeElement;
+        if (e.shiftKey) {
+          if (focused === cancelBtn || !overlay.contains(focused)) {
+            e.preventDefault();
+            confirmBtn.focus();
+          }
+        } else {
+          if (focused === confirmBtn || !overlay.contains(focused)) {
+            e.preventDefault();
+            cancelBtn.focus();
+          }
+        }
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    confirmBtn.focus();
+
     function cleanup() {
       overlay.classList.add('hidden');
       overlay.removeEventListener('click', onBgClick);
+      document.removeEventListener('keydown', onKeyDown);
     }
 
     function onBgClick(e) {
@@ -158,8 +181,8 @@ function showConfirm(title, message) {
     }
 
     overlay.addEventListener('click', onBgClick);
-    document.getElementById('modal-cancel').onclick = () => { cleanup(); resolve(false); };
-    document.getElementById('modal-confirm').onclick = () => { cleanup(); resolve(true); };
+    cancelBtn.onclick = () => { cleanup(); resolve(false); };
+    confirmBtn.onclick = () => { cleanup(); resolve(true); };
   });
 }
 
@@ -168,9 +191,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
     document.getElementById('tab-' + tab).classList.add('active');
     btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
     if (tab === 'map') setTimeout(() => map.invalidateSize(), 100);
   });
 });
