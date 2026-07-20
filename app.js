@@ -1,7 +1,21 @@
 window.APP_CONFIG = {
   VERSION: "6.27.1",
   BUILD: "30c4c4b",
-  CACHE_NAME: "relocation-v6.27.1-30c4c4b"
+  CACHE_NAME: "relocation-v6.27.1-30c4c4b",
+  MIN_SPLASH_MS: 5000,
+  SPLASH_START: Date.now()
+};
+
+const _cfg = window.APP_CONFIG;
+window.hideSplash = function() {
+  const el = document.getElementById('splash-screen');
+  if (!el) return;
+  const elapsed = Date.now() - _cfg.SPLASH_START;
+  if (elapsed < _cfg.MIN_SPLASH_MS) {
+    setTimeout(() => { el.classList.add('hidden'); }, _cfg.MIN_SPLASH_MS - elapsed);
+  } else {
+    el.classList.add('hidden');
+  }
 };
 
 let arrowMarker = null;
@@ -1556,22 +1570,20 @@ function autoUpdate(worker) {
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:#8d6e3f;border-radius:16px 16px 0 0"></div>
       <div style="font-size:48px;margin-bottom:8px">🚀</div>
       <h3 style="font-size:18px;color:#4e342e;margin-bottom:6px">Доступно обновление</h3>
-      <p style="font-size:13px;color:#6d4c41;margin-bottom:16px">Установить новую версию приложения</p>
+      <p style="font-size:13px;color:#6d4c41;margin-bottom:16px">Приложение обновится автоматически</p>
       <div style="width:100%;height:6px;background:#d7ccc8;border-radius:3px;overflow:hidden;margin-bottom:12px">
         <div id="update-progress" style="width:0%;height:100%;background:linear-gradient(90deg,#8d6e3f,#c9a84b);border-radius:3px;transition:width 0.1s linear"></div>
       </div>
-      <p style="font-size:12px;color:#4e342e;margin-bottom:4px">Авто-обновление через <span id="update-countdown">2</span> сек</p>
+      <p style="font-size:12px;color:#4e342e;margin-bottom:4px">Авто-обновление…</p>
     </div>`;
   document.body.appendChild(overlay);
 
-  let remaining = 2;
-  const countdownEl = document.getElementById('update-countdown');
+  let remaining = 5;
   const progressEl = document.getElementById('update-progress');
 
   const timer = setInterval(() => {
     remaining -= 0.1;
-    if (countdownEl) countdownEl.textContent = Math.ceil(remaining);
-    if (progressEl) progressEl.style.width = ((2 - remaining) / 2 * 100) + '%';
+    if (progressEl) progressEl.style.width = ((5 - remaining) / 5 * 100) + '%';
     if (remaining <= 0) {
       clearInterval(timer);
       doUpdate();
