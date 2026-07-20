@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.30.1",
-  BUILD: "a6291bf",
-  CACHE_NAME: "relocation-v6.30.1-a6291bf",
+  VERSION: "6.30.2",
+  BUILD: "11d14ba",
+  CACHE_NAME: "relocation-v6.30.2-11d14ba",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2553,29 +2553,29 @@ function renderSchema() {
   const CW = container ? container.clientWidth - 2 : window.innerWidth - 20;
 
   const items = [
-    {id:'_rf',  t:'Подготовка', v:true, icon:'📍'},
-    {id:'p10',  t:'Загранпаспорт мужа', icon:'🛂'},
-    {id:'p5w',  t:'Загранпаспорт жены', icon:'🛂'},
-    {id:'stamp',t:'Штамп гражданства', icon:'👶'},
-    {id:'p5d',  t:'Загранпаспорт ребёнка', icon:'🛂'},
-    {id:'nocrim_h',t:'Справка несудимости М', icon:'📃'},
-    {id:'nocrim_w',t:'Справка несудимости Ж', icon:'📃'},
-    {id:'apost_marr',t:'Апостиль на брак', icon:'🔖'},
-    {id:'apost_birth',t:'Апостиль на рождение', icon:'🔖'},
-    {id:'docs_done', t:'✅ Сделать дела', v:true, icon:'🏃', gap:2},
-    {id:'power', t:'📋 Собрать документы', v:true, icon:'📚', gap:2},
-    {id:'_ok',  t:'✅ Собрать чемоданы', v:true, icon:'🧳', gap:2},
-    {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩', gap:3},
-    {id:'m1_airbnb',t:'Заселение Airbnb', icon:'🏠'},
-    {id:'reg',  t:'Белый картон', icon:'🪪'},
-    {id:'m1_trans_base',t:'📝 Перевод документов', icon:'📝'},
-    {id:'m1_trans_diploma',t:'🎓 Перевод диплома', icon:'🎓'},
-    {id:'m1_trans_vax',t:'💉 Прививки перевод', icon:'💉'},
-    {id:'m1_insurance',t:'Медстраховка', icon:'🏥'},
-    {id:'m1_azk_submit',t:'📋 Подача в AZK', icon:'📋'},
-    {id:'m1_vnz_tax',t:'💰 Оплата пошлин', icon:'💰'},
-    {id:'m1_vnz_submit',t:'📩 Подача на ВНЖ', icon:'📩'},
-    {id:'_ok2', t:'✅ Пакет готов', v:true, icon:'📚'},
+    {id:'_rf',  t:'Подготовка', v:true},
+    {id:'p10',  t:'Загранпаспорт мужа'},
+    {id:'p5w',  t:'Загранпаспорт жены'},
+    {id:'stamp',t:'Штамп гражданства'},
+    {id:'p5d',  t:'Загранпаспорт ребёнка'},
+    {id:'nocrim_h',t:'Справка несудимости М'},
+    {id:'nocrim_w',t:'Справка несудимости Ж'},
+    {id:'apost_marr',t:'Апостиль на брак'},
+    {id:'apost_birth',t:'Апостиль на рождение'},
+    {id:'docs_done', t:'⭐ Сделать дела', v:true, gap:2},
+    {id:'power', t:'📋 Собрать документы', v:true, gap:2},
+    {id:'_ok',  t:'✅ Собрать чемоданы', v:true, gap:2},
+    {id:'m1_flight',t:'Перелёт в Белград', gap:3},
+    {id:'m1_airbnb',t:'Заселение Airbnb'},
+    {id:'reg',  t:'Белый картон'},
+    {id:'m1_trans_base',t:'📝 Перевод документов'},
+    {id:'m1_trans_diploma',t:'🎓 Перевод диплома'},
+    {id:'m1_trans_vax',t:'💉 Прививки перевод'},
+    {id:'m1_insurance',t:'Медстраховка'},
+    {id:'m1_azk_submit',t:'📋 Подача в AZK'},
+    {id:'m1_vnz_tax',t:'💰 Оплата пошлин'},
+    {id:'m1_vnz_submit',t:'📩 Подача на ВНЖ'},
+    {id:'_ok2', t:'✅ Пакет готов', v:true},
     {id:'m1_vnz',t:'🎯 ВНЖ по Таланту', goal:true},
   ];
 
@@ -3537,17 +3537,17 @@ window.addEventListener('sync-loaded', () => {
 
 // === SCHEMA EDIT MODE ===
 const SCHEMA_SIDE_TASKS = [
-  { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку',       icon:'💊' },
-  { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки',   icon:'📋' },
-  { parentId:'docs_done',   id:'dentist',        text:'Стоматология',          icon:'🦷' },
-  { parentId:'docs_done',   id:'power',          text:'Доверенность',          icon:'📝' },
-  { parentId:'power',       id:'child_consent',   text:'Согласие на выезд',    icon:'✍️' },
-  { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке',      icon:'🎓' },
-  { parentId:'power',       id:'driving_licenses',text:'Водительские права',    icon:'🚗' },
-  { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'🔖' },
-  { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'🔖' },
-  { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты',        icon:'🎫' },
-  { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb', icon:'💻' },
+  { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку' },
+  { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки' },
+  { parentId:'docs_done',   id:'dentist',        text:'Стоматология' },
+  { parentId:'docs_done',   id:'power',          text:'Доверенность' },
+  { parentId:'power',       id:'child_consent',   text:'Согласие на выезд' },
+  { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке' },
+  { parentId:'power',       id:'driving_licenses',text:'Водительские права' },
+  { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)' },
+  { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)' },
+  { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты' },
+  { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb' },
 ];
 const SCHEMA_PARENT_IDS = {};
 SCHEMA_SIDE_TASKS.forEach(st => { SCHEMA_PARENT_IDS[st.id] = st.parentId; });
