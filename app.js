@@ -1,22 +1,11 @@
 window.APP_CONFIG = {
-  VERSION: "6.27.1",
-  BUILD: "30c4c4b",
-  CACHE_NAME: "relocation-v6.27.1-30c4c4b",
-  MIN_SPLASH_MS: 5000,
-  SPLASH_START: Date.now()
+  VERSION: "6.30.1",
+  BUILD: "a6291bf",
+  CACHE_NAME: "relocation-v6.30.1-a6291bf",
+  MIN_SPLASH_MS: 5000
 };
 
-const _cfg = window.APP_CONFIG;
-window.hideSplash = function() {
-  const el = document.getElementById('splash-screen');
-  if (!el) return;
-  const elapsed = Date.now() - _cfg.SPLASH_START;
-  if (elapsed < _cfg.MIN_SPLASH_MS) {
-    setTimeout(() => { el.classList.add('hidden'); }, _cfg.MIN_SPLASH_MS - elapsed);
-  } else {
-    el.classList.add('hidden');
-  }
-};
+window._MIN_SPLASH_MS = window.APP_CONFIG.MIN_SPLASH_MS;
 
 let arrowMarker = null;
 let _schemaDecor = null;

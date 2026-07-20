@@ -52,7 +52,8 @@ const appConfigRegex = /window\.APP_CONFIG\s*=\s*\{[\s\S]*?\n\};/;
 const newAppConfig = `window.APP_CONFIG = {
   VERSION: "${newVersion}",
   BUILD: "${buildHash}",
-  CACHE_NAME: "${cacheName}"
+  CACHE_NAME: "${cacheName}",
+  MIN_SPLASH_MS: 5000
 };`;
 
 if (appConfigRegex.test(appJs)) {
