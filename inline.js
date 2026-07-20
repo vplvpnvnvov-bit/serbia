@@ -52,4 +52,9 @@
       el.classList.add('hidden');
     }
   };
+
+  setTimeout(function(){
+    var el = document.getElementById('splash-screen');
+    if (el && !el.classList.contains('hidden')) el.classList.add('hidden');
+  }, 15000);
 })();
