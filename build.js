@@ -84,6 +84,7 @@ indexHtml = indexHtml.replace(/(href="style\.css)(?:\?v=[^"]*)?(")/g, `$1?v=${fu
 indexHtml = indexHtml.replace(/(src="data\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="sync\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="app\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="inline\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 
 fs.writeFileSync(path.join(__dirname, 'index.html'), indexHtml, 'utf-8');
 console.log('✓ index.html успешно обновлен! Кэш-бастинг настроен на ?v=' + fullVersion);

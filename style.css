@@ -1701,6 +1701,18 @@ body.dark-theme .plan-tip-text a, body.dark-theme .plan-tip-link {
 .danger-btn { background: #dc3545; color: white; }
 .danger-btn:hover:not(:disabled) { background: #c82333; }
 
+.company-create-btn { margin-bottom: 10px; }
+.company-join-btn { background: #43a047 !important; }
+.company-join-btn:hover:not(:disabled) { background: #388e3c !important; }
+.company-help { margin-top: 14px; text-align: center; font-size: 12px; color: #86868b; }
+.auto-update-label { color: var(--text-muted,#86868b); font-size: 12px; }
+.spacer-8 { height: 8px; }
+.sync-code-display { cursor: pointer; font-weight: 700; letter-spacing: 2px; font-family: monospace; color: #1a237e; }
+body.dark-theme .sync-code-display { color: #90caf9; }
+.delete-account-card { border-color: #c62828; }
+.delete-account-btn { background: #b71c1c !important; color: #fff !important; }
+.delete-account-btn:hover:not(:disabled) { background: #8e0000 !important; }
+
 .sync-status-info {
   background: #f0f4f8;
   border-radius: 6px;

@@ -11,7 +11,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://server.arcgisonline.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://unpkg.com https://www.gstatic.com; font-src 'self' data:; media-src 'none'; frame-src 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com; style-src 'self' https://unpkg.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://server.arcgisonline.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://unpkg.com https://www.gstatic.com; font-src 'self' data:; media-src 'none'; frame-src 'none';">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -24,13 +24,6 @@
 <a href="#content" class="skip-link">Перейти к содержимому</a>
 
 <div id="splash-screen">
-  <div class="splash-cloud" style="top:4%;left:5%;width:260px;height:90px;animation-duration:13s;opacity:0.40;animation-delay:0s"></div>
-  <div class="splash-cloud" style="top:15%;left:55%;width:200px;height:70px;animation-duration:9s;opacity:0.35;animation-delay:-4s"></div>
-  <div class="splash-cloud" style="top:35%;left:25%;width:340px;height:110px;animation-duration:14s;opacity:0.30;animation-delay:-2s"></div>
-  <div class="splash-cloud" style="top:50%;left:70%;width:280px;height:85px;animation-duration:11s;opacity:0.40;animation-delay:-6s"></div>
-  <div class="splash-cloud" style="top:65%;left:8%;width:180px;height:60px;animation-duration:15s;opacity:0.25;animation-delay:-8s"></div>
-  <div class="splash-cloud" style="top:78%;left:60%;width:240px;height:75px;animation-duration:10s;opacity:0.35;animation-delay:-3s"></div>
-  <div class="splash-cloud" style="top:92%;left:35%;width:150px;height:50px;animation-duration:17s;opacity:0.20;animation-delay:-10s"></div>
   <div class="splash-quote-wrap">
     <div class="splash-quote" id="splash-quote"></div>
     <div class="splash-subquote">🇷🇸 Релокация в Белград</div>
@@ -65,10 +58,10 @@
     <h1 class="auth-logo">👥 Ключ компании</h1>
     <p class="auth-subtitle">Создайте свою компанию или введите ключ существующей</p>
     <div class="company-actions">
-      <button id="btn-company-create" class="auth-submit-btn" style="margin-bottom:10px">👥 Создать компанию</button>
-      <button id="btn-company-join" class="auth-submit-btn" style="background:#43a047">🫂 Войти в компанию</button>
+      <button id="btn-company-create" class="auth-submit-btn company-create-btn">👥 Создать компанию</button>
+      <button id="btn-company-join" class="auth-submit-btn company-join-btn">🫂 Войти в компанию</button>
     </div>
-    <p class="action-help" style="margin-top:14px;text-align:center;font-size:12px;color:#86868b">Ключ компании объединяет устройства. Создайте компанию, и передайте ключ тому, с кем хотите синхронизироваться. Или введите ключ существующей компании.</p>
+    <p class="action-help company-help">Ключ компании объединяет устройства. Создайте компанию, и передайте ключ тому, с кем хотите синхронизироваться. Или введите ключ существующей компании.</p>
   </div>
 </div>
 
@@ -254,10 +247,10 @@
         <div class="settings-data-center">
           <div class="settings-version-line">
             <span>🚀 <span id="app-version-display">—</span></span>
-            <span style="color:var(--text-muted,#86868b);font-size:12px">Авто-обновление</span>
+            <span class="auto-update-label">Авто-обновление</span>
           </div>
 
-          <div style="height:8px"></div>
+          <div class="spacer-8"></div>
 
           <div class="settings-card">
               <div class="card-header">
@@ -284,7 +277,7 @@
               <div class="card-body hidden">
                 <p class="card-desc">Все устройства в одной компании синхронизируются автоматически ☁️</p>
                 <div class="sync-status-info">
-                  <p><strong>Ключ компании:</strong> <span id="display-sync-code" style="cursor:pointer;font-weight:700;letter-spacing:2px;font-family:monospace;color:#1a237e" title="Нажмите чтобы изменить">—</span></p>
+                  <p><strong>Ключ компании:</strong> <span id="display-sync-code" class="sync-code-display" title="Нажмите чтобы изменить">—</span></p>
                   <p><strong>Облако:</strong> <span id="cloud-status">Проверка...</span></p>
                 </div>
                 <div class="card-actions">
@@ -322,7 +315,7 @@
             </div>
           </div>
 
-          <div class="settings-card" style="border-color:#c62828">
+          <div class="settings-card delete-account-card">
             <div class="card-header">
               <span class="card-icon">🚫</span>
               <h4>Удалить аккаунт</h4>
@@ -331,7 +324,7 @@
             <div class="card-body hidden">
               <p class="card-desc">Полностью удаляет аккаунт, облачные и локальные данные. Восстановление невозможно.</p>
               <div class="card-actions">
-                <button id="btn-delete-account" class="action-btn danger-btn" style="background:#b71c1c;color:#fff">🗑️ Удалить аккаунт навсегда</button>
+                <button id="btn-delete-account" class="action-btn danger-btn delete-account-btn">🗑️ Удалить аккаунт навсегда</button>
               </div>
             </div>
           </div>
@@ -360,41 +353,7 @@
   </div>
 </div>
 
-<script>
-const _splashStart = Date.now();
-
-const SPLASH_QUOTES = [
-  'Дорогу осилит идущий',
-  'Готовь сани летом, а документы — до переезда',
-  'Семь раз проверь бумаги — один раз подай',
-  'Глаза боятся, а руки собирают чемоданы',
-  'Под лежачий камень вода не течёт — как и ВНЖ',
-  'Терпение и труд — и боравак твой',
-  'Лучший план — это запасной план',
-  'Кто владеет информацией — тот владеет переездом',
-  'Переезд — это не катастрофа, а приключение',
-  'Будь готов к любым неожиданностям — и их не будет',
-  'Не боги ВНЖ оформляют, а люди с терпением',
-  'Србија те чека',
-  'Белград ждёт, но бумаги — нет',
-  'Бюрократия — это марафон, а не спринт',
-  'Лучше переплатить за апостиль, чем за адвоката',
-];
-document.getElementById('splash-quote').textContent =
-  '"' + SPLASH_QUOTES[Math.floor(Math.random() * SPLASH_QUOTES.length)] + '"';
-
-window.hideSplash = function() {
-  const el = document.getElementById('splash-screen');
-  if (!el) return;
-  const elapsed = Date.now() - _splashStart;
-  const minMs = window._MIN_SPLASH_MS || 5000;
-  if (elapsed < minMs) {
-    setTimeout(() => { el.classList.add('hidden'); }, minMs - elapsed);
-  } else {
-    el.classList.add('hidden');
-  }
-};
-</script>
+<script src="inline.js?v=6.32.3-034ba57"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" integrity="sha384-EwovEReIBwDzwCLP6GzQMiwcY7++0ugFpjjOZK9F1sM1YsUZrMhSNTQY/vNLXpbb" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" integrity="sha384-Fm5y7YoR1LHe2kBDy5A01hiYa1+TYkhjyhO//LS2bsV+L5CA1wtOPame5Opw5qrl" crossorigin="anonymous" defer></script>
