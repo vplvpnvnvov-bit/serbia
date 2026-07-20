@@ -61,15 +61,18 @@ firebase.auth().onAuthStateChanged(async user => {
 
     syncCode = localStorage.getItem('sync-code');
     if (!syncCode) {
+      window.hideSplash();
       document.getElementById('auth-screen').classList.add('hidden');
       document.getElementById('company-screen').classList.remove('hidden');
       return;
     }
+    window.hideSplash();
     document.getElementById('display-sync-code').textContent = syncCode;
     updateCloudStatus();
     setupSnapshotListener();
     window.dispatchEvent(new CustomEvent('auth-ready'));
   } else {
+    window.hideSplash();
     userId = null;
     if (_unsubSnapshot) { _unsubSnapshot(); _unsubSnapshot = null; }
     window.dispatchEvent(new CustomEvent('auth-logout'));

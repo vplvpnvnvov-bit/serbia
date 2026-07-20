@@ -44,6 +44,16 @@ let authMode = 'login';
 function showApp() {
   document.getElementById('auth-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
+  setTimeout(() => {
+    if (!document.getElementById('tab-schema')?.classList.contains('active')) return;
+    try {
+      const toggle = document.getElementById('toggle-schema-editor');
+      if (toggle) toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true';
+      updateSchemaToolbar();
+      renderSchema();
+      renderLegend();
+    } catch (e) { console.error(e); }
+  }, 150);
 }
 
 function showAuthScreen() {
