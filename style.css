@@ -2420,7 +2420,7 @@ body.dark-theme .carousel-caption {
 
 #schema-title {
   position: absolute;
-  top: 30px;
+  top: 46px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -2437,7 +2437,10 @@ body.dark-theme .carousel-caption {
   color: #4a3520;
   letter-spacing: 0.4px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  animation: fadeOutTitle 1s ease 9s forwards;
 }
+
+@keyframes fadeOutTitle { to { opacity: 0; } }
 
 body.dark-theme #schema-title {
   background: rgba(30,27,24,0.82);
