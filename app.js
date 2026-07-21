@@ -1754,6 +1754,7 @@ function renderPlan() {
   if (!root) return;
 
   let state = getPlanState();
+  console.log('[sync] renderPlan state:', state ? Object.keys(state.tasks || {}).length + ' tasks' : 'null');
   if (!state || !state.tasks || typeof state.tasks !== 'object') {
     state = null;
   }
@@ -3531,9 +3532,10 @@ if (schemaCanvas && !schemaCanvas.dataset.clickBound) {
 
 // Sync: обновление после загрузки из облака
 window.addEventListener('sync-loaded', () => {
+  console.log('[sync] sync-loaded handler fired');
   const active = document.activeElement;
   const isEditing = active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT');
-  if (isEditing) return;
+  if (isEditing) { console.log('[sync] skip — editing'); return; }
   try {
     renderPlan();
     const schemaTab = document.getElementById('tab-schema');
