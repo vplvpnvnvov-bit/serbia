@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.9",
-  BUILD: "bcab17b",
-  CACHE_NAME: "relocation-v6.35.9-bcab17b",
+  VERSION: "6.35.10",
+  BUILD: "f01091f",
+  CACHE_NAME: "relocation-v6.35.10-f01091f",
   MIN_SPLASH_MS: 5000
 };
 
@@ -256,7 +256,7 @@ function debouncedSave() {
     }
     window.saveToCloud()
       .then(() => { window._localPlanDirty = false; })
-      .catch(err => { showUserError(err); window._localPlanDirty = false; });
+      .catch(err => { showUserError(err); _debounceTimer = setTimeout(attempt, 5000); });
   };
   _debounceTimer = setTimeout(attempt, 1500);
 }
@@ -2329,7 +2329,7 @@ if (!planListenerAdded) {
       }
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => {});
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       debouncedSave();
       return;
@@ -2388,7 +2388,7 @@ if (!planListenerAdded) {
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => {});
       }
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
@@ -2431,7 +2431,7 @@ if (!planListenerAdded) {
       st.tasks[id].note = null;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => {});
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
