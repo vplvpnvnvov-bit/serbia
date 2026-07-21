@@ -220,16 +220,10 @@ window.saveToCloud = async function() {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
     if (plan && plan.tasks) {
-      Object.entries(plan.tasks).forEach(([id, t]) => {
-        const p = `plan.tasks.${id}`;
-        data[`${p}.checked`] = !!t.checked;
-        data[`${p}.progress`] = !!t.progress;
-        data[`${p}.customCost`] = t.customCost ?? null;
-        data[`${p}.date`] = t.date || null;
-        data[`${p}.note`] = t.note || null;
-      });
+      data.plan = plan;
     }
     if (plan && plan.tasks && plan.tasks.dentist) data._diag_dentist = JSON.stringify(plan.tasks.dentist);
+    if (plan && plan.tasks && plan.tasks.dentist) console.log('[sync] SAVING dentist:', JSON.stringify(plan.tasks.dentist));
     if (plan && plan.tasks && plan.tasks.dentist) console.log('[sync] SAVING dentist:', JSON.stringify(plan.tasks.dentist));
 
     const ref = db.collection('users').doc(syncCode);
