@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.34.3",
-  BUILD: "e19ee84",
-  CACHE_NAME: "relocation-v6.34.3-e19ee84",
+  VERSION: "6.34.4",
+  BUILD: "6d8a647",
+  CACHE_NAME: "relocation-v6.34.4-6d8a647",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2601,7 +2601,7 @@ document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
 
 // === SCHEMA TAB ===
 const SCHEMA_ITEMS = [
-  {id:'_rf',  t:'Подготовка', v:true, icon:'📍'},
+  {id:'_rf',  t:'', v:true, icon:'🪹'},
   {id:'p10',  t:'Загранпаспорт мужа', icon:'🛂'},
   {id:'p5w',  t:'Загранпаспорт жены', icon:'🛂'},
   {id:'stamp',t:'Штамп гражданства', icon:'👶'},
@@ -2640,28 +2640,30 @@ function drawSchemaSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
   else if (prog)  { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
   else            { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
 
-  ctx.font = 'bold 9px sans-serif';
-  const txtW = ctx.measureText(text).width;
-  const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-  const ph = 10;
-  const pox = x - (pw * PX) / 2;
-  const poy = y - ph * PX - 6 * PX;
+  if (text) {
+    ctx.font = 'bold 9px sans-serif';
+    const txtW = ctx.measureText(text).width;
+    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
+    const ph = 10;
+    const pox = x - (pw * PX) / 2;
+    const poy = y - ph * PX - 6 * PX;
 
-  ctx.fillStyle = bg;
-  ctx.fillRect(pox, poy, pw * PX, ph * PX);
-  ctx.fillStyle = border;
-  ctx.fillRect(pox, poy, pw * PX, PX);
-  ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-  ctx.fillRect(pox, poy, PX, ph * PX);
-  ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-  ctx.fillStyle = '#3e2723';
-  ctx.fillRect(pox + PX, poy + PX, 2, 2);
-  ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-  ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-  ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-  ctx.fillStyle = tc;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(text, x, poy + (ph * PX) / 2);
+    ctx.fillStyle = bg;
+    ctx.fillRect(pox, poy, pw * PX, ph * PX);
+    ctx.fillStyle = border;
+    ctx.fillRect(pox, poy, pw * PX, PX);
+    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
+    ctx.fillRect(pox, poy, PX, ph * PX);
+    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
+    ctx.fillStyle = '#3e2723';
+    ctx.fillRect(pox + PX, poy + PX, 2, 2);
+    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
+    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
+    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
+    ctx.fillStyle = tc;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, poy + (ph * PX) / 2);
+  }
 
   if (icon) {
     ctx.font = '18px serif';
