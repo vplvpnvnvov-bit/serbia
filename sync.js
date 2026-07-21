@@ -228,6 +228,7 @@ window.saveToCloud = async function() {
         data[`${p}.note`] = t.note || null;
       });
     }
+    if (plan && plan.tasks && plan.tasks.dentist) console.log('[sync] SAVING dentist:', JSON.stringify(plan.tasks.dentist));
 
     const ref = db.collection('users').doc(syncCode);
     const existing = await ref.get({ source: 'cache' });
