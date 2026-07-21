@@ -112,9 +112,9 @@ function setupSnapshotListener() {
       if (data.planVersion !== undefined) {
         localStorage.setItem('plan-local-version', String(data.planVersion));
       }
-      localStorage.setItem('last-sync-time', new Date().toLocaleString());
-      updateSyncStatusUI();
-      updateCloudStatus();
+    localStorage.setItem('last-sync-time', new Date().toLocaleString());
+    updateSyncStatusUI();
+    updateCloudStatus();
       window.dispatchEvent(new CustomEvent('sync-loaded'));
     }
   }, err => {
@@ -237,6 +237,7 @@ window.saveToCloud = async function() {
     localStorage.setItem('last-sync-time', new Date().toLocaleString());
     updateSyncStatusUI();
     updateCloudStatus();
+    await fetchAndLoadDoc();
   } finally {
     _localWritePending = false;
     window.syncPending = false;
