@@ -3313,23 +3313,23 @@ function renderSchema() {
   // Beak
   px(12, 3, 2, 1, '#ff8f00');
   // Eye
-  px(10, 3, 1, 1, '#ffffff');
-  px(10, 3, 1, 1, '#000000'); // pupil
-  px(10, 2, 1, 1, '#1565c0'); // brow
+  px(10, 3, 2, 1, '#ffffff');
+  px(11, 3, 1, 1, '#000000'); // pupil
+  px(10, 2, 2, 1, '#1565c0'); // brow
   // Tail
   px(1, 5, 3, 1, '#0d47a1');
   px(2, 6, 2, 1, '#0d47a1');
-  // Wing (flapping)
-  if (wingUp < 2) {
-    px(5, 0 - wingUp, 3, 2 + wingUp, '#1565c0');
-    px(4, 1 - wingUp, 1, 2 + wingUp, '#1565c0');
-  } else {
-    px(5, 9, 3, 2, '#1565c0');
-    px(4, 9, 1, 2, '#1565c0');
-  }
-  // Legs
+  // Legs (drawn before wing so wing covers them when down)
   px(6, 9, 1, 2, '#ff8f00');
   px(8, 9, 1, 2, '#ff8f00');
+  // Wing (flapping)
+  if (wingUp < 2) {
+    px(5, 0 - wingUp, 3, 3 + wingUp, '#1565c0');
+    px(4, 1 - wingUp, 1, 3 + wingUp, '#1565c0');
+  } else {
+    px(5, 6, 3, 4, '#1565c0');
+    px(4, 7, 1, 4, '#1565c0');
+  }
   ctx.restore();
 
   // Boundary glow — visible from flight start to landing complete
