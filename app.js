@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.37.4",
-  BUILD: "e653919",
-  CACHE_NAME: "relocation-v6.37.4-e653919",
+  VERSION: "6.37.5",
+  BUILD: "0724419",
+  CACHE_NAME: "relocation-v6.37.5-0724419",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2338,7 +2338,7 @@ if (!planListenerAdded) {
       }
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; document.getElementById('cloud-status').textContent = '✅ ' + (st.tasks[id]?.checked ? '🟢' : st.tasks[id]?.progress ? '🟡' : '⚪') + ' ' + t.id; }).catch(err => { showUserError(err); debouncedSave(); });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
