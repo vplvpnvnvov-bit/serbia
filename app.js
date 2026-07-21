@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.37.2",
-  BUILD: "fdca449",
-  CACHE_NAME: "relocation-v6.37.2-fdca449",
+  VERSION: "6.37.3",
+  BUILD: "98b6c04",
+  CACHE_NAME: "relocation-v6.37.3-98b6c04",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2340,7 +2340,6 @@ if (!planListenerAdded) {
       window._localPlanDirty = true;
       if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); debouncedSave(); });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
-      debouncedSave();
       return;
     }
 
