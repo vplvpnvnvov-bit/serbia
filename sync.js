@@ -114,7 +114,6 @@ function setupSnapshotListener() {
     if (serverTs > localTs) {
       console.log(`[sync] ACCEPT: ts=${serverTs} localTs=${localTs} ver=${data.planVersion}`);
       if (data.plan && data.plan.tasks) console.log('[sync] dentist in snapshot:', JSON.stringify(data.plan.tasks.dentist));
-      if (data._diag_dentist !== undefined) console.log('[diag] dentist WRITTEN BY PHONE:', data._diag_dentist);
       localStorage.setItem('plan-state', JSON.stringify(data.plan));
       localStorage.setItem('plan-state-last-updated', String(serverTs));
       if (data.planVersion !== undefined) {
@@ -215,15 +214,11 @@ window.saveToCloud = async function() {
     const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
     const plan = getPlanValues();
     const data = {
+      plan: plan,
       planVersion: localVersion,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    if (plan && plan.tasks) {
-      data.plan = plan;
-    }
-    if (plan && plan.tasks && plan.tasks.dentist) data._diag_dentist = JSON.stringify(plan.tasks.dentist);
-    if (plan && plan.tasks && plan.tasks.dentist) console.log('[sync] SAVING dentist:', JSON.stringify(plan.tasks.dentist));
     if (plan && plan.tasks && plan.tasks.dentist) console.log('[sync] SAVING dentist:', JSON.stringify(plan.tasks.dentist));
 
     const ref = db.collection('users').doc(syncCode);
