@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.4",
-  BUILD: "bb7b129",
-  CACHE_NAME: "relocation-v6.35.4-bb7b129",
+  VERSION: "6.35.5",
+  BUILD: "70b91e1",
+  CACHE_NAME: "relocation-v6.35.5-70b91e1",
   MIN_SPLASH_MS: 5000
 };
 
@@ -18,6 +18,10 @@ let _schemaNodes = null;
 let _schemaAnimating = false;
 let _schemaAnimFrame = null;
 let _landscapeMode = false;
+let _editMode = false;
+let _manualPositions = {};
+let _dragTarget = null;
+let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 let _landscapeOverrides = {};
 let _landscapeElements = [];
 let _currentCW = 0, _currentCH = 0;
@@ -3547,11 +3551,6 @@ const SCHEMA_SIDE_TASKS = [
 ];
 const SCHEMA_PARENT_IDS = {};
 SCHEMA_SIDE_TASKS.forEach(st => { SCHEMA_PARENT_IDS[st.id] = st.parentId; });
-
-let _editMode = false;
-let _manualPositions = {};
-let _dragTarget = null;
-let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
 const DEFAULT_MANUAL_OFFSETS = {
   pharm: { dx: 114, dy: -22 },
