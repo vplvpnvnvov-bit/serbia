@@ -113,6 +113,7 @@ function setupSnapshotListener() {
 
     if (serverTs > localTs) {
       console.log(`[sync] ACCEPT: ts=${serverTs} localTs=${localTs} ver=${data.planVersion}`);
+      if (data.plan && data.plan.tasks) console.log('[sync] dentist in snapshot:', JSON.stringify(data.plan.tasks.dentist));
       localStorage.setItem('plan-state', JSON.stringify(data.plan));
       localStorage.setItem('plan-state-last-updated', String(serverTs));
       if (data.planVersion !== undefined) {

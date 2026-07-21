@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.37.0",
-  BUILD: "505a868",
-  CACHE_NAME: "relocation-v6.37.0-505a868",
+  VERSION: "6.37.1",
+  BUILD: "6e9077c",
+  CACHE_NAME: "relocation-v6.37.1-6e9077c",
   MIN_SPLASH_MS: 5000
 };
 
@@ -1755,6 +1755,10 @@ function renderPlan() {
 
   let state = getPlanState();
   console.log('[sync] renderPlan state:', state ? Object.keys(state.tasks || {}).length + ' tasks' : 'null');
+  if (state && state.tasks) {
+    const dent = state.tasks.dentist;
+    console.log('[sync] dentist:', dent ? JSON.stringify(dent) : 'not found');
+  }
   if (!state || !state.tasks || typeof state.tasks !== 'object') {
     state = null;
   }
