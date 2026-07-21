@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.6",
-  BUILD: "a17524a",
-  CACHE_NAME: "relocation-v6.35.6-a17524a",
+  VERSION: "6.35.7",
+  BUILD: "e036a79",
+  CACHE_NAME: "relocation-v6.35.7-e036a79",
   MIN_SPLASH_MS: 5000
 };
 
@@ -3562,6 +3562,8 @@ const DEFAULT_MANUAL_OFFSETS = {
   child_consent: { dx: -35, dy: 80 },
   diplomas: { dx: 153, dy: -50 },
   driving_licenses: { dx: 127, dy: 33 },
+  apost_nocrim_h: { dx: 64, dy: 30 },
+  apost_nocrim_w: { dx: 93, dy: 53 },
   ticket_buy: { dx: 67, dy: -137 },
   airbnb_book: { dx: -123, dy: -46 },
   loans: { dx: 275, dy: -25 },
@@ -3571,8 +3573,6 @@ try {
   const saved = JSON.parse(localStorage.getItem('schema-manual-offsets') || 'null');
   _manualPositions = saved || DEFAULT_MANUAL_OFFSETS;
 } catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
-
-['apost_nocrim_h','apost_nocrim_w'].forEach(id => delete _manualPositions[id]);
 
 try {
   const saved = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null');
