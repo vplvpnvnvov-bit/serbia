@@ -92,30 +92,38 @@ function setupSnapshotListener() {
   if (!syncCode || !userId) return;
 
   _unsubSnapshot = db.collection('users').doc(syncCode).onSnapshot(snapshot => {
-    if (!snapshot.exists) return;
-    if (snapshot.metadata.hasPendingWrites) return;
-    if (_localWritePending) return;
-    if (window._localPlanDirty) return;
+    if (!snapshot.exists) { console.log('[sync] snapshot: doc does not exist'); return; }
+    if (snapshot.metadata.hasPendingWrites) { console.log('[sync] snapshot: pending writes (own)'); return; }
+    if (_localWritePending) { console.log('[sync] snapshot: local write pending'); return; }
+    if (window._localPlanDirty) { console.log('[sync] snapshot: local plan dirty'); return; }
 
     const data = snapshot.data();
-    if (!data || !data.lastUpdated) return;
+    if (!data || !data.lastUpdated) { console.log('[sync] snapshot: no data or lastUpdated'); return; }
 
     const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
-    if (data.plan && data.planVersion !== undefined && data.planVersion <= localVersion) return;
+    if (data.plan && data.planVersion !== undefined && data.planVersion <= localVersion) {
+      console.log(`[sync] snapshot: version skip (cloud=${data.planVersion} local=${localVersion})`);
+      return;
+    }
 
     const serverTs = data.lastUpdated.toMillis ? data.lastUpdated.toMillis() : data.lastUpdated;
     const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
 
-    if (serverTs > localTs && data.plan) {
+    if (!data.plan) { console.log('[sync] snapshot: no plan in data'); return; }
+
+    if (serverTs > localTs) {
+      console.log(`[sync] ACCEPT: ts=${serverTs} localTs=${localTs} ver=${data.planVersion}`);
       localStorage.setItem('plan-state', JSON.stringify(data.plan));
       localStorage.setItem('plan-state-last-updated', String(serverTs));
       if (data.planVersion !== undefined) {
         localStorage.setItem('plan-local-version', String(data.planVersion));
       }
-    localStorage.setItem('last-sync-time', new Date().toLocaleString());
-    updateSyncStatusUI();
-    updateCloudStatus();
+      localStorage.setItem('last-sync-time', new Date().toLocaleString());
+      updateSyncStatusUI();
+      updateCloudStatus();
       window.dispatchEvent(new CustomEvent('sync-loaded'));
+    } else {
+      console.log(`[sync] snapshot: ts skip (serverTs=${serverTs} <= localTs=${localTs})`);
     }
   }, err => {
     if (err.code !== 'permission-denied') console.warn('Snapshot error:', err.message);
