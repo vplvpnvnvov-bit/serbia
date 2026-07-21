@@ -1144,16 +1144,6 @@ body.dark-theme .avia-price-badge:hover {
 .tl-step.done .plan-task-cost {
   opacity: 0.7;
 }
-.plan-task-desc {
-  font-size: 11px;
-  color: #666;
-  flex-basis: 100%;
-  padding-left: 42px;
-  margin-top: -2px;
-}
-.tl-step.status-done .plan-task-desc {
-  color: #8bc34a;
-}
 
 /* Three-state status button */
 .plan-status-btn {
@@ -1917,9 +1907,6 @@ body.dark-theme .tl-step:hover {
 body.dark-theme .plan-task-name {
   color: #cfd8dc;
 }
-body.dark-theme .plan-task-desc {
-  color: #b0bec5;
-}
 body.dark-theme .plan-task-cost {
   color: #81c784;
 }
@@ -2107,9 +2094,6 @@ body.dark-theme .plan-date-val {
 }
 body.dark-theme .tl-step.status-done .plan-task-name {
   color: #81c784;
-}
-body.dark-theme .tl-step.status-done .plan-task-desc {
-  color: #a5d6a7;
 }
 body.dark-theme .metric-detail-item {
   color: #90a4ae;

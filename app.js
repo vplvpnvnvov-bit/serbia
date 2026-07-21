@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.36.0",
-  BUILD: "93132af",
-  CACHE_NAME: "relocation-v6.36.0-93132af",
+  VERSION: "6.36.1",
+  BUILD: "cf59c16",
+  CACHE_NAME: "relocation-v6.36.1-cf59c16",
   MIN_SPLASH_MS: 5000
 };
 
@@ -1949,13 +1949,6 @@ function renderPlan() {
       const curSym = t.currency === 'RUB' ? ' ₽' : ' €';
       costSpan.textContent = cost > 0 ? cost.toLocaleString('ru-RU') + curSym : 'Бесплатно';
       li.appendChild(costSpan);
-
-      if (t.desc) {
-        const descSpan = document.createElement('span');
-        descSpan.className = 'plan-task-desc';
-        descSpan.textContent = t.desc;
-        li.appendChild(descSpan);
-      }
 
       // Date block — visible when done AND hasDate
       if (checked && hasDate) {
