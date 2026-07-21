@@ -264,6 +264,27 @@ html, body {
   font-size: 17px;
   font-weight: 600;
 }
+.avia-price-badge {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--header-text);
+  background: rgba(255,255,255,0.15);
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-decoration: none;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.avia-price-badge:hover {
+  background: rgba(255,255,255,0.25);
+}
+body.dark-theme .avia-price-badge {
+  background: rgba(255,255,255,0.08);
+}
+body.dark-theme .avia-price-badge:hover {
+  background: rgba(255,255,255,0.15);
+}
 #sync-header-group {
   position: absolute;
   right: 12px;

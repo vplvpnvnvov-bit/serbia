@@ -101,12 +101,18 @@ function setupSnapshotListener() {
     const data = snapshot.data();
     if (!data || !data.lastUpdated) return;
 
+    const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
+    if (data.plan && data.planVersion !== undefined && data.planVersion <= localVersion) return;
+
     const serverTs = data.lastUpdated.toMillis ? data.lastUpdated.toMillis() : data.lastUpdated;
     const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
 
     if (serverTs > localTs && data.plan) {
       localStorage.setItem('plan-state', JSON.stringify(data.plan));
       localStorage.setItem('plan-state-last-updated', String(serverTs));
+      if (data.planVersion !== undefined) {
+        localStorage.setItem('plan-local-version', String(data.planVersion));
+      }
       localStorage.setItem('last-sync-time', new Date().toLocaleString());
       updateSyncStatusUI();
       updateCloudStatus();
@@ -163,12 +169,17 @@ async function fetchAndLoadDoc() {
   syncLoading = true;
   try {
     if (data.plan) {
+      const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
       const rawTs = data.lastUpdated || 0;
       const serverTs = rawTs && rawTs.toMillis ? rawTs.toMillis() : rawTs;
       const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
-      if (serverTs > localTs) {
+      const versionOk = data.planVersion === undefined || data.planVersion > localVersion;
+      if (versionOk && serverTs > localTs) {
         localStorage.setItem('plan-state', JSON.stringify(data.plan));
         localStorage.setItem('plan-state-last-updated', String(serverTs));
+        if (data.planVersion !== undefined) {
+          localStorage.setItem('plan-local-version', String(data.planVersion));
+        }
       }
     } else if (data.checklist || data.calc) {
       localStorage.setItem('checklist', JSON.stringify(data.checklist || {}));
@@ -192,8 +203,10 @@ window.saveToCloud = async function() {
   window.syncPending = true;
   _localWritePending = true;
   try {
+    const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
     const data = {
       plan: getPlanValues(),
+      planVersion: localVersion,
       version: CURRENT_DATA_VERSION,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),

@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.33.4",
-  BUILD: "a23d7fa",
-  CACHE_NAME: "relocation-v6.33.4-a23d7fa",
+  VERSION: "6.33.19",
+  BUILD: "1e9fdd9",
+  CACHE_NAME: "relocation-v6.33.19-1e9fdd9",
   MIN_SPLASH_MS: 5000
 };
 
@@ -1203,7 +1203,23 @@ const masterTimeline = [
         cost: 0, 
         currency: "RUB", 
         desc: "Запас необходимых препаратов на 3–6 месяцев", 
-        tip: "<p><b>⚠️ Таможенный контроль:</b> Правила ввоза лекарств физическими лицами жестко регулируются. Ознакомьтесь с ограничениями на <a href='https://www.carina.rs' target='_blank' rel='noopener noreferrer'>официальном сайте Таможенной службы Сербии (Uprava carina)</a>.</p><p><b>Что собрать:</b> Специфические рецептурные препараты, которые вы принимаете на регулярной основе (с запасом на полгода), детские жаропонижающие (в Сербии тяжело найти некоторые привычные сиропы), антигистаминные средства, сорбенты. На все рецептурные лекарства обязательно возьмите бумажный рецепт от лечащего врача с печатью клиники и указанием Международного непатентованного наименования (МНН) активного вещества на латыни — это позволит сербскому фармацевту подобрать местный аналог.</p>" 
+        tip: "<p><b>⚠️ Таможенный контроль:</b> Правила ввоза лекарств физическими лицами жестко регулируются. Ознакомьтесь с ограничениями на <a href='https://www.carina.rs' target='_blank' rel='noopener noreferrer'>официальном сайте Таможенной службы Сербии (Uprava carina)</a>.</p><p><b>Что собрать:</b> Специфические рецептурные препараты, которые вы принимаете на регулярной основе (с запасом на полгода), детские жаропонижающие (в Сербии тяжело найти некоторые привычные сиропы), антигистаминные средства, сорбенты. На все рецептурные лекарства обязательно возьмите бумажный рецепт от лечащего врача с печатью клиники и указанием Международного непатентованного наименования (МНН) активного вещества на латыни — это позволит сербскому фармацевту подобрать местный аналог.</p><p><b>👁️ Не только лекарства!</b> В эту же аптечку положите <b>контактные линзы</b> (с запасом на 6–12 месяцев), <b>раствор для линз</b> (большие бутылки — в Сербии мелкие объёмы по завышенной цене), <b>запасные очки</b> (если носите), <b>солнцезащитные очки с диоптриями</b> при необходимости. Также захватите <b>глазные капли</b> привычной марки, <b>увлажняющие спреи для носа</b> (в сухом климате Белграда пригодятся) и <b>запас средств для ухода за линзами</b> на первое время, пока не найдёте местную оптику.</p>" 
+      },
+      { 
+        id: "habits", 
+        name: "Собрать привычные гигиенические и косметические средства", 
+        cost: 0, 
+        currency: "RUB", 
+        desc: "Запас личной гигиены, косметики и средств ухода на 3–6 месяцев", 
+        tip: "<p><b>🎯 Почему это важно:</b> В Сербии многие привычные бренды попросту не представлены, а если представлены — то с другим составом (EU-регламенты отличаются от РФ/СНГ) и в 1.5–3 раза дороже. Особенно это касается женской гигиены, дезодорантов, красок для волос и specialised skin care. Заложите запас на первые 3–6 месяцев, пока не найдёте локальные аналоги.</p><p><b>🧴 Что положить в чемодан:</b></p><p><b>— Гигиена полости рта:</b> Зубные щётки привычных моделей (включая электрические со сменными насадками — насадки в Сербии стоят ощутимо дороже). Зубные пасты специфических марок (Splat, Rox, Biorepair — местные аналоги не всегда совпадают по составу). Ирригатор, если пользуетесь — с запасом насадок.</p><p><b>— Бритьё и уход:</b> Бритвенные станки и сменные кассеты (Gillette Fusion, Mach3 и аналоги — сменные кассеты в Сербии €25–35 за упаковку против €15–20 в РФ). Крем/пенка для бритья привычной марки. Триммер/машинка для стрижки со сменными лезвиями.</p><p><b>— Дезодоранты и парфюмерия:</b> Антиперспиранты привычных марок (Rexona, Nivea, Old Spice — составы в EU-версиях отличаются). Духи/туалетная вода — разница в цене незначительная, но если есть любимый флакон — берите.</p><p><b>— Женская гигиена:</b> Прокладки и тампоны привычных брендов (Kotex, Naturella, Always — EU-версии имеют другой впитывающий слой, многим не подходят). Ежедневные прокладки. Средства интимной гигиены.</p><p><b>— Волосы:</b> Шампуни/кондиционеры/маски для специфического типа волос (окрашенные, тонкие, кудрявые). Средства для укладки (муссы, лаки, воски). Краска для волос — если пользуетесь конкретным оттенком/брендом, берите с запасом. Расчёски/щётки привычных форм.</p><p><b>— Косметика и уход:</b> Тоники, сыворотки, кремы для лица специфических линеек (La Roche-Posay, Vichy, Avene — в Сербии есть, но ассортимент уже и цены выше). Мицеллярная вода, гидрофильное масло, патчи — всё, к чему привыкла кожа. Солнцезащитные кремы (EU-стандарт SPF отличается маркировкой, многие жалуются на липкость местных версий). Ватные диски/палочки — не занимают места, но в Сербии они другого качества и дороже.</p><p><b>— Маникюр/педикюр:</b> Кусачки, ножницы, пилочки, бафы — качественные инструменты берите свои (сербские аналоги в дрогериях часто одноразового качества). Лаки/гель-лаки, если наносите сами — база, топ, цвета. Средство для снятия лака (без ацетона).</p><p><b>— Лекарства без рецепта:</b> Обезболивающие (Найз, Кетанов, Спазмалгон — ищите действующее вещество по МНН, торговые названия в Сербии другие). Ферменты (Мезим, Панкреатин). Сорбенты (Энтеросгель, Полисорб). Противовирусные/иммуномодуляторы (Кагоцел, Арбидол — в Сербии не продаются вообще). Капли в нос (Снуп, Риностоп — местные капли другие). Пластыри, бинты, эластичные бинты.</p><p><b>💡 Стратегия упаковки:</b> Не везите шампуни/гели для душа (они есть в любом супермаркете по адекватным ценам). Сфокусируйтесь на том, что <b>действительно привязано к привычному бренду/составу</b>: дезодоранты, зубная паста, средства для укладки, женская гигиена, косметика для лица. Всё это занимает мало места, но экономит нервы на первые месяцы адаптации.</p>" 
+      },
+      { 
+        id: "gadgets", 
+        name: "Собрать технику и электронику в дорогу", 
+        cost: 0, 
+        currency: "RUB", 
+        desc: "Адаптеры, powerbank, кабели, носители данных", 
+        tip: "<p><b>⚡ Главное отличие:</b> В Сербии используются европейские розетки <b>типа F (Schuko)</b> — две круглые штыревые вилки с боковыми заземляющими контактами. Это стандарт CEE 7/4 (не путать с тонкими вилками типа C, которые входят, но не фиксируются). Если ваши приборы имеют вилки РФ/СНГ (тип C без боковых контактов или тип I с плоскими штырями), вам понадобятся <b>переходники</b>. Сетевые фильтры-удлинители из РФ часто имеют собственную вилку РФ — замените кабели.</p><p><b>🔌 Адаптеры и удлинители:</b></p><p>— <b>EU-адаптеры (тип C→F):</b> Купите 4–6 штук. Самые удобные — компактные переходники без лишних выступов (ищите 'EU plug adapter type F' на Ozon/Wildberries). Избегайте универсальных 'travel adapters' с 10 странами — они громоздкие и часто выпадают из розетки.</p><p>— <b>Удлинитель EU-стандарта:</b> Возьмите <b>один удлинитель с EU-вилкой и 3–4 EU-розетками</b> (продаётся в DNS/М.Видео, секция «Аксессуары для зарядных устройств», ищите 'удлинитель Schuko CEE 7/4'). Это нужно для того, чтобы включить EU-адаптеры ноутбука, монитора и зарядок в одну розетку.</p><p>— <b>Российский удлинитель (для старых приборов):</b> Возьмите один обычный «пилот» с 5 розетками на вилке РФ. Вставьте его в EU-адаптер — так вы сможете одновременно включить все приборы с вилками РФ (зарядники, колонки, увлажнитель) <b>через один-единственный адаптер</b>.</p><p>— <b>Usb-зарядка на 4–6 портов:</b> Заряжать телефон, планшет, наушники, e-reader, powerbank — всё из одной точки. Берите с EU-вилкой или с несъёмным кабелем USB-C.</p><p><b>💻 Ноутбуки и мониторы:</b></p><p>— Проверьте блоки питания. Большинство современных ноутбуков имеют <b>кабель C5/C7 от блока до розетки</b> — достаточно заменить этот кабель на EU-версию (продаётся отдельно за 200–300 ₽), а не покупать блок питания целиком.</p><p>— Если везёте монитор/iMac — блок питания обычно имеет <b>фиксированную вилку</b> типа C (РФ/СНГ). Ей нужен адаптер C→F. Настольный ПК — весь системник питается через блок питания с фиксированной вилкой, нужен адаптер.</p><p><b>📱 Что ещё взять:</b></p><p>— <b>Powerbank:</b> 20000–30000 mAh (больше нельзя в ручную кладь по правилам IATA — до 100 Wh / ~27000 mAh без согласования, до 160 Wh — с согласованием авиакомпании). Обязательно берите <b>два powerbank'a</b> по 20000 mAh — один в ручную кладь, второй тоже в ручную кладь (в багаж powerbank'и класть запрещено). Делайте звонок в авиакомпанию за сутки до вылета и уточняйте лимиты Wh.</p><p>— <b>Кабели:</b> USB-C↔USB-C, Lightning (если есть iPhone), microUSB (для старых девайсов), HDMI 2.0/2.1 (для монитора/ТВ). Каждый кабель — по 2 штуки (один в рюкзак, один на случай потери). С запасом длины 2–3 метра.</p><p>— <b>Внешние накопители:</b> SSD на 1–2 ТБ с USB-C (резервные копии документов, фото, рабочих проектов). Флешка USB-C / USB-A на 64–128 ГБ для обмена файлами. Внешний DVD-привод (usb) — может понадобиться для работы с архивами на CD/DVD.</p><p>— <b>Наушники:</b> Проводные (запасные) + TWS-наушники. В самолёте TWS нельзя использовать при взлёте/посадке (по правилам безопасности — могут потеряться). Возьмите проводные для перелёта.</p><p>— <b>E-reader / планшет:</b> Заранее закачайте книги, карты Белграда (MAPS.ME, 2GIS — офлайн-карты), PDF-документы, инструкции по ВНЖ.</p><p>— <b>Фотоаппарат / экшн-камера:</b> Если есть — берите. Для документов при подаче на ВНЖ потребуются фото 3.5×4.5 см на белом фоне (можно сделать в автоматах на Главпочтамте, но камера пригодится для туристического вида на жительство).</p><p>— <b>Роутер (опционально):</b> Если везёте свой Wi-Fi роутер — не забудьте, что провайдеры Сербии (Yettel, SBB, MTS) выдают свои ONT/роутеры. Ваш роутер можно использовать как дополнительную точку доступа или в режиме репитера. Убедитесь, что блок питания поддерживает 220V (все современные БП — да) и имеет EU-вилку или сменный кабель.</p><p><b>⚠️ Лайфхак для перелёта:</b> Все ценные вещи (ноутбук, планшет, наушники, внешние диски, powerbank) — <b>строго в ручную кладь</b>. Багаж в Air Serbia теряется или задерживается в 1–2% случаев. Если ваши адаптеры и кабели останутся в потерянном чемодане, вы в Белграде первый день будете без зарядки для телефона. Сложите в ручную кладь минимум: <b>1×EU-адаптер, 1×удлинитель, зарядка телефона + кабель, powerbank</b>.</p>" 
       },
       { 
         id: "med_vyps", 
@@ -1677,6 +1693,8 @@ function getPlanState() {
 
 function setPlanState(state) {
   localStorage.setItem('plan-state', JSON.stringify(state));
+  const ver = (parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0) + 1;
+  localStorage.setItem('plan-local-version', String(ver));
 }
 
 function calculateMonthMetrics(tasks, state) {
@@ -2234,6 +2252,7 @@ function refreshTaskRow(taskId) {
   const s = state.tasks && state.tasks[taskId] ? state.tasks[taskId] : { checked: false, progress: false, customCost: null };
   const checked = s.checked === true;
   const prog = s.progress === true;
+  const noteVal = s.note || '';
 
   let statusClass = '', statusEmoji = '⚪';
   if (checked) { statusClass = ' status-done'; statusEmoji = '🟢'; }
@@ -2250,6 +2269,27 @@ function refreshTaskRow(taskId) {
   const dateBlock = li.querySelector('.plan-date-inline');
   if (dateBlock) {
     dateBlock.style.display = (checked && s.date) ? '' : 'none';
+  }
+
+  // Note display
+  const noteDisplay = document.getElementById('plan-nd-' + taskId);
+  if (noteDisplay) {
+    noteDisplay.classList.toggle('hidden', !noteVal);
+    if (noteVal) noteDisplay.textContent = '📝 ' + noteVal;
+  }
+  const editBtn = li.querySelector('.plan-note-edit-btn');
+  if (editBtn) editBtn.textContent = noteVal ? '✏️' : '➕ Заметка';
+  const ta = li.querySelector('.plan-note-ta');
+  if (ta) ta.value = noteVal;
+  const delBtn = li.querySelector('.plan-note-del-btn');
+  const editWrap = document.getElementById('plan-ne-' + taskId);
+  if (delBtn && !noteVal) { delBtn.remove(); }
+  else if (!delBtn && noteVal && editWrap) {
+    const ndb = document.createElement('button');
+    ndb.className = 'plan-note-del-btn';
+    ndb.textContent = '🗑️';
+    ndb.dataset.planNoteDel = taskId;
+    editWrap.appendChild(ndb);
   }
 }
 
@@ -2566,13 +2606,13 @@ const SCHEMA_ITEMS = [
   {id:'p5w',  t:'Загранпаспорт жены', icon:'🛂'},
   {id:'stamp',t:'Штамп гражданства', icon:'👶'},
   {id:'p5d',  t:'Загранпаспорт ребёнка', icon:'🛂'},
-  {id:'nocrim_h',t:'Справка несудимости М', icon:'📃'},
-  {id:'nocrim_w',t:'Справка несудимости Ж', icon:'📃'},
-  {id:'apost_marr',t:'Апостиль на брак', icon:'🔖'},
-  {id:'apost_birth',t:'Апостиль на рождение', icon:'🔖'},
+  {id:'nocrim_h',t:'Справка несудимости М', icon:'🏛️'},
+  {id:'nocrim_w',t:'Справка несудимости Ж', icon:'🏛️'},
+  {id:'apost_marr',t:'Апостиль на брак', icon:'🏢'},
+  {id:'apost_birth',t:'Апостиль на рождение', icon:'🏢'},
   {id:'docs_done', t:'Сделать дела', v:true, icon:'⭐', gap:2},
   {id:'power', t:'Собрать документы', v:true, icon:'📚', gap:2},
-  {id:'_ok',  t:'Собрать чемоданы', v:true, icon:'🧳', gap:2},
+  {id:'_ok',  t:'Собрать чемоданы', v:true, icon:'🧳', gap:3},
   {id:'m1_flight',t:'Перелёт в Белград', icon:'🛩', gap:3},
   {id:'m1_airbnb',t:'Заселение Airbnb', icon:'🏠'},
   {id:'reg',  t:'Белый картон', icon:'🪪'},
@@ -2732,6 +2772,93 @@ function renderSchema() {
       const t = Math.max(0, Math.min(1, (y - 80) / (trailH - 160)));
     return CW / 2 + Math.sin(t * Math.PI * 4) * (CW * 0.28) + Math.cos(t * Math.PI * 7) * (CW * 0.08);
   };
+  // ── Side task paths (drawn behind all decorations) ──
+  const hitAreas = [];
+  const SIDE_TASKS = SCHEMA_SIDE_TASKS;
+  const parentGroups = {};
+  SIDE_TASKS.forEach(st => { if (!parentGroups[st.parentId]) parentGroups[st.parentId] = []; parentGroups[st.parentId].push(st); });
+  const placedSigns = [];
+  Object.keys(parentGroups).forEach(pid => {
+    const children = parentGroups[pid];
+    const pIdx = items.findIndex(item => item.id === pid);
+    if (pIdx < 0) return;
+    const pNode = nodes[pIdx];
+    const nIdx = Math.min(pIdx + 1, nodes.length - 1);
+    const prIdx = Math.max(pIdx - 1, 0);
+    const tdx = nodes[nIdx].x - nodes[prIdx].x;
+    const tdy = nodes[nIdx].y - nodes[prIdx].y;
+    const tLen = Math.sqrt(tdx * tdx + tdy * tdy) || 1;
+    const perpX = -tdy / tLen;
+    const perpY = tdx / tLen;
+    const count = children.length;
+    const signFootprint = 12 * PX + 25;
+    const maxSpread = baseStep * ((items[pIdx].gap || 1) - 1) + baseStep * 0.6;
+    const parentText = items[pIdx].t || '';
+    ctx.font = 'bold 9px sans-serif';
+    const parentTextW = ctx.measureText(parentText).width;
+    const ppw = Math.max(Math.ceil(parentTextW / PX) + 4, 14);
+    const parentSignX = pNode.x - (ppw * PX) / 2;
+    const parentSignY = pNode.y - 10 * PX - 6 * PX;
+    const parentSignW = ppw * PX;
+    const parentSignH = 10 * PX;
+    const spaceRight = CW - pNode.x - parentSignW / 2;
+    const spaceLeft = pNode.x - parentSignW / 2;
+    const rightRatio = spaceRight / (spaceLeft + spaceRight || 1);
+    const nRight = Math.round(count * rightRatio);
+    const nLeft = count - nRight;
+    const placed = [];
+    children.forEach((child, ci) => {
+      child.side = ci < nRight ? -1 : 1;
+      child.col = ci < nRight ? ci : ci - nRight;
+      placed.push(child);
+    });
+    placed.forEach((child, ci) => {
+      const availableOnSide = child.side === 1 ? pNode.x - parentSignW / 2 - 10 : CW - pNode.x - parentSignW / 2 - 10;
+      const distRatio = 0.35 + child.col * 0.35;
+      const dist = Math.max(CW * 0.12, Math.min(availableOnSide - 20, availableOnSide * distRatio));
+      const gapY = maxSpread / (count + 1);
+      const offset = (child.col + 1 - count / 2) * gapY;
+      let sx = pNode.x + child.side * perpX * dist + offset * (tdx / tLen);
+      let sy = pNode.y + child.side * perpY * dist + offset * (tdy / tLen);
+      sx = Math.max(70, Math.min(CW - 70, sx));
+      let childSignTop = sy - signFootprint;
+      if (childSignTop < parentSignY + parentSignH && sy > parentSignY) { sy = parentSignY + parentSignH + signFootprint; childSignTop = sy - signFootprint; }
+      sy = Math.max(signFootprint + 10, Math.min(CH - 20, sy));
+      let candidateBounds = { x: sx - 65, y: childSignTop, w: 130, h: signFootprint };
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const hit = placedSigns.find(ps => candidateBounds.x < ps.x + ps.w && candidateBounds.x + candidateBounds.w > ps.x && candidateBounds.y < ps.y + ps.h && candidateBounds.y + candidateBounds.h > ps.y);
+        if (!hit) break;
+        sx += child.side * perpX * 20; sy += (tdy / tLen) * 20;
+        candidateBounds = { x: sx - 65, y: sy - signFootprint, w: 130, h: signFootprint };
+      }
+      if (_manualPositions[child.id]) { sx = pNode.x + _manualPositions[child.id].dx; sy = pNode.y + _manualPositions[child.id].dy; }
+      else if (_editMode) { _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y }; }
+      const done = (state.tasks?.[child.id] || {}).checked;
+      const prog = (state.tasks?.[child.id] || {}).progress;
+      child._sx = sx; child._sy = sy; child._done = done; child._prog = prog;
+      // Path line only (sign drawn later on top)
+      const towardX = pNode.x - sx; const towardY = pNode.y - sy;
+      const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
+      const cpx = -towardY / tpLen; const cpy = towardX / tpLen;
+      const waveAmp = Math.min(tpLen * 0.12, 20);
+      ctx.strokeStyle = done ? '#81c784' : '#bbb';
+      ctx.lineWidth = done ? 2.5 : 1.8; ctx.lineCap = 'round';
+      if (!done) ctx.setLineDash([6, 10]);
+      ctx.beginPath(); ctx.moveTo(sx, sy);
+      let fromX = sx, fromY = sy;
+      [{ t: 0.25, sign: 1 }, { t: 0.5, sign: -1 }, { t: 0.75, sign: 1 }].forEach((seg, segI) => {
+        const toX = segI < 2 ? sx + towardX * seg.t : pNode.x;
+        const toY = segI < 2 ? sy + towardY * seg.t : pNode.y;
+        const midX = (fromX + toX) / 2 + cpx * waveAmp * seg.sign;
+        const midY = (fromY + toY) / 2 + cpy * waveAmp * seg.sign;
+        ctx.quadraticCurveTo(midX, midY, toX, toY);
+        fromX = toX; fromY = toY;
+      });
+      ctx.stroke();
+      if (!done) ctx.setLineDash([]);
+    });
+  });
+
   if (!_schemaDecor || _schemaDecor._cw !== CW || _schemaDecor._ch !== CH) {
     let rngSeed = 1;
     const rnd = () => { rngSeed = (rngSeed * 16807) % 2147483647; return (rngSeed - 1) / 2147483646; };
@@ -3030,170 +3157,6 @@ function renderSchema() {
     });
   }
 
-  const hitAreas = [];
-
-  const SIDE_TASKS = SCHEMA_SIDE_TASKS;
-
-  const parentGroups = {};
-  SIDE_TASKS.forEach(st => {
-    if (!parentGroups[st.parentId]) parentGroups[st.parentId] = [];
-    parentGroups[st.parentId].push(st);
-  });
-
-  const placedSigns = [];
-
-  Object.keys(parentGroups).forEach(pid => {
-    const children = parentGroups[pid];
-    const pIdx = items.findIndex(item => item.id === pid);
-    if (pIdx < 0) return;
-    const pNode = nodes[pIdx];
-
-    const nIdx = Math.min(pIdx + 1, nodes.length - 1);
-    const prIdx = Math.max(pIdx - 1, 0);
-    const tdx = nodes[nIdx].x - nodes[prIdx].x;
-    const tdy = nodes[nIdx].y - nodes[prIdx].y;
-    const tLen = Math.sqrt(tdx * tdx + tdy * tdy) || 1;
-    const perpX = -tdy / tLen;
-    const perpY = tdx / tLen;
-
-    const count = children.length;
-    const signFootprint = 12 * PX + 25;
-    const maxSpread = baseStep * ((items[pIdx].gap || 1) - 1) + baseStep * 0.6;
-
-    // Parent signboard bounds (approximate)
-    const parentText = items[pIdx].t || '';
-    ctx.font = 'bold 9px sans-serif';
-    const parentTextW = ctx.measureText(parentText).width;
-    const ppw = Math.max(Math.ceil(parentTextW / PX) + 4, 14);
-    const parentSignX = pNode.x - (ppw * PX) / 2;
-    const parentSignY = pNode.y - 10 * PX - 6 * PX;
-    const parentSignW = ppw * PX;
-    const parentSignH = 10 * PX;
-
-    // Compute available space on each side
-    const spaceRight = CW - pNode.x - parentSignW / 2;
-    const spaceLeft = pNode.x - parentSignW / 2;
-    const rightRatio = spaceRight / (spaceLeft + spaceRight || 1);
-    const nRight = Math.round(count * rightRatio);
-    const nLeft = count - nRight;
-
-    const sides = [];
-    for (let i = 0; i < nRight; i++) sides.push({ side: 1, col: i });
-    for (let i = 0; i < nLeft; i++) sides.push({ side: -1, col: i });
-
-    sides.forEach(({ side, col }) => {
-      const ci = sides.indexOf({ side, col }); // doesn't work - need real index
-    });
-
-    // Actually, build children with their assigned positions
-    const placed = [];
-    children.forEach((child, ci) => {
-      const targetSide = ci < nRight ? -1 : 1;
-      const colIndex = ci < nRight ? ci : ci - nRight;
-      placed.push({ ...child, side: targetSide, col: colIndex });
-    });
-
-    placed.forEach((child, ci) => {
-      const availableOnSide = child.side === 1
-        ? pNode.x - parentSignW / 2 - 10
-        : CW - pNode.x - parentSignW / 2 - 10;
-      const distRatio = 0.35 + child.col * 0.35;
-      const dist = Math.max(CW * 0.12, Math.min(availableOnSide - 20, availableOnSide * distRatio));
-      const gapY = maxSpread / (count + 1);
-      const offset = (child.col + 1 - count / 2) * gapY;
-
-      let sx = pNode.x + child.side * perpX * dist + offset * (tdx / tLen);
-      let sy = pNode.y + child.side * perpY * dist + offset * (tdy / tLen);
-
-      const approxW = 130;
-      sx = Math.max(approxW / 2 + 5, Math.min(CW - approxW / 2 - 5, sx));
-
-      let childSignTop = sy - signFootprint;
-      if (childSignTop < parentSignY + parentSignH && sy > parentSignY) {
-        sy = parentSignY + parentSignH + signFootprint;
-        childSignTop = sy - signFootprint;
-      }
-      sy = Math.max(signFootprint + 10, Math.min(CH - 20, sy));
-
-      // Resolve overlap with already-placed signs
-      let candidateBounds = { x: sx - approxW / 2, y: childSignTop, w: approxW, h: signFootprint };
-      for (let attempt = 0; attempt < 6; attempt++) {
-        const hit = placedSigns.find(ps =>
-          candidateBounds.x < ps.x + ps.w &&
-          candidateBounds.x + candidateBounds.w > ps.x &&
-          candidateBounds.y < ps.y + ps.h &&
-          candidateBounds.y + candidateBounds.h > ps.y
-        );
-        if (!hit) break;
-        sx += child.side * perpX * 20;
-        sy += (tdy / tLen) * 20;
-        candidateBounds = { x: sx - approxW / 2, y: sy - signFootprint, w: approxW, h: signFootprint };
-      }
-
-      // Use manual position override if set
-      if (_manualPositions[child.id]) {
-        sx = pNode.x + _manualPositions[child.id].dx;
-        sy = pNode.y + _manualPositions[child.id].dy;
-      } else if (_editMode) {
-        _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y };
-      }
-
-      const done = (state.tasks?.[child.id] || {}).checked;
-      const prog = (state.tasks?.[child.id] || {}).progress;
-
-      const sign = drawSchemaSign(ctx, { x: sx, y: sy, text: child.text, icon: child.icon, done, prog, PX });
-
-      const towardX = pNode.x - sx;
-      const towardY = pNode.y - sy;
-      const tpLen = Math.sqrt(towardX * towardX + towardY * towardY) || 1;
-      const cpx = -towardY / tpLen;
-      const cpy = towardX / tpLen;
-      const waveAmp = Math.min(tpLen * 0.12, 20);
-
-      const segs = [
-        { t: 0.25, sign: 1 },
-        { t: 0.5, sign: -1 },
-        { t: 0.75, sign: 1 },
-      ];
-
-      ctx.strokeStyle = done ? '#81c784' : '#bbb';
-      ctx.lineWidth = done ? 2.5 : 1.8;
-      ctx.lineCap = 'round';
-      if (!done) ctx.setLineDash([6, 10]);
-      ctx.beginPath(); ctx.moveTo(sx, sy);
-
-      let fromX = sx, fromY = sy;
-      segs.forEach((seg, segI) => {
-        const toX = segI < 2 ? sx + towardX * seg.t : pNode.x;
-        const toY = segI < 2 ? sy + towardY * seg.t : pNode.y;
-        const midX = (fromX + toX) / 2 + cpx * waveAmp * seg.sign;
-        const midY = (fromY + toY) / 2 + cpy * waveAmp * seg.sign;
-        ctx.quadraticCurveTo(midX, midY, toX, toY);
-        fromX = toX; fromY = toY;
-      });
-
-      ctx.stroke();
-      if (!done) ctx.setLineDash([]);
-
-      hitAreas.push({ id: child.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8 });
-      placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
-
-      if (_editMode) {
-        _manualPositions[child.id] = { dx: sx - pNode.x, dy: sy - pNode.y };
-        // Drag handle
-        ctx.strokeStyle = '#ff6d00';
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(sx, sy + 12, 10, 0, Math.PI * 2); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,109,0,0.3)';
-        ctx.beginPath(); ctx.arc(sx, sy + 12, 10, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#ff6d00';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText('↕', sx, sy + 12);
-      }
-    });
-  });
-
   // Barriers at the border — closed until all pre-border tasks done
   const allBeforeBorderDone = items.slice(0, 13).every(item => {
     if (item.v) return true;
@@ -3279,6 +3242,14 @@ function renderSchema() {
   });
 
   _schemaHitAreas = hitAreas;
+
+  // ── Side task signs (drawn on top of trail, items) ──
+  SCHEMA_SIDE_TASKS.forEach(st => {
+    if (st._sx == null) return;
+    const sign = drawSchemaSign(ctx, { x: st._sx, y: st._sy, text: st.text, icon: st.icon, done: st._done, prog: st._prog, PX });
+    hitAreas.push({ id: st.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8 });
+    placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
+  });
 
   const now = Date.now();
 
@@ -3450,7 +3421,6 @@ function renderSchema() {
     ctx.fillText('❄️', d.x + floatX, d.y + floatY - 20);
     ctx.restore();
   });
-
 }
 
 function renderLegend() {
@@ -3560,6 +3530,8 @@ window.addEventListener('sync-loaded', () => {
 // === SCHEMA EDIT MODE ===
 const SCHEMA_SIDE_TASKS = [
   { parentId:'_ok',         id:'pharm',          text:'Собрать аптечку',       icon:'💊' },
+  { parentId:'_ok',         id:'habits',         text:'Привычные вещи',        icon:'🧴' },
+  { parentId:'_ok',         id:'gadgets',        text:'Техника в дорогу',      icon:'🔌' },
   { parentId:'docs_done',   id:'med_vyps',       text:'Медицинские выписки',   icon:'📋' },
   { parentId:'docs_done',   id:'dentist',        text:'Стоматология',          icon:'🦷' },
   { parentId:'docs_done',   id:'power',          text:'Доверенность',          icon:'📝' },
@@ -3567,8 +3539,8 @@ const SCHEMA_SIDE_TASKS = [
   { parentId:'power',       id:'child_consent',   text:'Согласие на выезд',    icon:'✍️' },
   { parentId:'power',       id:'diplomas',        text:'Дипломы о вышке',      icon:'🎓' },
   { parentId:'power',       id:'driving_licenses',text:'Водительские права',    icon:'🚗' },
-  { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'🔖' },
-  { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'🔖' },
+  { parentId:'nocrim_h',    id:'apost_nocrim_h',  text:'Апостиль НС (М)',      icon:'👮' },
+  { parentId:'nocrim_w',    id:'apost_nocrim_w',  text:'Апостиль НС (Ж)',      icon:'👮' },
   { parentId:'m1_flight',   id:'ticket_buy',      text:'Купить билеты',        icon:'🎫' },
   { parentId:'m1_flight',   id:'airbnb_book',     text:'Забронировать Airbnb', icon:'💻' },
 ];
@@ -3582,6 +3554,8 @@ let _dragStartX = 0, _dragStartY = 0, _dragOrigX = 0, _dragOrigY = 0;
 
 const DEFAULT_MANUAL_OFFSETS = {
   pharm: { dx: 114, dy: -22 },
+  habits: { dx: -105, dy: 30 },
+  gadgets: { dx: 130, dy: 50 },
   med_vyps: { dx: 165, dy: -100 },
   dentist: { dx: -32, dy: -94 },
   power: { dx: 102, dy: 31 },
