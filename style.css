@@ -1827,13 +1827,15 @@ body.dark-theme .sync-code-display { color: #90caf9; }
 
 #poi-reestr-arrow { font-size: 10px; margin-left: 4px; }
 
+.theme-btn .theme-icon { font-size: 18px; line-height: 1; }
+
 /* Theme toggle button */
 .theme-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 11px 14px;
-  min-height: 44px;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 16px;
   background: rgba(255,255,255,0.1);

@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.33.19",
-  BUILD: "1e9fdd9",
-  CACHE_NAME: "relocation-v6.33.19-1e9fdd9",
+  VERSION: "6.34.0",
+  BUILD: "9ccee05",
+  CACHE_NAME: "relocation-v6.34.0-9ccee05",
   MIN_SPLASH_MS: 5000
 };
 
@@ -3778,18 +3778,15 @@ if (schemaCanvas && !schemaCanvas.dataset.dragBound) {
 // === Theme toggle ===
 const themeToggleBtn = document.getElementById('theme-toggle');
 const themeIcon = themeToggleBtn?.querySelector('.theme-icon');
-const themeText = themeToggleBtn?.querySelector('.theme-text');
 
 function applyTheme(theme) {
   if (theme === 'dark') {
     document.body.classList.add('dark-theme');
     if (themeIcon) themeIcon.textContent = '🌙';
-    if (themeText) themeText.textContent = 'Тёмная тема';
     if (currentTileLayer && mapTiles) currentTileLayer.setUrl(mapTiles.dark);
   } else {
     document.body.classList.remove('dark-theme');
     if (themeIcon) themeIcon.textContent = '☀️';
-    if (themeText) themeText.textContent = 'Светлая тема';
     if (currentTileLayer && mapTiles) currentTileLayer.setUrl(mapTiles.light);
   }
   localStorage.setItem('app-theme', theme);
