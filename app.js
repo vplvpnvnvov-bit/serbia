@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.38.2",
-  BUILD: "78eaae7",
-  CACHE_NAME: "relocation-v6.38.2-78eaae7",
+  VERSION: "6.38.3",
+  BUILD: "a772094",
+  CACHE_NAME: "relocation-v6.38.3-a772094",
   MIN_SPLASH_MS: 5000
 };
 
@@ -3221,7 +3221,14 @@ function renderSchema() {
     const poy = sy - ph * PX - 6 * PX;
 
     if (item.id !== 'power' && item.id !== '_ok' && item.id !== 'docs_done' && item.id !== '_rf') {
-      hitAreas.push({ id:item.id, x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
+      const itemNote = state.tasks?.[item.id]?.note || '';
+      if (itemNote) {
+        ctx.fillStyle = '#ffc107';
+        ctx.beginPath();
+        ctx.arc(pox + pw * PX, poy, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      hitAreas.push({ id:item.id, x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8, note: itemNote || undefined });
     }
 
     // Plank board — pixel-style rectangle with nail details
@@ -3261,7 +3268,14 @@ function renderSchema() {
   SCHEMA_SIDE_TASKS.forEach(st => {
     if (st._sx == null) return;
     const sign = drawSchemaSign(ctx, { x: st._sx, y: st._sy, text: st.text, icon: st.icon, done: st._done, prog: st._prog, PX });
-    hitAreas.push({ id: st.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8 });
+    const sNote = state.tasks?.[st.id]?.note || '';
+    if (sNote) {
+      ctx.fillStyle = '#ffc107';
+      ctx.beginPath();
+      ctx.arc(sign.x + sign.w, sign.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    hitAreas.push({ id: st.id, x: sign.x - 4, y: sign.y - 4, w: sign.w + 8, h: sign.h + 6 * PX + 8, note: sNote || undefined });
     placedSigns.push({ x: sign.x, y: sign.y, w: sign.w, h: sign.h + 6 * PX + 8 });
   });
 
@@ -3531,6 +3545,40 @@ if (schemaCanvas && !schemaCanvas.dataset.clickBound) {
       }
     });
   });
+
+  let _schemaTooltip = null;
+  function schemaTooltip() {
+    if (!_schemaTooltip) {
+      _schemaTooltip = document.createElement('div');
+      _schemaTooltip.style.cssText = 'position:fixed;z-index:9999;background:rgba(60,50,40,0.93);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-family:sans-serif;pointer-events:none;display:none;max-width:280px;line-height:1.4;box-shadow:0 2px 12px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1)';
+      document.body.appendChild(_schemaTooltip);
+      schemaCanvas.addEventListener('mouseleave', () => { _schemaTooltip.style.display = 'none'; });
+      schemaCanvas.addEventListener('mousemove', e => {
+        const rect = schemaCanvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+        let found = null;
+        (_schemaHitAreas || []).some(area => {
+          if (area.note && mx >= area.x && mx <= area.x + area.w && my >= area.y && my <= area.y + area.h) {
+            found = area; return true;
+          }
+        });
+        if (found) {
+          _schemaTooltip.textContent = '📝 ' + found.note;
+          _schemaTooltip.style.display = 'block';
+          let tx = e.clientX + 14, ty = e.clientY - 8;
+          if (tx + 290 > window.innerWidth) tx = window.innerWidth - 290;
+          _schemaTooltip.style.left = tx + 'px';
+          _schemaTooltip.style.top = ty + 'px';
+          schemaCanvas.style.cursor = 'default';
+        } else {
+          _schemaTooltip.style.display = 'none';
+          schemaCanvas.style.cursor = '';
+        }
+      });
+    }
+    return _schemaTooltip;
+  }
+  schemaTooltip();
 }
 
 // Sync: обновление после загрузки из облака
