@@ -351,6 +351,7 @@ body.dark-theme .avia-price-badge:hover {
 /* TAB CONTENT (для вкладок без карты) */
 .tab-content {
   padding: 16px;
+  position: relative;
 }
 .tab-content h2 {
   font-size: 18px;
@@ -2417,13 +2418,9 @@ body.dark-theme .carousel-caption {
 }
 .schema-tool-exit { color: #777; border-color: #ccc; }
 
-#schema-map-wrap {
-  position: relative;
-}
-
 #schema-title {
   position: absolute;
-  top: 14px;
+  top: 30px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
