@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.10",
-  BUILD: "f01091f",
-  CACHE_NAME: "relocation-v6.35.10-f01091f",
+  VERSION: "6.35.11",
+  BUILD: "c118a4b",
+  CACHE_NAME: "relocation-v6.35.11-c118a4b",
   MIN_SPLASH_MS: 5000
 };
 
@@ -250,6 +250,7 @@ function debouncedSave() {
   if (!window.saveToCloud) return;
   clearTimeout(_debounceTimer);
   const attempt = () => {
+    _debounceTimer = null;
     if (window.syncPending) {
       _debounceTimer = setTimeout(attempt, 500);
       return;
@@ -258,8 +259,18 @@ function debouncedSave() {
       .then(() => { window._localPlanDirty = false; })
       .catch(err => { showUserError(err); _debounceTimer = setTimeout(attempt, 5000); });
   };
-  _debounceTimer = setTimeout(attempt, 1500);
+  _debounceTimer = setTimeout(attempt, 800);
 }
+
+// Форсированное сохранение при скрытии страницы
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && _debounceTimer != null && window.saveToCloud) {
+    const t = _debounceTimer;
+    clearTimeout(t);
+    _debounceTimer = null;
+    window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => {});
+  }
+});
 
 // === MAP ===
 const mapTiles = {
