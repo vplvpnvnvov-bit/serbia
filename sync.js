@@ -1,5 +1,4 @@
 // === Firebase Sync ===
-const CURRENT_DATA_VERSION = "2026.1";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBOZ-ou8bBnJ6HoubfxFiDNlJ6wiiX8vOk",
@@ -207,7 +206,6 @@ window.saveToCloud = async function() {
     const plan = getPlanValues();
     const data = {
       planVersion: localVersion,
-      version: CURRENT_DATA_VERSION,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
