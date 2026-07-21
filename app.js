@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.5",
-  BUILD: "70b91e1",
-  CACHE_NAME: "relocation-v6.35.5-70b91e1",
+  VERSION: "6.35.6",
+  BUILD: "a17524a",
+  CACHE_NAME: "relocation-v6.35.6-a17524a",
   MIN_SPLASH_MS: 5000
 };
 
@@ -3048,7 +3048,7 @@ function renderSchema() {
   }
 
   // Compass rose
-  const cx = 50, cy0 = 60;
+  const cx = 50, cy0 = 85;
   ctx.fillStyle = '#5d4037';
   ctx.font = 'bold 12px serif'; ctx.textAlign = 'center';
   ctx.fillText('N', cx, cy0 - 20);
@@ -3562,8 +3562,6 @@ const DEFAULT_MANUAL_OFFSETS = {
   child_consent: { dx: -35, dy: 80 },
   diplomas: { dx: 153, dy: -50 },
   driving_licenses: { dx: 127, dy: 33 },
-  apost_nocrim_h: { dx: 64, dy: 30 },
-  apost_nocrim_w: { dx: 93, dy: 53 },
   ticket_buy: { dx: 67, dy: -137 },
   airbnb_book: { dx: -123, dy: -46 },
   loans: { dx: 275, dy: -25 },
@@ -3573,6 +3571,8 @@ try {
   const saved = JSON.parse(localStorage.getItem('schema-manual-offsets') || 'null');
   _manualPositions = saved || DEFAULT_MANUAL_OFFSETS;
 } catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
+
+['apost_nocrim_h','apost_nocrim_w'].forEach(id => delete _manualPositions[id]);
 
 try {
   const saved = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null');
