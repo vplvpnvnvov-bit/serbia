@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.7",
-  BUILD: "e036a79",
-  CACHE_NAME: "relocation-v6.35.7-e036a79",
+  VERSION: "6.35.8",
+  BUILD: "cee708e",
+  CACHE_NAME: "relocation-v6.35.8-cee708e",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2329,6 +2329,7 @@ if (!planListenerAdded) {
       }
       setPlanState(st);
       window._localPlanDirty = true;
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       debouncedSave();
       return;
@@ -2385,9 +2386,9 @@ if (!planListenerAdded) {
         const st = getPlanState() || { tasks: {} };
         if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
-        setPlanState(st);
-        window._localPlanDirty = true;
-        debouncedSave();
+      setPlanState(st);
+      window._localPlanDirty = true;
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
       }
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
@@ -2430,7 +2431,7 @@ if (!planListenerAdded) {
       delete st.tasks[id].note;
       setPlanState(st);
       window._localPlanDirty = true;
-      debouncedSave();
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
@@ -3528,8 +3529,12 @@ if (schemaCanvas && !schemaCanvas.dataset.clickBound) {
 window.addEventListener('sync-loaded', () => {
   const active = document.activeElement;
   const isEditing = active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT');
-  if (isEditing) return; // не разрушаем UI во время редактирования
-  try { renderPlan(); } catch (e) { showUserError(e); }
+  if (isEditing) return;
+  try {
+    renderPlan();
+    const schemaTab = document.getElementById('tab-schema');
+    if (schemaTab && schemaTab.classList.contains('active')) { renderSchema(); renderLegend(); }
+  } catch (e) { showUserError(e); }
 });
 
 // === SCHEMA EDIT MODE ===
