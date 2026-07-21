@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.8",
-  BUILD: "cee708e",
-  CACHE_NAME: "relocation-v6.35.8-cee708e",
+  VERSION: "6.35.9",
+  BUILD: "bcab17b",
+  CACHE_NAME: "relocation-v6.35.9-bcab17b",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2428,7 +2428,7 @@ if (!planListenerAdded) {
       if (!id) return;
       const st = getPlanState() || { tasks: {} };
       if (!st.tasks[id]) st.tasks[id] = { checked: false, progress: false, customCost: null };
-      delete st.tasks[id].note;
+      st.tasks[id].note = null;
       setPlanState(st);
       window._localPlanDirty = true;
       if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(() => { window._localPlanDirty = false; });

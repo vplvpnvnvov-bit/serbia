@@ -204,13 +204,23 @@ window.saveToCloud = async function() {
   _localWritePending = true;
   try {
     const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
+    const plan = getPlanValues();
     const data = {
-      plan: getPlanValues(),
       planVersion: localVersion,
       version: CURRENT_DATA_VERSION,
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
+    if (plan && plan.tasks) {
+      Object.entries(plan.tasks).forEach(([id, t]) => {
+        const p = `plan.tasks.${id}`;
+        data[`${p}.checked`] = !!t.checked;
+        data[`${p}.progress`] = !!t.progress;
+        data[`${p}.customCost`] = t.customCost ?? null;
+        data[`${p}.date`] = t.date || null;
+        data[`${p}.note`] = t.note || null;
+      });
+    }
 
     const ref = db.collection('users').doc(syncCode);
     const existing = await ref.get({ source: 'cache' });
