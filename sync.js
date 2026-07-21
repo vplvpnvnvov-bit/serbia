@@ -305,8 +305,13 @@ function migrateLegacyData() {
     });
   });
 
-  const state = { tasks };
-  localStorage.setItem('plan-state', JSON.stringify(state));
+  const planState = { tasks };
+  if (typeof setPlanState === 'function') {
+    setPlanState(planState);
+  } else {
+    localStorage.setItem('plan-state', JSON.stringify(planState));
+    localStorage.setItem('plan-local-version', '1');
+  }
   localStorage.removeItem('checklist');
   localStorage.removeItem('checklist-locked');
   localStorage.removeItem('calc-state');
