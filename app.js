@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.38.1",
-  BUILD: "190d580",
-  CACHE_NAME: "relocation-v6.38.1-190d580",
+  VERSION: "6.38.2",
+  BUILD: "78eaae7",
+  CACHE_NAME: "relocation-v6.38.2-78eaae7",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2396,7 +2396,7 @@ if (!planListenerAdded) {
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); debouncedSave(); });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
       }
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
@@ -2425,7 +2425,7 @@ if (!planListenerAdded) {
       st.tasks[id].note = val || undefined;
       setPlanState(st);
       window._localPlanDirty = true;
-      debouncedSave();
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
@@ -2439,7 +2439,7 @@ if (!planListenerAdded) {
       st.tasks[id].note = null;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); debouncedSave(); });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
       try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
       return;
     }
