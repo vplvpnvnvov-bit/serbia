@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.0",
-  BUILD: "e89074c",
-  CACHE_NAME: "relocation-v6.35.0-e89074c",
+  VERSION: "6.35.1",
+  BUILD: "0600435",
+  CACHE_NAME: "relocation-v6.35.1-0600435",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2640,13 +2640,14 @@ function drawSchemaSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
   else if (prog)  { bg='#fff176'; border='#f9a825'; tc='#e65100'; }
   else            { bg='#d7ccc8'; border='#8d6e3f'; tc='#4e342e'; }
 
+  let pw = 0, ph = 0, pox = 0, poy = 0;
   if (text) {
     ctx.font = 'bold 9px sans-serif';
     const txtW = ctx.measureText(text).width;
-    const pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
-    const ph = 10;
-    const pox = x - (pw * PX) / 2;
-    const poy = y - ph * PX - 6 * PX;
+    pw = Math.max(Math.ceil(txtW / PX) + 4, 14);
+    ph = 10;
+    pox = x - (pw * PX) / 2;
+    poy = y - ph * PX - 6 * PX;
 
     ctx.fillStyle = bg;
     ctx.fillRect(pox, poy, pw * PX, ph * PX);
