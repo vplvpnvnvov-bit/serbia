@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.35.1",
-  BUILD: "0600435",
-  CACHE_NAME: "relocation-v6.35.1-0600435",
+  VERSION: "6.35.2",
+  BUILD: "acf03d3",
+  CACHE_NAME: "relocation-v6.35.2-acf03d3",
   MIN_SPLASH_MS: 5000
 };
 
@@ -2630,7 +2630,7 @@ const SCHEMA_ITEMS = [
 const SCHEMA_VIRTUAL_CHILDREN = {
   docs_done: ['dentist', 'med_vyps', 'power', 'loans'],
   power: ['child_consent', 'diplomas', 'driving_licenses'],
-  _ok: ['pharm'],
+  _ok: ['pharm', 'habits', 'gadgets'],
 };
 
 function drawSchemaSign(ctx, { x, y, text, icon, done, prog, isVirtual, PX }) {
@@ -3211,30 +3211,28 @@ function renderSchema() {
       hitAreas.push({ id:item.id, x:pox - 4, y:poy - 4, w:pw * PX + 8, h:ph * PX + 6 * PX + 8 });
     }
 
-    // Neon glow on current
-    if (i === dinoIdx) { ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 12; }
-
     // Plank board — pixel-style rectangle with nail details
-    ctx.fillStyle = bg;
-    ctx.fillRect(pox, poy, pw * PX, ph * PX);
-    ctx.fillStyle = border;
-    ctx.fillRect(pox, poy, pw * PX, PX);
-    ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
-    ctx.fillRect(pox, poy, PX, ph * PX);
-    ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
-    // Nails
-    ctx.fillStyle = '#3e2723';
-    ctx.fillRect(pox + PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
-    ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
-    ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
-
-    if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
-
-    // Text on plank
-    ctx.fillStyle = tc;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(item.t, sx, poy + (ph * PX) / 2);
+    if (item.t) {
+      if (i === dinoIdx) { ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 12; }
+      ctx.fillStyle = bg;
+      ctx.fillRect(pox, poy, pw * PX, ph * PX);
+      ctx.fillStyle = border;
+      ctx.fillRect(pox, poy, pw * PX, PX);
+      ctx.fillRect(pox, poy + (ph-1) * PX, pw * PX, PX);
+      ctx.fillRect(pox, poy, PX, ph * PX);
+      ctx.fillRect(pox + (pw-1) * PX, poy, PX, ph * PX);
+      // Nails
+      ctx.fillStyle = '#3e2723';
+      ctx.fillRect(pox + PX, poy + PX, 2, 2);
+      ctx.fillRect(pox + (pw-2) * PX, poy + PX, 2, 2);
+      ctx.fillRect(pox + PX, poy + (ph-2) * PX, 2, 2);
+      ctx.fillRect(pox + (pw-2) * PX, poy + (ph-2) * PX, 2, 2);
+      if (i === dinoIdx) { ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
+      // Text on plank
+      ctx.fillStyle = tc;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(item.t, sx, poy + (ph * PX) / 2);
+    }
 
     // Item icon on the trail node
     if (item.icon) {
