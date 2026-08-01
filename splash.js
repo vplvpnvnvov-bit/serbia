@@ -55,6 +55,7 @@
       .then(function(d) {
         if (d && d.price) {
           aviaPriceEl.textContent = d.price.toLocaleString('ru-RU') + ' ₽';
+          console.log('avia price updated from cache:', d.price, '₽');
         }
       })
       .catch(function() {});
