@@ -321,19 +321,18 @@ function migrateLegacyData() {
 window.migrateLegacyData = migrateLegacyData;
 
 
-window.changeSyncCode = function() {
-  const raw = prompt('Введите ключ компании:', syncCode || '');
-  if (raw && raw.trim()) {
-    const c = raw.trim();
-    if (c.length < 6 || c.length > 18) {
-      window.showConfirm('Ошибка', 'Код должен быть от 6 до 18 символов.');
-      return;
-    }
-    localStorage.setItem('sync-code', c);
-    syncCode = c;
-    document.getElementById('display-sync-code').textContent = c;
-    updateCloudStatus();
-    setupSnapshotListener();
-    window.loadFromCloud().catch(err => { console.warn('Ошибка загрузки после смены кода:', err?.message || err); });
+window.changeSyncCode = async function() {
+  const raw = await window.showPrompt('Ключ компании', 'Введите ключ существующей компании (6–18 символов).', syncCode || '');
+  if (!raw) return;
+  const c = raw.trim();
+  if (c.length < 6 || c.length > 18) {
+    window.showConfirm('Ошибка', 'Код должен быть от 6 до 18 символов.');
+    return;
   }
+  localStorage.setItem('sync-code', c);
+  syncCode = c;
+  document.getElementById('display-sync-code').textContent = c;
+  updateCloudStatus();
+  setupSnapshotListener();
+  window.loadFromCloud().catch(err => { console.warn('Ошибка загрузки после смены кода:', err?.message || err); });
 };

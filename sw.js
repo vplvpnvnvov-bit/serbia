@@ -1,6 +1,7 @@
-const CACHE_NAME = 'relocation-v6.38.3-a772094';
+const CACHE_NAME = 'relocation-v6.39.0-00d9521';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js', './sync.js',
+  './utils.js', './map.js', './plan.js', './schema.js', './splash.js',
   './manifest.json', './icon.svg',
 ];
 
@@ -47,12 +48,6 @@ self.addEventListener('fetch', e => {
       })
     );
   } else {
-    e.respondWith(
-      fetch(e.request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        return res;
-      }).catch(() => caches.match(e.request))
-    );
+    e.respondWith(fetch(e.request));
   }
 });

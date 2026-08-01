@@ -82,6 +82,11 @@ let indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
 
 indexHtml = indexHtml.replace(/(href="style\.css)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="data\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="utils\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="map\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="plan\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="schema\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
+indexHtml = indexHtml.replace(/(src="splash\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="sync\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="app\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);
 indexHtml = indexHtml.replace(/(src="inline\.js)(?:\?v=[^"]*)?(")/g, `$1?v=${fullVersion}$2`);

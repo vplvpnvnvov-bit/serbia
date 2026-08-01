@@ -149,6 +149,56 @@ function showConfirm(title, message) {
   });
 }
 
+function showPrompt(title, message, currentValue) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('confirm-modal');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const confirmBtn = document.getElementById('modal-confirm');
+    const titleEl = document.getElementById('modal-title');
+    const messageEl = document.getElementById('modal-message');
+    confirmBtn.textContent = 'ОК';
+
+    let input = document.getElementById('modal-prompt-input');
+    if (!input) {
+      input = document.createElement('input');
+      input.type = 'password';
+      input.id = 'modal-prompt-input';
+      input.className = 'modal-prompt-input';
+      input.style.cssText = 'width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:6px;font-size:14px;margin-top:8px;box-sizing:border-box';
+      messageEl.parentNode.insertBefore(input, messageEl.nextSibling);
+    }
+    input.value = currentValue || '';
+    input.style.display = 'block';
+    input.focus();
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    overlay.classList.remove('hidden');
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') { cleanup(); resolve(null); return; }
+      if (e.key === 'Enter') { cleanup(); resolve(input.value.trim()); }
+    }
+    document.addEventListener('keydown', onKeyDown);
+
+    function cleanup() {
+      overlay.classList.add('hidden');
+      input.style.display = 'none';
+      overlay.removeEventListener('click', onBgClick);
+      document.removeEventListener('keydown', onKeyDown);
+      confirmBtn.textContent = 'ОК';
+    }
+
+    function onBgClick(e) {
+      if (e.target === overlay) { cleanup(); resolve(null); }
+    }
+
+    overlay.addEventListener('click', onBgClick);
+    cancelBtn.onclick = () => { cleanup(); resolve(null); };
+    confirmBtn.onclick = () => { cleanup(); resolve(input.value.trim()); };
+  });
+}
+
 // === TABS ===
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
