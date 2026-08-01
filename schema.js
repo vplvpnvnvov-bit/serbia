@@ -1060,6 +1060,10 @@ try {
 } catch { _manualPositions = DEFAULT_MANUAL_OFFSETS; }
 
 try {
+  if (!localStorage.getItem('schema-landscape-v2')) {
+    localStorage.removeItem('schema-landscape-overrides');
+    localStorage.setItem('schema-landscape-v2', '1');
+  }
   const saved = JSON.parse(localStorage.getItem('schema-landscape-overrides') || 'null');
   if (saved && Object.keys(saved).length) {
     const first = saved[Object.keys(saved)[0]];
