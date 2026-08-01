@@ -334,6 +334,6 @@ window.changeSyncCode = function() {
     document.getElementById('display-sync-code').textContent = c;
     updateCloudStatus();
     setupSnapshotListener();
-    window.loadFromCloud().catch(() => {});
+    window.loadFromCloud().catch(err => { console.warn('Ошибка загрузки после смены кода:', err?.message || err); });
   }
 };

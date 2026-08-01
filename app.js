@@ -61,7 +61,7 @@ function showApp() {
       updateSchemaToolbar();
       renderSchema();
       renderLegend();
-    } catch (e) { showUserError(e); }
+    } catch (e) { showUserError(e, 'Инициализация приложения'); }
   }, 150);
 }
 
@@ -223,8 +223,8 @@ function setSection(id, title, text) {
 
 // Глобальный обработчик ошибок — показывает баннер пользователю
 let _errorToastTimer = null;
-function showUserError(err) {
-  console.error(err);
+function showUserError(err, ctx) {
+  console.error(ctx ? '[' + ctx + ']' : '', err);
   const el = document.getElementById('error-toast') || (() => {
     const div = document.createElement('div');
     div.id = 'error-toast';
@@ -232,7 +232,8 @@ function showUserError(err) {
     document.body.appendChild(div);
     return div;
   })();
-  el.textContent = '⚠️ ' + (err?.message || err || 'Произошла ошибка. Перезагрузите страницу.');
+  const msg = err?.message || err || 'Произошла ошибка. Перезагрузите страницу.';
+  el.textContent = '⚠️ ' + (ctx ? ctx + ': ' : '') + msg;
   el.style.transform = 'translateY(0)';
   clearTimeout(_errorToastTimer);
   _errorToastTimer = setTimeout(() => { el.style.transform = 'translateY(-100%)'; }, 8000);
@@ -257,7 +258,7 @@ function debouncedSave() {
     }
     window.saveToCloud()
       .then(() => { window._localPlanDirty = false; })
-      .catch(err => { showUserError(err); _debounceTimer = setTimeout(attempt, 5000); });
+      .catch(err => { showUserError(err, 'Автосохранение'); _debounceTimer = setTimeout(attempt, 5000); });
   };
   _debounceTimer = setTimeout(attempt, 800);
 }
@@ -2236,7 +2237,7 @@ if (!planListenerAdded) {
       const btn = el.classList.contains('plan-lock-btn') ? el : el.closest('.plan-lock-btn');
       const isLocked = localStorage.getItem('plan-locked') === 'true';
       localStorage.setItem('plan-locked', isLocked ? 'false' : 'true');
-      try { renderPlan(); } catch (e) { showUserError(e); }
+      try { renderPlan(); } catch (e) { showUserError(e, 'Блокировка плана'); }
       return;
     }
 
@@ -2259,8 +2260,8 @@ if (!planListenerAdded) {
       }
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
-      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err, 'Сохранение статуса'); if (!_debounceTimer) debouncedSave(); });
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e, 'Обновление UI задачи'); }
       return;
     }
 
@@ -2317,9 +2318,9 @@ if (!planListenerAdded) {
         st.tasks[id].date = dd + '.' + mm + '.' + yy;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err, 'Сохранение даты'); if (!_debounceTimer) debouncedSave(); });
       }
-      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e, 'Обновление UI даты'); }
       return;
     }
 
@@ -2346,8 +2347,8 @@ if (!planListenerAdded) {
       st.tasks[id].note = val || undefined;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
-      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err, 'Сохранение заметки'); if (!_debounceTimer) debouncedSave(); });
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e, 'Обновление UI заметки'); }
       return;
     }
 
@@ -2360,8 +2361,8 @@ if (!planListenerAdded) {
       st.tasks[id].note = null;
       setPlanState(st);
       window._localPlanDirty = true;
-      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err); if (!_debounceTimer) debouncedSave(); });
-      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e); }
+      if (window.saveToCloud) window.saveToCloud().then(() => { window._localPlanDirty = false; }).catch(err => { showUserError(err, 'Удаление заметки'); if (!_debounceTimer) debouncedSave(); });
+      try { refreshTaskRow(id); refreshMetrics(); } catch (e) { showUserError(e, 'Обновление UI после удаления'); }
       return;
     }
 
@@ -2432,9 +2433,9 @@ function initApp() {
   if (_appInitialized) return;
   _appInitialized = true;
   if (window.migrateLegacyData) {
-    try { window.migrateLegacyData(); } catch (e) { showUserError(e); }
+    try { window.migrateLegacyData(); } catch (e) { showUserError(e, 'Миграция старых данных'); }
   }
-  try { renderPlan(); } catch (e) { showUserError(e); }
+  try { renderPlan(); } catch (e) { showUserError(e, 'Загрузка плана'); }
   updateSyncStatusUI();
   const versionEl = document.getElementById('app-version-display');
   if (versionEl && window.APP_CONFIG) {
@@ -2463,7 +2464,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           await window.factoryReset();
         } catch (err) {
-          showUserError(err);
+          showUserError(err, 'Сброс устройства');
         }
       }
     });
@@ -2472,7 +2473,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-delete-account')?.addEventListener('click', async (e) => {
     e.preventDefault();
     if (await showConfirm('Удаление аккаунта', 'Аккаунт, все данные в облаке и на устройстве будут удалены безвозвратно. Продолжить?')) {
-      try { await window.deleteAccount(); } catch (err) { showUserError(err); }
+      try { await window.deleteAccount(); } catch (err) { showUserError(err, 'Удаление аккаунта'); }
     }
   });
 
@@ -2530,7 +2531,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.querySelector('[data-tab="plan"]')?.addEventListener('click', () => {
-  setTimeout(() => { try { renderPlan(); } catch (e) { showUserError(e); } }, 50);
+  setTimeout(() => { try { renderPlan(); } catch (e) { showUserError(e, 'Переключение вкладки'); } }, 50);
 });
 
 // === SCHEMA TAB ===
@@ -3449,7 +3450,7 @@ document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
     if (toggle) { toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true'; }
     updateSchemaToolbar();
     renderSchema(); renderLegend();
-  } catch(e) { showUserError(e); } }, 100);
+  } catch(e) { showUserError(e, 'Карта релокации'); } }, 100);
 });
 
 const schemaCanvas = document.getElementById('schema-canvas');
@@ -3512,7 +3513,7 @@ window.addEventListener('sync-loaded', () => {
     renderPlan();
     const schemaTab = document.getElementById('tab-schema');
     if (schemaTab && schemaTab.classList.contains('active')) { renderSchema(); renderLegend(); }
-  } catch (e) { showUserError(e); }
+  } catch (e) { showUserError(e, 'Обновление из облака'); }
 });
 
 // === SCHEMA EDIT MODE ===
