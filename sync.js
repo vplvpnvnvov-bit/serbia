@@ -339,6 +339,10 @@ window.changeSyncCode = async function() {
     window.showConfirm('Ошибка', 'Код должен быть от 6 до 18 символов.');
     return;
   }
+  if (!/^[a-zA-Z0-9]+$/.test(c)) {
+    window.showConfirm('Ошибка', 'Код должен содержать только латинские буквы и цифры.');
+    return;
+  }
   localStorage.setItem('sync-code', c);
   syncCode = c;
   document.getElementById('display-sync-code').textContent = c;

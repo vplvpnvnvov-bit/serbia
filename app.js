@@ -5,7 +5,7 @@ window.APP_CONFIG = {
   MIN_SPLASH_MS: 5000
 };
 
-window._MIN_SPLASH_MS = window.APP_CONFIG.MIN_SPLASH_MS;
+window._MIN_SPLASH_MS = Number(window.APP_CONFIG.MIN_SPLASH_MS) || 5000;
 // === AUTH SCREEN ===
 let authMode = 'login';
 
