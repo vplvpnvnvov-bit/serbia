@@ -425,7 +425,7 @@ function renderSchema() {
     dec.forEach(d => {
       if (d.t === 'cloud' || d.t === 'boundary' || d.t === 'snow' || d.t === 'rain' || d.t === 'butterfly') return;
       const tx = trailXAt(d.y);
-      const margin = d.t === 'lake' ? 70 : d.t === 'mt_ru' || d.t === 'peak' ? 60 : Math.max(35, CW * 0.13);
+      const margin = d.t === 'lake' ? 60 : d.t === 'mt_ru' || d.t === 'peak' ? 50 : 35;
       const dist = d.x - tx;
       const absDist = Math.abs(dist);
       if (absDist < margin) {
@@ -522,18 +522,18 @@ function renderSchema() {
         if (lpos) {
           ex = lpos.xr * CW;
           ey = lpos.yr * CH;
-        }
-        // Push away from trail
-        const tx = trailXAt(ey);
-        const margin = Math.max(35, CW * 0.13);
-        if (Math.abs(ex - tx) < margin) {
-          const toLeft = ex;
-          const toRight = CW - ex;
-          const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-          const drift = ((seed % 20) - 10);
-          ex = toLeft < toRight
-            ? Math.max(10, tx - margin - drift)
-            : Math.min(CW - 10, tx + margin + drift);
+          // Push away from trail
+          const tx = trailXAt(ey);
+          const margin = 35;
+          if (Math.abs(ex - tx) < margin) {
+            const toLeft = ex;
+            const toRight = CW - ex;
+            const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const drift = ((seed % 20) - 10);
+            ex = toLeft < toRight
+              ? Math.max(10, tx - margin - drift)
+              : Math.min(CW - 10, tx + margin + drift);
+          }
         }
         ctx.font = (d.sz || szMap[d.t] || 20) + 'px serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -553,15 +553,15 @@ function renderSchema() {
         if (lpos) {
           hx = lpos.xr * CW;
           hy = lpos.yr * CH;
-        }
-        const tx = trailXAt(hy);
-        const margin = Math.max(35, CW * 0.13);
-        if (Math.abs(hx - tx) < margin) {
-          const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-          const drift = ((seed % 20) - 10);
-          hx = hx < CW / 2
-            ? Math.max(10, tx - margin - drift)
-            : Math.min(CW - 10, tx + margin + drift);
+          const tx = trailXAt(hy);
+          const margin = 40;
+          if (Math.abs(hx - tx) < margin) {
+            const seed = (d._id || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+            const drift = ((seed % 20) - 10);
+            hx = hx < CW / 2
+              ? Math.max(10, tx - margin - drift)
+              : Math.min(CW - 10, tx + margin + drift);
+          }
         }
         const bw = d.w*S, bh = d.h*S, bx = hx - bw/2, by = hy;
         ctx.lineJoin = 'round';
