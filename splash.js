@@ -48,6 +48,18 @@
     aviaLink.href = 'https://www.aviasales.ru/search/MOW' + dd + mm + 'BEG1';
   }
 
+  var aviaPriceEl = document.getElementById('avia-price-val');
+  if (aviaPriceEl) {
+    fetch('data/avia-price.json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.price) {
+          aviaPriceEl.textContent = d.price.toLocaleString('ru-RU') + ' ₽';
+        }
+      })
+      .catch(function() {});
+  }
+
   window.hideSplash = function() {
     var el = document.getElementById('splash-screen');
     if (!el) return;
