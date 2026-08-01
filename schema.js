@@ -1067,9 +1067,9 @@ try {
       ? saved
       : convertToLandscapeOverrides(saved);
   } else {
-    _landscapeOverrides = convertToLandscapeOverrides(LANDSCAPE_DEFAULTS);
+    _landscapeOverrides = {};
   }
-} catch { _landscapeOverrides = convertToLandscapeOverrides(LANDSCAPE_DEFAULTS); }
+} catch { _landscapeOverrides = {}; }
 
 function exportManualPositions() {
   const lines = [];
