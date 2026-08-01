@@ -1,7 +1,7 @@
 window.APP_CONFIG = {
-  VERSION: "6.40.14",
-  BUILD: "b175cfa",
-  CACHE_NAME: "relocation-v6.40.14-b175cfa",
+  VERSION: "6.40.16",
+  BUILD: "6bad02c",
+  CACHE_NAME: "relocation-v6.40.16-6bad02c",
   MIN_SPLASH_MS: 5000
 };
 
@@ -19,7 +19,6 @@ function showApp() {
       if (toggle) toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true';
       updateSchemaToolbar();
       renderSchema();
-      renderLegend();
     } catch (e) { showUserError(e, 'Инициализация приложения'); }
   }, 150);
 }
