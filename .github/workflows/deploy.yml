@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: node --check app.js && node --check sync.js && node --check data.js && echo "All OK"
+      - run: node --check app.js && node --check sync.js && node --check data.js && node --check utils.js && node --check map.js && node --check plan.js && node --check schema.js && node --check splash.js && node --check build.js && echo "All OK"

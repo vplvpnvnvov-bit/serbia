@@ -2,7 +2,6 @@
   var _splashStart = Date.now();
   var PRICE_CACHE_KEY = 'avia-price-cache';
   var CACHE_TTL = 600000;
-  var WORKER_URL = 'https://serbia-avia-proxy.REPLACE_ME.workers.dev';
 
   var CLOUDS = [
     { top:4, left:5, w:260, h:90, dur:13, op:.40, del:0 },
@@ -52,7 +51,7 @@
     aviaLink.href = 'https://www.aviasales.ru/search/MOW' + dd + mm + 'BEG1';
   }
 
-  if (aviaPriceEl && WORKER_URL.indexOf('REPLACE_ME') === -1) {
+  if (aviaPriceEl) {
     try {
       var cached = JSON.parse(localStorage.getItem(PRICE_CACHE_KEY) || 'null');
       if (cached && cached.price && (Date.now() - cached.ts < CACHE_TTL)) {
@@ -60,15 +59,12 @@
       }
     } catch (_) {}
 
-    var y2 = new Date(Date.now() + 864e5);
-    var dateStr = y2.toISOString().slice(0, 10);
-    fetch(WORKER_URL + '?date=' + dateStr)
+    fetch('data/avia-price.json')
       .then(function(r) { return r.json(); })
       .then(function(d) {
-        if (d && d.data && d.data.length > 0) {
-          var price = d.data[0].price;
-          aviaPriceEl.textContent = price.toLocaleString('ru-RU') + ' ₽';
-          localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ price: price, ts: Date.now() }));
+        if (d && d.price) {
+          aviaPriceEl.textContent = d.price.toLocaleString('ru-RU') + ' ₽';
+          localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ price: d.price, ts: Date.now() }));
         }
       })
       .catch(function() {});

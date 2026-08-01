@@ -1,6 +1,0 @@
-name = "serbia-avia-proxy"
-main = "_worker.js"
-compatibility_date = "2025-01-01"
-
-[vars]
-TRAVELPAYOUTS_TOKEN = "SET_VIA_SECRET"
