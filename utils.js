@@ -140,8 +140,10 @@ function buildMonthMetricsHTML(M, monthCurSym) {
     + '</div>'
     + '<div class="plan-metric-details">'
     + '<div class="metric-detail-item"><span>🎯 Всего задач</span><span class="metric-num">' + M.taskTotal + '</span></div>'
-    + '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + M.taskDone + ' из ' + M.taskTotal + ' (' + M.donePct + '%)</span></div>'
-    + '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + M.taskProgress + ' (' + M.progPct + '%)</span></div>'
+    + (M.taskTotal > 0
+      ? '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + M.taskDone + ' из ' + M.taskTotal + ' (' + M.donePct + '%)</span></div>'
+        + '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + M.taskProgress + ' (' + M.progPct + '%)</span></div>'
+      : '<div class="metric-detail-item"><span>📋 План ещё не начат</span></div>')
     + '</div>'
     + '<div class="plan-progress-track tasks-combined">'
     + '<div class="plan-progress-segment segment-done" style="width:' + M.donePct + '%"></div>'
@@ -170,8 +172,10 @@ function buildSummaryHTML(rubPlanned, rubSpent, rubInProgress, eurPlanned013, eu
     + '<div style="font-weight:bold;margin-bottom:6px">📈 Готовность к переезду</div>'
     + '<div class="plan-metric-details" style="margin-bottom:6px">'
     + '<div class="metric-detail-item"><span>🎯 Всего задач</span><span class="metric-num">' + globalTaskTotal + '</span></div>'
-    + '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + globalTaskDone + ' (' + globalDonePct + '%)</span></div>'
-    + '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + globalTaskProgress + ' (' + globalProgPct + '%)</span></div>'
+    + (globalTaskTotal > 0
+      ? '<div class="metric-detail-item done"><span>🟢 Готово</span><span class="metric-num">' + globalTaskDone + ' (' + globalDonePct + '%)</span></div>'
+        + '<div class="metric-detail-item progress"><span>🟡 В процессе</span><span class="metric-num">' + globalTaskProgress + ' (' + globalProgPct + '%)</span></div>'
+      : '<div class="metric-detail-item"><span>📋 План ещё не начат</span></div>')
     + '</div>'
     + '<div class="plan-progress-track tasks-combined">'
     + '<div class="plan-progress-segment segment-done" style="width:' + globalDonePct + '%"></div>'

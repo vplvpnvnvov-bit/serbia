@@ -138,9 +138,10 @@ function setupSnapshotListener() {
   });
 }
 
-async function updateCloudStatus() {
+async function updateCloudStatus(loading) {
   const el = document.getElementById('cloud-status');
   if (!el) return;
+  if (loading) { el.textContent = '⏳ Загрузка...'; return; }
   if (!syncCode) { el.textContent = 'Нет кода'; return; }
   try {
     const doc = await db.collection('users').doc(syncCode).get({ source: 'default' });
@@ -182,6 +183,7 @@ async function fetchAndLoadDoc() {
   }
 
   syncLoading = true;
+  updateCloudStatus('loading');
   try {
     if (data.plan) {
       const localVersion = parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0;
