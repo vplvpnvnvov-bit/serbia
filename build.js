@@ -140,13 +140,6 @@ void async function fetchAviaPrice() {
     }
     console.warn(`⚠️ Не удалось получить цену авиабилета: ${e.message}`);
   }
-  indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');
-  const priceSpanRegex = /(<span id="avia-price-val">)([\s\S]*?)(<\/span>)/;
-  indexHtml = indexHtml.replace(priceSpanRegex, `$1${aviaPriceDisplay}$3`);
-  const hrefRegex = /(href="https:\/\/www\.aviasales\.ru\/search\/MOW)\d{0,4}(BEG1")/;
-  indexHtml = indexHtml.replace(hrefRegex, `$1${searchDate}$2`);
-  fs.writeFileSync(path.join(__dirname, 'index.html'), indexHtml, 'utf-8');
-  console.log(`✓ Плашка цены авиабилета: ${aviaPriceDisplay}`);
 }();
 
 console.log(`=== Автоматическая сборка завершена! Новая версия: v${newVersion} (${buildHash}) ===`);
