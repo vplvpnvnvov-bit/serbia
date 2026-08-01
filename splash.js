@@ -1,5 +1,8 @@
 (function(){
   var _splashStart = Date.now();
+  var PRICE_CACHE_KEY = 'avia-price-cache';
+  var CACHE_TTL = 600000;
+  var WORKER_URL = 'https://serbia-avia-proxy.REPLACE_ME.workers.dev';
 
   var CLOUDS = [
     { top:4, left:5, w:260, h:90, dur:13, op:.40, del:0 },
@@ -41,11 +44,34 @@
   if (qEl) qEl.textContent = '"' + QUOTES[Math.floor(Math.random() * QUOTES.length)] + '"';
 
   var aviaLink = document.getElementById('avia-price-badge');
+  var aviaPriceEl = document.getElementById('avia-price-val');
   if (aviaLink) {
     var y = new Date(Date.now() + 864e5);
     var dd = String(y.getDate()).padStart(2, '0');
     var mm = String(y.getMonth() + 1).padStart(2, '0');
     aviaLink.href = 'https://www.aviasales.ru/search/MOW' + dd + mm + 'BEG1';
+  }
+
+  if (aviaPriceEl && WORKER_URL.indexOf('REPLACE_ME') === -1) {
+    try {
+      var cached = JSON.parse(localStorage.getItem(PRICE_CACHE_KEY) || 'null');
+      if (cached && cached.price && (Date.now() - cached.ts < CACHE_TTL)) {
+        aviaPriceEl.textContent = cached.price.toLocaleString('ru-RU') + ' ₽';
+      }
+    } catch (_) {}
+
+    var y2 = new Date(Date.now() + 864e5);
+    var dateStr = y2.toISOString().slice(0, 10);
+    fetch(WORKER_URL + '?date=' + dateStr)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.data && d.data.length > 0) {
+          var price = d.data[0].price;
+          aviaPriceEl.textContent = price.toLocaleString('ru-RU') + ' ₽';
+          localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ price: price, ts: Date.now() }));
+        }
+      })
+      .catch(function() {});
   }
 
   window.hideSplash = function() {
