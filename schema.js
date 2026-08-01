@@ -874,83 +874,12 @@ function renderSchema() {
   });
 }
 
-function renderLegend() {
-  const canvas = document.getElementById('legend-canvas');
-  if (!canvas) return;
-  const container = canvas.parentElement;
-  const CW = container ? container.clientWidth - 20 : 360;
-  const dpr = window.devicePixelRatio || 1;
-  const ICON = 20, ROW_H = 22, PAD = 10;
-  const COL_W = (CW / 2) | 0;
-
-  const items = [
-    {z:0, hdr:'🇷🇺 РОССИЯ'},
-    {z:0, la:'Ель', dr(c,x,y,s){c.font='14px serif';c.fillText('🌲',x+2,y+12);}},
-    {z:0, la:'Берёза', dr(c,x,y,s){c.font='14px serif';c.fillText('🌳',x+1,y+12);}},
-    {z:0, la:'Горы (сопки)', dr(c,x,y,s){c.font='14px serif';c.fillText('🏔',x+2,y+12);}},
-    {z:0, la:'Озеро', dr(c,x,y,s){c.fillStyle='#42a5f5';[[-2,-1,3],[2,-2,2],[-1,2,2]].forEach(p=>{c.beginPath();c.arc(x+6+p[0],y+6+p[1],p[2],0,6.28);c.fill();});}},
-    {z:0, la:'Медвежий след', dr(c,x,y,s){c.font='14px serif';c.fillText('🐾',x+6,y+8);}},
-    {z:0, la:'Лось', dr(c,x,y,s){c.font='16px serif';c.fillText('🦌',x+2,y+12);}},
-    {z:0, la:'Лебедь', dr(c,x,y,s){c.font='14px serif';c.fillText('🦢',x+2,y+12);}},
-
-    {z:0, la:'Облака', dr(c,x,y,s){c.fillStyle='#cfd8dc';[[-4,-2,5],[-1,-4,6],[3,-3,5],[5,-1,4],[2,1,4],[-3,1,4]].forEach(p=>{c.beginPath();c.arc(x+6+p[0],y+6+p[1],p[2],0,6.28);c.fill();});}},
-
-    {z:1, hdr:'🇷🇸 СЕРБИЯ'},
-    {z:1, la:'Дуб', dr(c,x,y,s){c.font='14px serif';c.fillText('🌳',x+2,y+12);}},
-    {z:1, la:'Липа', dr(c,x,y,s){c.font='14px serif';c.fillText('🌿',x+2,y+12);}},
-
-    {z:1, la:'Холмы', dr(c,x,y,s){c.lineJoin='round';c.fillStyle='#33691e';c.beginPath();c.moveTo(x+1,y+11);c.lineTo(x+6,y+2);c.lineTo(x+11,y+11);c.fill();c.fillStyle='#689f38';c.beginPath();c.moveTo(x+2,y+11);c.lineTo(x+6,y+5);c.lineTo(x+10,y+11);c.fill();c.fillStyle='#aed581';c.beginPath();c.moveTo(x+3,y+11);c.lineTo(x+6,y+3);c.lineTo(x+9,y+11);c.fill();c.lineJoin='miter';}},
-    {z:1, la:'Озеро', dr(c,x,y,s){c.fillStyle='#42a5f5';[[2,-1,3],[-1,-2,2],[1,2,2],[-3,0,2]].forEach(p=>{c.beginPath();c.arc(x+6+p[0],y+6+p[1],p[2],0,6.28);c.fill();});}},
-    {z:1, la:'Орёл', dr(c,x,y,s){c.font='14px serif';c.fillText('🦅',x+2,y+12);}},
-    {z:1, la:'Голубь', dr(c,x,y,s){c.font='14px serif';c.fillText('🕊',x+2,y+12);}},
-    {z:1, la:'Крепость Калемегдан', dr(c,x,y,s){c.font='16px serif';c.fillText('🏰',x+2,y+12);}},
-
-    {z:1, la:'Шпиль (город)', dr(c,x,y,s){c.font='14px serif';c.fillText('🏛️',x+2,y+12);}},
-    {z:1, la:'Облака', dr(c,x,y,s){c.fillStyle='#f5f5f5';[[-4,-2,5],[-1,-4,6],[3,-3,5],[5,-1,4],[2,1,4],[-3,1,4]].forEach(p=>{c.beginPath();c.arc(x+6+p[0],y+6+p[1],p[2],0,6.28);c.fill();});}},
-  ];
-
-  const rCnt = [0, 0];
-  items.forEach(it => { if (it.hdr) return; rCnt[it.z]++; });
-  const maxR = Math.max(rCnt[0], rCnt[1]) + 1;
-  const H = maxR * ROW_H + PAD * 2 + 10;
-
-  canvas.style.width = CW + 'px';
-  canvas.style.height = H + 'px';
-  canvas.width = CW * dpr;
-  canvas.height = H * dpr;
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  ctx.fillStyle = '#fdf5c9'; ctx.fillRect(0, 0, CW, H);
-  ctx.strokeStyle = '#d7ccc8'; ctx.lineWidth = 1;
-  ctx.strokeRect(3, 3, CW - 6, H - 6);
-
-  let row0 = 0, row1 = 0;
-  items.forEach(item => {
-    const col = item.z;
-    const row = col === 0 ? row0++ : row1++;
-    const cx = col * COL_W + 8;
-    const cy = PAD + row * ROW_H;
-    if (item.hdr) {
-      ctx.fillStyle = '#5d4037'; ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(item.hdr, cx, cy + 14);
-    } else {
-      item.dr(ctx, cx, cy, 1);
-      ctx.fillStyle = '#4e342e'; ctx.font = '10px sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(item.la, cx + ICON + 6, cy + 13);
-    }
-  });
-}
-
-
 document.querySelector('[data-tab="schema"]')?.addEventListener('click', () => {
   setTimeout(() => { try {
     const toggle = document.getElementById('toggle-schema-editor');
     if (toggle) { toggle.checked = localStorage.getItem('schema-editor-enabled') === 'true'; }
     updateSchemaToolbar();
-    renderSchema(); renderLegend();
+    renderSchema();
   } catch(e) { showUserError(e, 'Карта релокации'); } }, 100);
 });
 
@@ -1013,7 +942,7 @@ window.addEventListener('sync-loaded', () => {
   try {
     renderPlan();
     const schemaTab = document.getElementById('tab-schema');
-    if (schemaTab && schemaTab.classList.contains('active')) { renderSchema(); renderLegend(); }
+    if (schemaTab && schemaTab.classList.contains('active')) { renderSchema(); }
   } catch (e) { showUserError(e, 'Обновление из облака'); }
 });
 
