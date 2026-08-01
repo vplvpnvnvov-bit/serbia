@@ -40,6 +40,14 @@
   var qEl = document.getElementById('splash-quote');
   if (qEl) qEl.textContent = '"' + QUOTES[Math.floor(Math.random() * QUOTES.length)] + '"';
 
+  var aviaLink = document.getElementById('avia-price-badge');
+  if (aviaLink) {
+    var y = new Date(Date.now() + 864e5);
+    var dd = String(y.getDate()).padStart(2, '0');
+    var mm = String(y.getMonth() + 1).padStart(2, '0');
+    aviaLink.href = 'https://www.aviasales.ru/search/MOW' + dd + mm + 'BEG1';
+  }
+
   window.hideSplash = function() {
     var el = document.getElementById('splash-screen');
     if (!el) return;
