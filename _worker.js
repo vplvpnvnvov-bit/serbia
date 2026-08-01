@@ -1,10 +1,10 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const date = url.searchParams.get('date');
     if (!date) return new Response('missing ?date=', { status: 400 });
 
-    const api = `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=MOW&destination=BEG&direct=true&one_way=1&currency=rub&limit=1&departure_at=${date}&token=${TRAVELPAYOUTS_TOKEN}`;
+    const api = `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=MOW&destination=BEG&direct=true&one_way=1&currency=rub&limit=1&departure_at=${date}&token=${env.TRAVELPAYOUTS_TOKEN}`;
 
     const res = await fetch(api);
     const body = await res.text();
