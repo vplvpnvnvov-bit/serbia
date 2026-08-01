@@ -13,13 +13,13 @@
 <meta http-equiv="Expires" content="0">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://www.travelpayouts.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://server.arcgisonline.com https://*.travelpayouts.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://unpkg.com https://www.gstatic.com https://*.travelpayouts.com; font-src 'self' data:; media-src 'none'; frame-src https://www.travelpayouts.com; frame-ancestors 'none'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org https://server.arcgisonline.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://unpkg.com https://www.gstatic.com; font-src 'self' data:; media-src 'none'; frame-src 'none'; frame-ancestors 'none'; form-action 'self';">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Релокация в Белград</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-<link rel="stylesheet" href="style.css?v=6.40.0-c6eaf47" />
+<link rel="stylesheet" href="style.css?v=6.40.1-3dcbf95" />
 </head>
 <body>
 
@@ -71,7 +71,6 @@
   <header id="header">
     <h1>🇷🇸 Релокация в Белград</h1>
      <a class="avia-price-badge" href="https://www.aviasales.ru/search/MOW0208BEG1" target="_blank" rel="noopener noreferrer" title="Актуальные цены на Aviasales" id="avia-price-badge">✈️&nbsp;<span id="avia-price-val">— ₽</span></a>
-    <div id="tp-widget" style="display:inline-block;vertical-align:middle;margin-left:8px;width:160px;height:40px;overflow:hidden;border-radius:8px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.1)"></div>
     <button id="theme-toggle" class="theme-btn" aria-label="Переключить тему"><span class="theme-icon">☀️</span></button>
   </header>
 
@@ -356,19 +355,18 @@
   </div>
 </div>
 
-<script src="splash.js?v=6.40.0-c6eaf47"></script>
+<script src="splash.js?v=6.40.1-3dcbf95"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js" crossorigin="anonymous" defer></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js" crossorigin="anonymous" defer></script>
-<script src="data.js?v=6.40.0-c6eaf47" defer></script>
-<script src="utils.js?v=6.40.0-c6eaf47" defer></script>
-<script src="map.js?v=6.40.0-c6eaf47" defer></script>
-<script src="plan.js?v=6.40.0-c6eaf47" defer></script>
-<script src="schema.js?v=6.40.0-c6eaf47" defer></script>
-<script src="sync.js?v=6.40.0-c6eaf47" defer></script>
-<script src="app.js?v=6.40.0-c6eaf47" defer></script>
+<script src="data.js?v=6.40.1-3dcbf95" defer></script>
+<script src="utils.js?v=6.40.1-3dcbf95" defer></script>
+<script src="map.js?v=6.40.1-3dcbf95" defer></script>
+<script src="plan.js?v=6.40.1-3dcbf95" defer></script>
+<script src="schema.js?v=6.40.1-3dcbf95" defer></script>
+<script src="sync.js?v=6.40.1-3dcbf95" defer></script>
+<script src="app.js?v=6.40.1-3dcbf95" defer></script>
 
-<script async src="https://www.travelpayouts.com/calendar_widget/iframe.js?marker=370704&origin=MOW&destination=BEG&currency=rub&width=160&searchUrl=www.aviasales.ru/search&one_way=true&only_direct=true&locale=ru" charset="UTF-8"></script>
 </body>
 </html>
