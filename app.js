@@ -349,7 +349,11 @@ window.factoryReset = async function() {
   showResetOverlay();
 
   try { await window.deleteCloudData(); } catch (e) {}
+  const keepKeys = ['app-theme', 'schema-editor-enabled', 'schema-manual-offsets', 'schema-landscape-overrides'];
+  const saved = {};
+  keepKeys.forEach(k => { const v = localStorage.getItem(k); if (v !== null) saved[k] = v; });
   localStorage.clear();
+  Object.keys(saved).forEach(k => localStorage.setItem(k, saved[k]));
   const newCode = window.generateSecureSyncCode ? window.generateSecureSyncCode() : Math.random().toString(36).slice(2, 14);
   localStorage.setItem('sync-code', newCode);
 

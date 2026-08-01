@@ -217,9 +217,10 @@ function getPlanState() {
 
 function setPlanState(state) {
   const json = JSON.stringify(state);
+  const hadPlan = !!localStorage.getItem('plan-state');
   localStorage.setItem('plan-state', json);
   _planStateCache = state;
   _planStateCacheKey = json;
-  const ver = (parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0) + 1;
+  const ver = hadPlan ? (parseInt(localStorage.getItem('plan-local-version') || '0', 10) || 0) + 1 : 1;
   localStorage.setItem('plan-local-version', String(ver));
 }

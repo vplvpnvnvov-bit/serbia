@@ -512,10 +512,17 @@ describe('getPlanState / setPlanState', () => {
     assert.deepEqual(r, { tasks: { y: { checked: true } } });
   });
 
-  it('increments plan-local-version on setPlanState', () => {
+  it('resets plan-local-version to 1 when plan-state is missing', () => {
     env.localStorage.setItem('plan-local-version', '5');
     env.setPlanState({ tasks: {} });
-    assert.equal(env.localStorage.getItem('plan-local-version'), '6');
+    assert.equal(env.localStorage.getItem('plan-local-version'), '1');
+  });
+
+  it('increments plan-local-version when plan-state exists', () => {
+    env.setPlanState({ tasks: {} });
+    assert.equal(env.localStorage.getItem('plan-local-version'), '1');
+    env.setPlanState({ tasks: { a: { checked: true } } });
+    assert.equal(env.localStorage.getItem('plan-local-version'), '2');
   });
 
   it('starts plan-local-version at 1 when not set', () => {

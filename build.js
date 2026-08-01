@@ -132,11 +132,12 @@ void async function fetchAviaPrice() {
       }
     }
   } catch (e) {
-    // Пробуем загрузить из кеша
     try {
       const cached = JSON.parse(fs.readFileSync(aviaPricePath, 'utf-8'));
-      if (cached.price) aviaPriceDisplay = `${cached.price.toLocaleString('ru-RU')} ₽`;
-    } catch (_) {}
+      if (cached && cached.price) aviaPriceDisplay = `${cached.price.toLocaleString('ru-RU')} ₽`;
+    } catch (_) {
+      aviaPriceDisplay = '– ₽';
+    }
     console.warn(`⚠️ Не удалось получить цену авиабилета: ${e.message}`);
   }
   indexHtml = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf-8');

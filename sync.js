@@ -87,6 +87,12 @@ function updateSyncStatusUI() {
   }
 }
 
+function isValidPlanData(plan) {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return false;
+  if (!plan.tasks || typeof plan.tasks !== 'object' || Array.isArray(plan.tasks)) return false;
+  return true;
+}
+
 function setupSnapshotListener() {
   if (_unsubSnapshot) { _unsubSnapshot(); _unsubSnapshot = null; }
   if (!syncCode || !userId) return;
@@ -114,6 +120,7 @@ function setupSnapshotListener() {
     if (serverTs > localTs) {
       console.log(`[sync] ACCEPT: ts=${serverTs} localTs=${localTs} ver=${data.planVersion}`);
       if (data.plan && data.plan.tasks) console.log('[sync] dentist in snapshot:', JSON.stringify(data.plan.tasks.dentist));
+      if (!isValidPlanData(data.plan)) { console.warn('[sync] snapshot: invalid plan data, rejecting'); return; }
       localStorage.setItem('plan-state', JSON.stringify(data.plan));
       localStorage.setItem('plan-state-last-updated', String(serverTs));
       if (data.planVersion !== undefined) {
@@ -183,6 +190,7 @@ async function fetchAndLoadDoc() {
       const localTs = parseInt(localStorage.getItem('plan-state-last-updated') || '0', 10);
       const versionOk = data.planVersion === undefined || data.planVersion > localVersion;
       if (versionOk && serverTs > localTs) {
+        if (!isValidPlanData(data.plan)) { console.warn('[sync] loadFromCloud: invalid plan data, rejecting'); return; }
         localStorage.setItem('plan-state', JSON.stringify(data.plan));
         localStorage.setItem('plan-state-last-updated', String(serverTs));
         if (data.planVersion !== undefined) {
